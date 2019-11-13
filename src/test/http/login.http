@@ -1,0 +1,7 @@
+###
+
+# 获取userid
+GET http://localhost:8084/api/login/getuserid/d1d0d2850e303954ab517d5fb4dfe176
+
+
+###
