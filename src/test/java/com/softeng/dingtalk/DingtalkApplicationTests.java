@@ -3,24 +3,25 @@ package com.softeng.dingtalk;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
+import com.softeng.dingtalk.component.DingTalkUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+@Slf4j
 @SpringBootTest
 class DingtalkApplicationTests {
 
-    @Test
-    void contextLoads() {
-        DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/gettoken");
-        OapiGettokenRequest request = new OapiGettokenRequest();
-        request.setAppkey("dingk9nmede0wzi7aywt");
-        request.setAppsecret("nh3mY7PPMAne3aDEpyANGjKlQIFLBkPQ0npYUnOELNVSJFuKST-ngsrfMK2sZiB9");
-        request.setHttpMethod("GET");
-        try {
-            OapiGettokenResponse response = client.execute(request);
-            System.out.println(response.getAccessToken());
-        } catch (Exception e) {
+    @Autowired
+    DingTalkUtils dingTalkUtils;
 
+    @Test
+    void test_getAccessToken() {
+        if (dingTalkUtils.getAccessToken() != null) {
+            log.debug("succeed get Access Token: " + dingTalkUtils.getAccessToken());
+        } else {
+            log.debug("fail get AccessToken");
         }
     }
 
