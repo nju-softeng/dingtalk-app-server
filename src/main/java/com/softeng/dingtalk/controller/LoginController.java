@@ -23,15 +23,15 @@ public class LoginController {
     DingTalkUtils dingTalkUtils;
 
     @GetMapping("/getuserid/{code}")
-    public Map getUserID(@PathVariable String code) {
-        log.debug("get userid successful");
-        String userid;
+    public Map getUserId(@PathVariable String code) {
+        String userid = null;
         try {
             userid = dingTalkUtils.getUserId(code);
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "code 过期");
         }
-
         return Map.of("userid", userid);
     }
+
+
 }

@@ -22,6 +22,8 @@ public class User {
     @Column(unique = true)
     private int userid;
     private String name;
+    private String degree;
     private Double AC;
+    private int conSuccess;
 
 }
