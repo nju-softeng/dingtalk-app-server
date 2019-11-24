@@ -28,7 +28,7 @@ public class ApplicationServiceTest {
 
     @Test
     public void test() {
-        log.debug(applicationService.isExist(5, 1, 1) + "");
+
     }
 
 }

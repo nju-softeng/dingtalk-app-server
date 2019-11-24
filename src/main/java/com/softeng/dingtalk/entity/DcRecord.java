@@ -23,7 +23,7 @@ public class DcRecord {
     private double dvalue;  // Dedication Value
     private double cvalue;  // Contribution Value
     private double dc;
-    private int week;
+    private int timeflag;  // 表示申请所属 年、月、周
     private boolean ischeck;  // 是否被审核
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;
@@ -33,10 +33,10 @@ public class DcRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 
-    public DcRecord(double dc, LocalDateTime insertTime, int week, User applicant, User auditor) {
+    public DcRecord(double dc, LocalDateTime insertTime, User applicant, User auditor) {
         this.dc = dc;
         this.insertTime = insertTime;
-        this.week = week;
+
         this.applicant = applicant;
         this.auditor = auditor;
     }

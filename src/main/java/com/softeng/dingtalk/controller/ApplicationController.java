@@ -56,20 +56,20 @@ public class ApplicationController {
      * @return void
      * @Date 7:01 PM 12/27/2019
      **/
-    @PostMapping("/application")
-    public void addApplication(@RequestBody ApplicationInfo applicationInfo) {
-        DcRecord dcRecord = applicationInfo.getDcRecord();       //获取DC申请信息
-        List<AcItem> acItems = applicationInfo.getAcItems();     //获取该绩效申请的ac申请
-        int uid = dcRecord.getApplicant().getId();
-        int aid = dcRecord.getAuditor().getId();
-        int week = dcRecord.getWeek();
-        if (applicationService.isExist(uid, aid, week) == false) {
-            applicationService.addApplication(dcRecord, acItems);    //持久化绩效申请
-        } else {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "！！！！");
-        }
-
-    }
+//    @PostMapping("/application")
+//    public void addApplication(@RequestBody ApplicationInfo applicationInfo) {
+//        DcRecord dcRecord = applicationInfo.getDcRecord();       //获取DC申请信息
+//        List<AcItem> acItems = applicationInfo.getAcItems();     //获取该绩效申请的ac申请
+//        int uid = dcRecord.getApplicant().getId();
+//        int aid = dcRecord.getAuditor().getId();
+//        int week = dcRecord.getWeek();
+//        if (applicationService.isExist(uid, aid, week) == false) {
+//            applicationService.addApplication(dcRecord, acItems);    //持久化绩效申请
+//        } else {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
+//        }
+//
+//    }
 
 
     /**

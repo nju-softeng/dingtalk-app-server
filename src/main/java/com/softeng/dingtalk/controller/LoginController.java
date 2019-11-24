@@ -38,7 +38,7 @@ public class LoginController {
 
     /**
      * @description 用户登录
-     * @param [authcode]：免登授权码
+     * @param authcode：免登授权码
      * @return java.util.Map
      * @date 9:17 AM 12/11/2019
      **/
