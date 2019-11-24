@@ -31,17 +31,18 @@ public class PerformanceService {
         log.debug(week + "");
         log.debug("user:" + uid);
         String yearmonth = localDateTime.toString().substring(0, 7);
-        Double totalDc = dcRecordRepository.getUserWeekTotalDc(uid, yearmonth, week);
-        if (totalDc != null) {
-            //todo 如果有 dcsummary 数据更新值，否则新建
-            DcSummary dcSummary = dcSummaryRepository.getDcSummaryID(uid, yearmonth, week);
-            if (dcSummary != null) {
-                dcSummary.setDc(totalDc);
-                dcSummaryRepository.save(dcSummary);
-            } else {
-                dcSummaryRepository.save(new DcSummary(localDateTime.getYear(), localDateTime.getMonthValue(),week, totalDc, new User(uid)));
-            }
-        }
+        //todo
+        //Double totalDc = dcRecordRepository.getUserWeekTotalDc(uid, yearmonth, week);
+//        if (totalDc != null) {
+//            //todo 如果有 dcsummary 数据更新值，否则新建
+//            DcSummary dcSummary = dcSummaryRepository.getDcSummaryID(uid, yearmonth, week);
+//            if (dcSummary != null) {
+//                dcSummary.setDc(totalDc);
+//                dcSummaryRepository.save(dcSummary);
+//            } else {
+//                dcSummaryRepository.save(new DcSummary(localDateTime.getYear(), localDateTime.getMonthValue(),week, totalDc, new User(uid)));
+//            }
+//        }
     }
 
 }
