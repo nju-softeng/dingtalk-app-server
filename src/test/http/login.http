@@ -1,7 +1,12 @@
 ###
 
 # 获取userid
-GET http://localhost:8080/api/login/getuserid/d1d0d2850e303954ab517d5fb4dfe176
+POST http://localhost:8080/api/login/
+Content-Type: application/json
+
+{
+  "code": "1ccf9101a1623ca985b73d7157cc8b21"
+}
 
 
 ###
