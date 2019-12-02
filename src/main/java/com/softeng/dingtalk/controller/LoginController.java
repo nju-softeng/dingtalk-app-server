@@ -16,22 +16,26 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/login")
+@RequestMapping("/api")
 public class LoginController {
 
     @Autowired
     DingTalkUtils dingTalkUtils;
 
+
     @GetMapping("/getuserid/{code}")
     public Map getUserId(@PathVariable String code) {
-        String userid = null;
-        try {
-            userid = dingTalkUtils.getUserId(code);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "code 过期");
-        }
+        String userid = dingTalkUtils.getUserId(code);
         return Map.of("userid", userid);
     }
 
+    @PostMapping("/login")
+    public Map login(@RequestBody Map authcode) {
+        String userid = dingTalkUtils.getUserId((String) authcode.get("code"));
+        /**
+         *  判断
+         **/
+        return dingTalkUtils.getUserDetail(userid);
+    }
 
 }

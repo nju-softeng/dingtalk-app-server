@@ -10,7 +10,9 @@ import com.dingtalk.api.response.OapiUserGetResponse;
 import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
 
@@ -43,14 +45,14 @@ public class DingTalkUtils {
             token = response.getAccessToken();
         } catch (ApiException e) {
             log.error("getAccessToken failed", e);
-            throw new RuntimeException();
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
         }
         return token;
     }
 
     /**
      * @Date 9:40 PM 11/13/2019
-     * @Description 获得userid,通过 access_token 和 requestAuthcode；在内部调用了getAccessToken()，不用传参
+     * @Description 获得userid : 通过 access_token 和 requestAuthcode；在内部调用了getAccessToken()，不用传参
      * @Param [requestAuthCode]
      * @return java.lang.String
      **/
@@ -64,11 +66,11 @@ public class DingTalkUtils {
             OapiUserGetuserinfoResponse response = client.execute(request, getAccessToken());
             userId = response.getUserid();
         } catch (ApiException e) {
-            log.error("getAccessToken failed", e);
+            log.debug("getUserId failed", e);
             throw new RuntimeException();
         }
         if (userId == null) {
-            throw new RuntimeException("不存在的临时授权码");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "code 过期");
         }
         return userId;
     }
@@ -85,7 +87,7 @@ public class DingTalkUtils {
             log.error("getUserDetail fail", e);
             throw new RuntimeException();
         }
-        return Map.of("name", response.getName(), "isAdmin", response.getIsAdmin(), "position", response.getPosition());
+        return Map.of("name", response.getName(), "isAdmin", response.getIsAdmin());
     }
 
 }
