@@ -87,7 +87,7 @@ public class DingTalkUtils {
             log.error("getUserDetail fail", e);
             throw new RuntimeException();
         }
-        return Map.of("name", response.getName(), "isAdmin", response.getIsAdmin());
+        return Map.of("name", response.getName(), "isAdmin", response.getIsAdmin(),"avatar", response.getAvatar());
     }
 
 }
