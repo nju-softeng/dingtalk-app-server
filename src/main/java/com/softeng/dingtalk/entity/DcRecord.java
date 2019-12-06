@@ -1,40 +1,33 @@
 package com.softeng.dingtalk.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @author zhanyeye
- * @description 每周绩效申请
+ * @description 所有的确认的 DC值 记录
  * @date 12/5/2019
  */
-@Entity
 @Getter
 @Setter
+@Entity
 @NoArgsConstructor
-public class Application {
+public class DcRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int month;
     private int week;
     private int DC;
-    private boolean isCheck;   // 是否已审核
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
-    private LocalDateTime insertTime;   //插入时间
+    private LocalDateTime insertTime;
 
     @ManyToOne
-    private User applicant;    // 申请人
+    private User user;
     @ManyToOne
-    private User auditor;      // 审核人
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "application")
-    private List<AcApplication> acApplications;  //本次绩效申请包含的 AC申请
+    private User auditor;
 }
