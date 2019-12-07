@@ -35,6 +35,7 @@ public class LoginController {
         /**
          *  判断
          **/
+        log.debug(userid);
         return dingTalkUtils.getUserDetail(userid);
     }
 
