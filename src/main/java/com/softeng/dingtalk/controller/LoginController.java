@@ -23,12 +23,6 @@ public class LoginController {
     DingTalkUtils dingTalkUtils;
 
 
-    @GetMapping("/getuserid/{code}")
-    public Map getUserId(@PathVariable String code) {
-        String userid = dingTalkUtils.getUserId(code);
-        return Map.of("userid", userid);
-    }
-
     @PostMapping("/login")
     public Map login(@RequestBody Map authcode) {
         String userid = dingTalkUtils.getUserId((String) authcode.get("code"));
