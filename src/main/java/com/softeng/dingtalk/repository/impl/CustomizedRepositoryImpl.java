@@ -17,7 +17,6 @@ public class CustomizedRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID> 
 
     public CustomizedRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {
         super(entityInformation, entityManager);
-        // TODO Auto-generated constructor stub
         this.entityManager = entityManager;
     }
 

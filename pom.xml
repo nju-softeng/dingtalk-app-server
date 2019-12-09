@@ -54,6 +54,13 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.dingtalk.open</groupId>
+            <artifactId>taobao-sdk-java-auto</artifactId>
+            <version>2019.12.05</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/resources/lib/taobao-sdk-java-auto.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
@@ -61,6 +68,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
             </plugin>
         </plugins>
     </build>
