@@ -16,13 +16,5 @@ class DingtalkApplicationTests {
     @Autowired
     DingTalkUtils dingTalkUtils;
 
-    @Test
-    void test_getAccessToken() {
-        if (dingTalkUtils.getAccessToken() != null) {
-            log.debug("succeed get Access Token: " + dingTalkUtils.getAccessToken());
-        } else {
-            log.debug("fail get AccessToken");
-        }
-    }
 
 }
