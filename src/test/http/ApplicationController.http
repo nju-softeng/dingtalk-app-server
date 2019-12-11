@@ -1,0 +1,47 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection) or
+# paste cURL into the file and request will be converted to HTTP Request format.
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+
+###
+
+# 添加申请
+POST http://localhost:8080/api/application
+token: fa026a68e9f388ccbbd1a49dfa205dd6be3e0eb8239f7af4a967c677bc634cd308f8388cccc5e5290593a96a769680fe
+Content-Type: application/json
+
+{
+  "applicant": {
+    "id": 1
+  },
+  "auditor": {
+    "id": 1
+  },
+  "month": 11,
+  "week": 2,
+  "dc": 2,
+  "acItems": [
+    {
+      "AC": 1,
+      "reason": "组会汇报"
+    },
+    {
+      "AC": 1,
+      "reason": "论文评审"
+    },
+    {
+      "AC": 1,
+      "reason": "组会评审"
+    }
+  ]
+}
+
+###
+
+GET http://localhost:8080/api/hello
+token: fa026a68e9f388ccbbd1a49dfa205dd6be3e0eb8239f7af4a967c677bc634cd308f8388cccc5e5290593a96a769680fe
+
+###

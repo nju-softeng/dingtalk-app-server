@@ -25,7 +25,6 @@ public class UserService {
     }
 
     public User addUser(User user) {
-        log.debug(user.toString());
         User u = userRepository.save(user);
         return userRepository.refresh(u);
     }
