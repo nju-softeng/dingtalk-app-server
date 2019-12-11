@@ -57,7 +57,7 @@ public class User {
 
     public User(String userid, String name, String avatar, int authority) {
         this.userid = userid;
-        this.userid = name;
+        this.name = name;
         this.avatar = avatar;
         this.authority = authority;
     }
