@@ -34,7 +34,7 @@ public class Application {
     @ManyToOne
     private User auditor;      // 审核人
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "application")
-    private List<AcApplication> acApplications;  //本次绩效申请包含的 AC申请
+    private List<AcItem> acItems;  //本次绩效申请包含的 AC申请
 }

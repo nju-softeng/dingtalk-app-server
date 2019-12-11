@@ -38,10 +38,10 @@ public class LoginController {
     EncryptorComponent encryptorComponent;
 
     /**
-     * @Description 用户登录
-     * @Param [authcode]：免登授权码
+     * @description 用户登录
+     * @param [authcode]：免登授权码
      * @return java.util.Map
-     * @Date 9:17 AM 12/11/2019
+     * @date 9:17 AM 12/11/2019
      **/
     @PostMapping("/login")
     public void login(@RequestBody Map authcode, HttpServletResponse response) {

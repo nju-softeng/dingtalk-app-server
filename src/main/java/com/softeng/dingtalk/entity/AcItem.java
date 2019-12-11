@@ -15,11 +15,12 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
-public class AcApplication {
+public class AcItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int AC;
+    private String reason;
 
     @ManyToOne
     private Application application;  //ac申请属于的周绩效申请
