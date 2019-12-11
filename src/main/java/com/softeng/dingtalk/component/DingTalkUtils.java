@@ -8,6 +8,7 @@ import com.dingtalk.api.request.OapiUserGetuserinfoRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.dingtalk.api.response.OapiUserGetResponse;
 import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
+import com.softeng.dingtalk.entity.User;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -73,6 +74,23 @@ public class DingTalkUtils {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "code 过期");
         }
         return userId;
+    }
+
+    public User getNewUser(String userid) {
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/get");
+        OapiUserGetRequest request = new OapiUserGetRequest();
+        request.setUserid(userid);
+        request.setHttpMethod("GET");
+        OapiUserGetResponse response;
+        try {
+            response = client.execute(request, getAccessToken());
+        } catch (ApiException e) {
+            log.error("getUserDetail fail", e);
+            throw new RuntimeException();
+        }
+        int authority = response.getIsAdmin() ? User.ADMIN_AUTHORITY : User.USER_AUTHORITY;
+        User user = new User(response.getUserid(), response.getName(), response.getAvatar(), authority);
+        return  user;
     }
 
     public Map getUserDetail(String userid) {

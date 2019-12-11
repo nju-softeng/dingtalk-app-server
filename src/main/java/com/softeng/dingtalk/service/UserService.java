@@ -20,6 +20,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public User getUser(String userid) {
+        return userRepository.findUserByUserid(userid);
+    }
+
     public User addUser(User user) {
         log.debug(user.toString());
         User u = userRepository.save(user);
