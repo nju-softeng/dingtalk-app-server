@@ -19,7 +19,7 @@ public class AcItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int AC;
+    private int ac;
     private String reason;
 
     @ManyToOne

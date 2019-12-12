@@ -22,7 +22,7 @@ public class DcRecord {
     private int id;
     private int month;
     private int week;
-    private int DC;
+    private int dc;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;
 

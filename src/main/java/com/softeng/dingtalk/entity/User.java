@@ -45,9 +45,6 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<AcRecord> acRecords;           //用户的所有AC日志
-    @JsonIgnore
-    @OneToMany(mappedBy = "applicant", cascade = CascadeType.REMOVE)
-    private List<WeeklyApplyRecord> weeklyApplyRecordList;   //用户当周的申过的审核人列表
 
 
     //定义静态常量表示用户权限

@@ -20,20 +20,20 @@ Content-Type: application/json
   "auditor": {
     "id": 1
   },
-  "month": 11,
-  "week": 2,
+  "month": 12,
+  "week": 3,
   "dc": 2,
   "acItems": [
     {
-      "AC": 1,
+      "ac": 1,
       "reason": "组会汇报"
     },
     {
-      "AC": 1,
+      "ac": 1,
       "reason": "论文评审"
     },
     {
-      "AC": 1,
+      "ac": 1,
       "reason": "组会评审"
     }
   ]

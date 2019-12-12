@@ -1,6 +1,5 @@
 package com.softeng.dingtalk.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,10 +23,12 @@ public class Application {
     private int id;
     private int month;
     private int week;
-    private int DC;
+    private int dc;
     private boolean isCheck;   // 是否已审核
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;   //插入时间
+    @Column(unique = true)
+    private String flag;
 
     @ManyToOne
     private User applicant;    // 申请人

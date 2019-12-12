@@ -22,7 +22,7 @@ public class AcRecord {
     private int id;
     private int month;
     private int week;
-    private int AC;
+    private int ac;
     private int totalAC;
     private String reason;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
