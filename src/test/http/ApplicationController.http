@@ -20,8 +20,8 @@ Content-Type: application/json
   "auditor": {
     "id": 1
   },
-  "month": 12,
-  "week": 3,
+  "month": 9,
+  "week": 4,
   "dc": 2,
   "acItems": [
     {

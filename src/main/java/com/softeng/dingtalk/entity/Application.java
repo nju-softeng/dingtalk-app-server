@@ -35,7 +35,9 @@ public class Application {
     @ManyToOne
     private User auditor;      // 审核人
 
-
     @OneToMany(mappedBy = "application")
     private List<AcItem> acItems;  //本次绩效申请包含的 AC申请
+
+    @OneToOne(mappedBy = "application")
+    private DcRecord dcRecord;
 }
