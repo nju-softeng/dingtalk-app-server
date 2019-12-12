@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -111,7 +113,12 @@ public class DingTalkUtils {
         } catch (ApiException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
         }
-        return  null;
+        List<OapiReportListResponse.JsonObject> jsonObjectList = response.getResult().getDataList().get(0).getContents();
+        Map<String, String> map = new HashMap<>();
+        for (int i = 0; i < jsonObjectList.size(); i++) {
+            map.put(jsonObjectList.get(i).getKey(), jsonObjectList.get(i).getValue());
+        }
+        return  map;
     }
 
 }
