@@ -3,9 +3,11 @@ package com.softeng.dingtalk.component;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiGettokenRequest;
+import com.dingtalk.api.request.OapiReportListRequest;
 import com.dingtalk.api.request.OapiUserGetRequest;
 import com.dingtalk.api.request.OapiUserGetuserinfoRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
+import com.dingtalk.api.response.OapiReportListResponse;
 import com.dingtalk.api.response.OapiUserGetResponse;
 import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
 import com.softeng.dingtalk.entity.User;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author zhanyeye
@@ -93,19 +96,22 @@ public class DingTalkUtils {
         return  user;
     }
 
-    public Map getUserDetail(String userid) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/get");
-        OapiUserGetRequest request = new OapiUserGetRequest();
+
+    public Map getReport(String userid){
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
+        OapiReportListRequest request = new OapiReportListRequest();
         request.setUserid(userid);
-        request.setHttpMethod("GET");
-        OapiUserGetResponse response;
+        request.setStartTime(System.currentTimeMillis()- TimeUnit.DAYS.toMillis(3));  //获取的开始时间是3天前
+        request.setEndTime(System.currentTimeMillis());
+        request.setCursor(0L);
+        request.setSize(1L);
+        OapiReportListResponse response;
         try {
             response = client.execute(request, getAccessToken());
         } catch (ApiException e) {
-            log.error("getUserDetail fail", e);
-            throw new RuntimeException();
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
         }
-        return Map.of("name", response.getName(), "isAdmin", response.getIsAdmin(),"avatar", response.getAvatar());
+        return  null;
     }
 
 }

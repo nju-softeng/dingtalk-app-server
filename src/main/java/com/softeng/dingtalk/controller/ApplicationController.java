@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -25,8 +26,13 @@ public class ApplicationController {
     @Autowired
     AcItemService acItemService;
 
+    @GetMapping("/report/{uid}/")
+    public Map getReport(@PathVariable int uid) {
+
+    }
+
     /**
-     * @description 添加申请
+     * 用户提交申请
      * @date 3:02 PM 12/11/2019
      **/
     @PostMapping("/application")
@@ -39,7 +45,9 @@ public class ApplicationController {
     }
 
 
+    @GetMapping("application/{}")
+    public void getUserApplication() {
 
-
+    }
 
 }

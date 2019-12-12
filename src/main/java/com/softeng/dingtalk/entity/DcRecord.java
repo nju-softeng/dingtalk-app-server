@@ -30,4 +30,8 @@ public class DcRecord {
     private User user;
     @ManyToOne
     private User auditor;
+
+    @OneToOne
+    @JoinColumn(unique = true)
+    private Application application;
 }
