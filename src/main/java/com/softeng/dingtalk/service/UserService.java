@@ -20,6 +20,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public String getUserid(int id) {
+        return userRepository.findById(id).get().getUserid();
+    }
+
     public User getUser(String userid) {
         return userRepository.findUserByUserid(userid);
     }

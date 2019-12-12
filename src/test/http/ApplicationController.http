@@ -41,7 +41,8 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/api/hello
-token: fa026a68e9f388ccbbd1a49dfa205dd6be3e0eb8239f7af4a967c677bc634cd308f8388cccc5e5290593a96a769680fe
+# 获取周报
+GET http://localhost:8080/api/report/2
+token: 94c9803ee24199d0b7f0837d4775f7bf42ce7e383c7a205ad58790d1c94847a2e197cae5ca46b058ee09348e1b5b3e95
 
 ###

@@ -1,10 +1,13 @@
 package com.softeng.dingtalk.controller;
 
+import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.Application;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.service.AcItemService;
 import com.softeng.dingtalk.service.ApplicationService;
+import com.softeng.dingtalk.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +28,16 @@ public class ApplicationController {
     ApplicationService applicationService;
     @Autowired
     AcItemService acItemService;
+    @Autowired
+    UserService userService;
+    @Autowired
+    DingTalkUtils dingTalkUtils;
 
-    @GetMapping("/report/{uid}/")
-    public Map getReport(@PathVariable int uid) {
-
+    @GetMapping("/report/{uid}")
+    public Map getReport(@RequestAttribute int uid) {
+        log.debug(uid+"");
+        String userid = userService.getUserid(uid);
+        return dingTalkUtils.getReport(userid);
     }
 
     /**
