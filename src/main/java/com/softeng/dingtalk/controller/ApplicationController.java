@@ -10,6 +10,9 @@ import com.softeng.dingtalk.service.ApplicationService;
 import com.softeng.dingtalk.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +36,12 @@ public class ApplicationController {
     @Autowired
     DingTalkUtils dingTalkUtils;
 
+    /**
+     * 根据uid获取周报
+     * @param [uid]
+     * @return java.util.Map
+     * @date 6:31 PM 12/12/2019
+     **/
     @GetMapping("/report/{uid}")
     public Map getReport(@RequestAttribute int uid) {
         log.debug(uid+"");
@@ -42,6 +51,8 @@ public class ApplicationController {
 
     /**
      * 用户提交申请
+     * @param [application]
+     * @return void
      * @date 3:02 PM 12/11/2019
      **/
     @PostMapping("/application")
@@ -53,10 +64,10 @@ public class ApplicationController {
         acItemService.addAcItemList(acItems, a);                           //持久化ac申请，并将绩效申请作为外键
     }
 
-
-    @GetMapping("application/{}")
-    public void getUserApplication() {
-
+    @GetMapping("application/{uid}/page={page}")
+    public Map getUserApplication(@RequestAttribute int uid, @PathVariable int page) {
+        List<Application> applications = applicationService.getApplications(uid, page);
+        return Map.of("applications", applications);
     }
 
 }
