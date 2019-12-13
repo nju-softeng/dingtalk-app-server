@@ -25,7 +25,7 @@ public class Application {
     private int month;
     private int week;
     private int dc;
-    private boolean isCheck;   // 是否已审核
+    private boolean ischeck;   // 是否已审核
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;   //插入时间
     @Column(unique = true)

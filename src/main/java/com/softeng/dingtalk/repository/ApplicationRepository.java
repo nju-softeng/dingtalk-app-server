@@ -23,8 +23,8 @@ public interface ApplicationRepository extends CustomizedRepository<Application,
     List<Application> listApplicationByuid(@Param("uid") int uid, Pageable pageable);
 
 
-//    //根据uid(审核人)，获得待审核的申请  ->  审核人查看待审核的申请
-//    @Query("select a from Application a where a.id = :uid and a.ischeck = false")
-//    List<Application> listPendingApplication(@Param("uid") int uid);
+    //根据uid(审核人)，获得待审核的申请  ->  审核人查看待审核的申请
+    @Query("select a from Application a where a.auditor.id = :uid and a.ischeck = false")
+    List<Application> listPendingApplication(@Param("uid") int uid);
 
 }

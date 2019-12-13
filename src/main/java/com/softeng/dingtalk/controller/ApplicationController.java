@@ -37,12 +37,7 @@ public class ApplicationController {
     @Autowired
     DingTalkUtils dingTalkUtils;
 
-    /**
-     * 根据uid获取周报
-     * @param [uid]
-     * @return java.util.Map
-     * @date 6:31 PM 12/12/2019
-     **/
+    //根据uid获取周报
     @GetMapping("/report/{uid}")
     public Map getReport(@RequestAttribute int uid) {
         log.debug(uid+"");
@@ -50,12 +45,7 @@ public class ApplicationController {
         return dingTalkUtils.getReport(userid);
     }
 
-    /**
-     * 用户提交申请
-     * @param [applicationInfo]
-     * @return void
-     * @date 3:02 PM 12/11/2019
-     **/
+    //用户提交申请
     @PostMapping("/application")
     public void addApplication(@RequestBody ApplicationInfo applicationInfo) {
         Application application = applicationInfo.getApplication();
@@ -66,10 +56,19 @@ public class ApplicationController {
         acItemService.addAcItemList(acItems, a);                           //持久化ac申请，并将绩效申请作为外键
     }
 
+    //用户分页查询已提交的申请
     @GetMapping("application/{uid}/page={page}")
     public Map getUserApplication(@RequestAttribute int uid, @PathVariable int page) {
         List<Application> applications = applicationService.getApplications(uid, page);
         return Map.of("applications", applications);
     }
 
+
+    //审核人获取待审核的申请
+    @GetMapping("/pending_audit/{uid}")
+    public List<Application> getAuditApplication(@RequestAttribute int uid) {
+        return applicationService.getPendingApplication(uid);
+    }
+
+    //TODO 审核人提交审核
 }
