@@ -35,10 +35,10 @@ public class ApplicationService {
         return applicationRepository.listApplicationByuid(uid, pageable);
     }
 
-//    //根据uid(审核人)，获得待审核的申请  ->  审核人查看待审核的申请
-//    public List<Application> getPendingApplication(int uid) {
-//        return applicationRepository.listPendingApplication(uid);
-//    }
+    //根据uid(审核人)，获得待审核的申请  ->  审核人查看待审核的申请
+    public List<Application> getPendingApplication(int uid) {
+        return applicationRepository.listPendingApplication(uid);
+    }
 
 
 }
