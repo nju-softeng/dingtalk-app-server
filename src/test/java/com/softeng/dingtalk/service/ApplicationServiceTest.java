@@ -36,4 +36,14 @@ public class ApplicationServiceTest {
         }
     }
 
+
+//    @Test
+//    public void test_listPendingApplication() {
+//        List<Application> applications = applicationRepository.listPendingApplication(2);
+//        for (int i = 0; i < applications.size(); i++) {
+//            log.debug(applications.get(i).getApplicant().getName() + "");
+//        }
+//    }
+
+
 }

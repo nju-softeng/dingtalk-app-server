@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author zhanyeye
  * @description 操作User实体类的接口
@@ -13,6 +15,12 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserRepository extends CustomizedRepository<User, Integer>, JpaRepository<User, Integer> {
+    //通过userid查找用户 -> 通过用户进入系统时调用API获得的userid查询用户，判断用户是否在系统中，还是新用户
     @Query("select u from User u where u.userid = :userid")
     User findUserByUserid(@Param("userid")String userid);
+
+    //TODO 管理员是否要被列入
+    //查找所有的具有审核权限的用户 -> 供用户提交审核申请时选择
+    @Query("select u from User u where  u.authority = 1")
+    List<User> listAuditor();
 }
