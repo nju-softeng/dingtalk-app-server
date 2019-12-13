@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 /**
  * @author zhanyeye
@@ -20,16 +21,25 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    //获取用户的userID -> 从钉钉API获取用户信息时，要根据userID获取  （获取周报）
     public String getUserid(int id) {
         return userRepository.findById(id).get().getUserid();
     }
 
+    //通过useID获取用户 -> 通过用户进入系统时调用API获得的userID查询用户，判断用户是否在系统中，还是新用户
     public User getUser(String userid) {
         return userRepository.findUserByUserid(userid);
     }
 
+    //添加用户 -> 用于新用户登录时，将其添加到数据库中
     public User addUser(User user) {
         User u = userRepository.save(user);
         return userRepository.refresh(u);
     }
+
+    //查询所有的审核员 -> 供用户提交审核申请时选择
+    public List<User> getAuditorUser() {
+        return userRepository.listAuditor();
+    }
+
 }
