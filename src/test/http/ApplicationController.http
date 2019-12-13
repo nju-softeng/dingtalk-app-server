@@ -15,12 +15,12 @@ Content-Type: application/json
 
 {
   "applicant": {
-    "id": 1
+    "id": 2
   },
   "auditor": {
-    "id": 1
+    "id": 2
   },
-  "month": 9,
+  "month": 11,
   "week": 4,
   "dc": 2,
   "acItems": [
@@ -41,8 +41,15 @@ Content-Type: application/json
 
 ###
 
-# 获取周报
+# 获取指定用户的周报
 GET http://localhost:8080/api/report/2
 token: 94c9803ee24199d0b7f0837d4775f7bf42ce7e383c7a205ad58790d1c94847a2e197cae5ca46b058ee09348e1b5b3e95
+
+###
+
+# 分页获取指定用户的申请
+GET http://localhost:8080/api/application/2/page=0
+token: 94c9803ee24199d0b7f0837d4775f7bf42ce7e383c7a205ad58790d1c94847a2e197cae5ca46b058ee09348e1b5b3e95
+Content-Type: application/json
 
 ###

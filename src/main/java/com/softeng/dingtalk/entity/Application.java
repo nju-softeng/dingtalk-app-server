@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,6 +36,7 @@ public class Application {
     @ManyToOne
     private User auditor;      // 审核人
 
+    @JsonIgnore
     @OneToMany(mappedBy = "application")
     private List<AcItem> acItems;  //本次绩效申请包含的 AC申请
 
