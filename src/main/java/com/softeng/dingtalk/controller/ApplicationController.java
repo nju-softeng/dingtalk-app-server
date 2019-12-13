@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
+import com.softeng.dingtalk.dto.ApplicationInfo;
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.Application;
 import com.softeng.dingtalk.entity.User;
@@ -51,13 +52,14 @@ public class ApplicationController {
 
     /**
      * 用户提交申请
-     * @param [application]
+     * @param [applicationInfo]
      * @return void
      * @date 3:02 PM 12/11/2019
      **/
     @PostMapping("/application")
-    public void addApplication(@RequestBody Application application) {
-        List<AcItem> acItems = application.getAcItems();                   //获取该绩效申请的ac申请
+    public void addApplication(@RequestBody ApplicationInfo applicationInfo) {
+        Application application = applicationInfo.getApplication();
+        List<AcItem> acItems = applicationInfo.getAcItems();                   //获取该绩效申请的ac申请
         //拼接 month, week, applicant_id, auditor_id 字段，插入flag约束字段中
         application.setFlag(application.getMonth()+ "-" + application.getWeek() + "-" + application.getApplicant().getId() + "-" + application.getAuditor().getId());
         Application a = applicationService.addApplication(application);    //持久化绩效申请
