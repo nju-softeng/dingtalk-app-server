@@ -21,7 +21,7 @@ Content-Type: application/json
     "auditor": {
       "id": 1
     },
-    "month": 2,
+    "month": 3,
     "week": 2,
     "dc": 2
   },
@@ -46,7 +46,7 @@ Content-Type: application/json
 ###
 
 # 获取指定用户的周报
-GET http://localhost:8080/api/report/2
+GET http://localhost:8080/api/report/1
 token: 380a1b4ec47c6a4df4ea74219768ceeb5bc86f332bad13f92b9d526aef606107a3239c241100972f2e484270ddc56bc5
 
 ###

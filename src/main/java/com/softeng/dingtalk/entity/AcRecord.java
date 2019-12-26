@@ -28,9 +28,9 @@ public class AcRecord {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
     private User user;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 
 }
