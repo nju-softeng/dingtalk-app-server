@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * @author zhanyeye
- * @description
+ * @description 加密和解密的组件，用于token的加密和解密
  * @create 12/11/2019 10:08 AM
  */
 @Component

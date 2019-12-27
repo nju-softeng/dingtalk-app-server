@@ -81,6 +81,7 @@ public class DingTalkUtils {
         return userId;
     }
 
+
     public User getNewUser(String userid) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/get");
         OapiUserGetRequest request = new OapiUserGetRequest();
@@ -99,6 +100,13 @@ public class DingTalkUtils {
     }
 
 
+    /**
+     * @description 获取周报信息
+     * @param [userid]
+     * @return java.util.Map
+     * @author zhanyeye
+     * @date 2:08 PM 12/26/2019
+     **/
     public Map getReport(String userid){
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
         OapiReportListRequest request = new OapiReportListRequest();
@@ -112,6 +120,9 @@ public class DingTalkUtils {
             response = client.execute(request, getAccessToken());
         } catch (ApiException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
+        }
+        if (response.getResult().getDataList().isEmpty()) {
+            return Map.of();
         }
         List<OapiReportListResponse.JsonObject> jsonObjectList = response.getResult().getDataList().get(0).getContents();
         Map<String, String> map = new HashMap<>();

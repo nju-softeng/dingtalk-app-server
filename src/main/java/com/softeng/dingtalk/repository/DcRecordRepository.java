@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @date 12/12/2019
  */
 public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integer>, JpaRepository<DcRecord, Integer> {
+
 }

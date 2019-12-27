@@ -19,6 +19,11 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 public class User {
+    //定义静态常量表示用户权限
+    public static final int USER_AUTHORITY = 0;
+    public static final int AUDITOR_AUTHORITY = 1;
+    public static final int ADMIN_AUTHORITY = 2;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -26,7 +31,6 @@ public class User {
     private String userid;    //钉钉用户userID
     private String name;      //用户姓名
     private String avatar;    //用户头像
-    private Double currentAC; //当前AC值
     private int successCnt;   //连续成功次数
     private String degree;    //学位
     private int authority = USER_AUTHORITY;  //用户权限
@@ -45,12 +49,6 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<AcRecord> acRecords;           //用户的所有AC日志
-
-
-    //定义静态常量表示用户权限
-    public static final int USER_AUTHORITY = 0;
-    public static final int AUDITOR_AUTHORITY = 1;
-    public static final int ADMIN_AUTHORITY = 2;
 
     public User(String userid, String name, String avatar, int authority) {
         this.userid = userid;
