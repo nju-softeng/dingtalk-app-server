@@ -25,7 +25,6 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class LoginController {
     //为了防止伪造角色
-    //TODO 解释这么做的原因
     private static final String USER_ROLE = "bb63e5f7e0f2ffae845c";
     private static final String AUDITOR_AUTHORITY = "pb53e2f7g0f2hfanp4sx";
     private static final String ADMIN_ROLE = "6983f953b49c88210cb9";

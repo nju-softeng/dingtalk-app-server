@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 /**
  * @author zhanyeye
- * @description 所有的确认的 DC值 记录
+ * @description 所有的确认的DC值记录（DC日志）
  * @date 12/5/2019
  */
 @Getter
@@ -22,12 +22,12 @@ public class DcRecord {
     private int id;
     private int month;
     private int week;
-    private int dc;
+    private double dc;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;
 
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
-    private User user;
+    private User applicant;
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 

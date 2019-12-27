@@ -8,20 +8,20 @@
 
 ###
 
-# 添加申请
+# 用户提交周绩效申请
 POST http://localhost:8080/api/application
-token: 380a1b4ec47c6a4df4ea74219768ceeb5bc86f332bad13f92b9d526aef606107a3239c241100972f2e484270ddc56bc5
+token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555fcc4b851acd295d64de7d1fb
 Content-Type: application/json
 
 {
   "application": {
     "applicant": {
-      "id": 1
+      "id": 2
     },
     "auditor": {
       "id": 1
     },
-    "month": 3,
+    "month": 4,
     "week": 2,
     "dc": 2
   },
@@ -41,34 +41,27 @@ Content-Type: application/json
   ]
 }
 
-
-
 ###
 
 # 获取指定用户的周报
 GET http://localhost:8080/api/report/1
-token: 380a1b4ec47c6a4df4ea74219768ceeb5bc86f332bad13f92b9d526aef606107a3239c241100972f2e484270ddc56bc5
+token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555fcc4b851acd295d64de7d1fb
 
 ###
 
 # 分页获取指定用户的申请
 GET http://localhost:8080/api/application/2/page=0
-token: 380a1b4ec47c6a4df4ea74219768ceeb5bc86f332bad13f92b9d526aef606107a3239c241100972f2e484270ddc56bc5
+token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555fcc4b851acd295d64de7d1fb
 Content-Type: application/json
-
 
 ###
 
 # 分页获取指定用户的申请
-GET http://localhost:8080/api/application/1/page=0
-token: 380a1b4ec47c6a4df4ea74219768ceeb5bc86f332bad13f92b9d526aef606107a3239c241100972f2e484270ddc56bc5
+GET http://localhost:8080/api/application/2/page=1
+token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555fcc4b851acd295d64de7d1fb
 Content-Type: application/json
 
 ###
 
-# 获取审核人待审核申请
-GET http://localhost:8080/api/pending_audit/1
-token: 380a1b4ec47c6a4df4ea74219768ceeb5bc86f332bad13f92b9d526aef606107a3239c241100972f2e484270ddc56bc5
-Content-Type: application/json
 
-###
+

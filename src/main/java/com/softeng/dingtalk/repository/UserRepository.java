@@ -19,7 +19,7 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     @Query("select u from User u where u.userid = :userid")
     User findUserByUserid(@Param("userid")String userid);
 
-    //TODO 管理员是否要被列入
+    //todo 管理员是否要被列入
     //查找所有的具有审核权限的用户 -> 供用户提交审核申请时选择
     @Query("select u from User u where  u.authority = 1")
     List<User> listAuditor();

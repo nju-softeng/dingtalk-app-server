@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 /**
  * @author zhanyeye
- * @description AC值变更记录
+ * @description AC值记录 (AC日志：被审核人确认的用户ac变更记录)
  * @date 12/5/2019
  */
 @Getter
@@ -22,14 +22,13 @@ public class AcRecord {
     private int id;
     private int month;
     private int week;
-    private int ac;
-    private int totalAC;
+    private double ac;
     private String reason;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;
 
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
-    private User user;
+    private User applicant;
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 
