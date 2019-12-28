@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author zhanyeye
  * @description  UserService测试类
@@ -26,6 +29,7 @@ public class UserServiceTest {
         User u = new User("0001", "zhanyeye", "avatar", 0);
         userService.addUser(u);
     }
+
 
     @Test
     public void test_getUserid() {

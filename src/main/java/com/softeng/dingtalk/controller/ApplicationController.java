@@ -75,6 +75,9 @@ public class ApplicationController {
     public Map getUserApplication(@RequestAttribute int uid, @PathVariable int page) {
         List<Application> applications = applicationService.getApplications(uid, page);
         return Map.of("applications", applications);
+        //
     }
+
+
 
 }

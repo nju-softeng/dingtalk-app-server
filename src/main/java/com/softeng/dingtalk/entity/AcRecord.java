@@ -28,7 +28,7 @@ public class AcRecord {
     private LocalDateTime insertTime;
 
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
-    private User applicant;
+    private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 

@@ -18,5 +18,5 @@ import java.util.List;
 @AllArgsConstructor
 public class ApplicationInfo {
     private Application application;  //周绩效申请
-    private List<AcItem> acItems;     //ac值申请列表
+    private List<AcItem> acItems;     //ac值申请列表      //todo 注意可能会有空指针
 }

@@ -5,6 +5,7 @@ import com.softeng.dingtalk.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @description
  * @date 12/27/2019
  */
+@Repository
 public interface AcRecordRepository extends CustomizedRepository<AcRecord, Integer>, JpaRepository<AcRecord, Integer> {
 
     /**
@@ -30,6 +32,6 @@ public interface AcRecordRepository extends CustomizedRepository<AcRecord, Integ
      * @return java.util.List<com.softeng.dingtalk.entity.AcRecord>
      * @Date 8:45 PM 12/27/2019
      **/
-    @Query("select a from AcRecord a where a.applicant.id = :uid")
+    @Query("select a from AcRecord a where a.user.id = :uid")
     List<AcRecord> getAcRecordsByApplicantId(@Param("uid") int uid);
 }
