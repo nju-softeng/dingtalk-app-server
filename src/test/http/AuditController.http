@@ -30,7 +30,7 @@ Content-Type: application/json
      "id": 1
    },
    "application": {
-     "id": 1
+     "id": 2
    }
  },
   "acRecords": [
@@ -38,13 +38,25 @@ Content-Type: application/json
       "month": 12,
       "week": 4,
       "ac": 1,
-      "reason": "组会评审"
+      "reason": "组会评审",
+      "auditor": {
+        "id": 1
+      },
+      "user": {
+        "id": 2
+      }
     },
     {
       "month": 12,
       "week": 4,
       "ac": 1,
-      "reason": "test"
+      "reason": "test",
+      "auditor": {
+        "id": 1
+      },
+      "user": {
+        "id": 2
+      }
     }
   ]
 

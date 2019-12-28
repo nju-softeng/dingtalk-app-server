@@ -18,7 +18,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @ToString
 public class Application {
     @Id
@@ -46,4 +45,10 @@ public class Application {
     @JsonIgnore
     @OneToOne(mappedBy = "application")
     private DcRecord dcRecord;
+
+    public Application(int month, int week, int dc) {
+        this.month = month;
+        this.week = week;
+        this.dc = dc;
+    }
 }

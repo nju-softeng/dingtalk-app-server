@@ -4,7 +4,6 @@ import com.softeng.dingtalk.dto.ApplicationInfo;
 import com.softeng.dingtalk.dto.AuditInfo;
 import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.Application;
-import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.ApplicationRepository;
@@ -57,17 +56,14 @@ public class AuditService {
      * @date 10:03 AM 12/27/2019
      **/
     public void addAuditResult(AuditInfo auditInfo) {
-        dcRecordRepository.save(auditInfo.getDcRecord());
-        for (int i = 0; i < auditInfo.getAcRecords().size(); i++) {
-            acRecordRepository.save(auditInfo.getAcRecords().get(i));
-        }
-        //todo 跟新acRecord 审核人ID 和 申请人ID
-        applicationRepository.updateApplicationStatus(auditInfo.getDcRecord().getApplication().getId());
+        dcRecordRepository.save(auditInfo.getDcRecord());     //持久化DC记录
+        acRecordRepository.saveAll(auditInfo.getAcRecords());  //持久化多个AC记录
+        applicationRepository.updateApplicationCheckStatus(auditInfo.getDcRecord().getApplication().getId());  // 将申请状态从false变成true
     }
 
-    public List<AcRecord> getAcRecord(int uid) {
-        return acRecordRepository.getAcRecordsByAuditor(new User())
-    }
+//    public List<AcRecord> getAcRecord(int uid) {
+//        return acRecordRepository.getAcRecordsByAuditor(new User());
+//    }
 
 
     public void updateDcRecord(double dc) {

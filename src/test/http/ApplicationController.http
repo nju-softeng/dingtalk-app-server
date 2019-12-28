@@ -16,27 +16,27 @@ Content-Type: application/json
 {
   "application": {
     "applicant": {
-      "id": 2
+      "id": 5
     },
     "auditor": {
       "id": 1
     },
-    "month": 4,
-    "week": 2,
+    "month": 12,
+    "week": 7,
     "dc": 2
   },
   "acItems": [
     {
       "ac": 1,
-      "reason": "组会汇报"
+      "reason": "test1"
     },
     {
       "ac": 1,
-      "reason": "论文评审"
+      "reason": "test2"
     },
     {
       "ac": 1,
-      "reason": "组会评审"
+      "reason": "test3"
     }
   ]
 }

@@ -29,12 +29,11 @@ public class ApplicationService {
 
     //添加申请 ->  用户提交一个周绩效申请（包括DC和AC）
     public void addApplication(Application application, List<AcItem> acItems) {
-        Application a = applicationRepository.save(application);
-        applicationRepository.refresh(a);
+        applicationRepository.save(application);
         for (int i = 0; i < acItems.size(); i++) { // 持久化ac申请，并将绩效申请作为外键
             acItems.get(i).setApplication(application);
-            acItemRepository.save(acItems.get(i));
         }
+        acItemRepository.saveAll(acItems);
     }
 
     //获取指定用户的申请 ->  用于查看申请历史

@@ -36,6 +36,11 @@ public class ApplicationServiceTest {
         }
     }
 
+    @Test
+    public void test() {
+        applicationRepository.save(new Application(1, 1, 1));
+    }
+
 
 //    @Test
 //    public void test_listPendingApplication() {
