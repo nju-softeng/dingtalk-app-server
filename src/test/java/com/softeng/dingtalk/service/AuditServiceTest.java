@@ -2,6 +2,7 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.Application;
+import com.softeng.dingtalk.repository.DcRecordRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,9 +23,11 @@ import java.util.List;
 public class AuditServiceTest {
     @Autowired
     AuditService auditService;
+    @Autowired
+    DcRecordRepository dcRecordRepository;
 
     @Test
-    public void test_getPendingApplication() {
-        auditService.getPendingApplication(1);
+    public void test() {
+
     }
 }
