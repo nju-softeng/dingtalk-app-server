@@ -1,8 +1,10 @@
 package com.softeng.dingtalk;
 
 import com.softeng.dingtalk.entity.Application;
+import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.ApplicationRepository;
+import com.softeng.dingtalk.repository.DcRecordRepository;
 import com.softeng.dingtalk.repository.UserRepository;
 import com.softeng.dingtalk.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +34,8 @@ public class InitDatabase {
     UserRepository userRepository;
     @Autowired
     ApplicationRepository applicationRepository;
-
+    @Autowired
+    DcRecordRepository dcRecordRepository;
     @Test
     public void addUser() {
         List<User> users = new ArrayList<>();
@@ -68,7 +71,11 @@ public class InitDatabase {
 
     @Test
     public void addDcRecord() {
-        
+        //double dc, LocalDateTime insertTime, int week, User user, User auditor, Application application
+        List<DcRecord> dcRecords = new ArrayList<>();
+        dcRecords.add(new DcRecord(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(5),  new User(1), new Application(1)));
+        dcRecords.add(new DcRecord(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(5),  new User(2), new Application(2)));
+        dcRecordRepository.saveAll(dcRecords);
     }
 
 

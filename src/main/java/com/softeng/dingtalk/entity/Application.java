@@ -56,4 +56,7 @@ public class Application {
         this.applicant = applicant;
         this.auditor = auditor;
     }
+    public Application(int id) {
+        this.id = id;
+    }
 }

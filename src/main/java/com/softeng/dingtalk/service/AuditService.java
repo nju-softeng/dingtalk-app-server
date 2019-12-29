@@ -4,6 +4,7 @@ import com.softeng.dingtalk.dto.ApplicationInfo;
 import com.softeng.dingtalk.dto.AuditInfo;
 import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.Application;
+import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.ApplicationRepository;
@@ -56,9 +57,12 @@ public class AuditService {
      * @date 10:03 AM 12/27/2019
      **/
     public void addAuditResult(AuditInfo auditInfo) {
-        dcRecordRepository.save(auditInfo.getDcRecord());     //持久化DC记录
-        acRecordRepository.saveAll(auditInfo.getAcRecords());  //持久化多个AC记录
-        applicationRepository.updateApplicationCheckStatus(auditInfo.getDcRecord().getApplication().getId());  // 将申请状态从false变成true
+        DcRecord dcRecord = auditInfo.getDcRecord();
+        List<AcRecord> acRecords = auditInfo.getAcRecords();
+        dcRecordRepository.save(dcRecord);     //持久化DC记录
+        acRecordRepository.saveAll(acRecords);  //持久化多个AC记录
+        applicationRepository.updateApplicationCheckStatus(dcRecord.getApplication().getId());  // 将申请状态从false变成true
+
     }
 
 //    public List<AcRecord> getAcRecord(int uid) {

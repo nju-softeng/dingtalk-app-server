@@ -21,15 +21,24 @@ public class DcRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private double dc;
-    @Column(columnDefinition = "DATETIME")
-    private LocalDateTime insertTime;
     private int week;
+    @Column(columnDefinition = "DATETIME")
+    private LocalDateTime createTime;
+
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
-
     @OneToOne
     @JoinColumn(unique = true)
     private Application application;
+
+    public DcRecord(double dc, LocalDateTime createTime, int week, User user, User auditor, Application application) {
+        this.dc = dc;
+        this.createTime = createTime;
+        this.week = week;
+        this.user = user;
+        this.auditor = auditor;
+        this.application = application;
+    }
 }

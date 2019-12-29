@@ -6,6 +6,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDateTime;
+
 /**
  * @author zhanyeye
  * @description
@@ -17,7 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class TestIdea {
     @Test
     public void test() {
-        String str = new StringBuilder().append("a").toString();
-        log.debug(str);
+        LocalDateTime localDateTime = LocalDateTime.of(2019,9,1,1,1);
+        log.debug(localDateTime.toString().substring(0, 7).replace("-", ""));
     }
 }
