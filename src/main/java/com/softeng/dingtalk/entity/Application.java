@@ -18,19 +18,22 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @ToString
 public class Application {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int month;
-    private int week;
     private double dc;
     private boolean ischeck;   // 是否已审核
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime insertTime;   //插入时间
+    private int week;
+
     @JsonIgnore
-    @Column(unique = true)
+    //todo 重新设计
+    //@Column(unique = true)
     private String flag;
 
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
@@ -46,9 +49,11 @@ public class Application {
     @OneToOne(mappedBy = "application")
     private DcRecord dcRecord;
 
-    public Application(int month, int week, int dc) {
-        this.month = month;
+    public Application(double dc, LocalDateTime localDateTime, int week, User applicant, User auditor) {
+        this.insertTime = localDateTime;
         this.week = week;
         this.dc = dc;
+        this.applicant = applicant;
+        this.auditor = auditor;
     }
 }

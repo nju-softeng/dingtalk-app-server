@@ -20,12 +20,10 @@ public class DcRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int month;
-    private int week;
     private double dc;
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime insertTime;
-
+    private int week;
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)

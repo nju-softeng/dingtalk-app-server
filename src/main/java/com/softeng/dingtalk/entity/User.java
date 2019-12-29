@@ -37,6 +37,8 @@ public class User {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;  //插入时间
 
+
+
     @JsonIgnore
     @OneToMany(mappedBy = "applicant", cascade = CascadeType.REMOVE)
     private List<Application> applicationlist;  //用户的所有绩效申请
@@ -55,5 +57,8 @@ public class User {
         this.name = name;
         this.avatar = avatar;
         this.authority = authority;
+    }
+    public User(int id) {
+        this.id = id;
     }
 }

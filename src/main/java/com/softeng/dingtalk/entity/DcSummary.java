@@ -9,28 +9,22 @@ import java.time.LocalDateTime;
 
 /**
  * @author zhanyeye
- * @description AC值记录 (AC日志：被审核人确认的用户ac变更记录)
- * @date 12/5/2019
+ * @description 汇总每周的绩效值
+ * @create 12/29/2019 9:26 AM
  */
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
-public class AcRecord {
+public class DcSummary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int year;
     private int month;
     private int week;
-    private double ac;
-    private String reason;
-    @Column(columnDefinition = "DATETIME")
-    private LocalDateTime insertTime;
-
-    @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
-    private User user;
+    private double dc;
     @ManyToOne(fetch = FetchType.LAZY)
-    private User auditor;
-
+    private User user;
+    private LocalDateTime insertTime;   //插入时间
 }
