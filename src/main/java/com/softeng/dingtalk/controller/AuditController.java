@@ -32,7 +32,10 @@ public class AuditController {
      **/
     @PostMapping("/audit")
     public void addAuditResult(@RequestBody AuditInfo auditInfo) {
-        auditService.addAuditResult(auditInfo);
+        auditService.addAuditResult(auditInfo); //持久化审核结果
+        //todo
+        auditInfo.getDcRecord().getUser().getId();
+
     }
 
     /**
