@@ -20,25 +20,24 @@ public class DcRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private double dc;
+    private double dvalue;  // Dedication Value
+    private double cvalue;  // Contribution Value
+    private double dc;    //
     private int week;
-    @Column(columnDefinition = "DATETIME")
-    private LocalDateTime createTime;
+    private boolean ischeck;  // 是否被审核
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    private LocalDateTime insertTime;
 
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
-    private User user;
+    private User applicant;
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
-    @OneToOne
-    @JoinColumn(unique = true)
-    private Application application;
 
-    public DcRecord(double dc, LocalDateTime createTime, int week, User user, User auditor, Application application) {
+    public DcRecord(double dc, LocalDateTime createTime, int week, User applicant, User auditor, Application application) {
         this.dc = dc;
-        this.createTime = createTime;
+        this.insertTime = insertTime;
         this.week = week;
-        this.user = user;
+        this.applicant = applicant;
         this.auditor = auditor;
-        this.application = application;
     }
 }
