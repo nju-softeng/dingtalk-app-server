@@ -20,14 +20,10 @@ public class AcRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int year;
-    private int month;
-    private int week;
     private double ac;
     private String reason;
-    @Column(columnDefinition = "DATETIME")
-    private LocalDateTime insertTime;
-
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    private LocalDateTime createTime;
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
