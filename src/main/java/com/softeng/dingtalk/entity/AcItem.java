@@ -24,8 +24,7 @@ public class AcItem {
     private int id;
     private double ac;
     private String reason;
-
-    @JsonIgnore   //todo 检查是否合适
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
     private Application application;  //ac申请属于的周绩效申请
 }

@@ -26,15 +26,12 @@ public class Application {
     private int id;
     private double dc;
     private boolean ischeck;   // 是否已审核
-
-    @Column(columnDefinition = "DATETIME")
-    private LocalDateTime insertTime;   //插入时间
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    private LocalDateTime createTime;   //插入时间
     private int week;
-
     @JsonIgnore
-    //todo 重新设计
-    //@Column(unique = true)
-    private String flag;
+    @Column(unique = true)
+    private String flag;    //拼接日期，applicant_id, auditor_id 防止重复
 
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
     private User applicant;    // 申请人
@@ -44,13 +41,12 @@ public class Application {
     @JsonIgnore
     @OneToMany(mappedBy = "application", cascade = CascadeType.REMOVE)
     private List<AcItem> acItems;  //本次绩效申请包含的 AC申请
-
     @JsonIgnore
     @OneToOne(mappedBy = "application")
     private DcRecord dcRecord;
 
     public Application(double dc, LocalDateTime localDateTime, int week, User applicant, User auditor) {
-        this.insertTime = localDateTime;
+        this.createTime = localDateTime;
         this.week = week;
         this.dc = dc;
         this.applicant = applicant;
