@@ -3,14 +3,15 @@ package com.softeng.dingtalk.controller;
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.dto.ApplicationInfo;
 import com.softeng.dingtalk.entity.AcItem;
-import com.softeng.dingtalk.entity.Application;
-import com.softeng.dingtalk.repository.AcItemRepository;
+import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.service.ApplicationService;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -57,11 +58,17 @@ public class ApplicationController {
      **/
     @PostMapping("/application")
     public void addApplication(@RequestBody ApplicationInfo applicationInfo) {
-        Application apply = applicationInfo.getApplication();   //获取DC申请信息
-        List<AcItem> acItems = applicationInfo.getAcItems();          //获取该绩效申请的ac申请
-        //拼接 month, week, applicant_id, auditor_id 字段，插入flag约束字段中
-        //application.setFlag(application.getMonth()+ "-" + application.getWeek() + "-" + application.getApplicant().getId() + "-" + application.getAuditor().getId());
-        applicationService.addApplication(apply, acItems);    //持久化绩效申请
+        DcRecord dcRecord = applicationInfo.getDcRecord();       //获取DC申请信息
+        List<AcItem> acItems = applicationInfo.getAcItems();     //获取该绩效申请的ac申请
+        int uid = dcRecord.getApplicant().getId();
+        int aid = dcRecord.getAuditor().getId();
+        int week = dcRecord.getWeek();
+        if (applicationService.isExist(uid, aid, week) == false) {
+            applicationService.addApplication(dcRecord, acItems);    //持久化绩效申请
+        } else {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "！！！！");
+        }
+
     }
 
 
@@ -73,8 +80,8 @@ public class ApplicationController {
      **/
     @GetMapping("application/{uid}/page={page}")
     public Map getUserApplication(@RequestAttribute int uid, @PathVariable int page) {
-        List<Application> applications = applicationService.getApplications(uid, page);
-        return Map.of("applications", applications);
+        List<DcRecord> dcRecords = applicationService.getDcRecord(uid, page);
+        return Map.of("dcRecords", dcRecords);
         //
     }
 

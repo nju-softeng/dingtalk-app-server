@@ -1,21 +1,16 @@
 package com.softeng.dingtalk;
 
-import com.softeng.dingtalk.entity.Application;
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.repository.ApplicationRepository;
 import com.softeng.dingtalk.repository.DcRecordRepository;
 import com.softeng.dingtalk.repository.UserRepository;
-import com.softeng.dingtalk.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.stereotype.Service;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,13 +28,10 @@ public class InitDatabase {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    ApplicationRepository applicationRepository;
-    @Autowired
     DcRecordRepository dcRecordRepository;
     @Test
     public void init() {
         addUser();
-        addApplication();
         addDcRecord();
     }
 
@@ -60,30 +52,12 @@ public class InitDatabase {
     }
 
     @Test
-    public void addApplication() {
-        List<Application> applications = new ArrayList<>();
-        applications.add(new Application(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(5),  new User(1)));
-        applications.add(new Application(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(5),  new User(2)));
-        applications.add(new Application(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(5),  new User(3)));
-        applications.add(new Application(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(5),  new User(4)));
-        applications.add(new Application(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(6),  new User(1)));
-        applications.add(new Application(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(6),  new User(2)));
-        applications.add(new Application(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(6),  new User(3)));
-        applications.add(new Application(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(6),  new User(4)));
-        applications.add(new Application(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(7),  new User(1)));
-        applications.add(new Application(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(7),  new User(2)));
-        applications.add(new Application(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(7),  new User(4)));
-        applicationRepository.saveAll(applications);
-    }
-
-    @Test
     public void addDcRecord() {
         //double dc, LocalDateTime insertTime, int week, User user, User auditor, Application application
         List<DcRecord> dcRecords = new ArrayList<>();
-        dcRecords.add(new DcRecord(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(5),  new User(1), new Application(1)));
-        dcRecords.add(new DcRecord(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(5),  new User(2), new Application(2)));
+        dcRecords.add(new DcRecord(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(5),  new User(1)));
+        dcRecords.add(new DcRecord(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(5),  new User(2)));
         dcRecordRepository.saveAll(dcRecords);
     }
-
 
 }

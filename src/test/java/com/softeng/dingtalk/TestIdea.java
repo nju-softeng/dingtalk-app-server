@@ -19,8 +19,6 @@ import java.time.LocalDateTime;
 public class TestIdea {
     @Test
     public void test() {
-        LocalDateTime localDateTime = LocalDateTime.of(2019,9,1,1,1);
-        log.debug(localDateTime.toString());
-        log.debug(localDateTime.toString().substring(0, 7));
+        log.debug(LocalDateTime.now().toString().substring(0,7));
     }
 }

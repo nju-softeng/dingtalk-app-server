@@ -1,22 +1,35 @@
 package com.softeng.dingtalk.repository;
 
-        import com.softeng.dingtalk.entity.DcRecord;
-        import org.springframework.data.domain.Pageable;
-        import org.springframework.data.jpa.repository.JpaRepository;
-        import org.springframework.data.jpa.repository.Modifying;
-        import org.springframework.data.jpa.repository.Query;
-        import org.springframework.data.repository.query.Param;
-        import org.springframework.stereotype.Repository;
+import com.softeng.dingtalk.entity.DcRecord;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-        import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.util.List;
 
 /**
  * @author zhanyeye
- * @description
+ * @description  操作 DcRecord 实体类的接口
  * @date 12/12/2019
  */
 @Repository
 public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integer>, JpaRepository<DcRecord, Integer> {
+
+    /**
+     * 查询是否存在某条记录，
+     * @param uid, aid, yearmonth, week
+     * @return java.lang.Integer
+     * @Date 7:47 PM 12/30/2019
+     **/
+    @Query(value =
+            "SELECT IfNULL((SELECT id FROM dc_record WHERE applicant_id = :uid and auditor_id = :aid and DATE_FORMAT(insert_time, '%Y-%m') = :yearmonth and week = :week LIMIT 1), 0)",
+            nativeQuery = true)
+    Integer isExist(@Param("uid") int uid,@Param("aid") int aid, @Param("yearmonth") String yearmonth,@Param("week") int week);
+
     /**
      * 用于分页显示申请历史 ->  根据uid(用户)，获取用户提交的申请，实现分页
      * @param uid 申请人ID
@@ -45,7 +58,7 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integ
     @Modifying
     @Query("update DcRecord d set d.ischeck = true where d.id = :id")
     void updateCheckStatus(@Param("id") int id);
-    
+
     /**
      * 计算指定用户，指定周的，在各组的dc之和
      * @param uid 用户ID
