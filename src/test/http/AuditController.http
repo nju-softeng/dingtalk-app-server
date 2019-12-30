@@ -21,16 +21,17 @@ Content-Type: application/json
 {
  "dcRecord": {
    "month": 12,
-   "week": 4,
+   "week": 1,
+   "createTime": "2019-12-15T00:00:00",
    "dc": 0.9,
    "user": {
-     "id": 2
+     "id": 5
    },
    "auditor": {
      "id": 1
    },
    "application": {
-     "id": 2
+     "id": 9
    }
  },
   "acRecords": [
@@ -43,7 +44,7 @@ Content-Type: application/json
         "id": 1
       },
       "user": {
-        "id": 2
+        "id": 5
       }
     },
     {
@@ -55,7 +56,7 @@ Content-Type: application/json
         "id": 1
       },
       "user": {
-        "id": 2
+        "id": 5
       }
     }
   ]
