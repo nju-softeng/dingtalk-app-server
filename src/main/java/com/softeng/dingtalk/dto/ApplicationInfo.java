@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dto;
 
 import com.softeng.dingtalk.entity.AcItem;
-import com.softeng.dingtalk.entity.Application;
+import com.softeng.dingtalk.entity.DcRecord;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +17,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class ApplicationInfo {
-    private Application application;  //周绩效申请
+    private DcRecord dcRecord;        //DC值申请
     private List<AcItem> acItems;     //ac值申请列表      //todo 注意可能会有空指针
 }

@@ -38,20 +38,6 @@ public class User {
     private LocalDateTime insertTime;  //插入时间
 
 
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "applicant", cascade = CascadeType.REMOVE)
-    private List<Application> applicationlist;  //用户的所有绩效申请
-    @JsonIgnore
-    @OneToMany(mappedBy = "auditor", cascade = CascadeType.REMOVE)
-    private List<Application> checklist;        //审核人收到的审核
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<DcRecord> dcRecords;           //用户的所有DC绩效记录
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<AcRecord> acRecords;           //用户的所有AC日志
-
     public User(String userid, String name, String avatar, int authority) {
         this.userid = userid;
         this.name = name;

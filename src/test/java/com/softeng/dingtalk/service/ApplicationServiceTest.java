@@ -1,8 +1,6 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.entity.Application;
-import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.repository.ApplicationRepository;
+import com.softeng.dingtalk.repository.DcRecordRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -25,30 +22,13 @@ import java.util.List;
 @Slf4j
 public class ApplicationServiceTest {
     @Autowired
-    ApplicationRepository applicationRepository;
-
-    @Test
-    public void test_findApplication() {
-        Pageable pageable = PageRequest.of(0, 2);
-        List<Application> applications = applicationRepository.listApplicationByuid(2, pageable);
-        for (int i = 0; i < applications.size(); i++) {
-            log.debug(applications.get(i).getDc() + "");
-        }
-    }
+    DcRecordRepository dcRecordRepository;
+    @Autowired
+    ApplicationService applicationService;
 
     @Test
     public void test() {
-
+        log.debug(applicationService.isExist(5, 1, 1) + "");
     }
-
-
-//    @Test
-//    public void test_listPendingApplication() {
-//        List<Application> applications = applicationRepository.listPendingApplication(2);
-//        for (int i = 0; i < applications.size(); i++) {
-//            log.debug(applications.get(i).getApplicant().getName() + "");
-//        }
-//    }
-
 
 }

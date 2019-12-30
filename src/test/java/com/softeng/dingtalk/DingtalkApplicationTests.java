@@ -16,5 +16,4 @@ class DingtalkApplicationTests {
     @Autowired
     DingTalkUtils dingTalkUtils;
 
-
 }

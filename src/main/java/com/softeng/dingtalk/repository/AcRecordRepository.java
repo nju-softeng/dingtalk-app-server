@@ -19,19 +19,19 @@ public interface AcRecordRepository extends CustomizedRepository<AcRecord, Integ
 
     /**
      * 审核人获取自己审核的AC日志
-     * @param [uid]
+     * @param uid 审核人id
      * @return java.util.List<com.softeng.dingtalk.entity.AcRecord>
      * @Date 8:44 PM 12/27/2019
      **/
     @Query("select a from AcRecord a where a.auditor.id = :uid")
-    List<AcRecord> getAcRecordsByAuditorId(@Param("uid") int uid);
+    List<AcRecord> listByAuditorId(@Param("uid") int uid);
 
     /**
      * 申请人获取自己的AC日志
-     * @param [uid]
+     * @param uid 申请人id
      * @return java.util.List<com.softeng.dingtalk.entity.AcRecord>
      * @Date 8:45 PM 12/27/2019
      **/
     @Query("select a from AcRecord a where a.user.id = :uid")
-    List<AcRecord> getAcRecordsByApplicantId(@Param("uid") int uid);
+    List<AcRecord> listByApplicantId(@Param("uid") int uid);
 }

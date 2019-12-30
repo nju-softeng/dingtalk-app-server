@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 /**
  * @author zhanyeye
- * @description 每周绩效申请中的AC值申请  （一个 application 可能有多个 acItem: 一个申请可能包含多个ac申请）
+ * @description 每周绩效申请中的AC值申请  （一个 DcRecord 可能有多个 acItem: 一个申请可能包含多个ac申请）
  * @date 12/5/2019
  */
 @Getter
@@ -26,5 +26,5 @@ public class AcItem {
     private String reason;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
-    private Application application;  //ac申请属于的周绩效申请
+    private DcRecord dcRecord;  //ac申请属于的周绩效申请
 }

@@ -1,7 +1,6 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.AcItem;
-import com.softeng.dingtalk.entity.Application;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +15,6 @@ import java.util.List;
  */
 @Repository
 public interface AcItemRepository extends CustomizedRepository<AcItem, Integer>, JpaRepository<AcItem, Integer> {
-    @Query("select a from AcItem a where a.application.id = :id")
-    List<AcItem> findAllByApplicationID(@Param("id") int id);
+    @Query("select a from AcItem a where a.dcRecord.id = :id")
+    List<AcItem> findAllByDcRecordID(@Param("id") int id);
 }

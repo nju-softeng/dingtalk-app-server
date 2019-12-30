@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 /**
  * @author zhanyeye
- * @description 所有的确认的DC值记录（DC日志）
+ * @description 周DC值记录（DC日志）
  * @date 12/5/2019
  */
 @Getter
@@ -22,7 +22,7 @@ public class DcRecord {
     private int id;
     private double dvalue;  // Dedication Value
     private double cvalue;  // Contribution Value
-    private double dc;    //
+    private double dc;
     private int week;
     private boolean ischeck;  // 是否被审核
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
@@ -33,7 +33,7 @@ public class DcRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 
-    public DcRecord(double dc, LocalDateTime createTime, int week, User applicant, User auditor, Application application) {
+    public DcRecord(double dc, LocalDateTime insertTime, int week, User applicant, User auditor) {
         this.dc = dc;
         this.insertTime = insertTime;
         this.week = week;
