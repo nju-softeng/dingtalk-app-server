@@ -26,5 +26,12 @@ public class DcSummary {
     private double dc;
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-    private LocalDateTime insertTime;   //插入时间
+
+    public DcSummary(int year, int month, int week, double dc, User user) {
+        this.year = year;
+        this.month = month;
+        this.dc = dc;
+        this.user = user;
+    }
+
 }

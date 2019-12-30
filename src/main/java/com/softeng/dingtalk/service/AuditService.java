@@ -34,6 +34,8 @@ public class AuditService {
     DcRecordRepository dcRecordRepository;
     @Autowired
     AcRecordRepository acRecordRepository;
+    @Autowired
+    PerformanceService performanceService;
 
     /**
      * 审核人查看待审核的申请
@@ -52,17 +54,15 @@ public class AuditService {
 
     /**
      * 审核人提交的审核结果 (DcRecord, AcRecords)
-     * @param auditInfo 审核结果信息(dto)
+     * @param auditInfo 审核结果信息(dto) //todo 需更新
      * @return void
      * @date 10:03 AM 12/27/2019
      **/
-    public void addAuditResult(AuditInfo auditInfo) {
-        DcRecord dcRecord = auditInfo.getDcRecord();
-        List<AcRecord> acRecords = auditInfo.getAcRecords();
+    public void addAuditResult(DcRecord dcRecord, List<AcRecord> acRecords) {
         dcRecordRepository.save(dcRecord);     //持久化DC记录
         acRecordRepository.saveAll(acRecords);  //持久化多个AC记录
         applicationRepository.updateApplicationCheckStatus(dcRecord.getApplication().getId());  // 将申请状态从false变成true
-
+        performanceService.updateWeekTotalDc(dcRecord.getUser().getId(), dcRecord.getCreateTime(), dcRecord.getWeek());
     }
 
 //    public List<AcRecord> getAcRecord(int uid) {

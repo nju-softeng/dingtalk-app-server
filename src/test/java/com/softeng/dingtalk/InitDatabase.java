@@ -37,6 +37,13 @@ public class InitDatabase {
     @Autowired
     DcRecordRepository dcRecordRepository;
     @Test
+    public void init() {
+        addUser();
+        addApplication();
+        addDcRecord();
+    }
+
+    @Test
     public void addUser() {
         List<User> users = new ArrayList<>();
         users.add(new User("306147243334957616", "詹泽晔", "https://static-legacy.dingtalk.com/media/lADPDgQ9rK52m0PNAi3NAgc_519_557.jpg", 2 ));

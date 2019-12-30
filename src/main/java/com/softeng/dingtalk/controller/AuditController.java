@@ -2,14 +2,11 @@ package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.dto.ApplicationInfo;
 import com.softeng.dingtalk.dto.AuditInfo;
-import com.softeng.dingtalk.entity.Application;
-import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.service.AuditService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,6 +21,7 @@ public class AuditController {
     @Autowired
     AuditService auditService;
 
+
     /**
      * 审核员提交审核结果
      * @param auditInfo  审核结果信息
@@ -32,15 +30,13 @@ public class AuditController {
      **/
     @PostMapping("/audit")
     public void addAuditResult(@RequestBody AuditInfo auditInfo) {
-        auditService.addAuditResult(auditInfo); //持久化审核结果
-        //todo
-        auditInfo.getDcRecord().getUser().getId();
+        auditService.addAuditResult(auditInfo.getDcRecord(), auditInfo.getAcRecords()); //持久化审核结果
 
     }
 
     /**
      * 审核人获取待审核的申请
-     * @param [uid]
+     * @param uid
      * @return java.util.List<com.softeng.dingtalk.dto.ApplicationInfo>
      * @Date 10:06 AM 12/28/2019
      **/

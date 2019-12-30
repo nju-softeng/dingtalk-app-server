@@ -20,6 +20,7 @@ public class TestIdea {
     @Test
     public void test() {
         LocalDateTime localDateTime = LocalDateTime.of(2019,9,1,1,1);
-        log.debug(localDateTime.toString().substring(0, 7).replace("-", ""));
+        log.debug(localDateTime.toString());
+        log.debug(localDateTime.toString().substring(0, 7));
     }
 }
