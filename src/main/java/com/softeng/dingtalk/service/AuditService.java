@@ -29,8 +29,7 @@ public class AuditService {
     DcRecordRepository dcRecordRepository;
     @Autowired
     AcRecordRepository acRecordRepository;
-    @Autowired
-    PerformanceService performanceService;
+
 
     /**
      * 审核人查看待审核的申请
