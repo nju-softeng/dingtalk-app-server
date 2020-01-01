@@ -20,16 +20,15 @@ public class DcSummary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int year;
-    private int month;
+    private int yearmonth;
     private int week;
     private double dc;
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    public DcSummary(int year, int month, int week, double dc, User user) {
-        this.year = year;
-        this.month = month;
+    public DcSummary(int yearmonth, int week, double dc, User user) {
+        this.yearmonth = yearmonth;
+        this.week = week;
         this.dc = dc;
         this.user = user;
     }

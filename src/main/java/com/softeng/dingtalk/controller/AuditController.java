@@ -28,11 +28,10 @@ public class AuditController {
      * @return void
      * @date 9:35 AM 12/27/2019
      **/
-//    @PostMapping("/audit")
-//    public void addAuditResult(@RequestBody AuditInfo auditInfo) {
-//        auditService.addAuditResult(auditInfo.getDcRecord(), auditInfo.getAcRecords()); //持久化审核结果
-//
-//    }
+    @PostMapping("/audit")
+    public void addAuditResult(@RequestBody AuditInfo auditInfo) {
+        auditService.addAuditResult(auditInfo.getDcRecord(), auditInfo.getAcRecords()); //持久化审核结果
+    }
 
     /**
      * 审核人获取待审核的申请

@@ -108,6 +108,7 @@ public class DingTalkUtils {
      * @date 2:08 PM 12/26/2019
      **/
     public Map getReport(String userid){
+        //todo 注意配置公网IP
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
         OapiReportListRequest request = new OapiReportListRequest();
         request.setUserid(userid);

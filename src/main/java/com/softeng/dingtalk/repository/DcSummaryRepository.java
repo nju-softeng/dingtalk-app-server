@@ -17,13 +17,13 @@ import java.util.List;
 public interface DcSummaryRepository extends CustomizedRepository<DcSummary, Integer>, JpaRepository<DcSummary, Integer> {
 
     /**
-     * 获取指定用户指定日期的dc汇总值ID
-     * @param [uid, yearmonth, week]
+     * 获取指定用户指定日期的dc汇总值
+     * @param uid, yearmonth, week
      * @return java.util.List<java.lang.Integer>
      * @Date 10:58 AM 12/30/2019
      **/
-    @Query(value = "select id from dc_summary where user_id = :uid and concat(year, '-', month) = :yearmonth and week = :week", nativeQuery = true)
-    DcSummary getDcSummaryID(@Param("uid") int uid, @Param("yearmonth") String yearmonth, @Param("week") int week);
+    @Query("select  d from DcSummary d where d.user.id = :uid and d.yearmonth = :yearmonth and d.week = :week ")
+    DcSummary getDcSummary(@Param("uid") int uid, @Param("yearmonth") int yearmonth, @Param("week") int week);
 
 
 }

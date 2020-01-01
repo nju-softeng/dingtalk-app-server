@@ -26,23 +26,27 @@ public class PerformanceService {
     @Autowired
     DcRecordRepository dcRecordRepository;
 
-    public void updateWeekTotalDc(int uid, LocalDateTime localDateTime, int week) {
-        log.debug(localDateTime.toString());
-        log.debug(week + "");
-        log.debug("user:" + uid);
-        String yearmonth = localDateTime.toString().substring(0, 7);
-        //todo
-        //Double totalDc = dcRecordRepository.getUserWeekTotalDc(uid, yearmonth, week);
-//        if (totalDc != null) {
-//            //todo 如果有 dcsummary 数据更新值，否则新建
-//            DcSummary dcSummary = dcSummaryRepository.getDcSummaryID(uid, yearmonth, week);
-//            if (dcSummary != null) {
-//                dcSummary.setDc(totalDc);
-//                dcSummaryRepository.save(dcSummary);
-//            } else {
-//                dcSummaryRepository.save(new DcSummary(localDateTime.getYear(), localDateTime.getMonthValue(),week, totalDc, new User(uid)));
-//            }
-//        }
+    /**
+     *
+     * @param uid, date
+     * @return void
+     * @Date 10:53 AM 1/1/2020
+     **/
+    public void updateWeekTotalDc(int uid, int date) {
+
+        log.debug("uid: {} date: {}",uid, date);
+
+        Double totalDc = dcRecordRepository.getUserWeekTotalDc(uid, date);
+        if (totalDc != null) {
+            //todo 如果有 dcsummary 数据更新值，否则新建
+            DcSummary dcSummary = dcSummaryRepository.getDcSummary(uid, date / 10, date % 10);
+            if (dcSummary != null) {
+                dcSummary.setDc(totalDc);
+                dcSummaryRepository.save(dcSummary);
+            } else {
+                dcSummaryRepository.save(new DcSummary(date/10 , date % 10, totalDc, new User(uid)));
+            }
+        }
     }
 
 }
