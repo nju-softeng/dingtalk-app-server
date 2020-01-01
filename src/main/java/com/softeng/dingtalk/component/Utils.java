@@ -18,14 +18,15 @@ public class Utils {
 
     /**
      * 计算当前日期是本月的第几周 ISO 8601
-     * @return java.lang.String
-     * @Date 3:59 PM 12/31/2019
+     * @param localDate
+     * @return int
+     * @Date 8:26 AM 1/1/2020
      **/
-    public int getTimeFlag() {
+    public int getTimeFlag(LocalDate localDate) {
         int week;
-        int year = LocalDate.now().getYear();
-        int month = LocalDate.now().getMonthValue();
-        int day = LocalDate.now().getDayOfMonth();
+        int year = localDate.getYear();
+        int month = localDate.getMonthValue();
+        int day = localDate.getDayOfMonth();
         int beginDayOfWeek = LocalDate.of(year, month, 1).getDayOfWeek().getValue();
 
         log.debug("" + year + "-" + month + "-" + day + "-" + beginDayOfWeek);
@@ -46,7 +47,7 @@ public class Utils {
                 } else {
                     month--;
                 }
-                LocalDate lastMonth = LocalDate.now().minusDays(day);
+                LocalDate lastMonth = localDate.minusDays(day);
                 int lastMonthDays = lastMonth.getDayOfMonth();
                 int lastMonthEndWeek = lastMonth.getDayOfWeek().getValue();
                 int lastMonthBeginWeek = lastMonth.minusDays(lastMonthDays - 1).getDayOfWeek().getValue();
@@ -57,7 +58,6 @@ public class Utils {
                 }
             }
         }
-
         return year * 1000 + month * 10 + week;
     }
 }

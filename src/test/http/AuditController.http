@@ -20,24 +20,12 @@ Content-Type: application/json
 
 {
  "dcRecord": {
-   "month": 12,
-   "week": 1,
-   "createTime": "2019-12-15T00:00:00",
-   "dc": 0.9,
-   "user": {
-     "id": 5
-   },
-   "auditor": {
-     "id": 1
-   },
-   "application": {
-     "id": 9
-   }
+   "id": 3,
+   "cvalue": 0.5,
+   "dc": 1
  },
   "acRecords": [
     {
-      "month": 12,
-      "week": 4,
       "ac": 1,
       "reason": "组会评审",
       "auditor": {
@@ -48,8 +36,6 @@ Content-Type: application/json
       }
     },
     {
-      "month": 12,
-      "week": 4,
       "ac": 1,
       "reason": "test",
       "auditor": {

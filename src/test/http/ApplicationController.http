@@ -14,14 +14,14 @@ token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555f
 Content-Type: application/json
 
 {
+  "date": "2020-01-01",
   "dcRecord": {
     "applicant": {
       "id": 5
     },
     "auditor": {
-      "id": 1
+      "id": 4
     },
-    "week": 5,
     "dvalue": 2
   },
   "acItems": [
@@ -49,14 +49,14 @@ token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555f
 ###
 
 # 分页获取指定用户的申请
-GET http://localhost:8080/api/application/2/page=0
+GET http://localhost:8080/api/application/5/page=0
 token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555fcc4b851acd295d64de7d1fb
 Content-Type: application/json
 
 ###
 
 # 分页获取指定用户的申请
-GET http://localhost:8080/api/application/2/page=1
+GET http://localhost:8080/api/application/5/page=1
 token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555fcc4b851acd295d64de7d1fb
 Content-Type: application/json
 

@@ -19,6 +19,17 @@ import java.util.List;
 @Repository
 public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integer>, JpaRepository<DcRecord, Integer> {
 
+
+    /**
+     * 审核人更新dc申请的记录
+     * @param id, cvalue, dc
+     * @return void
+     * @Date 10:58 AM 1/1/2020
+     **/
+    @Modifying
+    @Query("update DcRecord d set d.cvalue = :cvalue, d.dc = :dc where d.id = :id")
+    void updateById(@Param("id") int id, @Param("cvalue") double cvalue, @Param("dc") double dc);
+
     /**
      * 查询是否存在某条记录，
      * @param uid, aid, yearmonth, week
@@ -66,6 +77,6 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integ
      * @return java.lang.Integer
      * @Date 9:48 PM 12/29/2019
      **/
-    @Query(value = "select sum(dc) from dc_record where user_id = :uid and timeflag = :timeflag", nativeQuery = true)
+    @Query(value = "select sum(dc) from dc_record where applicant_id = :uid and timeflag = :timeflag", nativeQuery = true)
     Double getUserWeekTotalDc(@Param("uid") int uid, @Param("timeflag") int timeflag);
 }

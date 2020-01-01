@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
+import com.softeng.dingtalk.component.Utils;
 import com.softeng.dingtalk.dto.ApplicationInfo;
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
@@ -33,6 +34,8 @@ public class ApplicationController {
     UserService userService;
     @Autowired
     DingTalkUtils dingTalkUtils;
+    @Autowired
+    Utils utils;
 
 
     /**
@@ -56,20 +59,21 @@ public class ApplicationController {
      * @return void
      * @Date 7:01 PM 12/27/2019
      **/
-//    @PostMapping("/application")
-//    public void addApplication(@RequestBody ApplicationInfo applicationInfo) {
-//        DcRecord dcRecord = applicationInfo.getDcRecord();       //获取DC申请信息
-//        List<AcItem> acItems = applicationInfo.getAcItems();     //获取该绩效申请的ac申请
-//        int uid = dcRecord.getApplicant().getId();
-//        int aid = dcRecord.getAuditor().getId();
-//        int week = dcRecord.getWeek();
-//        if (applicationService.isExist(uid, aid, week) == false) {
-//            applicationService.addApplication(dcRecord, acItems);    //持久化绩效申请
-//        } else {
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
-//        }
-//
-//    }
+    @PostMapping("/application")
+    public void addApplication(@RequestBody ApplicationInfo applicationInfo) {
+        DcRecord dcRecord = applicationInfo.getDcRecord();       //获取DC申请信息
+        List<AcItem> acItems = applicationInfo.getAcItems();     //获取该绩效申请的ac申请
+        int uid = dcRecord.getApplicant().getId();
+        int aid = dcRecord.getAuditor().getId();
+        int date = utils.getTimeFlag(applicationInfo.getDate()); //todo 时间判断
+        dcRecord.setTimeflag(date);
+        if (applicationService.isExist(uid, aid, date) == false) {
+            applicationService.addApplication(dcRecord, acItems);    //持久化绩效申请
+        } else {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
+        }
+
+    }
 
 
     /**
@@ -79,10 +83,10 @@ public class ApplicationController {
      * @Date 7:00 PM 12/27/2019
      **/
     @GetMapping("application/{uid}/page={page}")
-    public Map getUserApplication(@RequestAttribute int uid, @PathVariable int page) {
+    public Map getUserApplication(@PathVariable int uid, @PathVariable int page) { //todo 测试需要将 @RequestAttribute 改为 @PathVariable
         List<DcRecord> dcRecords = applicationService.getDcRecord(uid, page);
         return Map.of("dcRecords", dcRecords);
-        //
+        // todo 是否要包含AcItem
     }
 
 
