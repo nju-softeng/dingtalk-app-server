@@ -68,7 +68,7 @@ public class ApplicationController {
         int date = utils.getTimeFlag(applicationInfo.getDate()); //todo 时间判断
         dcRecord.setYearmonth(date / 10);
         dcRecord.setWeek(date % 10);
-        if (applicationService.isExist(uid, aid, date) == false) {
+        if (applicationService.isExist(uid, aid, dcRecord.getYearmonth(), dcRecord.getWeek()) == false) {
             applicationService.addApplication(dcRecord, acItems);    //持久化绩效申请
         } else {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");

@@ -55,21 +55,9 @@ public class AuditService {
      * @date 10:03 AM 12/27/2019
      **/
     public void addAuditResult(DcRecord dcRecord, List<AcRecord> acRecords) {
-        dcRecordRepository.updateById(dcRecord.getId(), dcRecord.getCvalue(), dcRecord.getDc());    //更新DC记录
+        dcRecordRepository.updateById(dcRecord.getId(), dcRecord.getCvalue(), dcRecord.getDc());    //审核人确定申请的 C值，DC值,更新 ischeck
         acRecordRepository.saveAll(acRecords);  //持久化多个AC记录
-        //todo 修改业务逻辑
-        dcRecordRepository.updateCheckStatus(dcRecord.getId()); // 将申请状态从false变成true
-        dcRecord = dcRecordRepository.findById(dcRecord.getId()).get();
-        performanceService.updateWeekTotalDc(dcRecord.getApplicant().getId(), dcRecord.getYearmonth(), dcRecord.getWeek());
+        // 数据库的触发器会更新申请人本周绩效到 DcSummary
     }
 
-
-//    public List<AcRecord> getAcRecord(int uid) {
-//        return acRecordRepository.getAcRecordsByAuditor(new User());
-//    }
-
-
-    public void updateDcRecord(double dc) {
-
-    }
 }
