@@ -32,19 +32,19 @@ public class PerformanceService {
      * @return void
      * @Date 10:53 AM 1/1/2020
      **/
-    public void updateWeekTotalDc(int uid, int date) {
+    public void updateWeekTotalDc(int uid, int yearmonth, int week) {
 
-        log.debug("uid: {} date: {}",uid, date);
+        log.debug("uid: {} date: {}",uid, yearmonth);
 
-        Double totalDc = dcRecordRepository.getUserWeekTotalDc(uid, date);
+        Double totalDc = dcRecordRepository.getUserWeekTotalDc(uid, yearmonth, week);
         if (totalDc != null) {
             //todo 如果有 dcsummary 数据更新值，否则新建
-            DcSummary dcSummary = dcSummaryRepository.getDcSummary(uid, date / 10, date % 10);
+            DcSummary dcSummary = dcSummaryRepository.getDcSummary(uid, yearmonth, week);
             if (dcSummary != null) {
                 dcSummary.setDc(totalDc);
                 dcSummaryRepository.save(dcSummary);
             } else {
-                dcSummaryRepository.save(new DcSummary(date/10 , date % 10, totalDc, new User(uid)));
+                dcSummaryRepository.save(new DcSummary(yearmonth , week, totalDc, new User(uid)));
             }
         }
     }

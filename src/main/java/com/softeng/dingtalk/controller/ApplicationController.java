@@ -66,7 +66,8 @@ public class ApplicationController {
         int uid = dcRecord.getApplicant().getId();
         int aid = dcRecord.getAuditor().getId();
         int date = utils.getTimeFlag(applicationInfo.getDate()); //todo 时间判断
-        dcRecord.setTimeflag(date);
+        dcRecord.setYearmonth(date / 10);
+        dcRecord.setWeek(date % 10);
         if (applicationService.isExist(uid, aid, date) == false) {
             applicationService.addApplication(dcRecord, acItems);    //持久化绩效申请
         } else {
