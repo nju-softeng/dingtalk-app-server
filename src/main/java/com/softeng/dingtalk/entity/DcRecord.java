@@ -23,7 +23,8 @@ public class DcRecord {
     private double dvalue;  // Dedication Value
     private double cvalue;  // Contribution Value
     private double dc;
-    private int timeflag;  // 表示申请所属 年、月、周
+    private int yearmonth;  // 表示申请所属 年、月
+    private int week;       // 申请所属周
     private boolean ischeck;  // 是否被审核
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;

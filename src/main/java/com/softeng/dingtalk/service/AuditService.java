@@ -60,7 +60,7 @@ public class AuditService {
         //todo 修改业务逻辑
         dcRecordRepository.updateCheckStatus(dcRecord.getId()); // 将申请状态从false变成true
         dcRecord = dcRecordRepository.findById(dcRecord.getId()).get();
-        performanceService.updateWeekTotalDc(dcRecord.getApplicant().getId(), dcRecord.getTimeflag());
+        performanceService.updateWeekTotalDc(dcRecord.getApplicant().getId(), dcRecord.getYearmonth(), dcRecord.getWeek());
     }
 
 

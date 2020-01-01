@@ -37,9 +37,9 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integ
      * @Date 7:47 PM 12/30/2019
      **/
     @Query(value =
-            "SELECT IfNULL((SELECT id FROM dc_record WHERE applicant_id = :uid and auditor_id = :aid and timeflag = :timeflag LIMIT 1), 0)",
+            "SELECT IfNULL((SELECT id FROM dc_record WHERE applicant_id = :uid and auditor_id = :aid and yearmonth = :yearmonth and week = :week LIMIT 1), 0)",
             nativeQuery = true)
-    Integer isExist(@Param("uid") int uid,@Param("aid") int aid, @Param("timeflag") int timeflag);
+    Integer isExist(@Param("uid") int uid,@Param("aid") int aid, @Param("yearmonth") int yearmonth, @Param("week") int week);
 
     /**
      * 用于分页显示申请历史 ->  根据uid(用户)，获取用户提交的申请，实现分页
@@ -77,6 +77,6 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integ
      * @return java.lang.Integer
      * @Date 9:48 PM 12/29/2019
      **/
-    @Query(value = "select sum(dc) from dc_record where applicant_id = :uid and timeflag = :timeflag", nativeQuery = true)
-    Double getUserWeekTotalDc(@Param("uid") int uid, @Param("timeflag") int timeflag);
+    @Query(value = "select sum(dc) from dc_record where applicant_id = :uid and yearmonth = :yearmonth and week = :week", nativeQuery = true)
+    Double getUserWeekTotalDc(@Param("uid") int uid, @Param("yearmonth") int yearmonth, @Param("week") int week);
 }

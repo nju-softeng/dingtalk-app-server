@@ -40,7 +40,7 @@ public class ApplicationService {
      **/
     public boolean isExist(int uid, int aid, int date) {
         //todo 注意测试
-        return dcRecordRepository.isExist(uid, aid, date) != 0 ? true : false;
+        return dcRecordRepository.isExist(uid, aid, date / 10, date % 10) != 0 ? true : false;
     }
 
     /**
