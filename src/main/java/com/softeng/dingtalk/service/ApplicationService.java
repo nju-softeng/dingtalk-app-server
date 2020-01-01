@@ -34,13 +34,13 @@ public class ApplicationService {
      * 每周1个用户只能向同一审核人提交一个申请，判断数据库中是否已存在
      * @param uid 用户ID
      * @param aid 审核人ID
-     * @param date
+     * @param yearmonth,week
      * @return boolean
      * @Date 8:12 PM 12/30/2019
      **/
-    public boolean isExist(int uid, int aid, int date) {
+    public boolean isExist(int uid, int aid, int yearmonth, int week) {
         //todo 注意测试
-        return dcRecordRepository.isExist(uid, aid, date / 10, date % 10) != 0 ? true : false;
+        return dcRecordRepository.isExist(uid, aid, yearmonth, week) != 0 ? true : false;
     }
 
     /**

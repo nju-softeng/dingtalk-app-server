@@ -27,7 +27,7 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integ
      * @Date 10:58 AM 1/1/2020
      **/
     @Modifying
-    @Query("update DcRecord d set d.cvalue = :cvalue, d.dc = :dc where d.id = :id")
+    @Query("update DcRecord d set d.cvalue = :cvalue, d.dc = :dc, d.ischeck = true where d.id = :id")
     void updateById(@Param("id") int id, @Param("cvalue") double cvalue, @Param("dc") double dc);
 
     /**

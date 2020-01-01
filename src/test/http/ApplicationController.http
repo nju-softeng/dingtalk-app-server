@@ -17,10 +17,10 @@ Content-Type: application/json
   "date": "2020-01-01",
   "dcRecord": {
     "applicant": {
-      "id": 5
+      "id": 7
     },
     "auditor": {
-      "id": 4
+      "id": 3
     },
     "dvalue": 2
   },
