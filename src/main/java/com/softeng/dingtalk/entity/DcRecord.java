@@ -34,11 +34,17 @@ public class DcRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 
-    public DcRecord(double dc, LocalDateTime insertTime, User applicant, User auditor) {
-        this.dc = dc;
-        this.insertTime = insertTime;
-
-        this.applicant = applicant;
-        this.auditor = auditor;
+    /**
+     * 测试初始化数据用
+     * @param applicant_id, auditor_id, dvalue, yearmonth, week
+     * @return
+     * @Date 1:53 PM 1/2/2020
+     **/
+    public DcRecord(int applicant_id, int auditor_id, double dvalue, int yearmonth, int week) {
+        this.applicant = new User(applicant_id);
+        this.auditor = new User(auditor_id);
+        this.dvalue = dvalue;
+        this.yearmonth = yearmonth;
+        this.week = week;
     }
 }

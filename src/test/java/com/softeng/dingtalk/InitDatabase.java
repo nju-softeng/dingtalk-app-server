@@ -32,7 +32,7 @@ public class InitDatabase {
     @Test
     public void init() {
         addUser();
-        addDcRecord();
+        ApplicantaddDcRecord();
     }
 
     @Test
@@ -52,11 +52,16 @@ public class InitDatabase {
     }
 
     @Test
-    public void addDcRecord() {
-        //double dc, LocalDateTime insertTime, int week, User user, User auditor, Application application
+    public void ApplicantaddDcRecord() {
         List<DcRecord> dcRecords = new ArrayList<>();
-        //dcRecords.add(new DcRecord(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(5),  new User(1)));
-        //dcRecords.add(new DcRecord(0.5, LocalDateTime.of(2019, 12, 1, 0, 0), 1, new User(5),  new User(2)));
+        dcRecords.add(new DcRecord(1, 5, 0.6, 202001, 1));
+        dcRecords.add(new DcRecord(2, 5, 0.6, 202001, 1));
+        dcRecords.add(new DcRecord(3, 5, 0.6, 202001, 1));
+        dcRecords.add(new DcRecord(4, 5, 0.6, 202001, 1));
+        dcRecords.add(new DcRecord(1, 6, 0.6, 201912, 5));
+        dcRecords.add(new DcRecord(2, 6, 0.6, 201912, 5));
+        dcRecords.add(new DcRecord(3, 6, 0.6, 201912, 5));
+        dcRecords.add(new DcRecord(4, 6, 0.6, 201912, 5));
         dcRecordRepository.saveAll(dcRecords);
     }
 
