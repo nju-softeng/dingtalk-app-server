@@ -3,9 +3,11 @@ package com.softeng.dingtalk.service;
 import com.softeng.dingtalk.dto.ApplicationInfo;
 import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.DcRecord;
+import com.softeng.dingtalk.entity.DcSummary;
 import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.DcRecordRepository;
+import com.softeng.dingtalk.repository.DcSummaryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,8 @@ public class AuditService {
     DcRecordRepository dcRecordRepository;
     @Autowired
     AcRecordRepository acRecordRepository;
+    @Autowired
+    DcSummaryRepository dcSummaryRepository;
 
 
     /**
@@ -54,9 +58,19 @@ public class AuditService {
      * @date 10:03 AM 12/27/2019
      **/
     public void addAuditResult(DcRecord dcRecord, List<AcRecord> acRecords) {
-        dcRecordRepository.updateById(dcRecord.getId(), dcRecord.getCvalue(), dcRecord.getDc());    //审核人确定申请的 C值，DC值,更新 ischeck
+        DcRecord dc = dcRecordRepository.findById(dcRecord.getId()).get();
+        dc.update(dcRecord.getCvalue(), dcRecord.getDc());
+        dcRecordRepository.save(dc);
         acRecordRepository.saveAll(acRecords);  //持久化多个AC记录
-        // 数据库的触发器会更新申请人本周绩效到 DcSummary
+
+        //更新DcSummary数据
+        Double dcSum = dcRecordRepository.getUserWeekTotalDc(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
+        DcSummary dcSummary = dcSummaryRepository.getDcSummary(dc.getApplicant().getId(), dc.getYearmonth());
+        if (dcSummary == null) {
+            dcSummary = new DcSummary(dc.getApplicant(), dc.getYearmonth());
+        }
+        dcSummary.updateWeek(dc.getWeek(), dcSum);
+        dcSummaryRepository.save(dcSummary);
     }
 
 }

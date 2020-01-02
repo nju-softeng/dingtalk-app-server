@@ -22,8 +22,8 @@ public interface DcSummaryRepository extends CustomizedRepository<DcSummary, Int
      * @return java.util.List<java.lang.Integer>
      * @Date 10:58 AM 12/30/2019
      **/
-    @Query("select  d from DcSummary d where d.user.id = :uid and d.yearmonth = :yearmonth and d.week = :week ")
-    DcSummary getDcSummary(@Param("uid") int uid, @Param("yearmonth") int yearmonth, @Param("week") int week);
+    @Query(value = "select  d from DcSummary d where d.user.id = :uid and d.yearmonth = :yearmonth")
+    DcSummary getDcSummary(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
 
 
 }
