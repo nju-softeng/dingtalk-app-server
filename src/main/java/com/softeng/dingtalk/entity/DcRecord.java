@@ -34,6 +34,12 @@ public class DcRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 
+    public void update(double cvalue, double dc) {
+        this.cvalue = cvalue;
+        this.dc = dc;
+        this.ischeck = true;
+    }
+
     /**
      * 测试初始化数据用
      * @param applicant_id, auditor_id, dvalue, yearmonth, week

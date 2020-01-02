@@ -70,13 +70,14 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integ
     @Query("update DcRecord d set d.ischeck = true where d.id = :id")
     void updateCheckStatus(@Param("id") int id);
 
+
     /**
-     * 计算指定用户，指定周的，在各组的dc之和
-     * @param uid 用户ID
-     * @param timeflag 所在年月周
-     * @return java.lang.Integer
-     * @Date 9:48 PM 12/29/2019
+     * 获取指定 dc_record 的用户所在日期，周，所有dc值之和（即包括其他审核人审核的dc值）
+     * @param id  DcRecord id
+     * @return java.lang.Double
+     * @Date 8:34 PM 1/2/2020
      **/
-    @Query(value = "select sum(dc) from dc_record where applicant_id = :uid and yearmonth = :yearmonth and week = :week", nativeQuery = true)
+    @Query(value = "select sum(dc) from dc_record where applicant_id = :uid and yearmonth = :yearmonth and week = :week",
+            nativeQuery = true)
     Double getUserWeekTotalDc(@Param("uid") int uid, @Param("yearmonth") int yearmonth, @Param("week") int week);
 }

@@ -22,7 +22,7 @@ Content-Type: application/json
  "dcRecord": {
    "id": 14,
    "cvalue": 0.5,
-   "dc": 1111
+   "dc": 100
  },
   "acRecords": [
     {
