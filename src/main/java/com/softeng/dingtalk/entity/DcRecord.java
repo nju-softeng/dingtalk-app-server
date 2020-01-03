@@ -53,4 +53,12 @@ public class DcRecord {
         this.yearmonth = yearmonth;
         this.week = week;
     }
+
+    public DcRecord(int applicant_id, int yearmonth, int week) {
+        this.applicant = new User(applicant_id);
+        this.yearmonth = yearmonth;
+        this.week = week;
+    }
+
+
 }

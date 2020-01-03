@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -58,9 +59,8 @@ public class AuditService {
      * @date 10:03 AM 12/27/2019
      **/
     public void addAuditResult(DcRecord dcRecord, List<AcRecord> acRecords) {
-        DcRecord dc = dcRecordRepository.findById(dcRecord.getId()).get();
-        dc.update(dcRecord.getCvalue(), dcRecord.getDc());
-        dcRecordRepository.save(dc);
+        dcRecordRepository.updateById(dcRecord.getId(), dcRecord.getCvalue(), dcRecord.getDc());
+        DcRecord dc = dcRecordRepository.getbyId(dcRecord.getId());  //这里的dc只返回了applicant, yearmonth, week 字段，其他字段为空
         acRecordRepository.saveAll(acRecords);  //持久化多个AC记录
 
         //更新DcSummary数据
