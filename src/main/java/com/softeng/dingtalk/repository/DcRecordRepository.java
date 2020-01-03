@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -18,6 +19,9 @@ import java.util.List;
  */
 @Repository
 public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integer>, JpaRepository<DcRecord, Integer> {
+
+    @Query("select new com.softeng.dingtalk.entity.DcRecord(d.applicant.id, d.yearmonth, d.week) from DcRecord d where d.id = :id")
+    DcRecord getbyId(@Param("id") int id);
 
 
     /**

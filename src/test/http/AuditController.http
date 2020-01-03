@@ -20,9 +20,9 @@ Content-Type: application/json
 
 {
  "dcRecord": {
-   "id": 14,
-   "cvalue": 0.5,
-   "dc": 100
+   "id":5,
+   "cvalue": 2,
+   "dc": 33
  },
   "acRecords": [
     {
