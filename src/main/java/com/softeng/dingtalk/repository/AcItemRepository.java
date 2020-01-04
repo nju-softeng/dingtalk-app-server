@@ -14,7 +14,7 @@ import java.util.List;
  * @date 12/11/2019
  */
 @Repository
-public interface AcItemRepository extends CustomizedRepository<AcItem, Integer>, JpaRepository<AcItem, Integer> {
+public interface AcItemRepository extends JpaRepository<AcItem, Integer> {
     @Query("select a from AcItem a where a.dcRecord.id = :id")
     List<AcItem> findAllByDcRecordID(@Param("id") int id);
 }

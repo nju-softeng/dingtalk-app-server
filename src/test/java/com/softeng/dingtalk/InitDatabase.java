@@ -4,6 +4,7 @@ import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.DcRecordRepository;
 import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.service.AuditService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +30,9 @@ public class InitDatabase {
     UserRepository userRepository;
     @Autowired
     DcRecordRepository dcRecordRepository;
+    @Autowired
+    AuditService auditService;
+
     @Test
     public void init() {
         addUser();
@@ -64,5 +68,6 @@ public class InitDatabase {
         dcRecords.add(new DcRecord(6, 4, 0.6, 201912, 5));
         dcRecordRepository.saveAll(dcRecords);
     }
+
 
 }

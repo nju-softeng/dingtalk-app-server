@@ -14,7 +14,7 @@ import java.util.List;
  * @date 12/29/2019
  */
 @Repository
-public interface DcSummaryRepository extends CustomizedRepository<DcSummary, Integer>, JpaRepository<DcSummary, Integer> {
+public interface DcSummaryRepository extends JpaRepository<DcSummary, Integer> {
 
     /**
      * 获取指定用户指定日期的dc汇总值
