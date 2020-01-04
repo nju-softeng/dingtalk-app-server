@@ -15,7 +15,7 @@ import java.util.List;
  * @date 12/27/2019
  */
 @Repository
-public interface AcRecordRepository extends CustomizedRepository<AcRecord, Integer>, JpaRepository<AcRecord, Integer> {
+public interface AcRecordRepository extends JpaRepository<AcRecord, Integer> {
 
     /**
      * 审核人获取自己审核的AC日志

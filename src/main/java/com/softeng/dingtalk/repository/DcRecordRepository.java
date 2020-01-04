@@ -18,7 +18,7 @@ import java.util.Map;
  * @date 12/12/2019
  */
 @Repository
-public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integer>, JpaRepository<DcRecord, Integer> {
+public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
 
     @Query("select new com.softeng.dingtalk.entity.DcRecord(d.applicant.id, d.yearmonth, d.week) from DcRecord d where d.id = :id")
     DcRecord getbyId(@Param("id") int id);

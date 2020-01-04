@@ -1,10 +1,15 @@
 package com.softeng.dingtalk.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @author zhanyeye
  * @description 封装绩效信息创给后端
  * @create 1/2/2020 2:09 PM
  */
+@Getter
+@Setter
 public class performance {
     private String name;
     private double allowance;
