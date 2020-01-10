@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,19 @@ import java.util.Map;
 @Repository
 public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
 
+    @Query(value = "select ifnull((select sum(dc) from dc_record where applicant_id = :uid and auditor_id = :aid and insert_time >= :stime and insert_time <= :etime), 0)", nativeQuery = true)
+    Double getByTime(@Param("uid") int uid, @Param("aid") int id, @Param("stime") String stime, @Param("etime") String etime);
+
+
+
+
+
+    /**
+     * 更具 id 查询指定ID的  applicant.id, yearmonth, week
+     * @param id
+     * @return com.softeng.dingtalk.entity.DcRecord
+     * @Date 7:17 PM 1/4/2020
+     **/
     @Query("select new com.softeng.dingtalk.entity.DcRecord(d.applicant.id, d.yearmonth, d.week) from DcRecord d where d.id = :id")
     DcRecord getbyId(@Param("id") int id);
 
@@ -63,16 +77,6 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      **/
     @Query("select d from DcRecord d where d.auditor.id = :uid and d.ischeck = false")
     List<DcRecord> listPendingReview(@Param("uid") int uid);
-
-    /**
-     * 更新申请状态为已审核
-     * @param id  申请id
-     * @return void
-     * @Date 4:40 PM 12/30/2019
-     **/
-    @Modifying
-    @Query("update DcRecord d set d.ischeck = true where d.id = :id")
-    void updateCheckStatus(@Param("id") int id);
 
 
     /**

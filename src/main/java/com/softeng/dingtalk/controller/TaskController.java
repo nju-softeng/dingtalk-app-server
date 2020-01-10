@@ -43,7 +43,16 @@ public class TaskController {
         taskService.updateTask(taskInfo.getTask(), taskInfo.getUids());
     }
 
-
+    /**
+     *
+     * @param task
+     * @return void
+     * @Date 11:26 PM 1/4/2020
+     **/
+    @PostMapping("/task_ac")
+    public void caculateAC(@RequestBody Task task) {
+        taskService.caculateAC(task);
+    }
 
 
 }

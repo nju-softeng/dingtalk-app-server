@@ -34,4 +34,14 @@ public interface AcRecordRepository extends JpaRepository<AcRecord, Integer> {
      **/
     @Query("select a from AcRecord a where a.user.id = :uid")
     List<AcRecord> listByApplicantId(@Param("uid") int uid);
+
+    //todo 测试
+    /**
+     * 获取指定用户的总ac
+     * @param uid
+     * @return java.lang.Double
+     * @Date 10:03 PM 1/10/2020
+     **/
+    @Query(value = "select ifnull((select sum(ac) from ac_record where user_id = :uid), 0)", nativeQuery = true)
+    Double getUserAcSum(@Param("uid") int uid);
 }
