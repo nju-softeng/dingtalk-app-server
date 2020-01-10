@@ -25,6 +25,7 @@ public class Task {
     private String description;
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
     private User auditor;
+    private int num;
     private double expectedAC;
     private boolean isAchieve;
     private LocalDate beginTime;

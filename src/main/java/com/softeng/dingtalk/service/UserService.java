@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -20,6 +22,8 @@ import java.util.List;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AcRecordRepository acRecordRepository;
 
     //获取用户的userID -> 从钉钉API获取用户信息时，要根据userID获取  （获取周报）
     public String getUserid(int id) {
@@ -28,7 +32,7 @@ public class UserService {
 
     //通过useID获取用户 -> 通过用户进入系统时调用API获得的userID查询用户，判断用户是否在系统中，还是新用户
     public User getUser(String userid) {
-        return userRepository.findUserByUserid(userid);
+        return userRepository.findByUserid(userid);
     }
 
     //添加用户 -> 用于新用户登录时，将其添加到数据库中
@@ -40,6 +44,18 @@ public class UserService {
     //查询所有的审核员 -> 供用户提交审核申请时选择
     public List<User> getAuditorUser() {
         return userRepository.listAuditor();
+    }
+
+    /**
+     * 获取用户信息
+     * @param uid
+     * @return java.util.Map
+     * @Date 9:18 PM 1/10/2020
+     **/
+    public Map getUserInfo(int uid) {
+        User u = userRepository.findById(uid).get();
+        double ac = acRecordRepository.getUserAcSum(uid);
+        return Map.of("name", u.getName(), "avatar", u.getAvatar(), "ac",ac);
     }
 
 }

@@ -1,9 +1,12 @@
 ###
 
 # 获取userid
-POST http://localhost:8080/api/login/
+POST http://localhost:8080/api/login
 Content-Type: application/json
 
+{
+  "authcode": "280975aa37da393bb6158b7b0deae40d"
+}
 
 
 
