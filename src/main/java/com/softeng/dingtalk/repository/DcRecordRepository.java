@@ -24,10 +24,6 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
     @Query(value = "select ifnull((select sum(dc) from dc_record where applicant_id = :uid and auditor_id = :aid and insert_time >= :stime and insert_time <= :etime), 0)", nativeQuery = true)
     Double getByTime(@Param("uid") int uid, @Param("aid") int id, @Param("stime") String stime, @Param("etime") String etime);
 
-
-
-
-
     /**
      * 更具 id 查询指定ID的  applicant.id, yearmonth, week
      * @param id

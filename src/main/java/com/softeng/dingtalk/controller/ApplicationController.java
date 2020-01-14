@@ -52,7 +52,6 @@ public class ApplicationController {
     }
 
 
-
     /**
      * @Description 用户提交申请
      * @Param [applicationInfo]
@@ -73,7 +72,6 @@ public class ApplicationController {
         } else {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
         }
-
     }
 
 
@@ -89,7 +87,6 @@ public class ApplicationController {
         return Map.of("dcRecords", dcRecords);
         // todo 是否要包含AcItem
     }
-
 
 
 }

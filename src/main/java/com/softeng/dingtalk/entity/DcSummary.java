@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 /**
  * @author zhanyeye
- * @description 汇总每周的绩效值
+ * @description 汇总每月各周绩效值
  * @create 12/29/2019 9:26 AM
  */
 @Getter

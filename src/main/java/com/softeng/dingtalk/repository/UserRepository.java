@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -27,6 +28,8 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
 
     //todo 管理员是否要被列入
     //查找所有的具有审核权限的用户 -> 供用户提交审核申请时选择
-    @Query("select u from User u where  u.authority = 1")
-    List<User> listAuditor();
+    @Query(value = "select id, name from user where authority = 1", nativeQuery = true)
+    List<Map<String, Object>> listAuditor();
+
+
 }
