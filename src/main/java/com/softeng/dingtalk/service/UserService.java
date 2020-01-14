@@ -42,8 +42,8 @@ public class UserService {
     }
 
     //查询所有的审核员 -> 供用户提交审核申请时选择
-    public List<User> getAuditorUser() {
-        return userRepository.listAuditor();
+    public Map getAuditorUser() {
+        return Map.of("auditorlist", userRepository.listAuditor());
     }
 
     /**

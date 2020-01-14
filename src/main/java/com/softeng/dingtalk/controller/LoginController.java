@@ -36,6 +36,7 @@ public class LoginController {
     @Autowired
     EncryptorComponent encryptorComponent;
 
+
     /**
      * @description 用户登录
      * @param authcode：免登授权码
@@ -45,13 +46,11 @@ public class LoginController {
     @PostMapping("/login")
     public void login(@RequestBody Map authcode, HttpServletResponse response) {
         String userid = dingTalkUtils.getUserId((String) authcode.get("authcode"));  //根据免登授权码获取userid
-
         User user = userService.getUser(userid); //去数据库查找用户
         if (user == null) { //如果用户不存在，调用钉钉API获取用户信息，将用户导入数据库
             user = dingTalkUtils.getNewUser(userid);
             userService.addUser(user);
         }
-
         Map map = Map.of("uid", user.getId(), "authorityid", user.getAuthority());
         // 生成加密token
         String token = encryptorComponent.encrypt(map);
@@ -68,5 +67,4 @@ public class LoginController {
         response.setHeader("role", role);
         response.setHeader("uid", user.getId() + "");
     }
-
 }

@@ -69,15 +69,15 @@ public class TestIdea {
 //        log.debug("{}", month);
 //        int week = LocalDate.now().getDayOfWeek().getValue();
 //        log.debug("{}",week);
-        log.debug(getTimeFlag(LocalDate.of(2019, 10, 31)) + "");
-        log.debug(getTimeFlag(LocalDate.of(2019, 11, 1)) + "");
-        log.debug(getTimeFlag(LocalDate.of(2019, 11, 4)) + "");
-        log.debug(getTimeFlag(LocalDate.of(2019, 11, 24)) + "");
-        log.debug(getTimeFlag(LocalDate.of(2019, 11, 30)) + "");
-        log.debug(getTimeFlag(LocalDate.of(2019, 12, 1)) + "");
-        log.debug(getTimeFlag(LocalDate.of(2019, 12, 2)) + "");
-        log.debug(getTimeFlag(LocalDate.of(2019, 12, 31)) + "");
-        log.debug(getTimeFlag(LocalDate.of(2017, 1, 1)) + "");
+//        log.debug(getTimeFlag(LocalDate.of(2019, 10, 31)) + "");
+//        log.debug(getTimeFlag(LocalDate.of(2019, 11, 1)) + "");
+//        log.debug(getTimeFlag(LocalDate.of(2019, 11, 4)) + "");
+//        log.debug(getTimeFlag(LocalDate.of(2019, 11, 24)) + "");
+//        log.debug(getTimeFlag(LocalDate.of(2019, 11, 30)) + "");
+//        log.debug(getTimeFlag(LocalDate.of(2019, 12, 1)) + "");
+//        log.debug(getTimeFlag(LocalDate.of(2019, 12, 2)) + "");
+//        log.debug(getTimeFlag(LocalDate.of(2019, 12, 31)) + "");
+        log.debug(getTimeFlag(LocalDate.of(2020, 1, 5)) + "");
 
     }
 

@@ -20,6 +20,7 @@ public class TaskController {
     @Autowired
     TaskService taskService;
 
+
     /**
      * 审核人创建任务
      * @param taskInfo
@@ -43,8 +44,9 @@ public class TaskController {
         taskService.updateTask(taskInfo.getTask(), taskInfo.getUids());
     }
 
+
     /**
-     *
+     * 计算任务的ac？？ //todo 待确认
      * @param task
      * @return void
      * @Date 11:26 PM 1/4/2020
@@ -53,6 +55,5 @@ public class TaskController {
     public void caculateAC(@RequestBody Task task) {
         taskService.caculateAC(task);
     }
-
 
 }

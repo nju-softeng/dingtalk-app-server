@@ -33,11 +33,11 @@ public class DingTalkUtils {
     private static final String APP_KEY = "dingk9nmede0wzi7aywt";
     private static final String APP_SECRET = "nh3mY7PPMAne3aDEpyANGjKlQIFLBkPQ0npYUnOELNVSJFuKST-ngsrfMK2sZiB9";
 
+
     /**
-     * @Date 9:10 PM 11/13/2019
-     * @Description 获取 access_token
-     * @Param []
+     * 获取 AccessToken
      * @return java.lang.String
+     * @Date 9:10 PM 11/13/2019
      **/
     public String getAccessToken() {
         String token = null;
@@ -56,11 +56,13 @@ public class DingTalkUtils {
         return token;
     }
 
+
+    //todo 每次都要调用getAccessToken()， 后续修改
     /**
-     * @Date 9:40 PM 11/13/2019
-     * @Description 获得userid : 通过 access_token 和 requestAuthcode；在内部调用了getAccessToken()，不用传参
-     * @Param [requestAuthCode]
+     * 获得userid : 通过 access_token 和 requestAuthcode；在内部调用了getAccessToken()，不用传参
+     * @param [requestAuthCode]
      * @return java.lang.String
+     * @Date 5:07 PM 1/13/2020
      **/
     public String getUserId(String requestAuthCode) {
         String userId = null;
@@ -81,7 +83,12 @@ public class DingTalkUtils {
         return userId;
     }
 
-
+    /**
+     * 通过 userid （钉钉的用户码），获取钉钉中用户信息
+     * @param userid
+     * @return com.softeng.dingtalk.entity.User
+     * @Date 5:09 PM 1/13/2020
+     **/
     public User getNewUser(String userid) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/get");
         OapiUserGetRequest request = new OapiUserGetRequest();
@@ -101,11 +108,11 @@ public class DingTalkUtils {
 
 
     /**
-     * @description 获取周报信息
+     * 获取周报信息
      * @param [userid]
      * @return java.util.Map
      * @author zhanyeye
-     * @date 2:08 PM 12/26/2019
+     * @Date 2:08 PM 12/26/2019
      **/
     public Map getReport(String userid){
         //todo 注意配置公网IP

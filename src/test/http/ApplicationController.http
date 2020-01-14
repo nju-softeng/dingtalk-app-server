@@ -14,29 +14,18 @@ token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555f
 Content-Type: application/json
 
 {
-  "date": "2020-01-11",
+  "date": "2020-01-26",
   "dcRecord": {
     "applicant": {
-      "id": 5
+      "id": 6
     },
     "auditor": {
-      "id": 1
+      "id": 2
     },
     "dvalue": 2
   },
   "acItems": [
-    {
-      "ac": 1,
-      "reason": "test1"
-    },
-    {
-      "ac": 1,
-      "reason": "test2"
-    },
-    {
-      "ac": 1,
-      "reason": "test3"
-    }
+
   ]
 }
 
