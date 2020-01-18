@@ -31,12 +31,36 @@ public class Utils {
         int day = localDate.getDayOfMonth();   //日
         int firstDayWeek = LocalDate.of(year, month, 1).getDayOfWeek().getValue(); //当前月第1天是周几
 
+
         // (7 - firstDayWeek) + 1 :本月第一天到本月第一个周日，共有多少天
         // day - [(7 - firstDayWeek) + 1] 除去跨月周的第一天到当前天，有多少天
 
-        if (firstDayWeek <= 4) { // 所跨周算本月第一周
+        if (firstDayWeek == 1) { // 本月1日正好是周一，不存在跨月周
+            week = (int)Math.ceil(day / 7.0);
+            if (week == 5) {
+                week = 1;
+                if (month == 12) {
+                    month = 1;
+                    year++;
+                } else {
+                    month++;
+                }
+            }
+        } else if (firstDayWeek <= 4) { // 所跨周算本月第一周
             if(day > (8 - firstDayWeek)) { // 天数 > (7 - firstDayWeek) + 1 : 当前天超过了第1周的范围,
                 week = 1 + (int)Math.ceil((day - (8 - firstDayWeek)) / 7.0);
+                if (week == 5) {
+                    int endDayWeek = LocalDate.of(year, month, localDate.lengthOfMonth()).getDayOfWeek().getValue();
+                    if (endDayWeek < 4) {
+                        week = 1;
+                        if (month == 12) {
+                            month = 1;
+                            year++;
+                        } else {
+                            month++;
+                        }
+                    }
+                }
             } else {
                 week = 1; // 本月第1周
             }
@@ -52,7 +76,6 @@ public class Utils {
                         month++;
                     }
                 }
-
             } else { //当前天算上月最后一周
                 if (month == 1) {
                     month = 12;
