@@ -11,6 +11,7 @@
 GET http://localhost:8080/api/user/getAuditors
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
 
+###
 
 # 获取审核人待审核申请
 GET http://localhost:8080/api/pending_audit/1
@@ -26,31 +27,11 @@ Content-Type: application/json
 
 {
  "dcRecord": {
-   "id":5,
-   "cvalue": 2,
-   "dc": 33
+   "id":1,
+   "cvalue": 1,
+   "dc": 0.75
  },
   "acRecords": [
-    {
-      "ac": 1,
-      "reason": "组会评审",
-      "auditor": {
-        "id": 1
-      },
-      "user": {
-        "id": 5
-      }
-    },
-    {
-      "ac": 1,
-      "reason": "test",
-      "auditor": {
-        "id": 1
-      },
-      "user": {
-        "id": 5
-      }
-    }
   ]
 
 }

@@ -16,4 +16,9 @@ class DingtalkApplicationTests {
     @Autowired
     DingTalkUtils dingTalkUtils;
 
+    @Test
+    public void test() {
+        dingTalkUtils.workrecord("306147243334957616");
+    }
+
 }

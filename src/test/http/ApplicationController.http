@@ -6,23 +6,28 @@
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
+
+POST http://localhost:8080/api/getdate
+token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
+Content-Type: application/json
+
+"2019-01-12"
+
 ###
 
 # 用户提交周绩效申请
 POST http://localhost:8080/api/application
-token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555fcc4b851acd295d64de7d1fb
+token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
 Content-Type: application/json
 
 {
-  "date": "2020-01-26",
   "dcRecord": {
-    "applicant": {
-      "id": 6
-    },
     "auditor": {
-      "id": 2
+      "id":1
     },
-    "dvalue": 2
+    "dvalue": 0.75,
+    "yearmonth": 202001,
+    "week": 5
   },
   "acItems": [
 
@@ -32,14 +37,14 @@ Content-Type: application/json
 ###
 
 # 获取指定用户的周报
-GET http://localhost:8080/api/report/1
-token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555fcc4b851acd295d64de7d1fb
+GET http://localhost:8080/api/report/
+token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
 
 ###
 
 # 分页获取指定用户的申请
-GET http://localhost:8080/api/application/5/page=0
-token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555fcc4b851acd295d64de7d1fb
+GET http://localhost:8080/api/application/5/page=1
+token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
 Content-Type: application/json
 
 ###

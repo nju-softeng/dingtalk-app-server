@@ -2,14 +2,8 @@ package com.softeng.dingtalk.component;
 
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
-import com.dingtalk.api.request.OapiGettokenRequest;
-import com.dingtalk.api.request.OapiReportListRequest;
-import com.dingtalk.api.request.OapiUserGetRequest;
-import com.dingtalk.api.request.OapiUserGetuserinfoRequest;
-import com.dingtalk.api.response.OapiGettokenResponse;
-import com.dingtalk.api.response.OapiReportListResponse;
-import com.dingtalk.api.response.OapiUserGetResponse;
-import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
+import com.dingtalk.api.request.*;
+import com.dingtalk.api.response.*;
 import com.softeng.dingtalk.entity.User;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,10 +54,10 @@ public class DingTalkUtils {
     }
 
 
-    //todo 每次都要调用getAccessToken()， 后续修改
+    //todo 每次都要调用getAccessToken()，后续修改
     /**
      * 获得userid : 通过 access_token 和 requestAuthcode；在内部调用了getAccessToken()，不用传参
-     * @param [requestAuthCode]
+     * @param requestAuthCode
      * @return java.lang.String
      * @Date 5:07 PM 1/13/2020
      **/
@@ -109,7 +106,7 @@ public class DingTalkUtils {
 
     /**
      * 获取周报信息
-     * @param [userid]
+     * @param userid
      * @return java.util.Map
      * @author zhanyeye
      * @Date 2:08 PM 12/26/2019
@@ -129,15 +126,35 @@ public class DingTalkUtils {
         } catch (ApiException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
         }
-        if (response.getResult().getDataList().isEmpty()) {
+
+        if (response.getResult().getDataList().get(0).getContents().size() == 0) {
             return Map.of();
+        } else {
+            return Map.of("contents", response.getResult().getDataList().get(0).getContents());
         }
-        List<OapiReportListResponse.JsonObject> jsonObjectList = response.getResult().getDataList().get(0).getContents();
-        Map<String, String> map = new HashMap<>();
-        for (int i = 0; i < jsonObjectList.size(); i++) {
-            map.put(jsonObjectList.get(i).getKey(), jsonObjectList.get(i).getValue());
+    }
+
+    public void workrecord(String userid) {
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/workrecord/add");
+        OapiWorkrecordAddRequest req = new OapiWorkrecordAddRequest();
+        req.setUserid(userid);
+        req.setCreateTime(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
+        req.setTitle("提交绩效信息");
+        req.setUrl("http://www.dingdev.xyz:8080/?corpId=dingeff939842ad9207f35c2f4657eb6378f#/example/table");
+        List<OapiWorkrecordAddRequest.FormItemVo> list2 = new ArrayList<OapiWorkrecordAddRequest.FormItemVo>();
+        OapiWorkrecordAddRequest.FormItemVo obj3 = new OapiWorkrecordAddRequest.FormItemVo();
+        list2.add(obj3);
+        obj3.setTitle("标题");
+        obj3.setContent("内容");
+        req.setFormItemList(list2);
+        OapiWorkrecordAddResponse rsp = null;
+        try {
+            rsp = client.execute(req, getAccessToken());
+        } catch (Exception e) {
+
         }
-        return  map;
+
+        System.out.println(rsp.getBody());
     }
 
 }
