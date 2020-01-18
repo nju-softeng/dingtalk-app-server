@@ -55,6 +55,7 @@ public class UserService {
     public Map getUserInfo(int uid) {
         User u = userRepository.findById(uid).get();
         double ac = acRecordRepository.getUserAcSum(uid);
+        log.debug(ac + "?");
         return Map.of("name", u.getName(), "avatar", u.getAvatar(), "ac",ac);
     }
 

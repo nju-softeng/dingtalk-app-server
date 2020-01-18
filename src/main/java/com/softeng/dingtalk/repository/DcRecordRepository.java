@@ -21,6 +21,14 @@ import java.util.Map;
 @Repository
 public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
 
+
+
+    /**
+     * 计算项目期间dc值
+     * @param uid, id, stime, etime
+     * @return java.lang.Double
+     * @Date 6:51 PM 1/17/2020
+     **/
     @Query(value = "select ifnull((select sum(dc) from dc_record where applicant_id = :uid and auditor_id = :aid and insert_time >= :stime and insert_time <= :etime), 0)", nativeQuery = true)
     Double getByTime(@Param("uid") int uid, @Param("aid") int id, @Param("stime") String stime, @Param("etime") String etime);
 
@@ -65,6 +73,10 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
     @Query("select d from DcRecord d where d.applicant.id = :uid")
     List<DcRecord> listByUid(@Param("uid") int uid, Pageable pageable);
 
+
+    @Query("select count (d) from DcRecord d where d.applicant.id = :uid")
+    Integer getCountByUid(@Param("uid") int uid);
+
     /**
      * 审核人查看待审核的申请  ->  根据uid(审核人)，获得待审核的申请
      * @param uid  审核人id
@@ -76,7 +88,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
 
 
     /**
-     * 获取指定 dc_record 的用户所在日期，周，所有dc值之和（即包括其他审核人审核的dc值）
+     * 获取 dc_record 的指定用户所在日期，周，所有dc值之和（即包括其他审核人审核的dc值）
      * @param id  DcRecord id
      * @return java.lang.Double
      * @Date 8:34 PM 1/2/2020

@@ -1,6 +1,8 @@
 package com.softeng.dingtalk;
 
+import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
+import com.softeng.dingtalk.repository.DcRecordRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.IsoFields;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author zhanyeye
@@ -22,6 +25,11 @@ import java.util.Calendar;
 @SpringBootTest
 @Slf4j
 public class TestIdea {
+
+    @Autowired
+    DcRecordRepository dcRecordRepository;
+
+
     @Test
     public void test() {
         Calendar calendar = Calendar.getInstance();
@@ -61,6 +69,16 @@ public class TestIdea {
 
     @Autowired
     Utils utils;
+    @Autowired
+    DingTalkUtils dingTalkUtils;
+
+    @Test
+    public void test_getToken() {
+        log.debug(dingTalkUtils.getAccessToken());
+        log.debug(System.currentTimeMillis()- TimeUnit.DAYS.toMillis(10) + "");
+        log.debug(System.currentTimeMillis() + "");
+    }
+
     @Test
     public void test_date() {
 //        int day = LocalDate.now().getDayOfMonth();

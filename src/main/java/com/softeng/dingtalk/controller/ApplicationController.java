@@ -5,6 +5,7 @@ import com.softeng.dingtalk.component.Utils;
 import com.softeng.dingtalk.dto.ApplicationInfo;
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.service.ApplicationService;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.UserService;
@@ -14,6 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +42,12 @@ public class ApplicationController {
     @Autowired
     Utils utils;
 
+    @PostMapping("/getdate")
+    public Map getdate(@RequestBody Map<String, LocalDate> map) {
+        log.debug(map.get("time").toString());
+        return utils.getTimeFlag(map.get("time"));
+    }
+
 
     /**
      * @Description 根据uid获取周报
@@ -44,7 +55,7 @@ public class ApplicationController {
      * @return java.util.Map
      * @Date 7:01 PM 12/27/2019
      **/
-    @GetMapping("/report/{uid}")
+    @GetMapping("/report")
     public Map getReport(@RequestAttribute int uid) {
         log.debug("根据uid获取周报,uid" + uid);
         String userid = userService.getUserid(uid);
@@ -59,14 +70,14 @@ public class ApplicationController {
      * @Date 7:01 PM 12/27/2019
      **/
     @PostMapping("/application")
-    public void addApplication(@RequestBody ApplicationInfo applicationInfo) {
+    public void addApplication(@RequestBody ApplicationInfo applicationInfo, @RequestAttribute int uid) {
         DcRecord dcRecord = applicationInfo.getDcRecord();       //获取DC申请信息
+        dcRecord.setApplicant(new User(uid)); // 从请求中获取uid
         List<AcItem> acItems = applicationInfo.getAcItems();     //获取该绩效申请的ac申请
-        int uid = dcRecord.getApplicant().getId();
         int aid = dcRecord.getAuditor().getId();
-        int date = utils.getTimeFlag(applicationInfo.getDate()); //todo 时间判断
-        dcRecord.setYearmonth(date / 10);
-        dcRecord.setWeek(date % 10);
+        Map<String, Integer> date = utils.getTimeFlag(applicationInfo.getDate()); //todo 时间判断
+        dcRecord.setYearmonth(date.get("yearmonth"));
+        dcRecord.setWeek(date.get("week"));
         if (applicationService.isExist(uid, aid, dcRecord.getYearmonth(), dcRecord.getWeek()) == false) {
             applicationService.addApplication(dcRecord, acItems);    //持久化绩效申请
         } else {
@@ -81,10 +92,9 @@ public class ApplicationController {
      * @return java.util.Map
      * @Date 7:00 PM 12/27/2019
      **/
-    @GetMapping("application/{uid}/page={page}")
-    public Map getUserApplication(@PathVariable int uid, @PathVariable int page) { //todo 测试需要将 @RequestAttribute 改为 @PathVariable
-        List<DcRecord> dcRecords = applicationService.getDcRecord(uid, page);
-        return Map.of("dcRecords", dcRecords);
+    @GetMapping("/application/{uid}/page={page}")
+    public Map getUserApplication(@RequestAttribute int uid, @PathVariable int page) {
+        return applicationService.getDcRecord(uid, page);
         // todo 是否要包含AcItem
     }
 

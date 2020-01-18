@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.temporal.IsoFields;
 import java.util.Calendar;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -23,35 +24,46 @@ public class Utils {
      * @return int
      * @Date 8:26 AM 1/1/2020
      **/
-    public int getTimeFlag(LocalDate localDate) {
+    public Map getTimeFlag(LocalDate localDate) {
         int week;
-        int year = localDate.getYear();
-        int month = localDate.getMonthValue();
-        int day = localDate.getDayOfMonth();
-        int beginDayOfWeek = LocalDate.of(year, month, 1).getDayOfWeek().getValue();
+        int year = localDate.getYear();        //年
+        int month = localDate.getMonthValue(); //月
+        int day = localDate.getDayOfMonth();   //日
+        int firstDayWeek = LocalDate.of(year, month, 1).getDayOfWeek().getValue(); //当前月第1天是周几
 
-        log.debug("" + year + "-" + month + "-" + day + "-" + beginDayOfWeek);
+        // (7 - firstDayWeek) + 1 :本月第一天到本月第一个周日，共有多少天
+        // day - [(7 - firstDayWeek) + 1] 除去跨月周的第一天到当前天，有多少天
 
-        if (beginDayOfWeek <= 4) { //所跨周算本月第一周
-            if(day > (8 - beginDayOfWeek)) {
-                week = 1 + (int)Math.ceil((day - (8 - beginDayOfWeek)) / 7.0);
-            } else { //本月第1周
-                week = 1;
+        if (firstDayWeek <= 4) { // 所跨周算本月第一周
+            if(day > (8 - firstDayWeek)) { // 天数 > (7 - firstDayWeek) + 1 : 当前天超过了第1周的范围,
+                week = 1 + (int)Math.ceil((day - (8 - firstDayWeek)) / 7.0);
+            } else {
+                week = 1; // 本月第1周
             }
-        } else {  //所跨周算上个月最后一周
-            if (day > (8 - beginDayOfWeek)) {
-                week = (int)Math.ceil((day - (8 - beginDayOfWeek)) / 7.0);
-            } else { //上月最后一周
+        } else {  // 所跨周算上个月最后一周
+            if (day > (8 - firstDayWeek)) { // 当前天不算上个月最后一周
+                week = (int)Math.ceil((day - (8 - firstDayWeek)) / 7.0);
+                if (week == 5) {
+                    week = 1;
+                    if (month == 12) {
+                        month = 1;
+                        year++;
+                    } else {
+                        month++;
+                    }
+                }
+
+            } else { //当前天算上月最后一周
                 if (month == 1) {
                     month = 12;
                     year--;
                 } else {
                     month--;
                 }
-                LocalDate lastMonth = localDate.minusDays(day);
-                int lastMonthDays = lastMonth.getDayOfMonth();
-                int lastMonthEndWeek = lastMonth.getDayOfWeek().getValue();
-                int lastMonthBeginWeek = lastMonth.minusDays(lastMonthDays - 1).getDayOfWeek().getValue();
+                LocalDate lastMonth = localDate.minusDays(day); // 上个月
+                int lastMonthDays = lastMonth.getDayOfMonth();  // 上个月天数
+                int lastMonthEndWeek = lastMonth.getDayOfWeek().getValue(); // 上个月最后一天是第几周
+                int lastMonthBeginWeek = lastMonth.minusDays(lastMonthDays - 1).getDayOfWeek().getValue(); // 上个月第一天是第几周
                 if (lastMonthEndWeek >= 4 && lastMonthBeginWeek <= 4) {
                     week = 5;
                 } else {
@@ -59,6 +71,7 @@ public class Utils {
                 }
             }
         }
-        return year * 1000 + month * 10 + week;
+        log.debug(year + " - " + month + " - " + week);
+        return Map.of("yearmonth", year * 100 + month, "week", week);
     }
 }

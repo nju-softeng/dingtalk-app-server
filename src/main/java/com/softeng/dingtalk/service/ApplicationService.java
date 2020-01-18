@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -60,12 +62,14 @@ public class ApplicationService {
     /**
      * 获取指定用户的申请 ->  用于查看申请历史
      * @param uid, page
-     * @return java.util.List<com.softeng.dingtalk.entity.DcRecord>
+     * @return java.util.List<com.softeng.dingtalk.entity.D cRecord>
      * @Date 8:22 PM 12/30/2019
      **/
-    public List<DcRecord> getDcRecord(int uid, int page) {
-        Pageable pageable = PageRequest.of(page, 10); //分页对象，每页10个
-        return dcRecordRepository.listByUid(uid, pageable);
+    public Map getDcRecord(int uid, int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending()); //分页对象，每页10个
+        List<DcRecord> dcRecords =  dcRecordRepository.listByUid(uid, pageable);
+        int amount = dcRecordRepository.getCountByUid(uid);
+        return  Map.of("dcRecords", dcRecords, "amount", amount);
     }
 
 
