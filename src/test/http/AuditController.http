@@ -14,7 +14,7 @@ token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430
 ###
 
 # 获取审核人待审核申请
-GET http://localhost:8080/api/pending_audit/1
+GET http://localhost:8080/api/pending_audit/
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
 
 

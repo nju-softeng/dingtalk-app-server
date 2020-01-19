@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class AuditInfo {
+public class AuditDTO {
     private DcRecord dcRecord;
     private List<AcRecord> acRecords;
 }

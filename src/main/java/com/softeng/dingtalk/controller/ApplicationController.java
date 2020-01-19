@@ -2,7 +2,7 @@ package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
-import com.softeng.dingtalk.dto.ApplicationInfo;
+import com.softeng.dingtalk.dto.ApplicationDTO;
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.entity.User;
@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -70,12 +67,12 @@ public class ApplicationController {
      * @Date 7:01 PM 12/27/2019
      **/
     @PostMapping("/application")
-    public void addApplication(@RequestBody ApplicationInfo applicationInfo, @RequestAttribute int uid) {
-        DcRecord dcRecord = applicationInfo.getDcRecord();       //获取DC申请信息
+    public void addApplication(@RequestBody ApplicationDTO applicationDTO, @RequestAttribute int uid) {
+        DcRecord dcRecord = applicationDTO.getDcRecord();       //获取DC申请信息
         dcRecord.setApplicant(new User(uid)); // 从请求中获取uid
-        List<AcItem> acItems = applicationInfo.getAcItems();     //获取该绩效申请的ac申请
+        List<AcItem> acItems = applicationDTO.getAcItems();     //获取该绩效申请的ac申请
         int aid = dcRecord.getAuditor().getId();
-        Map<String, Integer> date = utils.getTimeFlag(applicationInfo.getDate()); //todo 时间判断
+        Map<String, Integer> date = utils.getTimeFlag(applicationDTO.getDate()); //todo 时间判断
         dcRecord.setYearmonth(date.get("yearmonth"));
         dcRecord.setWeek(date.get("week"));
         if (applicationService.isExist(uid, aid, dcRecord.getYearmonth(), dcRecord.getWeek()) == false) {

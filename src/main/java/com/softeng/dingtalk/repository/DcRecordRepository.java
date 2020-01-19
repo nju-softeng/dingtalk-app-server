@@ -1,6 +1,8 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.DcRecord;
+import com.softeng.dingtalk.vo.ApplicationVO;
+import com.softeng.dingtalk.vo.DcRecordVO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -22,6 +24,15 @@ import java.util.Map;
 public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
 
 
+    /**
+     * 审核人查看待审核的申请  ->  根据uid(审核人)，获得待审核的申请
+     * @param uid  审核人id
+     * @return java.util.List<com.softeng.dingtalk.vo.ApplicationVO>
+     * @Date 8:18 PM 1/19/2020
+     **/
+    @Query("select new com.softeng.dingtalk.vo.DcRecordVO(d.id, d.applicant.name, d.dvalue, d.yearmonth, d.week, d.insertTime) from DcRecord d where d.auditor.id = :uid and d.ischeck = false")
+    List<DcRecordVO> listDcRecordVO(@Param("uid") int uid);
+
 
     /**
      * 计算项目期间dc值
@@ -39,7 +50,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @Date 7:17 PM 1/4/2020
      **/
     @Query("select new com.softeng.dingtalk.entity.DcRecord(d.applicant.id, d.yearmonth, d.week) from DcRecord d where d.id = :id")
-    DcRecord getbyId(@Param("id") int id);
+    DcRecord listById(@Param("id") int id);
 
 
     /**
@@ -77,14 +88,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
     @Query("select count (d) from DcRecord d where d.applicant.id = :uid")
     Integer getCountByUid(@Param("uid") int uid);
 
-    /**
-     * 审核人查看待审核的申请  ->  根据uid(审核人)，获得待审核的申请
-     * @param uid  审核人id
-     * @return java.util.List<com.softeng.dingtalk.entity.DcRecord>
-     * @Date 4:36 PM 12/30/2019
-     **/
-    @Query("select d from DcRecord d where d.auditor.id = :uid and d.ischeck = false")
-    List<DcRecord> listPendingReview(@Param("uid") int uid);
+
 
 
     /**
