@@ -16,11 +16,11 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class ApplicationInfo {
+public class ApplicationDTO {
     LocalDate date;
     private DcRecord dcRecord;        //DC值申请
     private List<AcItem> acItems;     //ac值申请列表      //todo 注意可能会有空指针
-    public ApplicationInfo(DcRecord dcRecord, List<AcItem> acItems) {
+    public ApplicationDTO(DcRecord dcRecord, List<AcItem> acItems) {
         this.dcRecord = dcRecord;
         this.acItems = acItems;
     }

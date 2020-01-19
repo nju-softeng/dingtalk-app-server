@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class TaskInfo {
+public class TaskDTO {
     private Task task;
     private int[] uids;
 }
