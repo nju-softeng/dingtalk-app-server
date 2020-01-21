@@ -111,13 +111,13 @@ public class DingTalkUtils {
      * @author zhanyeye
      * @Date 2:08 PM 12/26/2019
      **/
-    public Map getReport(String userid){
+    public Map getReport(String userid, LocalDateTime dateTime){
         //todo 注意配置公网IP
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
         OapiReportListRequest request = new OapiReportListRequest();
         request.setUserid(userid);
-        request.setStartTime(System.currentTimeMillis()- TimeUnit.DAYS.toMillis(3));  //获取的开始时间是3天前
-        request.setEndTime(System.currentTimeMillis());
+        request.setStartTime(dateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli() - TimeUnit.DAYS.toMillis(3));  //获取的开始时间是3天前
+        request.setEndTime(dateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli() + TimeUnit.DAYS.toMillis(3));
         request.setCursor(0L);
         request.setSize(1L);
         OapiReportListResponse response;
@@ -127,7 +127,7 @@ public class DingTalkUtils {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
         }
 
-        if (response.getResult().getDataList().get(0).getContents().size() == 0) {
+        if (response.getResult().getDataList().size() == 0) {
             return Map.of();
         } else {
             return Map.of("contents", response.getResult().getDataList().get(0).getContents());

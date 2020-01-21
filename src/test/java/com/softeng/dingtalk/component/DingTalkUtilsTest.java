@@ -19,9 +19,6 @@ public class DingTalkUtilsTest {
     @Autowired
     DingTalkUtils dingTalkUtils;
 
-    @Test
-    public void getReportTest() {
-        log.debug(dingTalkUtils.getReport("315448673626165392").toString());
-    }
+
 
 }
