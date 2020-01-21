@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.IsoFields;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
@@ -64,7 +65,7 @@ public class TestIdea {
         calendar.set(2020, Calendar.JANUARY, 1);
         log.debug(calendar.get(Calendar.WEEK_OF_MONTH) + "==? 1   2020.1.1-3");
 
-    }
+}
 
 
     @Autowired
@@ -81,21 +82,10 @@ public class TestIdea {
 
     @Test
     public void test_date() {
-//        int day = LocalDate.now().getDayOfMonth();
-//        log.debug("{}",day);
-//        int month = LocalDate.now().getMonthValue();
-//        log.debug("{}", month);
-//        int week = LocalDate.now().getDayOfWeek().getValue();
-//        log.debug("{}",week);
-//        log.debug(getTimeFlag(LocalDate.of(2019, 10, 31)) + "");
-//        log.debug(getTimeFlag(LocalDate.of(2019, 11, 1)) + "");
-//        log.debug(getTimeFlag(LocalDate.of(2019, 11, 4)) + "");
-//        log.debug(getTimeFlag(LocalDate.of(2019, 11, 24)) + "");
-//        log.debug(getTimeFlag(LocalDate.of(2019, 11, 30)) + "");
-//        log.debug(getTimeFlag(LocalDate.of(2019, 12, 1)) + "");
-//        log.debug(getTimeFlag(LocalDate.of(2019, 12, 2)) + "");
-//        log.debug(getTimeFlag(LocalDate.of(2019, 12, 31)) + "");
-        log.debug(getTimeFlag(LocalDate.of(2020, 1, 5)) + "");
+
+        log.debug(System.currentTimeMillis() + "");
+        log.debug(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli()  + "");
+
 
     }
 

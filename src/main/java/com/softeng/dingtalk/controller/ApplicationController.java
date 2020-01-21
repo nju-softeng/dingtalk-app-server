@@ -47,20 +47,6 @@ public class ApplicationController {
 
 
     /**
-     * @Description 根据uid获取周报
-     * @Param [uid]
-     * @return java.util.Map
-     * @Date 7:01 PM 12/27/2019
-     **/
-    @GetMapping("/report")
-    public Map getReport(@RequestAttribute int uid) {
-        log.debug("根据uid获取周报,uid" + uid);
-        String userid = userService.getUserid(uid);
-        return dingTalkUtils.getReport(userid);
-    }
-
-
-    /**
      * @Description 用户提交申请
      * @Param [applicationInfo]
      * @return void
