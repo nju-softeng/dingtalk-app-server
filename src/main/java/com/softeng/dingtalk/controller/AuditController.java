@@ -6,7 +6,9 @@ import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.vo.ApplicationVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -34,7 +36,6 @@ public class AuditController {
         auditService.addAuditResult(auditDTO.getDcRecord(), auditDTO.getAcRecords()); //持久化审核结果
     }
 
-
     /**
      * 审核人获取待审核的申请
      * @param uid
@@ -45,5 +46,15 @@ public class AuditController {
     public List<ApplicationVO> getAuditApplication(@RequestAttribute int uid) {
         log.debug("/pending_audit" + uid);
         return auditService.getPendingApplication(uid);
+    }
+
+
+    @GetMapping("/getreport")
+    public List<Object> getReport(@RequestAttribute int uid) {
+        try {
+            return auditService.AsyncGetReport(uid);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "并发请求超时");
+        }
     }
 }

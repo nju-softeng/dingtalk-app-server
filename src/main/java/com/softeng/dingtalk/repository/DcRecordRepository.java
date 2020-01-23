@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.DcRecord;
-import com.softeng.dingtalk.vo.ApplicationVO;
+import com.softeng.dingtalk.po.ReportApplicantPO;
 import com.softeng.dingtalk.vo.DcRecordVO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,10 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import java.time.LocalDate;
+
 import java.util.List;
-import java.util.Map;
+
 
 /**
  * @author zhanyeye
@@ -22,6 +21,15 @@ import java.util.Map;
  */
 @Repository
 public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
+
+    /**
+     * 根据审核人id 获取待审核申请的申请人 userid -> 用于获取周报
+     * @param uid
+     * @return java.util.List<java.lang.String>
+     * @Date 11:11 AM 1/23/2020
+     **/
+    @Query("select new com.softeng.dingtalk.po.ReportApplicantPO(d.applicant.userid, d.applicant.id, d.insertTime) from DcRecord d where d.auditor.id = :uid and d.ischeck = false")
+    List<ReportApplicantPO> listUserCode(int uid);
 
 
     /**
@@ -93,7 +101,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
 
     /**
      * 获取 dc_record 的指定用户所在日期，周，所有dc值之和（即包括其他审核人审核的dc值）
-     * @param id  DcRecord id
+     * @param uid, yearmonth, week
      * @return java.lang.Double
      * @Date 8:34 PM 1/2/2020
      **/

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 /**
  * @author zhanyeye
  * @description
@@ -22,8 +24,11 @@ public class AuditServiceTest {
     @Autowired
     DcRecordRepository dcRecordRepository;
 
-    @Test
-    public void test() {
-
-    }
+//    @Test
+//    public void test() {
+//        List<String> userids = dcRecordRepository.listUserCode(1);
+//        for (String str :userids) {
+//            log.debug(str);
+//        }
+//    }
 }

@@ -32,6 +32,9 @@ public class ApplicationService {
     @Autowired
     AcItemRepository acItemRepository;
 
+
+
+
     /**
      * 每周1个用户只能向同一审核人提交一个申请，判断数据库中是否已存在
      * @param uid 用户ID

@@ -1,9 +1,11 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.dto.ApplicationDTO;
+
+import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.entity.DcSummary;
+import com.softeng.dingtalk.po.ReportApplicantPO;
 import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.DcRecordRepository;
@@ -17,6 +19,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * @author zhanyeye
@@ -35,6 +40,8 @@ public class AuditService {
     AcRecordRepository acRecordRepository;
     @Autowired
     DcSummaryRepository dcSummaryRepository;
+    @Autowired
+    DingTalkUtils dingTalkUtils;
 
 
     /**
@@ -51,6 +58,22 @@ public class AuditService {
         }
         return applicationVOS;
     }
+
+
+    public List<Object> AsyncGetReport(int uid) throws ExecutionException, InterruptedException {
+        List<ReportApplicantPO> reportApplicantPOS = dcRecordRepository.listUserCode(uid);
+        List<Future<Map>> futures = new ArrayList<>();
+        for (ReportApplicantPO u : reportApplicantPOS) {
+            futures.add(dingTalkUtils.getReport(u.getUserid(), u.getInsertTime(), u.getUid()));
+        }
+        List<Object> result = new ArrayList<>();
+        for (Future future : futures) {
+            result.add(future.get());
+        }
+        return result;
+    }
+
+
 
     /**
      * 审核人提交的审核结果 (DcRecord, AcRecords)
