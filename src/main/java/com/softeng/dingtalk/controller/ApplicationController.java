@@ -47,12 +47,13 @@ public class ApplicationController {
         return utils.getTimeFlag(map.get("time"));
     }
 
-    @PostMapping("/getreport")
-    public Map getReport(@RequestBody ReportInfoVO reportInfoVO) {
-        String userid = userService.getUserid(reportInfoVO.getUid());
-        LocalDateTime dateTime = reportInfoVO.getDateTime();
-        return dingTalkUtils.getReport(userid, dateTime);
-    }
+//    @PostMapping("/getreport")
+//    public Map getReport(@RequestBody ReportInfoVO reportInfoVO) {
+//        String userid = userService.getUserid(reportInfoVO.getUid());
+//        LocalDateTime dateTime = reportInfoVO.getDateTime();
+//        return dingTalkUtils.getReport(userid, dateTime);
+//    }
+
 
     /**
      * @Description 用户提交申请

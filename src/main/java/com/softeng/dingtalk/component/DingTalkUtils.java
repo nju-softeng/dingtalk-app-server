@@ -8,6 +8,8 @@ import com.softeng.dingtalk.entity.User;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -105,13 +108,14 @@ public class DingTalkUtils {
 
 
     /**
-     * 获取周报信息
-     * @param userid
-     * @return java.util.Map
-     * @author zhanyeye
-     * @Date 2:08 PM 12/26/2019
+     * 异步方法
+     * 通过 userid 获取用户周报，（uid只是为了在返回值中添加）
+     * @param userid, dateTime, uid
+     * @return java.util.concurrent.Future<java.util.Map>
+     * @Date 7:32 PM 1/23/2020
      **/
-    public Map getReport(String userid, LocalDateTime dateTime){
+    @Async
+    public Future<Map> getReport(String userid, LocalDateTime dateTime, int uid){
         //todo 注意配置公网IP
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
         OapiReportListRequest request = new OapiReportListRequest();
@@ -128,9 +132,9 @@ public class DingTalkUtils {
         }
 
         if (response.getResult().getDataList().size() == 0) {
-            return Map.of();
+            return new AsyncResult<>(Map.of("uid", uid));
         } else {
-            return Map.of("contents", response.getResult().getDataList().get(0).getContents());
+            return new AsyncResult<>(Map.of("uid", uid,"contents", response.getResult().getDataList().get(0).getContents()));
         }
     }
 
