@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 public class DcRecordVO {
     private int id;
+    private int uid;
     private String name;
     private double dvalue;  // Dedication Value
     private int yearmonth;  // 表示申请所属 年、月
