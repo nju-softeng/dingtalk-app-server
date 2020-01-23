@@ -30,7 +30,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @return java.util.List<com.softeng.dingtalk.vo.ApplicationVO>
      * @Date 8:18 PM 1/19/2020
      **/
-    @Query("select new com.softeng.dingtalk.vo.DcRecordVO(d.id, d.applicant.name, d.dvalue, d.yearmonth, d.week, d.insertTime) from DcRecord d where d.auditor.id = :uid and d.ischeck = false")
+    @Query("select new com.softeng.dingtalk.vo.DcRecordVO(d.id, d.applicant.id, d.applicant.name, d.dvalue, d.yearmonth, d.week, d.insertTime) from DcRecord d where d.auditor.id = :uid and d.ischeck = false")
     List<DcRecordVO> listDcRecordVO(@Param("uid") int uid);
 
 
