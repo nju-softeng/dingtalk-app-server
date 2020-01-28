@@ -32,12 +32,15 @@ token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430
 Content-Type: application/json
 
 {
- "dcRecord": {
-   "id":1,
-   "cvalue": 1,
-   "dc": 0.75
- },
+  "id":2,
+  "cvalue": 1,
+  "dc": 0.75,
+  "ac": 1,
   "acRecords": [
+    {
+      "ac": 1,
+      "reason": "hhhhhh"
+    }
   ]
 
 }

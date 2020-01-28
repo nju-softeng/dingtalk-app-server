@@ -36,6 +36,16 @@ public class LoginController {
     @Autowired
     EncryptorComponent encryptorComponent;
 
+    @GetMapping("/login_test/{uid}")
+    public void testlogin(@PathVariable int uid, HttpServletResponse response) {
+        Map map = Map.of("uid", uid, "authorityid", User.USER_AUTHORITY);
+        // 生成加密token
+        String token = encryptorComponent.encrypt(map);
+        // 在header创建自定义的权限
+        response.setHeader("token",token);
+        response.setHeader("role", USER_ROLE);
+        response.setHeader("uid", uid + "");
+    }
 
     /**
      * @description 用户登录

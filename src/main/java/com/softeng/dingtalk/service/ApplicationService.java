@@ -32,9 +32,6 @@ public class ApplicationService {
     @Autowired
     AcItemRepository acItemRepository;
 
-
-
-
     /**
      * 每周1个用户只能向同一审核人提交一个申请，判断数据库中是否已存在
      * @param uid 用户ID
@@ -44,7 +41,6 @@ public class ApplicationService {
      * @Date 8:12 PM 12/30/2019
      **/
     public boolean isExist(int uid, int aid, int yearmonth, int week) {
-        //todo 注意测试
         return dcRecordRepository.isExist(uid, aid, yearmonth, week) != 0 ? true : false;
     }
 

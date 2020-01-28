@@ -37,9 +37,10 @@ public class DcRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 
-    public void update(double cvalue, double dc) {
+    public void update(double cvalue, double dc, double ac) {
         this.cvalue = cvalue;
         this.dc = dc;
+        this.ac = ac;
         this.ischeck = true;
     }
 

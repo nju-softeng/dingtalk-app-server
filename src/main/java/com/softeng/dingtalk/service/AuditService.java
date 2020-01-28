@@ -1,6 +1,5 @@
 package com.softeng.dingtalk.service;
 
-
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.DcRecord;
@@ -12,6 +11,7 @@ import com.softeng.dingtalk.repository.DcRecordRepository;
 import com.softeng.dingtalk.repository.DcSummaryRepository;
 import com.softeng.dingtalk.vo.ApplicationVO;
 import com.softeng.dingtalk.vo.DcRecordVO;
+import com.softeng.dingtalk.vo.ReviewVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,6 +60,12 @@ public class AuditService {
     }
 
 
+    /**
+     * 获取周报内容
+     * @param uid
+     * @return java.util.List<java.lang.Object>
+     * @Date 2:50 PM 1/26/2020
+     **/
     public List<Object> AsyncGetReport(int uid) throws ExecutionException, InterruptedException {
         List<ReportApplicantPO> reportApplicantPOS = dcRecordRepository.listUserCode(uid);
         List<Future<Map>> futures = new ArrayList<>();
@@ -74,19 +80,21 @@ public class AuditService {
     }
 
 
-
     /**
-     * 审核人提交的审核结果 (DcRecord, AcRecords)
-     * @param dcRecord
-     * @param acRecords
+     * 审核人提交的审核结果
+     * @param reviewVO
      * @return void
-     * @date 10:03 AM 12/27/2019
+     * @Date 12:04 PM 1/28/2020
      **/
-    public void addAuditResult(DcRecord dcRecord, List<AcRecord> acRecords) {
+    public void addAuditResult(ReviewVO reviewVO) {
         //todo 担心空指针！！！
-        dcRecordRepository.updateById(dcRecord.getId(), dcRecord.getCvalue(), dcRecord.getDc());
-        DcRecord dc = dcRecordRepository.listById(dcRecord.getId());  //这里的dc只返回了applicant, yearmonth, week 字段，其他字段为空
-        acRecordRepository.saveAll(acRecords);  //持久化多个AC记录
+        DcRecord dc = dcRecordRepository.findById(reviewVO.getId()).get();
+        dc.update(reviewVO.getCvalue(), reviewVO.getDc(),reviewVO.getAc());
+        for (AcRecord a : reviewVO.getAcRecords()) {
+            a.setUser(dc.getApplicant());
+            a.setAuditor(dc.getAuditor());
+        }
+        acRecordRepository.saveAll(reviewVO.getAcRecords());  //持久化多个AC记录
 
         //更新DcSummary数据
         Double dcSum = dcRecordRepository.getUserWeekTotalDc(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
