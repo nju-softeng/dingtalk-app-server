@@ -57,17 +57,17 @@ public class ApplicationController {
 
     /**
      * @Description 用户提交申请
-     * @Param [applicationInfo]
+     * @Param [applicationDTO] 包含 dcRecord, AcItems
      * @return void
      * @Date 7:01 PM 12/27/2019
      **/
     @PostMapping("/application")
     public void addApplication(@RequestBody ApplicationDTO applicationDTO, @RequestAttribute int uid) {
-        DcRecord dcRecord = applicationDTO.getDcRecord();       //获取DC申请信息
-        dcRecord.setApplicant(new User(uid)); // 从请求中获取uid
-        List<AcItem> acItems = applicationDTO.getAcItems();     //获取该绩效申请的ac申请
-        int aid = dcRecord.getAuditor().getId();
-        Map<String, Integer> date = utils.getTimeFlag(applicationDTO.getDate()); //todo 时间判断
+        DcRecord dcRecord = applicationDTO.getDcRecord();// 获取DC申请信息
+        dcRecord.setApplicant(new User(uid)); //设置申请人
+        List<AcItem> acItems = applicationDTO.getAcItems(); //拿到 ac申请
+        int aid = dcRecord.getAuditor().getId(); //审核人id
+        Map<String, Integer> date = utils.getTimeFlag(applicationDTO.getDate());
         dcRecord.setYearmonth(date.get("yearmonth"));
         dcRecord.setWeek(date.get("week"));
         if (applicationService.isExist(uid, aid, dcRecord.getYearmonth(), dcRecord.getWeek()) == false) {

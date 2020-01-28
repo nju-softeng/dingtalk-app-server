@@ -51,25 +51,6 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
     @Query(value = "select ifnull((select sum(dc) from dc_record where applicant_id = :uid and auditor_id = :aid and insert_time >= :stime and insert_time <= :etime), 0)", nativeQuery = true)
     Double getByTime(@Param("uid") int uid, @Param("aid") int id, @Param("stime") String stime, @Param("etime") String etime);
 
-    /**
-     * 更具 id 查询指定ID的  applicant.id, yearmonth, week
-     * @param id
-     * @return com.softeng.dingtalk.entity.DcRecord
-     * @Date 7:17 PM 1/4/2020
-     **/
-    @Query("select new com.softeng.dingtalk.entity.DcRecord(d.applicant.id, d.yearmonth, d.week) from DcRecord d where d.id = :id")
-    DcRecord listById(@Param("id") int id);
-
-
-    /**
-     * 审核人更新dc申请的记录
-     * @param id, cvalue, dc
-     * @return void
-     * @Date 10:58 AM 1/1/2020
-     **/
-    @Modifying
-    @Query("update DcRecord d set d.cvalue = :cvalue, d.dc = :dc, d.ischeck = true where d.id = :id")
-    void updateById(@Param("id") int id, @Param("cvalue") double cvalue, @Param("dc") double dc);
 
     /**
      * 查询是否存在某条记录，
@@ -81,6 +62,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
             "SELECT IfNULL((SELECT id FROM dc_record WHERE applicant_id = :uid and auditor_id = :aid and yearmonth = :yearmonth and week = :week LIMIT 1), 0)",
             nativeQuery = true)
     Integer isExist(@Param("uid") int uid,@Param("aid") int aid, @Param("yearmonth") int yearmonth, @Param("week") int week);
+
 
     /**
      * 用于分页显示申请历史 ->  根据uid(用户)，获取用户提交的申请，实现分页
@@ -95,8 +77,6 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
 
     @Query("select count (d) from DcRecord d where d.applicant.id = :uid")
     Integer getCountByUid(@Param("uid") int uid);
-
-
 
 
     /**

@@ -4,6 +4,7 @@ import com.softeng.dingtalk.dto.ApplicationDTO;
 import com.softeng.dingtalk.dto.AuditDTO;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.vo.ApplicationVO;
+import com.softeng.dingtalk.vo.ReviewVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,13 +28,13 @@ public class AuditController {
 
     /**
      * 审核员提交审核结果
-     * @param auditDTO  审核结果信息
+     * @param  reviewVO 审核结果信息
      * @return void
      * @date 9:35 AM 12/27/2019
      **/
     @PostMapping("/audit")
-    public void addAuditResult(@RequestBody AuditDTO auditDTO) {
-        auditService.addAuditResult(auditDTO.getDcRecord(), auditDTO.getAcRecords()); //持久化审核结果
+    public void addAuditResult(@RequestBody ReviewVO reviewVO) {
+        auditService.addAuditResult(reviewVO); //持久化审核结果
     }
 
     /**
