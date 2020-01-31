@@ -1,16 +1,11 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
-import com.softeng.dingtalk.entity.AcRecord;
-import com.softeng.dingtalk.entity.DcRecord;
-import com.softeng.dingtalk.entity.DcSummary;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.po.ReportApplicantPO;
-import com.softeng.dingtalk.repository.AcItemRepository;
-import com.softeng.dingtalk.repository.AcRecordRepository;
-import com.softeng.dingtalk.repository.DcRecordRepository;
-import com.softeng.dingtalk.repository.DcSummaryRepository;
-import com.softeng.dingtalk.vo.ApplicationVO;
-import com.softeng.dingtalk.vo.DcRecordVO;
+import com.softeng.dingtalk.repository.*;
+import com.softeng.dingtalk.vo.CheckedVO;
+import com.softeng.dingtalk.vo.ToCheckVO;
 import com.softeng.dingtalk.vo.ReviewVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +37,62 @@ public class AuditService {
     DcSummaryRepository dcSummaryRepository;
     @Autowired
     DingTalkUtils dingTalkUtils;
+    @Autowired
+    UserService userService;
+    @Autowired
+    DcAcRelationRepository dcAcRelationRepository;
 
+    /**
+     *
+     * @param checked
+     * @return void
+     * @Date 5:22 PM 1/30/2020
+     **/
+    public void updateAudit(CheckedVO checked) {
+        DcRecord dcRecord = dcRecordRepository.findById(checked.getId()).get();
+        dcRecord.update(checked.getCvalue(), checked.getDc(), checked.getAc());
+        dcRecordRepository.save(dcRecord); //持久化新的 dcRecord
+        List<Integer> acIds =  dcAcRelationRepository.listAcId(checked.getId()); // 获取之前的审核对应的ac申请的id
+        for (Integer i : acIds) {
+            acRecordRepository.deleteById(i); //更新前要删除上一次的 AcRecord 记录
+            log.debug("???????");
+        }
+
+        for (AcItem acItem : checked.getAcItems()) { //持久化新的 AcRecord
+            AcRecord acRecord = new AcRecord(dcRecord, acItem);
+            acRecordRepository.save(acRecord);
+
+        }
+    }
+
+
+    
+//    /**
+//     *  // todo 待修改
+//     * @param uid, dateTime
+//     * @return java.util.Map
+//     * @Date 11:29 AM 1/30/2020
+//     **/
+//    public Map getReport(int uid, LocalDateTime dateTime) {
+//        String userid =  userService.getUserid(uid);
+//        return dingTalkUtils.getReport(userid, dateTime);
+//    }
+    
+
+    /**
+     * 审核人获取已审核申请
+     * @param uid
+     * @return java.util.List<com.softeng.dingtalk.vo.CheckedVO>
+     * @Date 8:15 PM 1/28/2020
+     **/
+    public List<CheckedVO> listCheckVO(int uid) {
+        List<DcRecord> dcRecords = dcRecordRepository.listChecked(uid);
+        List<CheckedVO> checkedVOS = new ArrayList<>();
+        for (DcRecord dc : dcRecords) {
+            checkedVOS.add(new CheckedVO(dc.getApplicant().getName(),dc, acItemRepository.findAllByDcRecordID(dc.getId())));
+        }
+        return checkedVOS;
+    }
 
     /**
      * 审核人查看待审核的申请
@@ -50,13 +100,12 @@ public class AuditService {
      * @return java.util.List<com.softeng.dingtalk.dto.ApplicationInfo>
      * @date 9:37 AM 12/27/2019
      **/
-    public List<ApplicationVO> getPendingApplication(int uid) {
-        List<DcRecordVO> dcRecordVOList = dcRecordRepository.listDcRecordVO(uid);
-        List<ApplicationVO> applicationVOS = new ArrayList<>();
-        for ( DcRecordVO dcRecordVO : dcRecordVOList) {
-            applicationVOS.add(new ApplicationVO(dcRecordVO, acItemRepository.findAllByDcRecordID(dcRecordVO.getId())));
+    public List<ToCheckVO> getPendingApplication(int uid) {
+        List<ToCheckVO> toCheckVOList = dcRecordRepository.listDcRecordVO(uid);
+        for (ToCheckVO toCheckVO : toCheckVOList) {
+            toCheckVO.setAcItems(acItemRepository.findAllByDcRecordID(toCheckVO.getId()));
         }
-        return applicationVOS;
+        return toCheckVOList;
     }
 
 
@@ -70,7 +119,7 @@ public class AuditService {
         List<ReportApplicantPO> reportApplicantPOS = dcRecordRepository.listUserCode(uid);
         List<Future<Map>> futures = new ArrayList<>();
         for (ReportApplicantPO u : reportApplicantPOS) {
-            futures.add(dingTalkUtils.getReport(u.getUserid(), u.getInsertTime(), u.getUid()));
+            futures.add(dingTalkUtils.getReports(u.getUserid(), u.getInsertTime(), u.getUid()));
         }
         List<Object> result = new ArrayList<>();
         for (Future future : futures) {
@@ -93,8 +142,10 @@ public class AuditService {
         for (AcRecord a : reviewVO.getAcRecords()) {
             a.setUser(dc.getApplicant());
             a.setAuditor(dc.getAuditor());
+            acRecordRepository.save(a);
+            dcAcRelationRepository.save(new DcAcRelation(dc.getId(), a.getId()));
         }
-        acRecordRepository.saveAll(reviewVO.getAcRecords());  //持久化多个AC记录
+
 
         //更新DcSummary数据
         Double dcSum = dcRecordRepository.getUserWeekTotalDc(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());

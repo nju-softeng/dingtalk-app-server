@@ -6,10 +6,12 @@ import com.softeng.dingtalk.dto.ApplicationDTO;
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.repository.DcSummaryRepository;
 import com.softeng.dingtalk.service.ApplicationService;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.UserService;
-import com.softeng.dingtalk.vo.ReportInfoVO;
+import com.softeng.dingtalk.vo.DcSummaryVO;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,19 +42,26 @@ public class ApplicationController {
     DingTalkUtils dingTalkUtils;
     @Autowired
     Utils utils;
+    @Autowired
+    DcSummaryRepository dcSummaryRepository;
 
+    @GetMapping("/dcsummary/{yearmonth}")
+    public List<DcSummaryVO>  getDcSummary(@PathVariable int yearmonth) {
+        return dcSummaryRepository.listDcSummary(yearmonth);
+    }
+
+
+    /**
+     * 放回请求中的时间时本月第几周
+     * @param map
+     * @return java.util.Map
+     * @Date 2:17 PM 1/29/2020
+     **/
     @PostMapping("/getdate")
     public Map getdate(@RequestBody Map<String, LocalDate> map) {
         log.debug(map.get("time").toString());
         return utils.getTimeFlag(map.get("time"));
     }
-
-//    @PostMapping("/getreport")
-//    public Map getReport(@RequestBody ReportInfoVO reportInfoVO) {
-//        String userid = userService.getUserid(reportInfoVO.getUid());
-//        LocalDateTime dateTime = reportInfoVO.getDateTime();
-//        return dingTalkUtils.getReport(userid, dateTime);
-//    }
 
 
     /**

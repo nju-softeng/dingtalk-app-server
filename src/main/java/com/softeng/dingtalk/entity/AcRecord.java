@@ -36,4 +36,11 @@ public class AcRecord {
         this.reason = reason;
     }
 
+    public AcRecord(DcRecord dcRecord, AcItem acItem) {
+        this.ac = acItem.getAc();
+        this.reason = acItem.getReason();
+        this.user = dcRecord.getApplicant();
+        this.auditor = dcRecord.getAuditor();
+    }
+
 }

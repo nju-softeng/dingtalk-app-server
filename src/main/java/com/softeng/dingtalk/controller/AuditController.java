@@ -1,10 +1,9 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.dto.ApplicationDTO;
-import com.softeng.dingtalk.dto.AuditDTO;
 import com.softeng.dingtalk.service.AuditService;
-import com.softeng.dingtalk.vo.ApplicationVO;
+import com.softeng.dingtalk.vo.CheckedVO;
 import com.softeng.dingtalk.vo.ReviewVO;
+import com.softeng.dingtalk.vo.ToCheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +25,24 @@ public class AuditController {
     AuditService auditService;
 
 
+    @PostMapping("/updateAudit")
+    public void updateDcRecord(@PathVariable CheckedVO checkedVO) {
+
+
+    }
+
+
+    /**
+     * 审核人获取已经审核的申请
+     * @param uid
+     * @return java.util.List<com.softeng.dingtalk.vo.CheckedVO>
+     * @Date 8:41 PM 1/29/2020
+     **/
+    @GetMapping("/checked")
+    public List<CheckedVO> listChecked(@RequestAttribute int uid) {
+        return auditService.listCheckVO(uid);
+    }
+
     /**
      * 审核员提交审核结果
      * @param  reviewVO 审核结果信息
@@ -44,18 +61,24 @@ public class AuditController {
      * @Date 10:06 AM 12/28/2019
      **/
     @GetMapping("/pending_audit")
-    public List<ApplicationVO> getAuditApplication(@RequestAttribute int uid) {
+    public List<ToCheckVO> getAuditApplication(@RequestAttribute int uid) {
         log.debug("/pending_audit" + uid);
         return auditService.getPendingApplication(uid);
     }
 
 
-    @GetMapping("/getreport")
-    public List<Object> getReport(@RequestAttribute int uid) {
+    @GetMapping("/getreportlist")
+    public List<Object> getReportList(@RequestAttribute int uid) {
         try {
             return auditService.AsyncGetReport(uid);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "并发请求超时");
         }
     }
+
+//    @PostMapping("/getreport")
+//    public Map getReport(@RequestAttribute int uid, @RequestBody LocalDate date) {
+//        return auditService.getReport(uid, date);
+//    }
+
 }

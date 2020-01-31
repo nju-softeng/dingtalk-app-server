@@ -115,7 +115,7 @@ public class DingTalkUtils {
      * @Date 7:32 PM 1/23/2020
      **/
     @Async
-    public Future<Map> getReport(String userid, LocalDateTime dateTime, int uid){
+    public Future<Map> getReports(String userid, LocalDateTime dateTime, int uid){
         //todo 注意配置公网IP
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
         OapiReportListRequest request = new OapiReportListRequest();
@@ -137,6 +137,37 @@ public class DingTalkUtils {
             return new AsyncResult<>(Map.of("uid", uid,"contents", response.getResult().getDataList().get(0).getContents()));
         }
     }
+
+    /**
+     * 根据用户 userid, 和 dateTime 获取用户的周报
+     * @param userid, dateTime
+     * @return java.util.Map
+     * @Date 10:11 AM 1/30/2020
+     **/
+    public Map getReport(String userid, LocalDateTime dateTime) {
+        //todo 注意配置公网IP
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
+        OapiReportListRequest request = new OapiReportListRequest();
+        request.setUserid(userid);
+        log.debug( dateTime.toString());
+        log.debug(dateTime.plusDays(6).toString());
+        request.setStartTime(dateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+        request.setEndTime(dateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli() + TimeUnit.DAYS.toMillis(6));
+        request.setCursor(0L);
+        request.setSize(1L);
+        OapiReportListResponse response;
+        try {
+            response = client.execute(request, getAccessToken());
+        } catch (ApiException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
+        }
+        if (response.getResult().getDataList().size() == 0) {
+            return Map.of();
+        } else {
+            return Map.of("contents", response.getResult().getDataList().get(0).getContents());
+        }
+    }
+
 
     public void workrecord(String userid) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/workrecord/add");
