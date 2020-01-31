@@ -2,6 +2,9 @@ package com.softeng.dingtalk;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
+import com.softeng.dingtalk.entity.AcItem;
+import com.softeng.dingtalk.repository.AcItemRepository;
+import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.DcRecordRepository;
 import com.softeng.dingtalk.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,24 +45,13 @@ public class TestIdea {
     DingTalkUtils dingTalkUtils;
     @Autowired
     UserService userService;
+    @Autowired
+    AcItemRepository acItemRepository;
 
-//    @Test
-//    public void test_sync() throws ExecutionException, InterruptedException {
-//        long start = System.currentTimeMillis();
-//        List<Future<Map>> futures = new ArrayList<>();
-//        for (int i = 0; i <150; i++) {
-//
-//            String userid = userService.getUserid(1);
-//            futures.add(dingTalkUtils.getReport(userid, LocalDateTime.of(2020, 1, 19, 0, 0)));
-//        }
-//        List<Object> map = new ArrayList<>();
-//        for (Future future : futures) {
-//            map.add(future.get());
-//        }
-//
-//        log.debug(String.valueOf(System.currentTimeMillis() - start));
-//        log.debug(map.toString());
-//    }
+    @Test
+    public void test_sync() throws ExecutionException, InterruptedException {
+        acItemRepository.deleteById(Integer.valueOf(86));
+    }
 
 
 

@@ -19,6 +19,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 public class AcItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -27,4 +28,6 @@ public class AcItem {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
     private DcRecord dcRecord;  //ac申请属于的周绩效申请
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private AcRecord acRecord;
 }

@@ -2,10 +2,9 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.po.ReportApplicantPO;
-import com.softeng.dingtalk.vo.DcRecordVO;
+import com.softeng.dingtalk.vo.ToCheckVO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -21,6 +20,17 @@ import java.util.List;
  */
 @Repository
 public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
+
+
+    /**
+     * 根据审核人的id获取已经审核的申请
+     * @param uid
+     * @return java.util.List<com.softeng.dingtalk.entity.DcRecord>
+     * @Date 7:49 PM 1/28/2020
+     **/
+    @Query("select d from DcRecord d where d.auditor.id = :uid and d.ischeck = true")
+    List<DcRecord> listChecked(@Param("uid")int uid);
+
 
     /**
      * 根据审核人id 获取待审核申请的申请人 userid -> 用于获取周报
@@ -38,8 +48,8 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @return java.util.List<com.softeng.dingtalk.vo.ApplicationVO>
      * @Date 8:18 PM 1/19/2020
      **/
-    @Query("select new com.softeng.dingtalk.vo.DcRecordVO(d.id, d.applicant.id, d.applicant.name, d.dvalue, d.yearmonth, d.week, d.insertTime) from DcRecord d where d.auditor.id = :uid and d.ischeck = false")
-    List<DcRecordVO> listDcRecordVO(@Param("uid") int uid);
+    @Query("select new com.softeng.dingtalk.vo.ToCheckVO(d.id, d.applicant.id, d.applicant.name, d.dvalue, d.yearmonth, d.week, d.insertTime) from DcRecord d where d.auditor.id = :uid and d.ischeck = false")
+    List<ToCheckVO> listDcRecordVO(@Param("uid") int uid);
 
 
     /**
@@ -75,6 +85,12 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
     List<DcRecord> listByUid(@Param("uid") int uid, Pageable pageable);
 
 
+    /**
+     * 申请人申请的dcRecord数目
+     * @param uid
+     * @return java.lang.Integer
+     * @Date 2:19 PM 1/28/2020
+     **/
     @Query("select count (d) from DcRecord d where d.applicant.id = :uid")
     Integer getCountByUid(@Param("uid") int uid);
 

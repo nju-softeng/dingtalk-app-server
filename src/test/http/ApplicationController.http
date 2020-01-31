@@ -6,6 +6,11 @@
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
+GET http://localhost:8080/api/dcsummary/202001
+token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
+
+###
+
 POST http://localhost:8080/api/getreport
 token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
 Content-Type: application/json
