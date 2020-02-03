@@ -17,14 +17,13 @@ import java.util.Map;
 @Component
 public class Utils {
 
-    //todo 注意测试
     /**
      * 计算当前日期是本月的第几周 ISO 8601
      * @param localDate
-     * @return int
-     * @Date 8:26 AM 1/1/2020
+     * @return int[]
+     * @Date 4:16 PM 2/3/2020
      **/
-    public Map getTimeFlag(LocalDate localDate) {
+    public int[] getTimeFlag(LocalDate localDate) {
         int week;
         int year = localDate.getYear();        //年
         int month = localDate.getMonthValue(); //月
@@ -95,6 +94,9 @@ public class Utils {
             }
         }
         log.debug(year + " - " + month + " - " + week);
-        return Map.of("yearmonth", year * 100 + month, "week", week);
+        int[] result = new int[2];
+        result[0] = year * 100 + month;
+        result[1] = week;
+        return result;
     }
 }

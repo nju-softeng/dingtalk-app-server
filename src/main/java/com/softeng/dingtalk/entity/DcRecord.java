@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.softeng.dingtalk.vo.ApplicationVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -60,10 +61,20 @@ public class DcRecord {
         this.week = week;
     }
 
-    public DcRecord(int applicant_id, int yearmonth, int week) {
-        this.applicant = new User(applicant_id);
+    /**
+     * 用户提交申请，创建一个新的dcRecord
+     * @param application
+     * @return
+     * @Date 3:43 PM 2/3/2020
+     **/
+    public DcRecord(ApplicationVO application, int uid, int yearmonth, int week) {
+        this.applicant = new User(uid);
+        this.auditor = new User(application.getAuditorid());
+        this.dvalue = application.getDvalue();
+        this.weekdate = application.getDate();
         this.yearmonth = yearmonth;
         this.week = week;
+
     }
 
 
