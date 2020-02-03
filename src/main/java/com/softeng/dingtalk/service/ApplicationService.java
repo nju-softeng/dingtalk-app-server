@@ -67,7 +67,7 @@ public class ApplicationService {
     public Map getDcRecord(int uid, int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending()); //分页对象，每页10个
         List<DcRecord> dcRecords =  dcRecordRepository.listByUid(uid, pageable);
-        int amount = dcRecordRepository.    getCountByUid(uid);
+        int amount = dcRecordRepository.getCountByUid(uid);
         return  Map.of("dcRecords", dcRecords, "amount", amount);
     }
 

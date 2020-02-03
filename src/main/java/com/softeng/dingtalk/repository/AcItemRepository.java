@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.AcItem;
+import com.softeng.dingtalk.entity.DcRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +18,12 @@ import java.util.List;
 public interface AcItemRepository extends JpaRepository<AcItem, Integer> {
     @Query("select a from AcItem a where a.dcRecord.id = :id")
     List<AcItem> findAllByDcRecordID(@Param("id") int id);
+
+    /**
+     * 更新时先将旧数据删除
+     * @param dcRecord
+     * @return void
+     * @Date 4:22 PM 2/1/2020
+     **/
+    void deleteByDcRecord(DcRecord dcRecord);
 }

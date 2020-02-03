@@ -3,6 +3,7 @@ package com.softeng.dingtalk;
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
 import com.softeng.dingtalk.entity.AcItem;
+import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.DcRecordRepository;
@@ -15,9 +16,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 
+import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +40,7 @@ import java.util.concurrent.Future;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
+@Transactional
 public class TestIdea {
 
     @Autowired
@@ -50,9 +56,15 @@ public class TestIdea {
 
     @Test
     public void test_sync() throws ExecutionException, InterruptedException {
-        acItemRepository.deleteById(Integer.valueOf(86));
+        DcRecord dcRecord = dcRecordRepository.findById(2).get();
+        acItemRepository.deleteByDcRecord(dcRecord);
     }
 
+
+    @Test
+    public void test() {
+        log.debug(("231".isEmpty()) + ""  );
+    }
 
 
 }

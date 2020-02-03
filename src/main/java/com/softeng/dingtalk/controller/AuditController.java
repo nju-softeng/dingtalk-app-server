@@ -1,6 +1,9 @@
 package com.softeng.dingtalk.controller;
 
+import com.softeng.dingtalk.component.DingTalkUtils;
+import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.service.AuditService;
+import com.softeng.dingtalk.service.UserService;
 import com.softeng.dingtalk.vo.CheckedVO;
 import com.softeng.dingtalk.vo.ReviewVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
@@ -10,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -23,14 +28,27 @@ import java.util.List;
 public class AuditController {
     @Autowired
     AuditService auditService;
+    @Autowired
+    DingTalkUtils dingTalkUtils;
+    @Autowired
+    UserService userService;
 
-
-    @PostMapping("/updateAudit")
-    public void updateDcRecord(@PathVariable CheckedVO checkedVO) {
-
-
+    @PostMapping("/test")
+    public void test(@RequestBody LocalDate date) {
+        log.debug(date.toString());
     }
 
+    /**
+     * 审核人更新审核记录
+     * @param checked
+     * @return void
+     * @Date 9:13 PM 2/1/2020
+     **/
+    @PostMapping("/updateAudit")
+    public void updateChecked(@RequestBody CheckedVO checked) {
+        log.debug("/updateAudit" );
+        auditService.updateAudit(checked);
+    }
 
     /**
      * 审核人获取已经审核的申请
@@ -76,9 +94,10 @@ public class AuditController {
         }
     }
 
-//    @PostMapping("/getreport")
-//    public Map getReport(@RequestAttribute int uid, @RequestBody LocalDate date) {
-//        return auditService.getReport(uid, date);
-//    }
+    @PostMapping("/getreport/{uid}")
+    public Map getReport(@PathVariable int uid, @RequestBody LocalDate date) {
+        String userid = userService.getUserid(uid);
+        return dingTalkUtils.getReport(userid, date);
+    }
 
 }

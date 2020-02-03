@@ -4,20 +4,25 @@ import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * @author zhanyeye
- * @description 向前端传送审核人已经审核的申请
+ * @description 向前端传送审核人已经审核的申请,向后端传送审核人修改的申请
  * @create 1/28/2020 8:11 PM
  */
 @AllArgsConstructor
+@NoArgsConstructor  // 序列化用
 @Getter
+@Setter
 public class CheckedVO {
-    private String name;
-    private int id;
+    private int id;         // dcRecord id
+    private String name;    // 申请人姓名
+    private int uid;        // 申请人id
     private double dvalue;  // Dedication Value
     private double cvalue;  // Contribution Value
     private double dc;
@@ -27,9 +32,10 @@ public class CheckedVO {
     private LocalDateTime insertTime;
     private List<AcItem> acItems;
 
-    public CheckedVO(String name, DcRecord dc, List<AcItem> acItems) {
-        this.name = name;
+    public CheckedVO(DcRecord dc, List<AcItem> acItems) {
         this.id = dc.getId();
+        this.name = dc.getApplicant().getName();
+        this.uid = dc.getApplicant().getId();
         this.dvalue = dc.getDvalue();
         this.cvalue = dc.getCvalue();
         this.dc = dc.getDc();

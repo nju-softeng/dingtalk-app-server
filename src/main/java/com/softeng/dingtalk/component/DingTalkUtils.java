@@ -13,7 +13,9 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author zhanyeye
@@ -134,6 +137,7 @@ public class DingTalkUtils {
         if (response.getResult().getDataList().size() == 0) {
             return new AsyncResult<>(Map.of("uid", uid));
         } else {
+            log.debug(response.getResult().getDataList().get(0).getContents().get(0).getValue());
             return new AsyncResult<>(Map.of("uid", uid,"contents", response.getResult().getDataList().get(0).getContents()));
         }
     }
@@ -144,7 +148,7 @@ public class DingTalkUtils {
      * @return java.util.Map
      * @Date 10:11 AM 1/30/2020
      **/
-    public Map getReport(String userid, LocalDateTime dateTime) {
+    public Map listReport(String userid, LocalDateTime dateTime) {
         //todo 注意配置公网IP
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
         OapiReportListRequest request = new OapiReportListRequest();
@@ -164,9 +168,40 @@ public class DingTalkUtils {
         if (response.getResult().getDataList().size() == 0) {
             return Map.of();
         } else {
-            return Map.of("contents", response.getResult().getDataList().get(0).getContents());
+            List<OapiReportListResponse.JsonObject> contents = response.getResult().getDataList().get(0).getContents().stream()
+                    .filter((item) -> !item.getValue().isEmpty())
+                    .collect(Collectors.toList());
+            return Map.of("contents", contents);
         }
     }
+
+
+    public Map getReport(String userid, LocalDate date) {
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
+        OapiReportListRequest request = new OapiReportListRequest();
+        request.setUserid(userid);
+        Long startTime = LocalDateTime.of(date, LocalTime.of(12,0)).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        request.setStartTime(startTime); //开始时间
+        request.setEndTime(startTime + TimeUnit.DAYS.toMillis(5));  //结束时间
+        request.setCursor(0L);
+        request.setSize(1L);
+        OapiReportListResponse response;
+        try {
+            response = client.execute(request, getAccessToken());
+        } catch (ApiException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
+        }
+        if (response.getResult().getDataList().size() == 0) { // 无数据
+            return Map.of();
+        } else {
+            List<OapiReportListResponse.JsonObject> contents = response.getResult().getDataList().get(0).getContents().stream()
+                    .filter((item) -> !item.getValue().isEmpty())
+                    .collect(Collectors.toList());
+            return Map.of("contents", contents);
+        }
+    }
+
+
 
 
     public void workrecord(String userid) {
