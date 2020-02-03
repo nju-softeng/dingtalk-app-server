@@ -1,11 +1,10 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
-import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.UserService;
 import com.softeng.dingtalk.vo.CheckedVO;
-import com.softeng.dingtalk.vo.ReviewVO;
+import com.softeng.dingtalk.vo.CheckVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,13 +62,13 @@ public class AuditController {
 
     /**
      * 审核员提交审核结果
-     * @param  reviewVO 审核结果信息
+     * @param  checkVO 审核结果信息
      * @return void
      * @date 9:35 AM 12/27/2019
      **/
     @PostMapping("/audit")
-    public void addAuditResult(@RequestBody ReviewVO reviewVO) {
-        auditService.addAuditResult(reviewVO); //持久化审核结果
+    public void addAuditResult(@RequestBody CheckVO checkVO) {
+        auditService.addAuditResult(checkVO); //持久化审核结果
     }
 
     /**

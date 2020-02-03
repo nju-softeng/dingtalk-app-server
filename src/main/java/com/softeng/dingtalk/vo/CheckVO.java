@@ -1,7 +1,6 @@
 package com.softeng.dingtalk.vo;
 
 import com.softeng.dingtalk.entity.AcItem;
-import com.softeng.dingtalk.entity.AcRecord;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,13 +9,13 @@ import java.util.List;
 
 /**
  * @author zhanyeye
- * @description
+ * @description 审核人提交的审核结果
  * @create 1/28/2020 8:49 AM
  */
 @Setter
 @Getter
 @AllArgsConstructor
-public class ReviewVO {
+public class CheckVO {
     private int id;
     private double cvalue;
     private double dc;

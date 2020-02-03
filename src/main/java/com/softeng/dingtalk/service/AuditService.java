@@ -6,13 +6,12 @@ import com.softeng.dingtalk.po.ReportApplicantPO;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.CheckedVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
-import com.softeng.dingtalk.vo.ReviewVO;
+import com.softeng.dingtalk.vo.CheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -73,22 +72,22 @@ public class AuditService {
 
     /**
      * 审核人提交的审核结果
-     * @param reviewVO
+     * @param checkVO
      * @return void
      * @Date 12:04 PM 1/28/2020
      **/
-    public void addAuditResult(ReviewVO reviewVO) {
-        DcRecord dc = dcRecordRepository.findById(reviewVO.getId()).get();
-        dc.update(reviewVO.getCvalue(), reviewVO.getDc(),reviewVO.getAc());
+    public void addAuditResult(CheckVO checkVO) {
+        DcRecord dc = dcRecordRepository.findById(checkVO.getId()).get();
+        dc.update(checkVO.getCvalue(), checkVO.getDc(), checkVO.getAc());
         dcRecordRepository.save(dc);
-        for (AcItem a : reviewVO.getAcItems()) {
+        for (AcItem a : checkVO.getAcItems()) {
             a.setDcRecord(dc); //前端传来的没有dcRecord属性
             if (a.isStatus()) {
                 AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, a));
                 a.setAcRecord(acRecord);
             }
         }
-        acItemRepository.saveAll(reviewVO.getAcItems());
+        acItemRepository.saveAll(checkVO.getAcItems());
         //更新DcSummary数据
         Double dcSum = dcRecordRepository.getUserWeekTotalDc(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
         DcSummary dcSummary = dcSummaryRepository.getDcSummary(dc.getApplicant().getId(), dc.getYearmonth());

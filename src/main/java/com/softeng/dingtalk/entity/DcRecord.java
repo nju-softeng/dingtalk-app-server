@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.entity;
 
-import com.softeng.dingtalk.vo.ApplicationVO;
+import com.softeng.dingtalk.vo.ApplingVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -67,7 +67,7 @@ public class DcRecord {
      * @return
      * @Date 3:43 PM 2/3/2020
      **/
-    public DcRecord(ApplicationVO application, int uid, int yearmonth, int week) {
+    public DcRecord(ApplingVO application, int uid, int yearmonth, int week) {
         this.applicant = new User(uid);
         this.auditor = new User(application.getAuditorid());
         this.dvalue = application.getDvalue();
