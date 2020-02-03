@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * @author zhanyeye
- * @description
+ * @description 审核人获取待审核申请数据
  * @create 1/19/2020 8:33 PM
  */
 @AllArgsConstructor

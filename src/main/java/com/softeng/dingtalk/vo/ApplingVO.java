@@ -10,16 +10,14 @@ import java.util.List;
 
 /**
  * @author zhanyeye
- * @description 申请人每周的提交的绩效申请，包含dvalue, 和 acItems
+ * @description 申请人每周的提交的绩效申请，包含dvalue, 和 acItems 等
  * @create 2/2/2020 2:17 PM
 */
 @Getter
 @Setter
-public class ApplicationVO {
+public class ApplingVO {
     private int auditorid;
     private LocalDate date;
-    private double dvalue;  // Dedication Value
-    private int yearmonth;  // 表示申请所属 年、月
-    private int week;       // 申请所属周
+    private double dvalue;
     private List<AcItem> acItems;     //ac值申请列表
 }

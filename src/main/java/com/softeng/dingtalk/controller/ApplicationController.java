@@ -7,7 +7,7 @@ import com.softeng.dingtalk.repository.DcSummaryRepository;
 import com.softeng.dingtalk.service.ApplicationService;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.UserService;
-import com.softeng.dingtalk.vo.ApplicationVO;
+import com.softeng.dingtalk.vo.ApplingVO;
 import com.softeng.dingtalk.vo.DcSummaryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -61,13 +60,13 @@ public class ApplicationController {
 
 
     /**
-     * @Description 用户提交申请
-     * @Param [applicationDTO] 包含 dcRecord, AcItems
+     * 用户提交申请
+     * @param uid, application
      * @return void
-     * @Date 7:01 PM 12/27/2019
+     * @Date 4:46 PM 2/3/2020
      **/
     @PostMapping("/application")
-    public void addApplication(@RequestAttribute int uid, @RequestBody ApplicationVO application) {
+    public void addApplication(@RequestAttribute int uid, @RequestBody ApplingVO application) {
         int[] result = utils.getTimeFlag(application.getDate()); //数组大小为2，result[0]: yearmonth, result[1] week
         DcRecord dc = new DcRecord(application, uid, result[0], result[1]);
 
@@ -76,6 +75,13 @@ public class ApplicationController {
         } else {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
         }
+    }
+
+
+    @PostMapping("/updateApplication")
+    public void updateApplication(@RequestAttribute int uid, @RequestBody ApplingVO application) {
+        int[] result = utils.getTimeFlag(application.getDate()); //数组大小为2，result[0]: yearmonth, result[1] week
+        DcRecord dc = new DcRecord(application, uid, result[0], result[1]);
     }
 
 

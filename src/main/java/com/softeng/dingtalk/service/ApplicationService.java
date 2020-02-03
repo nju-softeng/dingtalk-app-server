@@ -58,6 +58,9 @@ public class ApplicationService {
         acItemRepository.saveAll(acItems);
     }
 
+
+    //todo 更新申请
+
     /**
      * 获取指定用户的申请 ->  用于查看申请历史
      * @param uid, page
