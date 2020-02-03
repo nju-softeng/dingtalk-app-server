@@ -42,5 +42,4 @@ public class AcRecord {
         this.user = dcRecord.getApplicant();
         this.auditor = dcRecord.getAuditor();
     }
-
 }
