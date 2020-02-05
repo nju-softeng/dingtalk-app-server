@@ -41,6 +41,7 @@ public class AuditService {
     UserService userService;
 
 
+
     /**
      * 审核人更新绩效申请
      * @param checked
@@ -117,10 +118,9 @@ public class AuditService {
      * @Date 8:15 PM 1/28/2020
      **/
     public List<CheckedVO> listCheckVO(int uid) {
-        List<DcRecord> dcRecords = dcRecordRepository.listChecked(uid);
-        List<CheckedVO> checkedVOS = new ArrayList<>();
-        for (DcRecord dc : dcRecords) {
-            checkedVOS.add(new CheckedVO(dc, acItemRepository.findAllByDcRecordID(dc.getId())));
+        List<CheckedVO> checkedVOS = dcRecordRepository.listChecked(uid);
+        for (CheckedVO checked : checkedVOS) {
+            checked.setAcItems(acItemRepository.findAllByDcRecordID(checked.getId()));
         }
         return checkedVOS;
     }
@@ -132,7 +132,7 @@ public class AuditService {
      * @date 9:37 AM 12/27/2019
      **/
     public List<ToCheckVO> getPendingApplication(int uid) {
-        List<ToCheckVO> toCheckVOList = dcRecordRepository.listDcRecordVO(uid);
+        List<ToCheckVO> toCheckVOList = dcRecordRepository.listToCheckVO(uid);
         for (ToCheckVO toCheckVO : toCheckVOList) {
             toCheckVO.setAcItems(acItemRepository.findAllByDcRecordID(toCheckVO.getId()));
         }
