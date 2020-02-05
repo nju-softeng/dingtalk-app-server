@@ -4,6 +4,7 @@ import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.repository.DcRecordRepository;
+import com.softeng.dingtalk.vo.AppliedVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -69,9 +70,9 @@ public class ApplicationService {
      **/
     public Map getDcRecord(int uid, int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending()); //分页对象，每页10个
-        List<DcRecord> dcRecords =  dcRecordRepository.listByUid(uid, pageable);
+        List<AppliedVO> appliedVOS =  dcRecordRepository.listByUid(uid, pageable);
         int amount = dcRecordRepository.getCountByUid(uid);
-        return  Map.of("dcRecords", dcRecords, "amount", amount);
+        return  Map.of("dcRecords", appliedVOS, "amount", amount);
     }
 
 
