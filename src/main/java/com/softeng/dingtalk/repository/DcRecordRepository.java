@@ -2,6 +2,7 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.po.ReportApplicantPO;
+import com.softeng.dingtalk.vo.AppliedVO;
 import com.softeng.dingtalk.vo.CheckedVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
 import org.springframework.data.domain.Pageable;
@@ -84,9 +85,9 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @Date 4:28 PM 12/30/2019
      *
      **/
-    @Query("select new com.softeng.dingtalk.vo.AppliedVO(d.id, d.auditor.id, d.auditor.name, d.ischeck, d.dvalue, d.dc, d.ac, d.weekdate, d.insertTime) " +
+    @Query("select new com.softeng.dingtalk.vo.AppliedVO(d.id, d.auditor.id, d.auditor.name, d.ischeck, d.dvalue, d.dc, d.ac, d.yearmonth, d.week, d.weekdate, d.insertTime) " +
             "from DcRecord d where d.applicant.id = :uid")
-    List<DcRecord> listByUid(@Param("uid") int uid, Pageable pageable);
+    List<AppliedVO> listByUid(@Param("uid") int uid, Pageable pageable);
 
 
     /**
