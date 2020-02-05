@@ -19,7 +19,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 public class AcItem {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
