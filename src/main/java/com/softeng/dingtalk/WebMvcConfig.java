@@ -20,7 +20,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/login")
-                .excludePathPatterns("/api/login_test/**");
+                .excludePathPatterns("/api/login_test/**")
+                .excludePathPatterns("/websocket");
         //todo 添加测试用登陆白名单
     }
 }
