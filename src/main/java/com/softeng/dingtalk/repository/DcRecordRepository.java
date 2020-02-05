@@ -2,6 +2,7 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.po.ReportApplicantPO;
+import com.softeng.dingtalk.vo.CheckedVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,8 +29,9 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @return java.util.List<com.softeng.dingtalk.entity.DcRecord>
      * @Date 7:49 PM 1/28/2020
      **/
-    @Query("select d from DcRecord d where d.auditor.id = :uid and d.ischeck = true")
-    List<DcRecord> listChecked(@Param("uid")int uid);
+    @Query("select new com.softeng.dingtalk.vo.CheckedVO(d.id, d.applicant.name, d.applicant.id, d.dvalue, d.cvalue, d.dc, d.ac, d.yearmonth, d.week, d.insertTime) " +
+            "from DcRecord d where d.auditor.id = :uid and d.ischeck = true")
+    List<CheckedVO> listChecked(@Param("uid")int uid);
 
 
     /**
@@ -49,7 +51,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @Date 8:18 PM 1/19/2020
      **/
     @Query("select new com.softeng.dingtalk.vo.ToCheckVO(d.id, d.applicant.id, d.applicant.name, d.dvalue, d.yearmonth, d.week, d.insertTime) from DcRecord d where d.auditor.id = :uid and d.ischeck = false")
-    List<ToCheckVO> listDcRecordVO(@Param("uid") int uid);
+    List<ToCheckVO> listToCheckVO(@Param("uid") int uid);
 
 
     /**
@@ -80,8 +82,10 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @param pageable
      * @return java.util.List<com.softeng.dingtalk.entity.DcRecord>
      * @Date 4:28 PM 12/30/2019
+     *
      **/
-    @Query("select d from DcRecord d where d.applicant.id = :uid")
+    @Query("select new com.softeng.dingtalk.vo.AppliedVO(d.id, d.auditor.id, d.auditor.name, d.ischeck, d.dvalue, d.dc, d.ac, d.weekdate, d.insertTime) " +
+            "from DcRecord d where d.applicant.id = :uid")
     List<DcRecord> listByUid(@Param("uid") int uid, Pageable pageable);
 
 

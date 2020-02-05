@@ -32,10 +32,6 @@ public class AuditController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/test")
-    public void test(@RequestBody LocalDate date) {
-        log.debug(date.toString());
-    }
 
     /**
      * 审核人更新审核记录
@@ -50,6 +46,18 @@ public class AuditController {
     }
 
     /**
+     * 审核人获取待审核的申请
+     * @param uid
+     * @return java.util.List<com.softeng.dingtalk.dto.ApplicationInfo>
+     * @Date 10:06 AM 12/28/2019
+     **/
+    @GetMapping("/pending_audit")
+    public List<ToCheckVO> getAuditApplication(@RequestAttribute int uid) {
+        log.debug("/pending_audit uid:" + uid);
+        return auditService.getPendingApplication(uid);
+    }
+
+    /**
      * 审核人获取已经审核的申请
      * @param uid
      * @return java.util.List<com.softeng.dingtalk.vo.CheckedVO>
@@ -57,6 +65,7 @@ public class AuditController {
      **/
     @GetMapping("/checked")
     public List<CheckedVO> listChecked(@RequestAttribute int uid) {
+        log.debug("/checked uid:" + uid );
         return auditService.listCheckVO(uid);
     }
 
@@ -68,24 +77,19 @@ public class AuditController {
      **/
     @PostMapping("/audit")
     public void addAuditResult(@RequestBody CheckVO checkVO) {
+        log.debug("/audit" );
         auditService.addAuditResult(checkVO); //持久化审核结果
     }
 
     /**
-     * 审核人获取待审核的申请
+     * 异步获取周报多个
      * @param uid
-     * @return java.util.List<com.softeng.dingtalk.dto.ApplicationInfo>
-     * @Date 10:06 AM 12/28/2019
+     * @return java.util.List<java.lang.Object>
+     * @Date 9:11 PM 2/4/2020
      **/
-    @GetMapping("/pending_audit")
-    public List<ToCheckVO> getAuditApplication(@RequestAttribute int uid) {
-        log.debug("/pending_audit" + uid);
-        return auditService.getPendingApplication(uid);
-    }
-
-
     @GetMapping("/getreportlist")
     public List<Object> getReportList(@RequestAttribute int uid) {
+        log.debug("/getreportlist uid:" + uid);
         try {
             return auditService.AsyncGetReport(uid);
         } catch (Exception e) {
@@ -93,6 +97,12 @@ public class AuditController {
         }
     }
 
+    /**
+     * 根据uid和时间获取周报
+     * @param uid, date
+     * @return java.util.Map
+     * @Date 9:12 PM 2/4/2020
+     **/
     @PostMapping("/getreport/{uid}")
     public Map getReport(@PathVariable int uid, @RequestBody LocalDate date) {
         String userid = userService.getUserid(uid);

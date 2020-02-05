@@ -32,17 +32,20 @@ public class CheckedVO {
     private LocalDateTime insertTime;
     private List<AcItem> acItems;
 
-    public CheckedVO(DcRecord dc, List<AcItem> acItems) {
-        this.id = dc.getId();
-        this.name = dc.getApplicant().getName();
-        this.uid = dc.getApplicant().getId();
-        this.dvalue = dc.getDvalue();
-        this.cvalue = dc.getCvalue();
-        this.dc = dc.getDc();
-        this.ac = dc.getAc();
-        this.yearmonth = dc.getYearmonth();
-        this.week = dc.getWeek();
-        this.insertTime = dc.getInsertTime();
-        this.acItems = acItems;
+
+
+    public CheckedVO(int id, String name, int uid, double dvalue, double cvalue, double dc, double ac, int yearmonth, int week, LocalDateTime insertTime) {
+        this.id = id;
+        this.name = name;
+        this.uid = uid;
+        this.dvalue = dvalue;
+        this.cvalue = cvalue;
+        this.dc = dc;
+        this.ac = ac;
+        this.yearmonth = yearmonth;
+        this.week = week;
+        this.insertTime = insertTime;
     }
+
+
 }

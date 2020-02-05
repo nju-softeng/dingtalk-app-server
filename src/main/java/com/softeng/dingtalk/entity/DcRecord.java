@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softeng.dingtalk.vo.ApplingVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author zhanyeye
@@ -39,6 +41,7 @@ public class DcRecord {
     private User applicant;
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
+
 
     public void update(double cvalue, double dc, double ac) {
         this.cvalue = cvalue;

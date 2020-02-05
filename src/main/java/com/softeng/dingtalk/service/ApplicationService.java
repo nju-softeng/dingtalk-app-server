@@ -75,7 +75,9 @@ public class ApplicationService {
     }
 
 
+    public void listApplied(int uid, int page) {
 
+    }
 
 
 }

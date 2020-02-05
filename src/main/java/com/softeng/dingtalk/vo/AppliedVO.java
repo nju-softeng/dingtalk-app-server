@@ -3,6 +3,7 @@ package com.softeng.dingtalk.vo;
 import com.softeng.dingtalk.entity.AcItem;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -12,9 +13,25 @@ import java.util.List;
  */
 public class AppliedVO {
     private int id;
-    private boolean status;
     private int auditorid;
-    private LocalDate date;
+    private String auditorName;
+    private boolean status;
     private double dvalue;
+    private double dc;
+    private double ac;
+    private LocalDate date;
+    private LocalDateTime insertTime;
     private List<AcItem> acItems;     //ac值申请列表
+
+    public AppliedVO(int id, int auditorid, String auditorName, boolean status, double dvalue, double dc, double ac, LocalDate date, LocalDateTime insertTime) {
+        this.id = id;
+        this.auditorid = auditorid;
+        this.auditorName = auditorName;
+        this.status = status;
+        this.dvalue = dvalue;
+        this.dc = dc;
+        this.ac = ac;
+        this.date = date;
+        this.insertTime = insertTime;
+    }
 }
