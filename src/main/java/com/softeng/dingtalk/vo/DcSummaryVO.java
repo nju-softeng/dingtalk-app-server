@@ -15,5 +15,10 @@ import lombok.Setter;
 @Setter
 public class DcSummaryVO {
     private String name;
-    private DcSummary dcSummary;
+    private int yearmonth;
+    private double week1;
+    private double week2;
+    private double week3;
+    private double week4;
+    private double week5;
 }

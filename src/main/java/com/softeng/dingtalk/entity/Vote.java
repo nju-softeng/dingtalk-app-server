@@ -22,6 +22,7 @@ public class Vote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @OneToOne
+    @JoinColumn(unique = true)
     private Paper paper;
     private LocalDateTime createTime;
     private LocalDateTime expiryTime;
