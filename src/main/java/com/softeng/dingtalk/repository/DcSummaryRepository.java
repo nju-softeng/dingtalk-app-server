@@ -26,7 +26,7 @@ public interface DcSummaryRepository extends JpaRepository<DcSummary, Integer> {
     @Query("select  d from DcSummary d where d.user.id = :uid and d.yearmonth = :yearmonth")
     DcSummary getDcSummary(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
 
-    @Query("select new com.softeng.dingtalk.vo.DcSummaryVO(d.user.name, d) from DcSummary d where d.yearmonth = :yearmonth")
+    @Query("select new com.softeng.dingtalk.vo.DcSummaryVO(d.user.name, d.yearmonth, d.week1, d.week2, d.week3, d.week4, d.week5) from DcSummary d where d.yearmonth = :yearmonth")
     List<DcSummaryVO> listDcSummary(@Param("yearmonth") int yearmonth);
 
 
