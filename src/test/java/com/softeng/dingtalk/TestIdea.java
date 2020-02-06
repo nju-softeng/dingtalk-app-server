@@ -38,7 +38,7 @@ import java.util.concurrent.Future;
  * @create 12/29/2019 10:49 AM
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
 @Transactional
 public class TestIdea {
@@ -56,8 +56,7 @@ public class TestIdea {
 
     @Test
     public void test_sync() throws ExecutionException, InterruptedException {
-        DcRecord dcRecord = dcRecordRepository.findById(2).get();
-        acItemRepository.deleteByDcRecord(dcRecord);
+        log.debug(LocalTime.now()+ "");
     }
 
 
