@@ -35,6 +35,20 @@ import java.util.stream.Collectors;
 public class DingTalkUtils {
     private static final String APP_KEY = "dingk9nmede0wzi7aywt";
     private static final String APP_SECRET = "nh3mY7PPMAne3aDEpyANGjKlQIFLBkPQ0npYUnOELNVSJFuKST-ngsrfMK2sZiB9";
+    private static final String TEAM_ID = "BYQN3886";
+
+    private static String accessToken;
+
+    /**
+     * 获取并保存 access_token
+     * @param
+     * @return void
+     * @Date 4:04 PM 2/6/2020
+     **/
+    private void setAccessToken() {
+        accessToken = getAccessToken();
+    }
+
 
 
     /**
@@ -54,13 +68,12 @@ public class DingTalkUtils {
             token = response.getAccessToken();
         } catch (ApiException e) {
             log.error("getAccessToken failed", e);
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "DingtalkUtils 获取accesstoken失败");
         }
         return token;
     }
 
 
-    //todo 每次都要调用getAccessToken()，后续修改
     /**
      * 获得userid : 通过 access_token 和 requestAuthcode；在内部调用了getAccessToken()，不用传参
      * @param requestAuthCode
@@ -74,14 +87,14 @@ public class DingTalkUtils {
         request.setCode(requestAuthCode);
         request.setHttpMethod("GET");
         try {
-            OapiUserGetuserinfoResponse response = client.execute(request, getAccessToken());
+            OapiUserGetuserinfoResponse response = client.execute(request, accessToken);
+            if (!response.isSuccess()) {
+                accessToken = getAccessToken();
+                response = client.execute(request, accessToken);
+            }
             userId = response.getUserid();
         } catch (ApiException e) {
-            log.debug("getUserId failed", e);
-            throw new RuntimeException();
-        }
-        if (userId == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "code 过期");
+            e.printStackTrace();
         }
         return userId;
     }
@@ -99,7 +112,11 @@ public class DingTalkUtils {
         request.setHttpMethod("GET");
         OapiUserGetResponse response;
         try {
-            response = client.execute(request, getAccessToken());
+            response = client.execute(request, accessToken);
+            if (!response.isSuccess()) {
+                setAccessToken();
+                response = client.execute(request, accessToken);
+            }
         } catch (ApiException e) {
             log.error("getUserDetail fail", e);
             throw new RuntimeException();
@@ -129,7 +146,11 @@ public class DingTalkUtils {
         request.setSize(1L);
         OapiReportListResponse response;
         try {
-            response = client.execute(request, getAccessToken());
+            response = client.execute(request, accessToken);
+            if (!response.isSuccess()) {
+                setAccessToken();
+                response = client.execute(request, accessToken);
+            }
         } catch (ApiException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
         }
@@ -156,7 +177,11 @@ public class DingTalkUtils {
         request.setSize(1L);
         OapiReportListResponse response;
         try {
-            response = client.execute(request, getAccessToken());
+            response = client.execute(request, accessToken);
+            if (!response.isSuccess()) {
+                setAccessToken();
+                response = client.execute(request, accessToken);
+            }
         } catch (ApiException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
         }
@@ -170,8 +195,26 @@ public class DingTalkUtils {
         }
     }
 
+    //获取整个部门的userid
+    public List<String> listUserId() {
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/getDeptMember");
+        OapiUserGetDeptMemberRequest req = new OapiUserGetDeptMemberRequest();
+        req.setDeptId(TEAM_ID);
+        req.setHttpMethod("GET");
+        OapiUserGetDeptMemberResponse response;
+        try {
+            response = client.execute(req, accessToken);
+            if(!response.isSuccess()) {
+                setAccessToken();
+                response = client.execute(req, accessToken);
+            }
+        } catch (ApiException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取getUserIds失败");
+        }
 
-    
+        return response.getUserIds();
+    }
+
 
     public void workrecord(String userid) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/workrecord/add");
