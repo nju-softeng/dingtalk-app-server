@@ -38,6 +38,7 @@ public class LoginController {
 
     @GetMapping("/login_test/{uid}")
     public void testlogin(@PathVariable int uid, HttpServletResponse response) {
+        log.debug("测试登陆" + uid);
         Map map = Map.of("uid", uid, "authorityid", User.USER_AUTHORITY);
         // 生成加密token
         String token = encryptorComponent.encrypt(map);
