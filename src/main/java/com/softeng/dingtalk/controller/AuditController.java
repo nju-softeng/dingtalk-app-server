@@ -77,6 +77,7 @@ public class AuditController {
      **/
     @PostMapping("/audit")
     public void addAuditResult(@RequestBody CheckVO checkVO) {
+        log.debug(checkVO.toString());
         log.debug("/audit" );
         auditService.addAuditResult(checkVO); //持久化审核结果
     }
@@ -104,9 +105,9 @@ public class AuditController {
      * @Date 9:12 PM 2/4/2020
      **/
     @PostMapping("/getreport/{uid}")
-    public Map getReport(@PathVariable int uid, @RequestBody LocalDate date) {
+    public Map getReport(@PathVariable int uid, @RequestBody Map<String, LocalDate> map) {
         String userid = userService.getUserid(uid);
-        return dingTalkUtils.getReport(userid, date);
+        return dingTalkUtils.getReport(userid, map.get("date"));
     }
 
 }

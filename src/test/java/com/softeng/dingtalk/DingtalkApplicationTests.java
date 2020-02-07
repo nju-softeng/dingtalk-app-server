@@ -19,7 +19,6 @@ class DingtalkApplicationTests {
     @Test
     public void test() {
 
-        dingTalkUtils.listUserId();
     }
 
 }

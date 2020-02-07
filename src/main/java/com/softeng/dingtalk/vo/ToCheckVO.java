@@ -26,8 +26,9 @@ public class ToCheckVO {
     private int week;       // 申请所属周
     private LocalDateTime insertTime;
     List<AcItem> acItems;
+    private LocalDate weekdate;
 
-    public ToCheckVO(int id, int uid, String name, double dvalue, int yearmonth, int week, LocalDateTime insertTime) {
+    public ToCheckVO(int id, int uid, String name, double dvalue, int yearmonth, int week, LocalDateTime insertTime, LocalDate weekdate) {
         this.id = id;
         this.uid = uid;
         this.name = name;
@@ -35,5 +36,6 @@ public class ToCheckVO {
         this.yearmonth = yearmonth;
         this.week = week;
         this.insertTime = insertTime;
+        this.weekdate = weekdate;
     }
 }

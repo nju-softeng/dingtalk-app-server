@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -17,5 +18,5 @@ import java.time.LocalDateTime;
 public class ReportApplicantPO {
     private String userid;
     private int uid;
-    private LocalDateTime insertTime;
+    private LocalDate date;
 }
