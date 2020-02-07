@@ -200,13 +200,14 @@ public class DingTalkUtils {
     public List<String> listUserId() {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/getDeptMember");
         OapiUserGetDeptMemberRequest req = new OapiUserGetDeptMemberRequest();
-        req.setDeptId(TEAM_ID);
+        req.setDeptId("1");
         req.setHttpMethod("GET");
         OapiUserGetDeptMemberResponse response;
         try {
             response = client.execute(req, accessToken);
             if(!response.isSuccess()) {
                 setAccessToken();
+                log.debug("????");
                 response = client.execute(req, accessToken);
             }
         } catch (ApiException e) {
