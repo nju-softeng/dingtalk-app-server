@@ -2,9 +2,12 @@ package com.softeng.dingtalk;
 
 import com.softeng.dingtalk.interceptor.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
+
 /**
  * @author zhanyeye
  * @description
@@ -24,4 +27,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/websocket");
         //todo 添加测试用登陆白名单
     }
+
+    //webSocket
+    @Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
+    }
+
 }
