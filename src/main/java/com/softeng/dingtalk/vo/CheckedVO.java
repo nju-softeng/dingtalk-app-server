@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,11 +31,12 @@ public class CheckedVO {
     private int yearmonth;  // 表示申请所属 年、月
     private int week;
     private LocalDateTime insertTime;
+    private LocalDate weekdate;
     private List<AcItem> acItems;
 
 
 
-    public CheckedVO(int id, String name, int uid, double dvalue, double cvalue, double dc, double ac, int yearmonth, int week, LocalDateTime insertTime) {
+    public CheckedVO(int id, String name, int uid, double dvalue, double cvalue, double dc, double ac, int yearmonth, int week, LocalDateTime insertTime, LocalDate weekdate) {
         this.id = id;
         this.name = name;
         this.uid = uid;
@@ -45,6 +47,7 @@ public class CheckedVO {
         this.yearmonth = yearmonth;
         this.week = week;
         this.insertTime = insertTime;
+        this.weekdate = weekdate;
     }
 
 

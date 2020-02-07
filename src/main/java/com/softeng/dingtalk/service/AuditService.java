@@ -150,7 +150,7 @@ public class AuditService {
         List<ReportApplicantPO> reportApplicantPOS = dcRecordRepository.listUserCode(uid);
         List<Future<Map>> futures = new ArrayList<>();
         for (ReportApplicantPO u : reportApplicantPOS) {
-            futures.add(dingTalkUtils.getReports(u.getUserid(), u.getInsertTime(), u.getUid()));
+            futures.add(dingTalkUtils.getReports(u.getUserid(), u.getDate(), u.getUid()));
         }
         List<Object> result = new ArrayList<>();
         for (Future future : futures) {
