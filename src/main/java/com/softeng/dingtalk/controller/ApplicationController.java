@@ -2,7 +2,9 @@ package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
+import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
+import com.softeng.dingtalk.projection.DcRecordProjection;
 import com.softeng.dingtalk.repository.DcSummaryRepository;
 import com.softeng.dingtalk.service.ApplicationService;
 import com.softeng.dingtalk.service.AuditService;
@@ -67,6 +69,7 @@ public class ApplicationController {
      **/
     @PostMapping("/application")
     public void addApplication(@RequestAttribute int uid, @RequestBody ApplingVO application) {
+        log.debug(application.getDate().toString());
         int[] result = utils.getTimeFlag(application.getDate()); //数组大小为2，result[0]: yearmonth, result[1] week
         DcRecord dc = new DcRecord(application, uid, result[0], result[1]);
 
@@ -78,7 +81,7 @@ public class ApplicationController {
     }
 
 
-    @PostMapping("/updateApplication")
+    @PostMapping("/application/update")
     public void updateApplication(@RequestAttribute int uid, @RequestBody ApplingVO application) {
         int[] result = utils.getTimeFlag(application.getDate()); //数组大小为2，result[0]: yearmonth, result[1] week
         DcRecord dc = new DcRecord(application, uid, result[0], result[1]);
@@ -86,16 +89,22 @@ public class ApplicationController {
 
 
     /**
-     * @Description 用户分页查询已提交的申请
-     * @Param [uid, page]
+     * 用户分页查询已提交的申请
+     * @param uid, page
      * @return java.util.Map
-     * @Date 7:00 PM 12/27/2019
+     * @Date 1:50 PM 2/10/2020
      **/
-    @GetMapping("/application/{uid}/page={page}")
-    public Map getUserApplication(@RequestAttribute int uid, @PathVariable int page) {
-        return applicationService.getDcRecord(uid, page);
-        // todo 是否要包含AcItem
+    @GetMapping("/application/{uid}/page/{page}")
+    public Map getUserApplication(@PathVariable int uid, @PathVariable int page) {
+        return applicationService.listDcRecord(uid, page);
     }
 
+
+
+
+    @GetMapping("/application/{id}")
+    public List<AcItem> listAcItems(@PathVariable int id) {
+        return applicationService.listAcItemBydcid(id);
+    }
 
 }

@@ -1,10 +1,12 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.service.UserService;
+import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,5 +37,10 @@ public class UserController {
     @GetMapping("/user/getAuditors")
     public Map getAuditors() {
         return userService.getAuditorUser();
+    }
+
+    @GetMapping("/userlist")
+    public List<UserVO> listusers() {
+        return userService.listUserVO();
     }
 }

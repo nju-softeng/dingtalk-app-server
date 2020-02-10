@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +27,7 @@ public class AcItem {
     private String reason;
     private boolean status;
     @JsonIgnore
+    @JsonIgnoreProperties("acItems")
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
     private DcRecord dcRecord;  //ac申请属于的周绩效申请
     @JsonIgnore

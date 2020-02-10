@@ -5,6 +5,7 @@ import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.DcRecordRepository;
 import com.softeng.dingtalk.repository.UserRepository;
 import com.softeng.dingtalk.service.AuditService;
+import com.softeng.dingtalk.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +33,14 @@ public class InitDatabase {
     DcRecordRepository dcRecordRepository;
     @Autowired
     AuditService auditService;
+    @Autowired
+    UserService userService;
+
+
+    @Test
+    public void fetchUsrs() {
+        userService.fetchUsers();
+    }
 
     @Test
     public void init() {

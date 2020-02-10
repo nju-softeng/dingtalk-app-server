@@ -2,6 +2,7 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
+import com.softeng.dingtalk.projection.DcRecordProjection;
 import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.repository.DcRecordRepository;
 import com.softeng.dingtalk.vo.AppliedVO;
@@ -60,7 +61,23 @@ public class ApplicationService {
     }
 
 
-    //todo 更新申请
+
+
+
+    public Map listDcRecord(int uid, int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
+        List<Integer> ids = dcRecordRepository.listIdByUid(uid, pageable);
+        if (ids.size() != 0) {
+            return Map.of("list", dcRecordRepository.findAllById(ids), "total", dcRecordRepository.getCountByUid(uid));
+        } else {
+            return Map.of("total", 0);
+        }
+
+
+    }
+
+
+
 
     /**
      * 获取指定用户的申请 ->  用于查看申请历史
@@ -76,8 +93,8 @@ public class ApplicationService {
     }
 
 
-    public void listApplied(int uid, int page) {
-
+    public List<AcItem> listAcItemBydcid(int id) {
+        return acItemRepository.findAllByDcRecordID(id);
     }
 
 

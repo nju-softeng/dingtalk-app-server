@@ -27,6 +27,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @JsonIgnore
     @Column(unique = true)
     private String userid;    //钉钉用户userID
     private String name;      //用户姓名
@@ -35,6 +36,7 @@ public class User {
     private String degree;    //学位
     private int authority = USER_AUTHORITY;  //用户权限
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    @JsonIgnore
     private LocalDateTime insertTime;  //插入时间
 
 

@@ -1,13 +1,16 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +27,12 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private AcRecordRepository acRecordRepository;
+    @Autowired
+    private DingTalkUtils dingTalkUtils;
+
+    public List<UserVO> listUserVO() {
+        return userRepository.listUserVOS();
+    }
 
     //获取用户的userID -> 从钉钉API获取用户信息时，要根据userID获取  （获取周报）
     public String getUserid(int id) {
@@ -58,5 +67,18 @@ public class UserService {
         log.debug(ac + "?");
         return Map.of("name", u.getName(), "avatar", u.getAvatar(), "ac",ac);
     }
+
+    public void fetchUsers() {
+
+        List<String> remoteUserids = dingTalkUtils.listUserId();
+        List<String> localUserids = userRepository.listAllUserid();
+        remoteUserids.removeAll(localUserids);
+        List<User> users = new ArrayList<>();
+        for (String userid : remoteUserids) {
+            users.add(dingTalkUtils.getNewUser(userid));
+        }
+        userRepository.saveAll(users);
+    }
+
 
 }
