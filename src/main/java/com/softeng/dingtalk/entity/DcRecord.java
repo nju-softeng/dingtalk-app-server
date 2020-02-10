@@ -1,11 +1,10 @@
 package com.softeng.dingtalk.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.softeng.dingtalk.vo.ApplingVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -21,6 +20,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@NamedEntityGraph(name="dcRecord.graph",attributeNodes={@NamedAttributeNode("acItems")})
 public class DcRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class DcRecord {
     private double cvalue;  // Contribution Value
     private double dc;
     private double ac;
-    private boolean ischeck;   // 是否被审核
+    private boolean status;   // 是否被审核
     private int yearmonth;     // 表示申请所属 年、月
     private int week;          // 申请所属周
     private LocalDate weekdate; //所属周的一天
@@ -43,12 +43,17 @@ public class DcRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 
+    @JsonIgnoreProperties("dcRecord")
+    @OneToMany(mappedBy = "dcRecord")
+    private List<AcItem> acItems;
+
+
 
     public void update(double cvalue, double dc, double ac) {
         this.cvalue = cvalue;
         this.dc = dc;
         this.ac = ac;
-        this.ischeck = true;
+        this.status = true;
     }
 
     /**
@@ -80,6 +85,5 @@ public class DcRecord {
         this.week = week;
 
     }
-
 
 }

@@ -28,7 +28,7 @@ public class PaperDetail {
     @JsonIgnoreProperties("paperDetails")
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
     private Paper paper;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private User user;
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)

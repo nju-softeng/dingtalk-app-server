@@ -6,6 +6,13 @@
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
+
+GET http://localhost:8080/api/apptest/1
+token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
+
+###
+
+
 GET http://localhost:8080/api/dcsummary/202001
 token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
 
@@ -66,7 +73,7 @@ Content-Type: application/json
 ###
 
 # 分页获取指定用户的申请
-GET http://localhost:8080/api/application/5/page=1
+GET http://localhost:8080/api/application/1/page/0
 token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555fcc4b851acd295d64de7d1fb
 Content-Type: application/json
 

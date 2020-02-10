@@ -4,6 +4,7 @@ import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.PaperDetail;
+import com.softeng.dingtalk.projection.PaperProjection;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.PaperDetailRepository;
 
@@ -106,7 +107,10 @@ public class PaperService {
         return paperRepository.listPaperlist();
     }
 
-
+    public List<PaperProjection> test() {
+        List<PaperProjection> paperProjections = paperRepository.findPaperBy();
+        return paperProjections;
+    }
 
 
 }

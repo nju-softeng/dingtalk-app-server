@@ -19,7 +19,7 @@ public class AppliedVO {
     private int id;
     private int auditorid;
     private String auditorName;
-    private boolean status;
+    private Boolean status;
     private double dvalue;
     private double dc;
     private double ac;
@@ -29,7 +29,7 @@ public class AppliedVO {
     private LocalDateTime insertTime;
     private List<AcItem> acItems;     //ac值申请列表
 
-    public AppliedVO(int id, int auditorid, String auditorName, boolean status, double dvalue, double dc, double ac, int yearmonth, int week, LocalDate date, LocalDateTime insertTime) {
+    public AppliedVO(int id, int auditorid, String auditorName, Boolean status, double dvalue, double dc, double ac, int yearmonth, int week, LocalDate date, LocalDateTime insertTime) {
         this.id = id;
         this.auditorid = auditorid;
         this.auditorName = auditorName;

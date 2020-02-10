@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.entity.Paper;
+import com.softeng.dingtalk.projection.PaperProjection;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +54,10 @@ public class PaperController {
 
 
 
-
+    @GetMapping("/papertest")
+    public List<PaperProjection> func() {
+        return paperService.test();
+    }
 
 
 

@@ -2,14 +2,17 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.po.ReportApplicantPO;
+import com.softeng.dingtalk.projection.DcRecordProjection;
 import com.softeng.dingtalk.vo.AppliedVO;
 import com.softeng.dingtalk.vo.CheckedVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.PathVariable;
 
 
 import java.util.List;
@@ -25,13 +28,34 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
 
 
     /**
+     * 更具分页查出的id去查询
+     * @param id, pageable
+     * @return java.util.List<com.softeng.dingtalk.projection.DcRecordProjection>
+     * @Date 1:30 PM 2/10/2020
+     **/
+    @EntityGraph(value="dcRecord.graph",type= EntityGraph.EntityGraphType.FETCH)
+    @Query("select d from DcRecord d where d.id in :ids")
+    List<DcRecordProjection> findAllById(List<Integer> ids);
+
+
+    /**
+     * 分页查询出申请者的申请id
+     * @param uid, pageable
+     * @return java.util.List<java.lang.Integer>
+     * @Date 3:08 PM 2/10/2020
+     **/
+    @Query("select d.id from DcRecord d where d.applicant.id = :uid")
+    List<Integer> listIdByUid(@Param("uid") int uid, Pageable pageable);
+
+
+    /**
      * 根据审核人的id获取已经审核的申请
      * @param uid
      * @return java.util.List<com.softeng.dingtalk.entity.DcRecord>
      * @Date 7:49 PM 1/28/2020
      **/
     @Query("select new com.softeng.dingtalk.vo.CheckedVO(d.id, d.applicant.name, d.applicant.id, d.dvalue, d.cvalue, d.dc, d.ac, d.yearmonth, d.week, d.insertTime, d.weekdate) " +
-            "from DcRecord d where d.auditor.id = :uid and d.ischeck = true")
+            "from DcRecord d where d.auditor.id = :uid and d.status = true")
     List<CheckedVO> listChecked(@Param("uid")int uid);
 
 
@@ -41,7 +65,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @return java.util.List<java.lang.String>
      * @Date 11:11 AM 1/23/2020
      **/
-    @Query("select new com.softeng.dingtalk.po.ReportApplicantPO(d.applicant.userid, d.applicant.id, d.weekdate) from DcRecord d where d.auditor.id = :uid and d.ischeck = false")
+    @Query("select new com.softeng.dingtalk.po.ReportApplicantPO(d.applicant.userid, d.applicant.id, d.weekdate) from DcRecord d where d.auditor.id = :uid and d.status = false")
     List<ReportApplicantPO> listUserCode(int uid);
 
 
@@ -51,7 +75,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @return java.util.List<com.softeng.dingtalk.vo.ApplicationVO>
      * @Date 8:18 PM 1/19/2020
      **/
-    @Query("select new com.softeng.dingtalk.vo.ToCheckVO(d.id, d.applicant.id, d.applicant.name, d.dvalue, d.yearmonth, d.week, d.insertTime, d.weekdate) from DcRecord d where d.auditor.id = :uid and d.ischeck = false")
+    @Query("select new com.softeng.dingtalk.vo.ToCheckVO(d.id, d.applicant.id, d.applicant.name, d.dvalue, d.yearmonth, d.week, d.insertTime, d.weekdate) from DcRecord d where d.auditor.id = :uid and d.status = false")
     List<ToCheckVO> listToCheckVO(@Param("uid") int uid);
 
 
@@ -85,7 +109,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @Date 4:28 PM 12/30/2019
      *
      **/
-    @Query("select new com.softeng.dingtalk.vo.AppliedVO(d.id, d.auditor.id, d.auditor.name, d.ischeck, d.dvalue, d.dc, d.ac, d.yearmonth, d.week, d.weekdate, d.insertTime) " +
+    @Query("select new com.softeng.dingtalk.vo.AppliedVO(d.id, d.auditor.id, d.auditor.name, d.status, d.dvalue, d.dc, d.ac, d.yearmonth, d.week, d.weekdate, d.insertTime) " +
             "from DcRecord d where d.applicant.id = :uid")
     List<AppliedVO> listByUid(@Param("uid") int uid, Pageable pageable);
 

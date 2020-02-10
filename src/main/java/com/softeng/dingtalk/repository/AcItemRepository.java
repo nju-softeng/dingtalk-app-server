@@ -26,4 +26,5 @@ public interface AcItemRepository extends JpaRepository<AcItem, Integer> {
      * @Date 4:22 PM 2/1/2020
      **/
     void deleteByDcRecord(DcRecord dcRecord);
+
 }

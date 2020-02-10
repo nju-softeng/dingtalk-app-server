@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Paper;
+import com.softeng.dingtalk.projection.PaperProjection;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -24,5 +25,8 @@ public interface PaperRepository extends JpaRepository<Paper, Integer> {
     @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
     @Query("select p from Paper p")
     List<Paper> listPaperlist();
+
+    @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
+    List<PaperProjection> findPaperBy();
 
 }

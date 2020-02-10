@@ -217,6 +217,25 @@ public class DingTalkUtils {
         return response.getUserIds();
     }
 
+//    public Map gettest() {
+//        DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/get_jsapi_ticket");
+//        OapiGetJsapiTicketRequest req = new OapiGetJsapiTicketRequest();
+//        req.setTopHttpMethod("GET");
+//        OapiGetJsapiTicketResponse response;
+//        try {
+//            response = client.execute(req, accessToken);
+//            if(!response.isSuccess()) {
+//                setAccessToken();
+//                response = client.execute(req, accessToken);
+//            }
+//        } catch (ApiException e) {
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取jsapi_ticket失败");
+//        }
+//
+//        return Map.of("agentId", "", "corpId", "", "timeStamp", "", "nonceStr", "", "signature", "");
+//    }
+
+
 
     public void workrecord(String userid) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/workrecord/add");

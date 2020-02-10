@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.vo.UserVO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,5 +32,10 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     @Query(value = "select id, name from user where authority = 1", nativeQuery = true)
     List<Map<String, Object>> listAuditor();
 
+    @Query("select new com.softeng.dingtalk.vo.UserVO(u.id, u.name) from User u")
+    List<UserVO> listUserVOS();
+
+    @Query("select u.userid from User u")
+    List<String> listAllUserid();
 
 }

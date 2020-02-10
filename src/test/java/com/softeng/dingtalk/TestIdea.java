@@ -4,9 +4,12 @@ import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
+import com.softeng.dingtalk.entity.Paper;
+import com.softeng.dingtalk.projection.PaperProjection;
 import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.DcRecordRepository;
+import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -40,7 +43,6 @@ import java.util.concurrent.Future;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
-@Transactional
 public class TestIdea {
 
     @Autowired
@@ -53,16 +55,18 @@ public class TestIdea {
     UserService userService;
     @Autowired
     AcItemRepository acItemRepository;
+    @Autowired
+    PaperService paperService;
 
     @Test
     public void test_sync() throws ExecutionException, InterruptedException {
-        log.debug(LocalTime.now()+ "");
+        userService.fetchUsers();
     }
 
 
     @Test
     public void test() {
-        log.debug(("231".isEmpty()) + ""  );
+        List<PaperProjection> test =  paperService.test();
     }
 
 
