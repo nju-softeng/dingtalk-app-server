@@ -54,6 +54,16 @@ public class DcRecord {
         this.dc = dc;
         this.ac = ac;
         this.status = true;
+
+    }
+
+    public void reApply(int authorid, double dvalue, LocalDate weekdate, int yearmonth, int week) {
+        this.auditor = new User(authorid);
+        this.dvalue = dvalue;
+        this.weekdate = weekdate;
+        this.status = false;
+        this.yearmonth = yearmonth;
+        this.week = week;
     }
 
     /**
@@ -83,7 +93,8 @@ public class DcRecord {
         this.weekdate = application.getDate();
         this.yearmonth = yearmonth;
         this.week = week;
-
     }
+
+
 
 }

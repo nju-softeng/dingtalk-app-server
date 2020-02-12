@@ -232,6 +232,8 @@ public class DingTalkUtils {
 //            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取jsapi_ticket失败");
 //        }
 //
+//        Map<String, String> map = new
+//
 //        return Map.of("agentId", "", "corpId", "", "timeStamp", "", "nonceStr", "", "signature", "");
 //    }
 

@@ -48,7 +48,7 @@ public class AuditService {
      * @return void
      * @Date 4:41 PM 2/1/2020
      **/
-    public void updateAudit(CheckedVO checked) {
+    public DcRecord updateAudit(CheckedVO checked) {
         DcRecord dc = dcRecordRepository.findById(checked.getId()).get();
         dc.update(checked.getCvalue(), checked.getDc(), checked.getAc()); // 更新 cvalue, dc, ac
         dcRecordRepository.save(dc); //持久化新的 dcRecord
@@ -61,14 +61,7 @@ public class AuditService {
             }
         }
         acItemRepository.saveAll(checked.getAcItems());
-        //更新DcSummary数据
-        Double dcSum = dcRecordRepository.getUserWeekTotalDc(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
-        DcSummary dcSummary = dcSummaryRepository.getDcSummary(dc.getApplicant().getId(), dc.getYearmonth());
-        if (dcSummary == null) {
-            dcSummary = new DcSummary(dc.getApplicant(), dc.getYearmonth());
-        }
-        dcSummary.updateWeek(dc.getWeek(), dcSum);
-        dcSummaryRepository.save(dcSummary);
+        return dc;
     }
 
     /**
@@ -77,7 +70,7 @@ public class AuditService {
      * @return void
      * @Date 12:04 PM 1/28/2020
      **/
-    public void addAuditResult(CheckVO checkVO) {
+    public DcRecord addAuditResult(CheckVO checkVO) {
         DcRecord dc = dcRecordRepository.findById(checkVO.getId()).get();
         dc.update(checkVO.getCvalue(), checkVO.getDc(), checkVO.getAc());
         dcRecordRepository.save(dc);
@@ -89,7 +82,14 @@ public class AuditService {
             }
         }
         acItemRepository.saveAll(checkVO.getAcItems());
-        //更新DcSummary数据
+        return dc;
+    }
+
+
+
+    //更新DcSummary数据
+    public void updateDcSummary(DcRecord dc) {
+        log.debug("update DcSummary" + dc.getId());
         Double dcSum = dcRecordRepository.getUserWeekTotalDc(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
         DcSummary dcSummary = dcSummaryRepository.getDcSummary(dc.getApplicant().getId(), dc.getYearmonth());
         if (dcSummary == null) {
@@ -98,6 +98,7 @@ public class AuditService {
         dcSummary.updateWeek(dc.getWeek(), dcSum);
         dcSummaryRepository.save(dcSummary);
     }
+
 
 //    /**
 //     *  // todo 待修改
