@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
+import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.UserService;
 import com.softeng.dingtalk.vo.CheckedVO;
@@ -42,7 +43,10 @@ public class AuditController {
     @PostMapping("/updateAudit")
     public void updateChecked(@RequestBody CheckedVO checked) {
         log.debug("/updateAudit" );
-        auditService.updateAudit(checked);
+
+        DcRecord dc = auditService.updateAudit(checked); //持久化审核结果
+        auditService.updateDcSummary(dc);
+
     }
 
     /**
@@ -79,7 +83,8 @@ public class AuditController {
     public void addAuditResult(@RequestBody CheckVO checkVO) {
         log.debug(checkVO.toString());
         log.debug("/audit" );
-        auditService.addAuditResult(checkVO); //持久化审核结果
+        DcRecord dc = auditService.addAuditResult(checkVO); //持久化审核结果
+        auditService.updateDcSummary(dc);
     }
 
     /**

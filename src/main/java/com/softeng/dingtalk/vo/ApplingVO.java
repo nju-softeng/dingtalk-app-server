@@ -4,6 +4,7 @@ import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,7 +16,9 @@ import java.util.List;
 */
 @Getter
 @Setter
+@ToString
 public class ApplingVO {
+    private int id;
     private int auditorid;
     private LocalDate date;
     private double dvalue;

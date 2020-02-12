@@ -82,9 +82,9 @@ public class ApplicationController {
 
 
     @PostMapping("/application/update")
-    public void updateApplication(@RequestAttribute int uid, @RequestBody ApplingVO application) {
-        int[] result = utils.getTimeFlag(application.getDate()); //数组大小为2，result[0]: yearmonth, result[1] week
-        DcRecord dc = new DcRecord(application, uid, result[0], result[1]);
+    public void updateApplication(@RequestBody ApplingVO apply) {
+        log.debug(apply.toString());
+        applicationService.updateApplication(apply);
     }
 
 
@@ -94,8 +94,8 @@ public class ApplicationController {
      * @return java.util.Map
      * @Date 1:50 PM 2/10/2020
      **/
-    @GetMapping("/application/{uid}/page/{page}")
-    public Map getUserApplication(@PathVariable int uid, @PathVariable int page) {
+    @GetMapping("/application/page/{page}")
+    public Map getUserApplication(@RequestAttribute int uid, @PathVariable int page) {
         return applicationService.listDcRecord(uid, page);
     }
 
