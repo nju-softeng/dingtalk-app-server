@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Paper;
+import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.projection.PaperProjection;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,5 +29,15 @@ public interface PaperRepository extends JpaRepository<Paper, Integer> {
 
     @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
     List<PaperProjection> findPaperBy();
+
+    @Modifying
+    @Query(value = "update paper set vote_id = :vid where id = :id", nativeQuery = true)
+    void updatePaperVote(@Param("id") int id, @Param("vid") int vid);
+
+    @Query("select p.vote.id from Paper p where p.id = :id")
+    Integer findVidById(@Param("id") int id);
+
+    @Query("select p.vote from  Paper p where p.id = :id")
+    Vote findVoteById(@Param("id") int id);
 
 }

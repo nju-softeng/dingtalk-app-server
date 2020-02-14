@@ -53,6 +53,11 @@ public class PaperController {
     }
 
 
+    @GetMapping("/paper/{id}")
+    public Paper getPaper(@PathVariable int id) {
+        return paperService.getPaper(id);
+    }
+
 
     @GetMapping("/papertest")
     public List<PaperProjection> func() {

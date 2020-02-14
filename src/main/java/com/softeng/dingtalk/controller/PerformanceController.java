@@ -1,18 +1,13 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.service.DcSummaryService;
+import com.softeng.dingtalk.service.PerformanceService;
 import com.softeng.dingtalk.vo.DateVO;
 import com.softeng.dingtalk.vo.DcSummaryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -24,13 +19,20 @@ import java.util.Map;
 @RequestMapping("/api")
 public class PerformanceController {
     @Autowired
-    DcSummaryService dcSummaryService;
+    PerformanceService performanceService;
 
     @PostMapping("/dcsummary")
     public List<DcSummaryVO> getDcSummary(@RequestBody DateVO dateVO) {
         log.debug(dateVO.toString());
-        return dcSummaryService.listDcSummaryVO(dateVO.getDate());
+        return performanceService.listDcSummaryVO(dateVO.getDate());
     }
+
+    @GetMapping("/acsummary")
+    public List<Object> getAcSummary() {
+        return performanceService.listAcSummary();
+    }
+
+
 
 
 }

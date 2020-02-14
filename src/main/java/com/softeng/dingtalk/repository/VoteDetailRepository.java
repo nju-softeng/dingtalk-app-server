@@ -16,4 +16,15 @@ import org.springframework.stereotype.Repository;
 public interface VoteDetailRepository extends JpaRepository<VoteDetail, Integer> {
 //    @Query("select count ")
 //    VoteResultVO getVoteResult(@Param("id") int id)
+
+    @Query(value = "select count(id) from vote_detail where vote_id = :vid and result = true", nativeQuery = true)
+    Integer getAcceptCnt(@Param("vid") int vid);
+
+    @Query(value = "select count(id) from vote_detail where vote_id = :vid", nativeQuery = true)
+    Integer getCnt(@Param("vid")int vid);
+
+    // 查看用户是否已经投票
+    @Query(value = "SELECT IfNULL((SELECT 1 FROM vote_detail WHERE vote_id = :vid and user_id = :uid  LIMIT 1), 0)", nativeQuery = true)
+    Integer isExist(@Param("vid") int vid, @Param("uid") int uid);
+
 }
