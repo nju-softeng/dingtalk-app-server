@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.DcSummaryRepository;
 import com.softeng.dingtalk.vo.DcSummaryVO;
 import lombok.extern.slf4j.Slf4j;
@@ -18,14 +19,21 @@ import java.util.List;
 @Service
 @Transactional
 @Slf4j
-public class DcSummaryService {
+public class PerformanceService {
     @Autowired
     DcSummaryRepository dcSummaryRepository;
+    @Autowired
+    AcRecordRepository acRecordRepository;
 
     public List<DcSummaryVO> listDcSummaryVO(LocalDate date) {
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
         log.debug(yearmonth + "");
         return dcSummaryRepository.listDcSummary(yearmonth);
+    }
+
+
+    public List<Object> listAcSummary() {
+        return acRecordRepository.listAcSummary();
     }
 
 }

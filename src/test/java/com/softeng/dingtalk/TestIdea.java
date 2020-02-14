@@ -2,15 +2,12 @@ package com.softeng.dingtalk;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
-import com.softeng.dingtalk.entity.AcItem;
-import com.softeng.dingtalk.entity.DcRecord;
-import com.softeng.dingtalk.entity.Paper;
+import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.projection.PaperProjection;
-import com.softeng.dingtalk.repository.AcItemRepository;
-import com.softeng.dingtalk.repository.AcRecordRepository;
-import com.softeng.dingtalk.repository.DcRecordRepository;
+import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.UserService;
+import com.softeng.dingtalk.service.VoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,20 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 
-import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-
-import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 
 /**
@@ -57,16 +42,34 @@ public class TestIdea {
     AcItemRepository acItemRepository;
     @Autowired
     PaperService paperService;
+    @Autowired
+    AcRecordRepository acRecordRepository;
+    @Autowired
+    VoteService voteService;
+    @Autowired
+    PaperRepository paperRepository;
+    @Autowired
+    VoteDetailRepository voteDetailRepository;
 
     @Test
     public void test_sync() throws ExecutionException, InterruptedException {
         userService.fetchUsers();
     }
 
+    @Test
+    public void test_1() {
+        List<Object> acVOS = acRecordRepository.listAcSummary();
+        for (Object acVO : acVOS) {
+
+            log.debug(acVO.toString());
+        }
+    }
+
 
     @Test
     public void test() {
-        List<PaperProjection> test =  paperService.test();
+        log.debug(voteDetailRepository.isExist(2, 2) + "");
+//        Vote vote = paperRepository.findVoteById(3);
     }
 
 

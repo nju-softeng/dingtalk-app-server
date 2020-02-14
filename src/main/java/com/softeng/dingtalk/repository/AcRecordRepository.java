@@ -1,7 +1,6 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.AcRecord;
-import com.softeng.dingtalk.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,4 +43,10 @@ public interface AcRecordRepository extends JpaRepository<AcRecord, Integer> {
      **/
     @Query(value = "select ifnull((select sum(ac) from ac_record where user_id = :uid), 0)", nativeQuery = true)
     Double getUserAcSum(@Param("uid") int uid);
+
+    //"select  new com.softeng.dingtalk.vo.AcVO(a.user.id, a.user.name, sum(a.ac)) from User u left join AcRecord a  on u.id = a.user.id group by a.user.id"
+    @Query(value = "select u.id, u.name, sum(a.ac) as total from User u left join ac_record a on u.id = a.user_id group by u.id order by total DESC", nativeQuery = true)
+    List<Object> listAcSummary();
+
+
 }

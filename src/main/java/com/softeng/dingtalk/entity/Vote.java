@@ -24,12 +24,11 @@ public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToOne
-    @JoinColumn(unique = true)
-    private Paper paper;
     private boolean result;
     private int acceptCount;
     private int amount;
+    private boolean status;
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalTime startTime;
     private LocalTime endTime;
 
@@ -37,10 +36,8 @@ public class Vote {
     @OneToMany(mappedBy = "vote")
     private List<VoteDetail> voteDetails;
 
-    public Vote(VoteVO voteVO) {
-        this.paper = new Paper(voteVO.getPaperid());
-        this.startTime = voteVO.getStartTime();
-        this.endTime = voteVO.getEndTime();
+    public Vote(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
 }

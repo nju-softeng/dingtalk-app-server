@@ -3,6 +3,7 @@ package com.softeng.dingtalk.vo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalTime;
 
@@ -14,8 +15,8 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class VoteVO {
-    int paperid;
-    private LocalTime startTime;
+    private int paperid;
     private LocalTime endTime;
 }

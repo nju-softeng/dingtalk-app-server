@@ -22,7 +22,6 @@ package com.softeng.dingtalk.entity;
 @Setter
 @Entity
 @NoArgsConstructor
-@ToString
 @NamedEntityGraph(name="paper.graph",attributeNodes={@NamedAttributeNode("paperDetails")})
 public class Paper {
     //定义静态常量表示用户权限
@@ -39,6 +38,11 @@ public class Paper {
     private LocalDateTime insertTime;  //插入时间
     private int level;
     private int result;
+
+    @JsonIgnoreProperties("paper")
+    @OneToOne
+    @JoinColumn(unique = true)
+    private Vote vote;
 
     @JsonIgnoreProperties("paper")
     @OneToMany(mappedBy = "paper")

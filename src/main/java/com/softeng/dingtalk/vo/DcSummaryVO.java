@@ -21,4 +21,5 @@ public class DcSummaryVO {
     private double week3;
     private double week4;
     private double week5;
+    private double total;
 }
