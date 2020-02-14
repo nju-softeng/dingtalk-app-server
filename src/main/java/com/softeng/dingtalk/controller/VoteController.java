@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.entity.VoteDetail;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -25,6 +27,8 @@ public class VoteController {
     VoteService voteService;
     @Autowired
     PaperService paperService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @PostMapping("/vote")
     public void addvote(@RequestBody VoteVO voteVO) {
@@ -32,11 +36,13 @@ public class VoteController {
         voteService.createVote(voteVO);
     }
 
-    @PostMapping("/vote/{id}")
-    public void addpoll(@PathVariable int id, @RequestBody VoteDetail voteDetail) {
-
-        voteDetail.setUser(new User(id));
+    @PostMapping("/vote/{vid}")
+    public Map addpoll(@PathVariable int vid, @RequestAttribute int uid, @RequestBody VoteDetail voteDetail) throws IOException {
+        voteDetail.setUser(new User(uid));
         voteService.poll(voteDetail);
+        Map map = voteService.getVoteDetail(vid);
+        WebSocketController.sendInfo(objectMapper.writeValueAsString(map));
+        return map;
     }
 
     //获取投票详情

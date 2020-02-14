@@ -40,11 +40,11 @@ public class WebSocketController {
         webSocketSet.add(this);  //加入set中
         addOnlineCount(); //添加在线人数
         log.info("新连接接入。当前在线人数为："+getOnlineCount());
-        try {
-            sendMessage("假装有内容");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            sendMessage("假装有内容");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @OnClose
