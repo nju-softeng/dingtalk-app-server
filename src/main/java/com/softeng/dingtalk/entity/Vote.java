@@ -25,8 +25,8 @@ public class Vote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private boolean result;
-    private int acceptCount;
-    private int amount;
+    private int accept;
+    private int total;
     private boolean status;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalTime startTime;

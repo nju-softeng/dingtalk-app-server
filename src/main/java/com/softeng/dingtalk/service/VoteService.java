@@ -62,9 +62,15 @@ public class VoteService {
         int total = voteDetailRepository.getCnt(vid);
         int reject = total - accept;
         return Map.of("status", true,"accept", accept, "total", total, "reject", reject);
-
     }
 
+
+    //投票截止后更新结果，vote对象需为从数据库中取出来的
+    public void updateVote(int vid) {
+        int accept = voteDetailRepository.getAcceptCnt(vid);
+        int total = voteDetailRepository.getCnt(vid);
+        voteRepository.updateStatus(vid, accept, total, accept > total - accept);
+    }
 
 
 }
