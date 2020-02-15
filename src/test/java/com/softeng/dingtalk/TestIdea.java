@@ -50,6 +50,8 @@ public class TestIdea {
     PaperRepository paperRepository;
     @Autowired
     VoteDetailRepository voteDetailRepository;
+    @Autowired
+    VoteRepository voteRepository;
 
     @Test
     public void test_sync() throws ExecutionException, InterruptedException {
@@ -68,8 +70,8 @@ public class TestIdea {
 
     @Test
     public void test() {
-        log.debug(voteDetailRepository.isExist(2, 2) + "");
-//        Vote vote = paperRepository.findVoteById(3);
+        dingTalkUtils.sentGroupMessage();
+
     }
 
 

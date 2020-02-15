@@ -217,25 +217,53 @@ public class DingTalkUtils {
         return response.getUserIds();
     }
 
-//    public Map gettest() {
-//        DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/get_jsapi_ticket");
-//        OapiGetJsapiTicketRequest req = new OapiGetJsapiTicketRequest();
-//        req.setTopHttpMethod("GET");
-//        OapiGetJsapiTicketResponse response;
-//        try {
-//            response = client.execute(req, accessToken);
-//            if(!response.isSuccess()) {
-//                setAccessToken();
-//                response = client.execute(req, accessToken);
-//            }
-//        } catch (ApiException e) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取jsapi_ticket失败");
-//        }
-//
-//        Map<String, String> map = new
-//
-//        return Map.of("agentId", "", "corpId", "", "timeStamp", "", "nonceStr", "", "signature", "");
-//    }
+
+
+
+
+    public void sentGroupMessage() {
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
+        OapiChatSendRequest request = new OapiChatSendRequest();
+        request.setChatid("chat227956d471b69962f8daf4989986f9a0");
+        OapiChatSendRequest.ActionCard actionCard = new OapiChatSendRequest.ActionCard();
+
+        actionCard.setTitle("下午好，打扰了，这是一个测试标题");
+        actionCard.setMarkdown("markdown 内容，今天雨夹雪，雨夹雪，雨夹雪，\n  ###### 6号标题\n + 1 + 2 + 3，");
+        actionCard.setBtnOrientation("1");
+
+        OapiChatSendRequest.BtnJson btn1 = new OapiChatSendRequest.BtnJson();
+        btn1.setTitle("test");
+        btn1.setActionUrl("http://www.baidu.com");
+
+        OapiChatSendRequest.BtnJson btn2 = new OapiChatSendRequest.BtnJson();
+        btn2.setTitle("PC端");
+        btn2.setActionUrl("dingtalk://dingtalkclient/action/openapp?corpid=dingeff939842ad9207f35c2f4657eb6378f&container_type=work_platform&app_id=0_313704868&redirect_type=jump&redirect_url=http://www.dingdev.xyz:8080/paper/vote/2");
+
+        List<OapiChatSendRequest.BtnJson> btnJsonList = new ArrayList<>();
+
+        btnJsonList.add(btn1);
+        btnJsonList.add(btn2);
+
+        actionCard.setBtnJsonList(btnJsonList);
+
+        request.setActionCard(actionCard);
+        request.setMsgtype("action_card");
+
+        try {
+            OapiChatSendResponse response = client.execute(request, accessToken);
+
+            if (!response.isSuccess()) {
+                setAccessToken();
+                response = client.execute(request, accessToken);;
+            }
+            log.debug(response.getBody());
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
 
 
 
@@ -261,6 +289,27 @@ public class DingTalkUtils {
 
         System.out.println(rsp.getBody());
     }
+
+
+//    public Map gettest() {
+//        DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/get_jsapi_ticket");
+//        OapiGetJsapiTicketRequest req = new OapiGetJsapiTicketRequest();
+//        req.setTopHttpMethod("GET");
+//        OapiGetJsapiTicketResponse response;
+//        try {
+//            response = client.execute(req, accessToken);
+//            if(!response.isSuccess()) {
+//                setAccessToken();
+//                response = client.execute(req, accessToken);
+//            }
+//        } catch (ApiException e) {
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取jsapi_ticket失败");
+//        }
+//
+//        Map<String, String> map = new
+//
+//        return Map.of("agentId", "", "corpId", "", "timeStamp", "", "nonceStr", "", "signature", "");
+//    }
 
 
 }
