@@ -2,8 +2,7 @@ package com.softeng.dingtalk;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
-import com.softeng.dingtalk.entity.Vote;
-import com.softeng.dingtalk.projection.PaperProjection;
+import com.softeng.dingtalk.po.PaperInfo2PO;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.UserService;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -52,6 +52,9 @@ public class TestIdea {
     VoteDetailRepository voteDetailRepository;
     @Autowired
     VoteRepository voteRepository;
+    @Autowired
+    PaperDetailRepository paperDetailRepository;
+
 
     @Test
     public void test_sync() throws ExecutionException, InterruptedException {
@@ -60,18 +63,22 @@ public class TestIdea {
 
     @Test
     public void test_1() {
-        List<Object> acVOS = acRecordRepository.listAcSummary();
-        for (Object acVO : acVOS) {
 
-            log.debug(acVO.toString());
-        }
+    }
+
+    @Test
+    public void test_2() {
+        dingTalkUtils.sendVoteResult("测试标题", true, 25, 40);
     }
 
 
     @Test
     public void test() {
-        dingTalkUtils.sentGroupMessage();
-
+        List<String> name = new ArrayList<>();
+        name.add("zhanzeye");
+        name.add("caoxiaojun");
+        name.add("dakaixin");
+        dingTalkUtils.sendVoteMsg(1,"papertitle", "16:00", name);
     }
 
 

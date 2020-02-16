@@ -1,8 +1,10 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.entity.Paper;
+import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.entity.VoteDetail;
+import com.softeng.dingtalk.po.Paperinfo1PO;
+import com.softeng.dingtalk.repository.PaperDetailRepository;
 import com.softeng.dingtalk.repository.PaperRepository;
 import com.softeng.dingtalk.repository.VoteDetailRepository;
 import com.softeng.dingtalk.repository.VoteRepository;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,12 +32,23 @@ public class VoteService {
     VoteDetailRepository voteDetailRepository;
     @Autowired
     PaperRepository paperRepository;
+    @Autowired
+    PaperDetailRepository paperDetailRepository;
+    @Autowired
+    DingTalkUtils dingTalkUtils;
 
 
     public void createVote(VoteVO voteVO) {
         Vote vote = new Vote(voteVO.getEndTime());
         voteRepository.save(vote);
         paperRepository.updatePaperVote(voteVO.getPaperid(), vote.getId());
+
+        // 发送投票信息
+        new Thread(()-> {
+            Paperinfo1PO paperinfo1PO = paperRepository.getPaperInfo1(voteVO.getPaperid());
+            List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
+            dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), paperinfo1PO.getTitle(), paperinfo1PO.getEndTime().toString(), namelist);
+        }).start();
     }
 
     public void poll(VoteDetail voteDetail) {
@@ -65,11 +79,12 @@ public class VoteService {
     }
 
 
-    //投票截止后更新结果，vote对象需为从数据库中取出来的
-    public void updateVote(int vid) {
+    //投票截止后更新结果，
+    public Map updateVote(int vid) {
         int accept = voteDetailRepository.getAcceptCnt(vid);
         int total = voteDetailRepository.getCnt(vid);
         voteRepository.updateStatus(vid, accept, total, accept > total - accept);
+        return Map.of("accept", accept, "total", total);
     }
 
 

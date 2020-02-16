@@ -59,10 +59,7 @@ public class PaperController {
     }
 
 
-    @GetMapping("/papertest")
-    public List<PaperProjection> func() {
-        return paperService.test();
-    }
+
 
 
 
