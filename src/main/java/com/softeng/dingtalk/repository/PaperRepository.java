@@ -2,6 +2,8 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.po.PaperInfo2PO;
+import com.softeng.dingtalk.po.Paperinfo1PO;
 import com.softeng.dingtalk.projection.PaperProjection;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,10 +25,20 @@ public interface PaperRepository extends JpaRepository<Paper, Integer> {
     @Query("update Paper p set p.result = :result where p.id = :id")
     void updatePaperResult(@Param("id") int id, @Param("result")int result);
 
+    // paper
     @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
     @Query("select p from Paper p")
     List<Paper> listPaperlist();
 
+    //获取
+    @Query("select new com.softeng.dingtalk.po.Paperinfo1PO(p.title, p.vote.endTime) from Paper p where p.id = :id")
+    Paperinfo1PO getPaperInfo1(@Param("id") int id);
+
+    @Query("select p.title from Paper p where p.vote.id = :vid")
+    String getPaperTitle(@Param("vid") int vid);
+
+
+    // todo delete
     @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
     List<PaperProjection> findPaperBy();
 
@@ -39,5 +51,10 @@ public interface PaperRepository extends JpaRepository<Paper, Integer> {
 
     @Query("select p.vote from  Paper p where p.id = :id")
     Vote findVoteById(@Param("id") int id);
+
+
+
+
+
 
 }

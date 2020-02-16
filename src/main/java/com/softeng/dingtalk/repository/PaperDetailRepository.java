@@ -27,4 +27,7 @@ public interface PaperDetailRepository extends JpaRepository<PaperDetail, Intege
     void deleteByPaperid(@Param("id") int id);
 
 
+    @Query("select pd.user.name from PaperDetail pd where pd.paper.id = :pid")
+    List<String> listPaperAuthor(@Param("pid") int pid);
+
 }

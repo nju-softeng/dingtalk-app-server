@@ -111,11 +111,6 @@ public class PaperService {
     }
 
 
-    public List<PaperProjection> test() {
-        List<PaperProjection> paperProjections = paperRepository.findPaperBy();
-        return paperProjections;
-    }
-
     public Vote getVoteByPid (int pid) {
         return paperRepository.findVoteById(pid);
     }

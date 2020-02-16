@@ -5,8 +5,10 @@ import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
 import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.entity.Vote;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -33,9 +35,41 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class DingTalkUtils {
-    private static final String APP_KEY = "dingk9nmede0wzi7aywt";
-    private static final String APP_SECRET = "nh3mY7PPMAne3aDEpyANGjKlQIFLBkPQ0npYUnOELNVSJFuKST-ngsrfMK2sZiB9";
-    private static final String TEAM_ID = "BYQN3886";
+    private static String CORPID;
+    private static String APP_KEY;
+    private static String APP_SECRET;
+    private static String CHAT_ID;
+    private static String AGENTID;
+    private static String DOMAIN;
+
+    @Value("${my.corpid}")
+    public void setCORPID(String corpid) {
+        CORPID = corpid;
+    }
+
+    @Value("${my.app_key}")
+    public void setAppKey(String appKey) {
+        APP_KEY = appKey;
+    }
+
+    @Value("${my.app_secret}")
+    public void setAppSecret(String appSecret) {
+        APP_SECRET = appSecret;
+    }
+
+    @Value("${my.chat_id}")
+    public void setChatId(String chatId) {
+        CHAT_ID = chatId;
+    }
+
+    @Value("${my.agent_id}")
+    public void setAGENTID(String agentid) {
+        AGENTID = agentid;
+    }
+    @Value("${my.domain}")
+    public void setDOMAIN(String domain) {
+        DOMAIN = domain;
+    }
 
     private static String accessToken;
 
@@ -224,7 +258,7 @@ public class DingTalkUtils {
     public void sentGroupMessage() {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
         OapiChatSendRequest request = new OapiChatSendRequest();
-        request.setChatid("chat227956d471b69962f8daf4989986f9a0");
+        request.setChatid(CHAT_ID);
         OapiChatSendRequest.ActionCard actionCard = new OapiChatSendRequest.ActionCard();
 
         actionCard.setTitle("下午好，打扰了，这是一个测试标题");
@@ -260,10 +294,100 @@ public class DingTalkUtils {
         } catch (ApiException e) {
             e.printStackTrace();
         }
+    }
 
+    // 发起投票时向群中发送消息
+    public void sendVoteMsg(int pid, String title, String endtime, List<String> namelist) {
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
+        OapiChatSendRequest request = new OapiChatSendRequest();
+        request.setChatid(CHAT_ID);
+        OapiChatSendRequest.ActionCard actionCard = new OapiChatSendRequest.ActionCard();
+
+        StringBuffer content = new StringBuffer().append(" ## 投票 \n ##### 论文： ").append(title).append(" \n ##### 作者： ");
+        for (String name : namelist) {
+            content.append(name).append(", ");
+        }
+        content.append(" \n 截止时间: ").append(endtime);
+
+        actionCard.setTitle("评审投票");
+        actionCard.setMarkdown(content.toString());
+        actionCard.setBtnOrientation("1");
+
+        OapiChatSendRequest.BtnJson btn1 = new OapiChatSendRequest.BtnJson();
+        btn1.setTitle("移动端尚不支持");
+        btn1.setActionUrl("https://www.dogedoge.com/");
+
+        OapiChatSendRequest.BtnJson btn2 = new OapiChatSendRequest.BtnJson();
+        btn2.setTitle("PC端");
+
+        StringBuffer pcurl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
+                .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
+                .append(DOMAIN).append("/paper/vote/").append(pid);
+
+        btn2.setActionUrl(pcurl.toString());
+
+        List<OapiChatSendRequest.BtnJson> btnJsonList = new ArrayList<>();
+
+        btnJsonList.add(btn1);
+        btnJsonList.add(btn2);
+
+        actionCard.setBtnJsonList(btnJsonList);
+
+        request.setActionCard(actionCard);
+        request.setMsgtype("action_card");
+
+        try {
+            OapiChatSendResponse response = client.execute(request, accessToken);
+
+            if (!response.isSuccess()) {
+                setAccessToken();
+                response = client.execute(request, accessToken);;
+            }
+            log.debug(response.getBody());
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
 
     }
 
+
+
+    // 发送投票结果
+    public void sendVoteResult(String title, boolean result, int accept, int total) {
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
+        OapiChatSendRequest request = new OapiChatSendRequest();
+        request.setChatid(CHAT_ID);
+        OapiChatSendRequest.ActionCard actionCard = new OapiChatSendRequest.ActionCard();
+
+        StringBuffer content = new StringBuffer().append(" #### 投票结果 \n ##### 论文： ").append(title)
+                .append(" \n 最终结果： ").append(result ? "Accept" : "reject")
+                .append("  \n  Accept: ").append(accept).append(" 票  \n ")
+                .append("Reject: ").append(total-accept).append(" 票  \n ")
+                .append("已参与人数： ").append(total).append("人  \n ");
+
+
+        actionCard.setTitle("投票结果");
+        actionCard.setMarkdown(content.toString());
+        actionCard.setSingleTitle("查看详情");
+        actionCard.setSingleUrl("http://www.dogedoge.com");
+
+
+
+        request.setActionCard(actionCard);
+        request.setMsgtype("action_card");
+
+        try {
+            OapiChatSendResponse response = client.execute(request, accessToken);
+
+            if (!response.isSuccess()) {
+                setAccessToken();
+                response = client.execute(request, accessToken);;
+            }
+            log.debug(response.getBody());
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 

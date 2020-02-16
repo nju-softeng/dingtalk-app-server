@@ -1,15 +1,21 @@
 package com.softeng.dingtalk.component;
 
+import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.po.PaperInfo2PO;
+import com.softeng.dingtalk.repository.PaperDetailRepository;
+import com.softeng.dingtalk.repository.PaperRepository;
 import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.service.VoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -26,17 +32,25 @@ public class Timer {
     VoteRepository voteRepository;
     @Autowired
     VoteService voteService;
+    @Autowired
+    PaperRepository paperRepository;
+    @Autowired
+    DingTalkUtils dingTalkUtils;
 
+
+    @Scheduled(cron = "0 1 * * * ?")
     public void checkVote() {
         List<Vote> votes = voteRepository.listByStatus(); //拿到没有结束的投票
-
         LocalTime nowtime = LocalTime.now();
         log.debug(nowtime.toString());
         for (Vote v : votes) {
             if (v.getEndTime().isBefore(nowtime)) {
-                voteService.updateVote(v.getId());
+                Map map = voteService.updateVote(v.getId());
                 // todo 钉钉发送消息
-                //
+                log.debug("钉钉发送消息");
+                String title = paperRepository.getPaperTitle(v.getId());
+                dingTalkUtils.sendVoteResult(title,v.isResult(), v.getAccept(), v.getTotal());
+
             }
         }
 
