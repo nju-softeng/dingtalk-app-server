@@ -20,7 +20,7 @@ public class VoteDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private boolean result;
+    private Boolean result;
 
     @JsonIgnoreProperties("voteDetails")
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID

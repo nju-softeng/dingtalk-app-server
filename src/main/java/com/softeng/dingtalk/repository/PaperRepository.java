@@ -2,9 +2,10 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Vote;
-import com.softeng.dingtalk.po.PaperInfo2PO;
-import com.softeng.dingtalk.po.Paperinfo1PO;
+import com.softeng.dingtalk.po.PaperinfoPO;
 import com.softeng.dingtalk.projection.PaperProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,17 +26,22 @@ public interface PaperRepository extends JpaRepository<Paper, Integer> {
     @Query("update Paper p set p.result = :result where p.id = :id")
     void updatePaperResult(@Param("id") int id, @Param("result")int result);
 
-    // paper
+    // paper select in 会默认升序排序
     @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
-    @Query("select p from Paper p")
-    List<Paper> listPaperlist();
+    @Query("select p from Paper p where p.id in :ids order by p.id desc")
+    List<Paper> findAllById(@Param("ids") List <Integer> ids);
 
-    //获取
-    @Query("select new com.softeng.dingtalk.po.Paperinfo1PO(p.title, p.vote.endTime) from Paper p where p.id = :id")
-    Paperinfo1PO getPaperInfo1(@Param("id") int id);
+    // 分页获取id
+    @Query("select p.id from Paper p")
+    Page<Integer> listAllId(Pageable pageable);
+
+
+    @Query("select p.title from Paper p where p.id = :id")
+    String getPaperTitleById(@Param("id") int id);
+
 
     @Query("select p.title from Paper p where p.vote.id = :vid")
-    String getPaperTitle(@Param("vid") int vid);
+    String getPaperTitleByVid(@Param("vid") int vid);
 
 
     // todo delete

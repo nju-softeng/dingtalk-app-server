@@ -2,7 +2,6 @@ package com.softeng.dingtalk;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
-import com.softeng.dingtalk.po.PaperInfo2PO;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.UserService;
@@ -81,5 +80,13 @@ public class TestIdea {
         dingTalkUtils.sendVoteMsg(1,"papertitle", "16:00", name);
     }
 
+    @Test
+    public void test_listVoteName() {
+        List<String> names = voteDetailRepository.listAcceptNamelist(1001);
+        log.debug(names.size() + "");
+        for (String str : names) {
+            log.debug(str);
+        }
+    }
 
 }

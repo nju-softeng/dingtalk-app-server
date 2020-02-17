@@ -1,9 +1,6 @@
 package com.softeng.dingtalk.component;
 
-import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Vote;
-import com.softeng.dingtalk.po.PaperInfo2PO;
-import com.softeng.dingtalk.repository.PaperDetailRepository;
 import com.softeng.dingtalk.repository.PaperRepository;
 import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.service.VoteService;
@@ -38,7 +35,7 @@ public class Timer {
     DingTalkUtils dingTalkUtils;
 
 
-    @Scheduled(cron = "0 1 * * * ?")
+    @Scheduled(cron = "0 31 * * * ?")
     public void checkVote() {
         List<Vote> votes = voteRepository.listByStatus(); //拿到没有结束的投票
         LocalTime nowtime = LocalTime.now();
@@ -48,7 +45,7 @@ public class Timer {
                 Map map = voteService.updateVote(v.getId());
                 // todo 钉钉发送消息
                 log.debug("钉钉发送消息");
-                String title = paperRepository.getPaperTitle(v.getId());
+                String title = paperRepository.getPaperTitleByVid(v.getId());
                 dingTalkUtils.sendVoteResult(title,v.isResult(), v.getAccept(), v.getTotal());
 
             }

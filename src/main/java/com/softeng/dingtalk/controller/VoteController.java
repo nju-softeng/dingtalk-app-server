@@ -38,9 +38,7 @@ public class VoteController {
 
     @PostMapping("/vote/{vid}")
     public Map addpoll(@PathVariable int vid, @RequestAttribute int uid, @RequestBody VoteDetail voteDetail) throws IOException {
-        voteDetail.setUser(new User(uid));
-        voteService.poll(voteDetail);
-        Map map = voteService.getVoteDetail(vid);
+        Map map = voteService.poll(vid, uid, voteDetail);
         WebSocketController.sendInfo(objectMapper.writeValueAsString(map));
         return map;
     }
@@ -50,11 +48,14 @@ public class VoteController {
     public Map getVoteDetail(@PathVariable int pid, @RequestAttribute int uid) {
         Vote vote = paperService.getVoteByPid(pid);
         if (vote.isStatus()) { //如果投票已经结束
-            return voteService.getVoteDetail(vote.getId());
+            return voteService.getVotedDetail(vote.getId(), uid);
         } else { //如果投票未结束
-            return voteService.getVoteDetail(vote.getId(),uid);
+            return voteService.getVotingDetail(vote.getId(),uid);
         }
     }
+
+
+
 
 
 
