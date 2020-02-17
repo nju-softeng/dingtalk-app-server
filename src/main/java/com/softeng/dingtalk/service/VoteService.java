@@ -59,10 +59,12 @@ public class VoteService {
         voteDetailRepository.save(voteDetail);
 
         // 返回当前的投票结果
-        int accept = voteDetailRepository.getAcceptCnt(vid);
-        int total = voteDetailRepository.getCnt(vid);
-        int reject = total - accept;
-        return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "result", voteDetail.getResult());
+        List<String> acceptlist =  voteDetailRepository.listAcceptNamelist(vid);
+        List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
+        int accept = acceptlist.size();  // accept 票数
+        int reject = rejectlist.size();  // reject 票数
+        int total = accept + reject;     // 总投票数
+        return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "result", voteDetail.getResult(),"acceptnames",acceptlist,"rejectnames", rejectlist);
     }
 
 
