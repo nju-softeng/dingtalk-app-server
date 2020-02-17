@@ -22,7 +22,7 @@ package com.softeng.dingtalk.entity;
 @Setter
 @Entity
 @NoArgsConstructor
-@NamedEntityGraph(name="paper.graph",attributeNodes={@NamedAttributeNode("paperDetails")})
+@NamedEntityGraph(name="paper.graph",attributeNodes={@NamedAttributeNode("paperDetails"),@NamedAttributeNode("vote")})
 public class Paper {
     //定义静态常量表示用户权限
     public static final int WAIT = 0;

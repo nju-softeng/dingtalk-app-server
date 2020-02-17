@@ -6,9 +6,11 @@ import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -47,9 +49,9 @@ public class PaperController {
         paperService.updateResult(id, result);
     }
 
-    @GetMapping("/paper")
-    public List<Paper> listPaper() {
-        return paperService.listPaper();
+    @GetMapping("/paper/page/{page}")
+    public Map listPaper(@PathVariable int page) {
+        return paperService.listPaper(page);
     }
 
 

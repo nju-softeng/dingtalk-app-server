@@ -10,10 +10,16 @@ import com.softeng.dingtalk.repository.PaperRepository;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author zhanyeye
@@ -100,8 +106,16 @@ public class PaperService {
     }
 
 
-    public List<Paper> listPaper() {
-        return paperRepository.listPaperlist();
+    public Map listPaper(int page) {
+        Pageable pageable = PageRequest.of(page, 6, Sort.by("id").descending());
+        Page<Integer> pages = paperRepository.listAllId(pageable); //查询出的分页数据对象
+        List<Integer> ids = pages.getContent();
+        if (ids.size() != 0) {
+            return Map.of("content", paperRepository.findAllById(ids), "total", pages.getTotalElements());
+        } else {
+            return Map.of("total",0);
+        }
+
     }
 
     public Paper getPaper(int id) {
