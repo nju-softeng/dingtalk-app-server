@@ -45,7 +45,7 @@ public class PaperController {
 
 
     // 论文参与者或审核人更新论文投稿结果
-    @PostMapping("/paper_result/{id}/{result}")
+    @GetMapping("/paper_result/{id}/{result}")
     public void updateResult(@PathVariable int id, @PathVariable int result) {
         paperService.updateResult(id, result);
         //todo  更新论文投票结果
