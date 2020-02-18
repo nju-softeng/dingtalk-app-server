@@ -128,7 +128,7 @@ public class VoteService {
     }
 
 
-    public void computeVoteAc()
+//    public void computeVoteAc()
 
 
 }
