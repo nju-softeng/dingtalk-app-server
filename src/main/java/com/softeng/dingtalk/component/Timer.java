@@ -35,21 +35,24 @@ public class Timer {
     DingTalkUtils dingTalkUtils;
 
 
-    @Scheduled(cron = "0 31 * * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     public void checkVote() {
         List<Vote> votes = voteRepository.listByStatus(); //拿到没有结束的投票
-        LocalTime nowtime = LocalTime.now();
-        log.debug(nowtime.toString());
-        for (Vote v : votes) {
-            if (v.getEndTime().isBefore(nowtime)) {
-                Map map = voteService.updateVote(v.getId());
-                // todo 钉钉发送消息
-                log.debug("钉钉发送消息");
-                String title = paperRepository.getPaperTitleByVid(v.getId());
-                dingTalkUtils.sendVoteResult(title,v.isResult(), v.getAccept(), v.getTotal());
+        if (votes.size() != 0) {
+            LocalTime nowtime = LocalTime.now();
+            log.debug("定时器执行：" + nowtime.toString());
+            for (Vote v : votes) {
+                if (v.getEndTime().isBefore(nowtime)) {
+                    Map map = voteService.updateVote(v.getId()); //更新
+                    // todo 钉钉发送消息
+                    log.debug("钉钉发送消息");
+                    String title = paperRepository.getPaperTitleByVid(v.getId());
+                    dingTalkUtils.sendVoteResult(title,v.isResult(), v.getAccept(), v.getTotal());
 
+                }
             }
         }
+
 
     }
 
