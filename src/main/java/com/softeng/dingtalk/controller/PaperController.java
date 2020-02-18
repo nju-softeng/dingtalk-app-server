@@ -45,18 +45,20 @@ public class PaperController {
 
 
     // 论文参与者或审核人更新论文投稿结果
-    @PostMapping("/paper_result/{id}")
-    public void updateResult(@PathVariable int id, @RequestBody Integer result) {
+    @PostMapping("/paper_result/{id}/{result}")
+    public void updateResult(@PathVariable int id, @PathVariable int result) {
         paperService.updateResult(id, result);
         //todo  更新论文投票结果
     }
 
+    // 分页获取论文
     @GetMapping("/paper/page/{page}")
     public Map listPaper(@PathVariable int page) {
         return paperService.listPaper(page);
     }
 
 
+    // 获取某个论文的详细信息
     @GetMapping("/paper/{id}")
     public Paper getPaper(@PathVariable int id) {
         return paperService.getPaper(id);

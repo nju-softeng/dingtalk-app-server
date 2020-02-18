@@ -32,6 +32,7 @@ public class Vote {
     private boolean status;   //投票是否截止
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDate startTime;
+    @Column(nullable = false)
     private LocalTime endTime;
 
     @JsonIgnoreProperties("vote")

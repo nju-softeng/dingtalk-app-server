@@ -67,7 +67,7 @@ public class PaperService {
         paperRepository.deleteById(id);
     }
 
-
+    // 更新论文结果
     public void  updateResult(int id, int result) {
         paperRepository.updatePaperResult(id, result); //更新指定 论文的结果
         Paper paper = paperRepository.findById(id).get();
