@@ -12,9 +12,13 @@ import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.vo.VoteVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -55,8 +59,20 @@ public class VoteService {
 
     // 用户投票
     public Map poll(int vid, int uid, VoteDetail voteDetail) {
-        voteDetail.setUser(new User(uid)); // 标明这一票是谁投的
-        voteDetailRepository.save(voteDetail);
+        LocalDateTime now = LocalDateTime.now();
+        log.debug("now" + now.toString());
+
+        Vote vote = voteRepository.findById(vid).get();
+        LocalDateTime ddl = LocalDateTime.of(vote.getStartTime(), vote.getEndTime()).plusMinutes(1);
+
+        log.debug("ddl" + now.toString());
+
+        if (now.isBefore(ddl)) {
+            voteDetail.setUser(new User(uid)); // 标明这一票是谁投的
+            voteDetailRepository.save(voteDetail);
+        } else {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "投票已经截止！");
+        }
 
         // 返回当前的投票结果
         List<String> acceptlist =  voteDetailRepository.listAcceptNamelist(vid);
@@ -94,7 +110,12 @@ public class VoteService {
         int reject = rejectlist.size();  // reject 票数
         int total = accept + reject;     // 总投票数
         Boolean myresult = voteDetailRepository.getVoteDetail(vid, uid); // 用户本人的投票情况：accept, reject, 未参与(null)
-        return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist);
+        if (myresult == null) {
+            return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist);
+        } else {
+            return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist);
+        }
+
     }
 
 
@@ -106,10 +127,8 @@ public class VoteService {
         return Map.of("accept", accept, "total", total);
     }
 
-//    public Map getVoteNamelist(int vid) {
-//
-//        return Map.of("accept_names", accepts, "reject_names", rejects);
-//    }
+
+    public void computeVoteAc()
 
 
 }

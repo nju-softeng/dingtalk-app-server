@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -24,5 +25,6 @@ public interface VoteRepository extends JpaRepository<Vote, Integer> {
     @Modifying
     @Query("update Vote v set v.status = true, v.accept = :accept, v.total = :total, v.result = :result where v.id = :id")
     void updateStatus(@Param("id") int id, @Param("accept") int accept, @Param("total") int total, @Param("result") boolean result);
+
 
 }
