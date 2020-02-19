@@ -2,6 +2,8 @@ package com.softeng.dingtalk;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
+import com.softeng.dingtalk.entity.Paper;
+import com.softeng.dingtalk.entity.PaperDetail;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.UserService;
@@ -62,7 +64,7 @@ public class TestIdea {
 
     @Test
     public void test_1() {
-
+        List<PaperDetail> paperDetails = paperDetailRepository.findByPaper(new Paper(1000));
     }
 
     @Test
