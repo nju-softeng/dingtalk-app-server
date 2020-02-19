@@ -36,7 +36,7 @@ public class Vote {
     private LocalTime endTime;
 
     @JsonIgnoreProperties("vote")
-    @OneToMany(mappedBy = "vote")
+    @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)
     private List<VoteDetail> voteDetails;
 
     public Vote(LocalTime endTime) {
