@@ -45,10 +45,11 @@ public class PaperController {
 
 
     // 论文参与者或审核人更新论文投稿结果
-    @GetMapping("/paper_result/{id}/{result}")
-    public void updateResult(@PathVariable int id, @PathVariable int result) {
-        paperService.updateResult(id, result);
-        //todo  更新论文投票结果
+    @PostMapping("/paper_result/{id}")
+    public void updateResult(@PathVariable int id, @RequestBody Map<String, Boolean> map) {
+        paperService.updateResult(id, map.get("data"));
+        // todo  更新论文投票结果
+        // todo 发送论文消息
     }
 
     // 分页获取论文

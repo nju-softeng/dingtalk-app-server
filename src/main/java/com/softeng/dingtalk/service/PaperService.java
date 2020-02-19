@@ -67,14 +67,18 @@ public class PaperService {
         paperRepository.deleteById(id);
     }
 
-    // 更新论文结果
-    public void  updateResult(int id, int result) {
-        paperRepository.updatePaperResult(id, result); //更新指定 论文的结果
+    // 更新论文结果, 并计算ac
+    public void  updateResult(int id, boolean result) {
+        //更新指定 论文的结果
         Paper paper = paperRepository.findById(id).get();
+        paper.setResult(result);
+        paperRepository.save(paper);
 
+
+        // 计算AC
         double sum = paperLevelRepository.getvalue(paper.getLevel()); //获取论文奖励总AC
         String reason = paper.getTitle();
-        if (result == Paper.REJECT) { //如果被拒绝则扣分
+        if (result == false) { //如果被拒绝则扣分
             sum *= -0.5;
             reason += " Reject";
         } else {
@@ -83,15 +87,14 @@ public class PaperService {
 
         List<PaperDetail> paperDetails = paperDetailRepository.findByPaper(new Paper(id)); //获取论文参与者
 
+        List<AcRecord> oldacRecords = paperDetails.stream().filter(x-> x.getAcRecord() != null).map(x-> x.getAcRecord()).collect(Collectors.toList());
+        acRecordRepository.deleteAll(oldacRecords);
 
 
         double[] rate = new double[]{0.5, 0.25, 0.15, 0.1};
         int i = 0;
         for (PaperDetail pd : paperDetails) {
             if (i == 4) break;
-            if (pd.getAcRecord() != null) {
-                acRecordRepository.delete(pd.getAcRecord());
-            }
             double ac = sum * rate[pd.getNum() - 1];
             AcRecord acRecord = new AcRecord(pd.getUser(), null, ac, reason);
             pd.setAc(ac);
@@ -100,9 +103,6 @@ public class PaperService {
             i++;
         }
         paperDetailRepository.saveAll(paperDetails);
-
-
-        //todo 调用投票计算
     }
 
 

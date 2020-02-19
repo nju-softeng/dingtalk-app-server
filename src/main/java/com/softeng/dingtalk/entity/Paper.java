@@ -24,10 +24,10 @@ package com.softeng.dingtalk.entity;
 @NoArgsConstructor
 @NamedEntityGraph(name="paper.graph",attributeNodes={@NamedAttributeNode("paperDetails"),@NamedAttributeNode("vote")})
 public class Paper {
-    //定义静态常量表示用户权限
-    public static final int WAIT = 0;
-    public static final int ACCEPT = 1;
-    public static final int REJECT= 2;
+//    //定义静态常量表示用户权限
+//    public static final int WAIT = 0;
+//    public static final int ACCEPT = 1;
+//    public static final int REJECT= 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,7 @@ public class Paper {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;  //插入时间
     private int level;
-    private int result;
+    private Boolean result;
 
     @JsonIgnoreProperties("paper")
     @OneToOne

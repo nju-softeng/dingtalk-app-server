@@ -1,8 +1,11 @@
 package com.softeng.dingtalk;
 
+import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.DcRecord;
+import com.softeng.dingtalk.entity.PaperLevel;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.DcRecordRepository;
+import com.softeng.dingtalk.repository.PaperLevelRepository;
 import com.softeng.dingtalk.repository.UserRepository;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.UserService;
@@ -35,6 +38,10 @@ public class InitDatabase {
     AuditService auditService;
     @Autowired
     UserService userService;
+    @Autowired
+    DingTalkUtils dingTalkUtils;
+    @Autowired
+    PaperLevelRepository paperLevelRepository;
 
 
     @Test
@@ -44,18 +51,36 @@ public class InitDatabase {
 
     @Test
     public void init() {
-        addUser();
-        ApplicantaddDcRecord();
+        userService.fetchUsers();
+        addpaperLevel();
+
     }
 
+    @Autowired
+    public void addpaperLevel() {
+        List<PaperLevel> paperLevels = new ArrayList<>();
+        paperLevels.add(new PaperLevel("Journal A", 1, 60));
+        paperLevels.add(new PaperLevel("Conference A", 2, 50));
+        paperLevels.add(new PaperLevel("Journal B", 3, 36));
+        paperLevels.add(new PaperLevel("Conference B", 4, 30));
+        paperLevels.add(new PaperLevel("Journal C", 5, 24));
+        paperLevels.add(new PaperLevel("Conference C", 6, 20));
+
+        paperLevelRepository.saveAll(paperLevels);
+
+    }
+
+
+
+
+
+
     @Test
-    public void addUser() {
+    public void addTestUser() {
         List<User> users = new ArrayList<>();
-        users.add(new User("306147243334957616", "詹泽晔", "https://static-legacy.dingtalk.com/media/lADPDgQ9rK52m0PNAi3NAgc_519_557.jpg", 1 ));
         users.add(new User("00002", "user2", "test", 1 ));
         users.add(new User("00003", "user3", "test", 1 ));
         users.add(new User("00004", "user4", "test", 1 ));
-        users.add(new User("315448673626165392", "曹晓俊", null, 0 ));
         users.add(new User("00006", "user6", "test", 0 ));
         users.add(new User("00007", "user7", "test", 0 ));
         users.add(new User("00008", "user8", "avatar8", 0 ));
@@ -64,19 +89,6 @@ public class InitDatabase {
         userRepository.saveAll(users);
     }
 
-    @Test
-    public void ApplicantaddDcRecord() {
-        List<DcRecord> dcRecords = new ArrayList<>();
-        dcRecords.add(new DcRecord(5, 1, 0.6, 202001, 1));
-        dcRecords.add(new DcRecord(5, 2, 0.6, 202001, 1));
-        dcRecords.add(new DcRecord(5, 3, 0.6, 202001, 1));
-        dcRecords.add(new DcRecord(5, 4, 0.6, 202001, 1));
-        dcRecords.add(new DcRecord(6, 1, 0.6, 201912, 5));
-        dcRecords.add(new DcRecord(6, 2, 0.6, 201912, 5));
-        dcRecords.add(new DcRecord(6, 3, 0.6, 201912, 5));
-        dcRecords.add(new DcRecord(6, 4, 0.6, 201912, 5));
-        dcRecordRepository.saveAll(dcRecords);
-    }
 
 
 }
