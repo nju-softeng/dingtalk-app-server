@@ -2,11 +2,8 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.projection.PaperProjection;
-import com.softeng.dingtalk.repository.AcRecordRepository;
-import com.softeng.dingtalk.repository.PaperDetailRepository;
+import com.softeng.dingtalk.repository.*;
 
-import com.softeng.dingtalk.repository.PaperLevelRepository;
-import com.softeng.dingtalk.repository.PaperRepository;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +35,8 @@ public class PaperService {
     PaperLevelRepository paperLevelRepository;
     @Autowired
     AcRecordRepository acRecordRepository;
+    @Autowired
+    VoteRepository voteRepository;
 
     // 添加论文记录
     public void addPaper(PaperVO papervo) {
@@ -52,18 +51,24 @@ public class PaperService {
     // 更新论文记录
     public void updatePaper(PaperVO paperVO) {
         Paper paper = paperRepository.findById(paperVO.getId()).get();
-        paper.update(paperVO);
+        paper.update(paperVO.getTitle(), paperVO.getJournal(), paperVO.getLevel());
         paperRepository.save(paper); //更新
-        paperDetailRepository.deleteByPaper(paper);
-        for (PaperDetail pd : paperVO.getPaperDetails()) {
+        paperDetailRepository.deleteByPaper(paper); // 删除paperDetail
+        for (PaperDetail pd : paperVO.getPaperDetails()) { // 重新添加paperDetail
             pd.setPaper(paper);
         }
         paperDetailRepository.saveAll(paperVO.getPaperDetails());
+
+        if (paper.getResult() != null) {
+            updateResult(paper.getId(), paper.getResult());
+        }
+
     }
 
     // 删除论文
     public void deletePaper(int id) {
-        paperDetailRepository.deleteByPaperid(id);
+        // paperDetailRepository.deleteByPaperid(id);
+        paperDetailRepository.deleteByPaper(new Paper(id));
         paperRepository.deleteById(id);
     }
 
@@ -108,7 +113,7 @@ public class PaperService {
 
     public Map listPaper(int page) {
         Pageable pageable = PageRequest.of(page, 6, Sort.by("id").descending());
-        Page<Integer> pages = paperRepository.listAllId(pageable); //查询出的分页数据对象
+        Page<Integer> pages = paperRepository.listAllId(pageable); //查询出的分页数据对象id
         List<Integer> ids = pages.getContent();
         if (ids.size() != 0) {
             return Map.of("content", paperRepository.findAllById(ids), "total", pages.getTotalElements());

@@ -40,7 +40,7 @@ public class Paper {
     private Boolean result;
 
     @JsonIgnoreProperties("paper")
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(unique = true)
     private Vote vote;
 
@@ -58,10 +58,12 @@ public class Paper {
         this.level = paperVO.getLevel();
     }
 
-    public void update(PaperVO paperVO) {
-        this.title = paperVO.getTitle();
-        this.journal = paperVO.getJournal();
-        this.level = paperVO.getLevel();
+
+
+    public void update(String title, String journal, int level) {
+        this.title = title;
+        this.journal = journal;
+        this.level = level;
     }
 
 

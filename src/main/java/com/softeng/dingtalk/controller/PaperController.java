@@ -24,21 +24,23 @@ public class PaperController {
     @Autowired
     PaperService paperService;
 
-    // 添加论文记录
+    // 添加或更新论文记录
     @PostMapping("/paper")
     public void addPaper(@RequestBody PaperVO papervo) {
         log.debug("/paper");
-        paperService.addPaper(papervo);
+        if (papervo.getId() == null) {
+            log.debug("add paper");
+            paperService.addPaper(papervo);
+        } else {
+            paperService.updatePaper(papervo);
+            log.debug("update paper");
+        }
+
     }
 
-    //更新论文记录
-    @PatchMapping("/paper")
-    public void updatePaper(@RequestBody PaperVO papervo) {
-        paperService.updatePaper(papervo);
-    }
 
     //删除论文记录
-    @DeleteMapping("/paper/{id}")
+    @GetMapping("/paper/delete/{id}")
     public void deletePaper(@PathVariable int id) {
         paperService.deletePaper(id);
     }

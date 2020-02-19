@@ -18,7 +18,7 @@ import java.util.List;
 @Setter
 @ToString
 public class PaperVO {
-    private int id;
+    private Integer id;
     private String title;
     private String journal;
     private int level;
