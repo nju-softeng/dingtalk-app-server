@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.repository;
 
+import com.softeng.dingtalk.entity.PaperDetail;
 import com.softeng.dingtalk.entity.VoteDetail;
 import com.softeng.dingtalk.vo.VoteResultVO;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,8 +29,13 @@ public interface VoteDetailRepository extends JpaRepository<VoteDetail, Integer>
     Integer isExist(@Param("vid") int vid, @Param("uid") int uid);
 
 
+    // 获取指定用户指定投票的结果
     @Query("select vd.result from VoteDetail vd where vd.vote.id = :vid and vd.user.id = :uid")
     Boolean getVoteDetail(@Param("vid") int vid, @Param("uid") int uid);
+
+    // 获取指定投票的每个人投票结果
+    @Query("select vd from VoteDetail vd where vd.vote.id = :vid")
+    List<VoteDetail> listByVid(@Param("vid") int vid);
 
     // 获取投accept票的人的名单列表
     @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = true")

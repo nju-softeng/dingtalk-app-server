@@ -1,9 +1,7 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
-import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.entity.Vote;
-import com.softeng.dingtalk.entity.VoteDetail;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.po.PaperinfoPO;
 import com.softeng.dingtalk.repository.PaperDetailRepository;
 import com.softeng.dingtalk.repository.PaperRepository;
@@ -17,8 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.Map;
 
@@ -128,7 +128,24 @@ public class VoteService {
     }
 
 
-//    public void computeVoteAc()
+    // 根据论文最终结果计算投票者的ac
+    public void computeVoteAc(int pid, int result) {
+        Vote vote = paperRepository.findVoteById(pid);
+        if (vote != null) {
+            List<VoteDetail> voteDetails = voteDetailRepository.listByVid(vote.getId());
+            List<AcRecord> acRecords = new ArrayList<>();
+            for (VoteDetail vd : voteDetails) {
+                if (vd.getResult())
+            }
+
+        }
+
+
+
+
+
+    }
+
 
 
 }
