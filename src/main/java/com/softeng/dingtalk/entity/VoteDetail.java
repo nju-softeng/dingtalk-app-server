@@ -27,4 +27,8 @@ public class VoteDetail {
     private Vote vote;
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    // 投票对应的ac值
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private AcRecord acRecord;
 }

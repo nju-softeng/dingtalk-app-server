@@ -24,7 +24,7 @@ import java.util.List;
 public interface PaperRepository extends JpaRepository<Paper, Integer> {
     @Modifying
     @Query("update Paper p set p.result = :result where p.id = :id")
-    void updatePaperResult(@Param("id") int id, @Param("result")int result);
+    void updatePaperResult(@Param("id") int id, @Param("result") boolean result);
 
     // paper select in 会默认升序排序
     @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)

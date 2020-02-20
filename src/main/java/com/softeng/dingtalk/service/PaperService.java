@@ -68,7 +68,7 @@ public class PaperService {
     }
 
 
-    public void  updateResult(int id, int result) {
+    public void  updateResult(int id, boolean result) {
         paperRepository.updatePaperResult(id, result); //更新指定 论文的结果
         Paper paper = paperRepository.findById(id).get();
 
