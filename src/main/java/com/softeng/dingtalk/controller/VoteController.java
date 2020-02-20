@@ -30,12 +30,15 @@ public class VoteController {
     @Autowired
     private ObjectMapper objectMapper;
 
+
+    // 创建一个投票
     @PostMapping("/vote")
     public void addvote(@RequestBody VoteVO voteVO) {
         log.debug(voteVO.toString());
         voteService.createVote(voteVO);
     }
 
+    // 用户投票
     @PostMapping("/vote/{vid}")
     public Map addpoll(@PathVariable int vid, @RequestAttribute int uid, @RequestBody VoteDetail voteDetail) throws IOException {
         Map map = voteService.poll(vid, uid, voteDetail);

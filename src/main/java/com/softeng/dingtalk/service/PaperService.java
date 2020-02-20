@@ -72,9 +72,11 @@ public class PaperService {
         paperRepository.deleteById(id);
     }
 
+
     // 更新论文结果, 并计算ac
     public void  updateResult(int id, boolean result) {
         //更新指定 论文的结果
+
         Paper paper = paperRepository.findById(id).get();
         paper.setResult(result);
         paperRepository.save(paper);
