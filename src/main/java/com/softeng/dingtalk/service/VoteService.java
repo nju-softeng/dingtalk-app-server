@@ -124,11 +124,14 @@ public class VoteService {
 
 
     // 更新投票的最终结果，投票截止后调用
-    public Map updateVote(int vid) {
-        int accept = voteDetailRepository.getAcceptCnt(vid);
-        int total = voteDetailRepository.getCnt(vid);
-        voteRepository.updateStatus(vid, accept, total, accept > total - accept);
-        return Map.of("accept", accept, "total", total);
+    public Vote updateVote(Vote v) {
+        int accept = voteDetailRepository.getAcceptCnt(v.getId());
+        int total = voteDetailRepository.getCnt(v.getId());
+        voteRepository.updateStatus(v.getId(), accept, total, accept > total - accept);
+        v.setAccept(accept);
+        v.setTotal(total);
+        v.setResult(accept > total - accept);
+        return v;
     }
 
 
