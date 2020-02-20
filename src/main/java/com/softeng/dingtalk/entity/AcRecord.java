@@ -36,6 +36,12 @@ public class AcRecord {
         this.reason = reason;
     }
 
+    public AcRecord(User user, double ac, String reason) {
+        this.user = user;
+        this.ac = ac;
+        this.reason = reason;
+    }
+
     public AcRecord(DcRecord dcRecord, AcItem acItem) {
         this.ac = acItem.getAc();
         this.reason = acItem.getReason();

@@ -2,8 +2,10 @@ package com.softeng.dingtalk;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
+import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.PaperDetail;
+import com.softeng.dingtalk.entity.VoteDetail;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.UserService;
@@ -19,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 
 /**
@@ -58,6 +61,11 @@ public class TestIdea {
 
 
     @Test
+    public void test_vote() {
+        voteService.computeVoteAc(9, false);
+    }
+
+    @Test
     public void test_sync() throws ExecutionException, InterruptedException {
         userService.fetchUsers();
     }
@@ -75,11 +83,17 @@ public class TestIdea {
 
     @Test
     public void test() {
-        List<String> name = new ArrayList<>();
-        name.add("zhanzeye");
-        name.add("caoxiaojun");
-        name.add("dakaixin");
-        dingTalkUtils.sendVoteMsg(1,"papertitle", "16:00", name);
+        List<VoteDetail> voteDetails = new ArrayList<>();
+        VoteDetail v1 =  new VoteDetail();
+        VoteDetail v2 =  new VoteDetail();
+        VoteDetail v3 =  new VoteDetail();
+        v1.setAcRecord(new AcRecord());
+        v2.setAcRecord(new AcRecord());
+        voteDetails.add(v1);
+        voteDetails.add(v2);
+        voteDetails.add(v3);
+        List<AcRecord> acRecords = voteDetails.stream().filter(x -> x.getAcRecord() != null).map((x-> x.getAcRecord())).collect(Collectors.toList());
+
     }
 
     @Test

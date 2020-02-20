@@ -3,10 +3,7 @@ package com.softeng.dingtalk.service;
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.po.PaperinfoPO;
-import com.softeng.dingtalk.repository.PaperDetailRepository;
-import com.softeng.dingtalk.repository.PaperRepository;
-import com.softeng.dingtalk.repository.VoteDetailRepository;
-import com.softeng.dingtalk.repository.VoteRepository;
+import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.VoteVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +11,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author zhanyeye
@@ -41,6 +43,8 @@ public class VoteService {
     PaperDetailRepository paperDetailRepository;
     @Autowired
     DingTalkUtils dingTalkUtils;
+    @Autowired
+    AcRecordRepository acRecordRepository;
 
 
     // 创建投票并钉钉发送消息
@@ -129,21 +133,29 @@ public class VoteService {
 
 
     // 根据论文最终结果计算投票者的ac
-    public void computeVoteAc(int pid, int result) {
+    public void computeVoteAc(int pid, boolean result) {
         Vote vote = paperRepository.findVoteById(pid);
         if (vote != null) {
             List<VoteDetail> voteDetails = voteDetailRepository.listByVid(vote.getId());
             List<AcRecord> acRecords = new ArrayList<>();
+
+            List<AcRecord> oldAcRecord = Optional.ofNullable(voteDetails).map(List::stream).orElseGet(Stream::empty)
+                    .filter(x -> x.getAcRecord() != null).map(x -> x.getAcRecord()).collect(Collectors.toList());
+            acRecordRepository.deleteAll(oldAcRecord); // 删除旧的 acRecord
+
             for (VoteDetail vd : voteDetails) {
-                if (vd.getResult())
+                AcRecord acRecord;
+                if (vd.getResult() == result) {
+                    acRecord = new AcRecord(vd.getUser(), 1, "投票预测成功");
+                } else {
+                    acRecord = new AcRecord(vd.getUser(), -1, "投票预测失败");
+                }
+                vd.setAcRecord(acRecord);
+                acRecords.add(acRecord);
             }
-
+            acRecordRepository.saveAll(acRecords);
+            voteDetailRepository.saveAll(voteDetails);
         }
-
-
-
-
-
     }
 
 
