@@ -26,7 +26,7 @@ public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private boolean result;   //投票最终结果
+    private Boolean result;   //投票最终结果
     private int accept;
     private int total;
     private boolean status;   //投票是否截止

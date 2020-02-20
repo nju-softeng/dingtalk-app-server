@@ -324,6 +324,7 @@ public class DingTalkUtils {
                 .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
                 .append(DOMAIN).append("/paper/vote/").append(pid);
 
+        log.debug("pc URL" + pcurl.toString());
         btn2.setActionUrl(pcurl.toString());
 
         List<OapiChatSendRequest.BtnJson> btnJsonList = new ArrayList<>();

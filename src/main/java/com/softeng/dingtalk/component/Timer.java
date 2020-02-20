@@ -43,11 +43,11 @@ public class Timer {
             log.debug("定时器执行：" + nowtime.toString());
             for (Vote v : votes) {
                 if (v.getEndTime().isBefore(nowtime)) {
-                    Map map = voteService.updateVote(v.getId()); //更新
+                    v = voteService.updateVote(v); //更新
                     // todo 钉钉发送消息
                     log.debug("钉钉发送消息");
                     String title = paperRepository.getPaperTitleByVid(v.getId());
-                    dingTalkUtils.sendVoteResult(title,v.isResult(), v.getAccept(), v.getTotal());
+                    dingTalkUtils.sendVoteResult(title,v.getResult(), v.getAccept(), v.getTotal());
 
                 }
             }
