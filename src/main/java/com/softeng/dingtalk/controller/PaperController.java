@@ -44,9 +44,11 @@ public class PaperController {
     }
 
 
+    // 更新论文最终投稿结果
     @PostMapping("/paper_result/{id}")
-    public void updateResult(@PathVariable int id, @RequestBody Integer result) {
-        paperService.updateResult(id, result);
+    public void updateResult(@PathVariable int id, @RequestBody boolean result) {
+        paperService.updateResult(id, result); // 更新论文状态，并计算作者的ac值
+         //将论文投稿结果与投票结果进行对比，计算投票者的ac
     }
 
     @GetMapping("/paper/page/{page}")
