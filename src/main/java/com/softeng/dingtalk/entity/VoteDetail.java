@@ -16,6 +16,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
+@NamedEntityGraph(name="voteDetail.graph",attributeNodes={@NamedAttributeNode("acRecord")})
 public class VoteDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

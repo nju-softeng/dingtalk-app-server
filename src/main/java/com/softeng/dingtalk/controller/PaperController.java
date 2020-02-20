@@ -3,6 +3,7 @@ package com.softeng.dingtalk.controller;
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.projection.PaperProjection;
 import com.softeng.dingtalk.service.PaperService;
+import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import java.util.Map;
 public class PaperController {
     @Autowired
     PaperService paperService;
+    @Autowired
+    VoteService voteService;
 
     // 添加或更新论文记录
     @PostMapping("/paper")
@@ -48,10 +51,10 @@ public class PaperController {
 
 
     // 论文参与者或审核人更新论文投稿结果
-    @PostMapping("/paper_result/{id}")
-    public void updateResult(@PathVariable int id, @RequestBody Map<String, Boolean> map) {
-        paperService.updateResult(id, map.get("data"));
-        // todo  更新论文投票结果
+    @PostMapping("/paper_result/{pid}")
+    public void updateResult(@PathVariable int pid, @RequestBody Map<String, Boolean> map) {
+        paperService.updateResult(pid, map.get("data"));
+        voteService.computeVoteAc(pid, map.get("data"));
         // todo 发送论文消息
     }
 

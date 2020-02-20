@@ -75,10 +75,9 @@ public class PaperService {
 
     // 更新论文结果, 并计算ac
     public void  updateResult(int id, boolean result) {
-        //更新指定 论文的结果
 
         Paper paper = paperRepository.findById(id).get();
-        paper.setResult(result);
+        paper.setResult(result);    //更新指定 论文的结果
         paperRepository.save(paper);
 
 
@@ -91,7 +90,6 @@ public class PaperService {
         } else {
             reason += " Accept";
         }
-
         List<PaperDetail> paperDetails = paperDetailRepository.findByPaper(new Paper(id)); //获取论文参与者
 
         List<AcRecord> oldacRecords = paperDetails.stream().filter(x-> x.getAcRecord() != null).map(x-> x.getAcRecord()).collect(Collectors.toList());

@@ -3,6 +3,7 @@ package com.softeng.dingtalk.repository;
 import com.softeng.dingtalk.entity.PaperDetail;
 import com.softeng.dingtalk.entity.VoteDetail;
 import com.softeng.dingtalk.vo.VoteResultVO;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,7 +34,9 @@ public interface VoteDetailRepository extends JpaRepository<VoteDetail, Integer>
     @Query("select vd.result from VoteDetail vd where vd.vote.id = :vid and vd.user.id = :uid")
     Boolean getVoteDetail(@Param("vid") int vid, @Param("uid") int uid);
 
+
     // 获取指定投票的每个人投票结果
+    @EntityGraph(value="voteDetail.graph",type= EntityGraph.EntityGraphType.FETCH)
     @Query("select vd from VoteDetail vd where vd.vote.id = :vid")
     List<VoteDetail> listByVid(@Param("vid") int vid);
 
