@@ -1,6 +1,7 @@
 package com.softeng.dingtalk;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
+import com.softeng.dingtalk.component.Timer;
 import com.softeng.dingtalk.component.Utils;
 import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.Paper;
@@ -20,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -58,6 +60,13 @@ public class TestIdea {
     VoteRepository voteRepository;
     @Autowired
     PaperDetailRepository paperDetailRepository;
+    @Autowired
+    Timer timer;
+
+
+
+
+
 
 
     @Test
@@ -67,18 +76,17 @@ public class TestIdea {
 
     @Test
     public void test_sync() throws ExecutionException, InterruptedException {
-        userService.fetchUsers();
+        int id = userService.getIdByUserid("362554492621552072");
+        log.debug(id + "");
     }
 
     @Test
     public void test_1() {
-        List<PaperDetail> paperDetails = paperDetailRepository.findByPaper(new Paper(1000));
+        Map map = dingTalkUtils.authentication("www.air-dev.cpm");
+        log.debug(map.toString());
     }
 
-    @Test
-    public void test_2() {
-        dingTalkUtils.sendVoteResult("测试标题", true, 25, 40);
-    }
+
 
 
     @Test

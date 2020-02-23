@@ -87,21 +87,7 @@ public class AuditController {
         auditService.updateDcSummary(dc);
     }
 
-    /**
-     * 异步获取周报多个
-     * @param uid
-     * @return java.util.List<java.lang.Object>
-     * @Date 9:11 PM 2/4/2020
-     **/
-    @GetMapping("/getreportlist")
-    public List<Object> getReportList(@RequestAttribute int uid) {
-        log.debug("/getreportlist uid:" + uid);
-        try {
-            return auditService.AsyncGetReport(uid);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "并发请求超时");
-        }
-    }
+
 
     /**
      * 根据uid和时间获取周报

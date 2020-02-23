@@ -15,14 +15,15 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -71,18 +72,14 @@ public class DingTalkUtils {
         DOMAIN = domain;
     }
 
-    private static String accessToken;
 
-    /**
-     * 获取并保存 access_token
-     * @param
-     * @return void
-     * @Date 4:04 PM 2/6/2020
-     **/
-    private void setAccessToken() {
-        accessToken = getAccessToken();
-    }
 
+    private static final long cacheTime = 1000 * 60 * 55 * 2; //缓存时间 1小时 50分钟
+
+    private static String accessToken;  //缓存的accessToken: 不可直接调用，以防过期
+    private static long tokenTime;      //缓存时间
+    private static String jsapiTicket;  //缓存的accessToken jsapi_ticket: 不可直接调用，以防过期
+    private static long ticketTime;     //缓存时间
 
 
     /**
@@ -90,21 +87,48 @@ public class DingTalkUtils {
      * @return java.lang.String
      * @Date 9:10 PM 11/13/2019
      **/
-    public String getAccessToken() {
-        String token = null;
-        DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/gettoken");
-        OapiGettokenRequest request = new OapiGettokenRequest();
-        request.setAppkey(APP_KEY);
-        request.setAppsecret(APP_SECRET);
-        request.setHttpMethod("GET");
-        try {
-            OapiGettokenResponse response = client.execute(request);
-            token = response.getAccessToken();
-        } catch (ApiException e) {
-            log.error("getAccessToken failed", e);
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "DingtalkUtils 获取accesstoken失败");
+    private String getAccessToken() {
+        long curTime = System.currentTimeMillis();
+        if (accessToken == null || curTime - tokenTime >= cacheTime ) {
+            DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/gettoken");
+            OapiGettokenRequest request = new OapiGettokenRequest();
+            request.setAppkey(APP_KEY);
+            request.setAppsecret(APP_SECRET);
+            request.setHttpMethod("GET");
+            try {
+                OapiGettokenResponse response = client.execute(request);
+                accessToken = response.getAccessToken();
+                tokenTime = System.currentTimeMillis();
+            } catch (ApiException e) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "DingtalkUtils 获取accesstoken失败");
+            }
+            log.debug("AccessToken 快要过期，重新获取");
         }
-        return token;
+        return accessToken;
+    }
+
+
+    /**
+     * 获取 Jsapi Ticket
+     * @return java.lang.String
+     * @Date 8:20 AM 2/23/2020
+     **/
+    private String getJsapiTicket()  {
+        long curTime = System.currentTimeMillis();
+        if (jsapiTicket == null || curTime - ticketTime >= cacheTime) {
+            DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/get_jsapi_ticket");
+            OapiGetJsapiTicketRequest req = new OapiGetJsapiTicketRequest();
+            req.setTopHttpMethod("GET");
+            try {
+                OapiGetJsapiTicketResponse response = client.execute(req, getAccessToken());
+                jsapiTicket = response.getTicket();
+                ticketTime = System.currentTimeMillis();
+            } catch (ApiException e) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "DingtalkUtils 获取JsapiTicket失败");
+            }
+            log.debug("JsapiTicket 快要过期，重新获取");
+        }
+        return jsapiTicket;
     }
 
 
@@ -121,17 +145,14 @@ public class DingTalkUtils {
         request.setCode(requestAuthCode);
         request.setHttpMethod("GET");
         try {
-            OapiUserGetuserinfoResponse response = client.execute(request, accessToken);
-            if (!response.isSuccess()) {
-                accessToken = getAccessToken();
-                response = client.execute(request, accessToken);
-            }
+            OapiUserGetuserinfoResponse response = client.execute(request, getAccessToken());
             userId = response.getUserid();
         } catch (ApiException e) {
             e.printStackTrace();
         }
         return userId;
     }
+
 
     /**
      * 通过 userid （钉钉的用户码），获取钉钉中用户信息
@@ -146,11 +167,7 @@ public class DingTalkUtils {
         request.setHttpMethod("GET");
         OapiUserGetResponse response;
         try {
-            response = client.execute(request, accessToken);
-            if (!response.isSuccess()) {
-                setAccessToken();
-                response = client.execute(request, accessToken);
-            }
+            response = client.execute(request, getAccessToken());
         } catch (ApiException e) {
             log.error("getUserDetail fail", e);
             throw new RuntimeException();
@@ -161,46 +178,7 @@ public class DingTalkUtils {
     }
 
 
-    /**
-     * 异步方法
-     * 通过 userid 获取用户周报，（uid只是为了在返回值中添加）
-     * @param userid, dateTime, uid
-     * @return java.util.concurrent.Future<java.util.Map>
-     * @Date 7:32 PM 1/23/2020
-     **/
-    @Async
-    public Future<Map> getReports(String userid, LocalDate date, int uid){
-        //todo 注意配置公网IP
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
-        OapiReportListRequest request = new OapiReportListRequest();
-        request.setUserid(userid);
-        Long startTime = LocalDateTime.of(date, LocalTime.of(12,0)).toInstant(ZoneOffset.of("+8")).toEpochMilli();
-        request.setStartTime(startTime); //开始时间
-        request.setEndTime(startTime + TimeUnit.DAYS.toMillis(5));  //结束时间
-        request.setCursor(0L);
-        request.setSize(1L);
-        OapiReportListResponse response;
-        try {
-            response = client.execute(request, accessToken);
-            if (!response.isSuccess()) {
-                setAccessToken();
-                response = client.execute(request, accessToken);
-            }
-        } catch (ApiException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
-        }
-
-        if (response.getResult().getDataList().size() == 0) {
-            return new AsyncResult<>(Map.of("uid", uid));
-        } else {
-            List<OapiReportListResponse.JsonObject> contents = response.getResult().getDataList().get(0).getContents().stream()
-                    .filter((item) -> !item.getValue().isEmpty())
-                    .collect(Collectors.toList());
-            return new AsyncResult<>(Map.of("uid", uid,"contents", contents));
-        }
-    }
-
-
+    // 获取周报信息
     public Map getReport(String userid, LocalDate date) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
         OapiReportListRequest request = new OapiReportListRequest();
@@ -212,13 +190,9 @@ public class DingTalkUtils {
         request.setSize(1L);
         OapiReportListResponse response;
         try {
-            response = client.execute(request, accessToken);
-            if (!response.isSuccess()) {
-                setAccessToken();
-                response = client.execute(request, accessToken);
-            }
+            response = client.execute(request, getAccessToken());
         } catch (ApiException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取accesstoken失败");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取周报失败");
         }
         if (response.getResult().getDataList().size() == 0) { // 无数据
             return Map.of();
@@ -230,6 +204,7 @@ public class DingTalkUtils {
         }
     }
 
+
     //获取整个部门的userid
     public List<String> listUserId() {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/getDeptMember");
@@ -238,12 +213,7 @@ public class DingTalkUtils {
         req.setHttpMethod("GET");
         OapiUserGetDeptMemberResponse response;
         try {
-            response = client.execute(req, accessToken);
-            if(!response.isSuccess()) {
-                setAccessToken();
-                log.debug("????");
-                response = client.execute(req, accessToken);
-            }
+            response = client.execute(req, getAccessToken());
         } catch (ApiException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取getUserIds失败");
         }
@@ -251,50 +221,6 @@ public class DingTalkUtils {
         return response.getUserIds();
     }
 
-
-
-
-
-    public void sentGroupMessage() {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
-        OapiChatSendRequest request = new OapiChatSendRequest();
-        request.setChatid(CHAT_ID);
-        OapiChatSendRequest.ActionCard actionCard = new OapiChatSendRequest.ActionCard();
-
-        actionCard.setTitle("下午好，打扰了，这是一个测试标题");
-        actionCard.setMarkdown("markdown 内容，今天雨夹雪，雨夹雪，雨夹雪，\n  ###### 6号标题\n + 1 + 2 + 3，");
-        actionCard.setBtnOrientation("1");
-
-        OapiChatSendRequest.BtnJson btn1 = new OapiChatSendRequest.BtnJson();
-        btn1.setTitle("test");
-        btn1.setActionUrl("http://www.baidu.com");
-
-        OapiChatSendRequest.BtnJson btn2 = new OapiChatSendRequest.BtnJson();
-        btn2.setTitle("PC端");
-        btn2.setActionUrl("dingtalk://dingtalkclient/action/openapp?corpid=dingeff939842ad9207f35c2f4657eb6378f&container_type=work_platform&app_id=0_313704868&redirect_type=jump&redirect_url=http://www.dingdev.xyz:8080/paper/vote/2");
-
-        List<OapiChatSendRequest.BtnJson> btnJsonList = new ArrayList<>();
-
-        btnJsonList.add(btn1);
-        btnJsonList.add(btn2);
-
-        actionCard.setBtnJsonList(btnJsonList);
-
-        request.setActionCard(actionCard);
-        request.setMsgtype("action_card");
-
-        try {
-            OapiChatSendResponse response = client.execute(request, accessToken);
-
-            if (!response.isSuccess()) {
-                setAccessToken();
-                response = client.execute(request, accessToken);;
-            }
-            log.debug(response.getBody());
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
-    }
 
     // 发起投票时向群中发送消息
     public void sendVoteMsg(int pid, String title, String endtime, List<String> namelist) {
@@ -309,41 +235,37 @@ public class DingTalkUtils {
         }
         content.append(" \n 截止时间: ").append(endtime);
 
-        actionCard.setTitle("评审投票");
-        actionCard.setMarkdown(content.toString());
-        actionCard.setBtnOrientation("1");
-
-        OapiChatSendRequest.BtnJson btn1 = new OapiChatSendRequest.BtnJson();
-        btn1.setTitle("移动端尚不支持");
-        btn1.setActionUrl("https://www.dogedoge.com/");
-
-        OapiChatSendRequest.BtnJson btn2 = new OapiChatSendRequest.BtnJson();
-        btn2.setTitle("PC端");
-
         StringBuffer pcurl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
                 .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
                 .append(DOMAIN).append("/paper/vote/").append(pid);
 
-        log.debug("pc URL" + pcurl.toString());
-        btn2.setActionUrl(pcurl.toString());
+        log.debug(pcurl.toString());
 
-        List<OapiChatSendRequest.BtnJson> btnJsonList = new ArrayList<>();
+        actionCard.setTitle("评审投票");
+        actionCard.setMarkdown(content.toString());
 
-        btnJsonList.add(btn1);
-        btnJsonList.add(btn2);
+//        actionCard.setBtnOrientation("1");
+//        OapiChatSendRequest.BtnJson btn1 = new OapiChatSendRequest.BtnJson();
+//        btn1.setTitle("移动端尚不支持");
+//        btn1.setActionUrl("https://www.dogedoge.com/");
+//        OapiChatSendRequest.BtnJson btn2 = new OapiChatSendRequest.BtnJson();
+//        btn2.setTitle("PC端");
+//        btn2.setActionUrl(pcurl.toString());
+//        List<OapiChatSendRequest.BtnJson> btnJsonList = new ArrayList<>();
+//        btnJsonList.add(btn1);
+//        btnJsonList.add(btn2);
+//        actionCard.setBtnJsonList(btnJsonList);
 
-        actionCard.setBtnJsonList(btnJsonList);
+        actionCard.setSingleTitle("目前支持PC端");
+        actionCard.setSingleUrl(pcurl.toString());
 
         request.setActionCard(actionCard);
         request.setMsgtype("action_card");
 
         try {
-            OapiChatSendResponse response = client.execute(request, accessToken);
+            OapiChatSendResponse response = client.execute(request, getAccessToken());
 
-            if (!response.isSuccess()) {
-                setAccessToken();
-                response = client.execute(request, accessToken);;
-            }
+
             log.debug(response.getBody());
         } catch (ApiException e) {
             e.printStackTrace();
@@ -354,7 +276,7 @@ public class DingTalkUtils {
 
 
     // 发送投票结果
-    public void sendVoteResult(String title, boolean result, int accept, int total) {
+    public void sendVoteResult(int pid, String title, boolean result, int accept, int total) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
         OapiChatSendRequest request = new OapiChatSendRequest();
         request.setChatid(CHAT_ID);
@@ -366,24 +288,23 @@ public class DingTalkUtils {
                 .append("Reject: ").append(total-accept).append(" 票  \n ")
                 .append("已参与人数： ").append(total).append("人  \n ");
 
+        StringBuffer pcurl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
+                .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
+                .append(DOMAIN).append("/paper/vote/").append(pid);
+
 
         actionCard.setTitle("投票结果");
         actionCard.setMarkdown(content.toString());
         actionCard.setSingleTitle("查看详情");
-        actionCard.setSingleUrl("http://www.dogedoge.com");
-
+        actionCard.setSingleUrl(pcurl.toString());
 
 
         request.setActionCard(actionCard);
         request.setMsgtype("action_card");
 
         try {
-            OapiChatSendResponse response = client.execute(request, accessToken);
+            OapiChatSendResponse response = client.execute(request, getAccessToken());
 
-            if (!response.isSuccess()) {
-                setAccessToken();
-                response = client.execute(request, accessToken);;
-            }
             log.debug(response.getBody());
         } catch (ApiException e) {
             e.printStackTrace();
@@ -392,49 +313,78 @@ public class DingTalkUtils {
 
 
 
-    public void workrecord(String userid) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/workrecord/add");
-        OapiWorkrecordAddRequest req = new OapiWorkrecordAddRequest();
-        req.setUserid(userid);
-        req.setCreateTime(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
-        req.setTitle("提交绩效信息");
-        req.setUrl("http://www.dingdev.xyz:8080/?corpId=dingeff939842ad9207f35c2f4657eb6378f#/example/table");
-        List<OapiWorkrecordAddRequest.FormItemVo> list2 = new ArrayList<OapiWorkrecordAddRequest.FormItemVo>();
-        OapiWorkrecordAddRequest.FormItemVo obj3 = new OapiWorkrecordAddRequest.FormItemVo();
-        list2.add(obj3);
-        obj3.setTitle("标题");
-        obj3.setContent("内容");
-        req.setFormItemList(list2);
-        OapiWorkrecordAddResponse rsp = null;
-        try {
-            rsp = client.execute(req, getAccessToken());
-        } catch (Exception e) {
 
+    // 字节数组转化成十六进制字符串
+    private String bytesToHex(final byte[] hash) {
+        Formatter formatter = new Formatter();
+        for (byte b : hash) {
+            formatter.format("%02x", b);
         }
+        String result = formatter.toString();
+        formatter.close();
+        return result;
+    }
 
-        System.out.println(rsp.getBody());
+    private String sign(String ticket, String nonceStr, long timeStamp, String url)  {
+        String plain = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + String.valueOf(timeStamp)
+                + "&url=" + url;
+        try {
+            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+            sha1.reset();
+            sha1.update(plain.getBytes("UTF-8"));
+            return bytesToHex(sha1.digest());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Map authentication(String url) {
+        long timeStamp = System.currentTimeMillis();
+        String nonceStr = "todowhatliesclearathand";
+        String signature = sign(getJsapiTicket(),nonceStr, timeStamp, url);
+        return Map.of("agentId", AGENTID,"url", url, "nonceStr", nonceStr, "timeStamp", timeStamp, "corpId", CORPID, "signature", signature);
     }
 
 
-//    public Map gettest() {
-//        DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/get_jsapi_ticket");
-//        OapiGetJsapiTicketRequest req = new OapiGetJsapiTicketRequest();
-//        req.setTopHttpMethod("GET");
-//        OapiGetJsapiTicketResponse response;
+
+//    public void sentGroupMessage() {
+//        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
+//        OapiChatSendRequest request = new OapiChatSendRequest();
+//        request.setChatid(CHAT_ID);
+//        OapiChatSendRequest.ActionCard actionCard = new OapiChatSendRequest.ActionCard();
+//
+//        actionCard.setTitle("下午好，打扰了，这是一个测试标题");
+//        actionCard.setMarkdown("markdown 内容，今天雨夹雪，雨夹雪，雨夹雪，\n  ###### 6号标题\n + 1 + 2 + 3，");
+//        actionCard.setBtnOrientation("1");
+//
+//        OapiChatSendRequest.BtnJson btn1 = new OapiChatSendRequest.BtnJson();
+//        btn1.setTitle("test");
+//        btn1.setActionUrl("http://www.baidu.com");
+//
+//        OapiChatSendRequest.BtnJson btn2 = new OapiChatSendRequest.BtnJson();
+//        btn2.setTitle("PC端");
+//        btn2.setActionUrl("dingtalk://dingtalkclient/action/openapp?corpid=dingeff939842ad9207f35c2f4657eb6378f&container_type=work_platform&app_id=0_313704868&redirect_type=jump&redirect_url=http://www.dingdev.xyz:8080/paper/vote/2");
+//
+//        List<OapiChatSendRequest.BtnJson> btnJsonList = new ArrayList<>();
+//
+//        btnJsonList.add(btn1);
+//        btnJsonList.add(btn2);
+//
+//        actionCard.setBtnJsonList(btnJsonList);
+//
+//        request.setActionCard(actionCard);
+//        request.setMsgtype("action_card");
+//
 //        try {
-//            response = client.execute(req, accessToken);
-//            if(!response.isSuccess()) {
-//                setAccessToken();
-//                response = client.execute(req, accessToken);
-//            }
+//            OapiChatSendResponse response = client.execute(request, getAccessToken());
 //        } catch (ApiException e) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取jsapi_ticket失败");
+//            e.printStackTrace();
 //        }
-//
-//        Map<String, String> map = new
-//
-//        return Map.of("agentId", "", "corpId", "", "timeStamp", "", "nonceStr", "", "signature", "");
 //    }
+
 
 
 }

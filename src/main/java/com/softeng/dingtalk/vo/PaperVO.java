@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -22,5 +23,6 @@ public class PaperVO {
     private String title;
     private String journal;
     private int level;
+    private LocalDate issueDate;
     private List<PaperDetail> paperDetails;
 }

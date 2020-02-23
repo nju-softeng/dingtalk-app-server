@@ -36,6 +36,7 @@ public class Paper {
     private String journal;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;  //插入时间
+    private LocalDate issueDate;       //出刊时间
     private int level;
     private Boolean result;
 
@@ -56,14 +57,16 @@ public class Paper {
         this.title = paperVO.getTitle();
         this.journal = paperVO.getJournal();
         this.level = paperVO.getLevel();
+        this.issueDate = paperVO.getIssueDate();
     }
 
 
 
-    public void update(String title, String journal, int level) {
+    public void update(String title, String journal, int level, LocalDate issueDate) {
         this.title = title;
         this.journal = journal;
         this.level = level;
+        this.issueDate = issueDate;
     }
 
 

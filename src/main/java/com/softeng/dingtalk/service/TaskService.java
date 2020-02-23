@@ -44,7 +44,6 @@ public class TaskService {
      **/
     public void addTask(Task task, int[] uids) {
         taskRepository.save(task);
-        log.debug(uids.length + "?");
         for (int i = 0; i < uids.length; i++) {
             taskAllocationRepository.save(new TaskAllocation(task, new User(uids[i])));
         }

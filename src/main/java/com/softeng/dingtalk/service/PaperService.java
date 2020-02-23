@@ -51,7 +51,7 @@ public class PaperService {
     // 更新论文记录
     public void updatePaper(PaperVO paperVO) {
         Paper paper = paperRepository.findById(paperVO.getId()).get();
-        paper.update(paperVO.getTitle(), paperVO.getJournal(), paperVO.getLevel());
+        paper.update(paperVO.getTitle(), paperVO.getJournal(), paperVO.getLevel(), paperVO.getIssueDate());
         paperRepository.save(paper); //更新
         paperDetailRepository.deleteByPaper(paper); // 删除paperDetail
         for (PaperDetail pd : paperVO.getPaperDetails()) { // 重新添加paperDetail

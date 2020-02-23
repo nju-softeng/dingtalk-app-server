@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -25,7 +26,7 @@ public class PerformanceService {
     @Autowired
     AcRecordRepository acRecordRepository;
 
-    public List<DcSummaryVO> listDcSummaryVO(LocalDate date) {
+    public List<Map<String, Object>> listDcSummaryVO(LocalDate date) {
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
         log.debug(yearmonth + "");
         return dcSummaryRepository.listDcSummary(yearmonth);

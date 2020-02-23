@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.controller;
 
+import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.service.UserService;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,8 @@ import java.util.Map;
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    DingTalkUtils dingTalkUtils;
 
 
     /**
@@ -43,4 +46,13 @@ public class UserController {
     public List<UserVO> listusers() {
         return userService.listUserVO();
     }
+
+    // 钉钉鉴权
+    @PostMapping("/jsapi_signature")
+    public Map jspai(@RequestBody Map<String, String> map) {
+        return dingTalkUtils.authentication(map.get("url"));
+    }
+
+
+
 }

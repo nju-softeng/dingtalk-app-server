@@ -68,8 +68,8 @@ public class UserService {
         return Map.of("name", u.getName(), "avatar", u.getAvatar(), "ac",ac);
     }
 
+    // 从钉钉服务器拉取用户同步到系统
     public void fetchUsers() {
-
         List<String> remoteUserids = dingTalkUtils.listUserId();
         List<String> localUserids = userRepository.listAllUserid();
         remoteUserids.removeAll(localUserids);
@@ -80,5 +80,14 @@ public class UserService {
         userRepository.saveAll(users);
     }
 
-
+    // 前端用 jsapi 选人，将 userid 变为 uid，若数据库中没有，从数据库中更新
+     public int getIdByUserid(String userid) {
+        Integer id = userRepository.findIdByUserid(userid);
+        if (id == null) {
+            User user = dingTalkUtils.getNewUser(userid);
+             user = addUser(user);
+             return user.getId();
+        }
+        return id;
+     }
 }

@@ -26,6 +26,8 @@ public class TaskAllocation {
     private User user; //开发者
     @ManyToOne(fetch = FetchType.LAZY)
     private AcRecord acRecord; //获得的ac值
+    private double ac;
+
 
     public TaskAllocation(Task task, User user) {
         this.task = task;
