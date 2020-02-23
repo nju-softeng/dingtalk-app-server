@@ -38,4 +38,7 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     @Query("select u.userid from User u")
     List<String> listAllUserid();
 
+    @Query("select u.id from User u where u.userid = :userid")
+    Integer findIdByUserid(@Param("userid") String userid);
+
 }

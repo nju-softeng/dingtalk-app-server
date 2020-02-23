@@ -46,8 +46,10 @@ public class Timer {
                     v = voteService.updateVote(v); //更新
                     // todo 钉钉发送消息
                     log.debug("钉钉发送消息");
-                    String title = paperRepository.getPaperTitleByVid(v.getId());
-                    dingTalkUtils.sendVoteResult(title,v.getResult(), v.getAccept(), v.getTotal());
+                    Map map = paperRepository.getPaperInfo(v.getId());
+                    int pid = (int)map.get("id");
+                    String title = map.get("title").toString();
+                    dingTalkUtils.sendVoteResult(pid, title, v.getResult(), v.getAccept(), v.getTotal());
 
                 }
             }

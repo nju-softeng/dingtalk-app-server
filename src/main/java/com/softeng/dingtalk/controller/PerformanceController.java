@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -21,12 +22,14 @@ public class PerformanceController {
     @Autowired
     PerformanceService performanceService;
 
+    // 拿到 dc 汇总
     @PostMapping("/dcsummary")
-    public List<DcSummaryVO> getDcSummary(@RequestBody DateVO dateVO) {
+    public List<Map<String, Object>> getDcSummary(@RequestBody DateVO dateVO) {
         log.debug(dateVO.toString());
         return performanceService.listDcSummaryVO(dateVO.getDate());
     }
 
+    // 拿到 dc 汇总
     @GetMapping("/acsummary")
     public List<Object> getAcSummary() {
         return performanceService.listAcSummary();

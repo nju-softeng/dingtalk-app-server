@@ -2,7 +2,6 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Vote;
-import com.softeng.dingtalk.po.PaperinfoPO;
 import com.softeng.dingtalk.projection.PaperProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -26,6 +26,9 @@ public interface PaperRepository extends JpaRepository<Paper, Integer> {
 //    @Modifying
 //    @Query("update Paper p set p.result = :result where p.id = :id")
 //    void updatePaperResult(@Param("id") int id, @Param("result")boolean result);
+
+
+
 
 
     // paper select in 会默认升序排序
@@ -42,8 +45,12 @@ public interface PaperRepository extends JpaRepository<Paper, Integer> {
     String getPaperTitleById(@Param("id") int id);
 
 
-    @Query("select p.title from Paper p where p.vote.id = :vid")
-    String getPaperTitleByVid(@Param("vid") int vid);
+    @Query(value = "select p.id, p.title from paper p where p.vote_id = :vid", nativeQuery = true)
+    Map<String, Object> getPaperInfo(@Param("vid") int vid);
+
+    @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
+    @Query(value = "select * from paper", nativeQuery = true)
+    List<Map<String, Object>> test();
 
 
     // todo delete

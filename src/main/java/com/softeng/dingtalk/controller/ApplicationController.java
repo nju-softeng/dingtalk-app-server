@@ -43,10 +43,10 @@ public class ApplicationController {
     @Autowired
     DcSummaryRepository dcSummaryRepository;
 
-    @GetMapping("/dcsummary/{yearmonth}")
-    public List<DcSummaryVO>  getDcSummary(@PathVariable int yearmonth) {
-        return dcSummaryRepository.listDcSummary(yearmonth);
-    }
+//    @GetMapping("/dcsummary/{yearmonth}")
+//    public List<DcSummaryVO>  getDcSummary(@PathVariable int yearmonth) {
+//        return dcSummaryRepository.listDcSummary(yearmonth);
+//    }
 
 
     /**

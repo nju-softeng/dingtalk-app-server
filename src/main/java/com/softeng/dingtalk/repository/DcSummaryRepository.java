@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -26,8 +27,12 @@ public interface DcSummaryRepository extends JpaRepository<DcSummary, Integer> {
     @Query("select  d from DcSummary d where d.user.id = :uid and d.yearmonth = :yearmonth")
     DcSummary getDcSummary(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
 
-    @Query("select new com.softeng.dingtalk.vo.DcSummaryVO(d.user.name, d.yearmonth, d.week1, d.week2, d.week3, d.week4, d.week5, d.total) from DcSummary d where d.yearmonth = :yearmonth")
-    List<DcSummaryVO> listDcSummary(@Param("yearmonth") int yearmonth);
+//    @Query("select new com.softeng.dingtalk.vo.DcSummaryVO(u.name, d.yearmonth, d.week1, d.week2, d.week3, d.week4, d.week5, d.total) " +
+////            "from User u left join DcSummary d on u.id = d.user.id  where d.yearmonth = :yearmonth")
+    // SELECT u.`name`, d.week1  FROM  `user` u left  JOIN  (SELECT * FROM dc_summary WHERE yearmonth = 202002) d on u.id = d.user_id
+    @Query(value = "select u.name, d.yearmonth, d.week1, d.week2, d.week3, d.week4, d.week5, d.total from user u left join (select * from dc_summary where yearmonth = :yearmonth) d on u.id = d.user_id",nativeQuery = true)
+
+    List<Map<String, Object>> listDcSummary(@Param("yearmonth") int yearmonth);
 
 
 }
