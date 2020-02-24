@@ -64,7 +64,7 @@ public class UserService {
     public Map getUserInfo(int uid) {
         User u = userRepository.findById(uid).get();
         double ac = acRecordRepository.getUserAcSum(uid);
-        log.debug(ac + "?");
+        dingTalkUtils.getJsapiTicket(); // 提前拿到jsapi ticket，避免需要时再去那减少时延
         return Map.of("name", u.getName(), "avatar", u.getAvatar(), "ac",ac);
     }
 

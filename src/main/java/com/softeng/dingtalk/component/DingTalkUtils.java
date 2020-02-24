@@ -87,7 +87,7 @@ public class DingTalkUtils {
      * @return java.lang.String
      * @Date 9:10 PM 11/13/2019
      **/
-    private String getAccessToken() {
+    public String getAccessToken() {
         long curTime = System.currentTimeMillis();
         if (accessToken == null || curTime - tokenTime >= cacheTime ) {
             DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/gettoken");
@@ -113,7 +113,7 @@ public class DingTalkUtils {
      * @return java.lang.String
      * @Date 8:20 AM 2/23/2020
      **/
-    private String getJsapiTicket()  {
+    public String getJsapiTicket()  {
         long curTime = System.currentTimeMillis();
         if (jsapiTicket == null || curTime - ticketTime >= cacheTime) {
             DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/get_jsapi_ticket");
