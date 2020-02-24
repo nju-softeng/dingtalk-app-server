@@ -87,8 +87,6 @@ public class TestIdea {
     }
 
 
-
-
     @Test
     public void test() {
         List<VoteDetail> voteDetails = new ArrayList<>();
