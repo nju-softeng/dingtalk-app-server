@@ -32,13 +32,10 @@ public class User {
     private String userid;    //钉钉用户userID
     private String name;      //用户姓名
     private String avatar;    //用户头像
-    private int successCnt;   //连续成功次数
-    private String degree;    //学位
     private int authority = USER_AUTHORITY;  //用户权限
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     @JsonIgnore
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;  //插入时间
-
 
     public User(String userid, String name, String avatar, int authority) {
         this.userid = userid;
@@ -46,6 +43,7 @@ public class User {
         this.avatar = avatar;
         this.authority = authority;
     }
+
     public User(int id) {
         this.id = id;
     }

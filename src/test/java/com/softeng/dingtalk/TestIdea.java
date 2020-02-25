@@ -64,16 +64,6 @@ public class TestIdea {
     Timer timer;
 
 
-
-
-
-
-
-    @Test
-    public void test_vote() {
-        voteService.computeVoteAc(9, false);
-    }
-
     @Test
     public void test_sync() throws ExecutionException, InterruptedException {
         int id = userService.getIdByUserid("362554492621552072");

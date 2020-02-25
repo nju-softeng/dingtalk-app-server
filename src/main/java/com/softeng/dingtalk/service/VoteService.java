@@ -2,7 +2,7 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.po.PaperinfoPO;
+
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.VoteVO;
 import lombok.extern.slf4j.Slf4j;
