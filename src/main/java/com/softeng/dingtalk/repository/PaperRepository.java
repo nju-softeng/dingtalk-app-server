@@ -23,9 +23,6 @@ import java.util.Map;
 @Repository
 public interface PaperRepository extends JpaRepository<Paper, Integer> {
 
-//    @Modifying
-//    @Query("update Paper p set p.result = :result where p.id = :id")
-//    void updatePaperResult(@Param("id") int id, @Param("result")boolean result);
 
 
 
@@ -66,8 +63,6 @@ public interface PaperRepository extends JpaRepository<Paper, Integer> {
 
     @Query("select p.vote from  Paper p where p.id = :id")
     Vote findVoteById(@Param("id") int id);
-
-
 
 
 

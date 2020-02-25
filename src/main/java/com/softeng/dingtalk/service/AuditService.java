@@ -2,7 +2,6 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.po.ReportApplicantPO;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.CheckedVO;
 import com.softeng.dingtalk.vo.ToCheckVO;

@@ -80,7 +80,7 @@ public class UserService {
         userRepository.saveAll(users);
     }
 
-    // 前端用 jsapi 选人，将 userid 变为 uid，若数据库中没有，从数据库中更新
+     // 前端用 jsapi 选人，将 userid 变为 uid，若数据库中没有，从数据库中更新
      public int getIdByUserid(String userid) {
         Integer id = userRepository.findIdByUserid(userid);
         if (id == null) {

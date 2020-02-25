@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.DcRecord;
-import com.softeng.dingtalk.po.ReportApplicantPO;
+
 import com.softeng.dingtalk.projection.DcRecordProjection;
 import com.softeng.dingtalk.vo.AppliedVO;
 import com.softeng.dingtalk.vo.CheckedVO;
@@ -29,7 +29,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
 
     /**
      * 更具分页查出的id去查询
-     * @param id, pageable
+     * @param ids
      * @return java.util.List<com.softeng.dingtalk.projection.DcRecordProjection>
      * @Date 1:30 PM 2/10/2020
      **/
@@ -59,14 +59,6 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
     List<CheckedVO> listChecked(@Param("uid")int uid);
 
 
-    /**
-     * 根据审核人id 获取待审核申请的申请人 userid -> 用于获取周报
-     * @param uid
-     * @return java.util.List<java.lang.String>
-     * @Date 11:11 AM 1/23/2020
-     **/
-    @Query("select new com.softeng.dingtalk.po.ReportApplicantPO(d.applicant.userid, d.applicant.id, d.weekdate) from DcRecord d where d.auditor.id = :uid and d.status = false")
-    List<ReportApplicantPO> listUserCode(int uid);
 
 
     /**
