@@ -36,6 +36,7 @@ public class User {
     @JsonIgnore
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;  //插入时间
+    private int degree; //
 
     public User(String userid, String name, String avatar, int authority) {
         this.userid = userid;

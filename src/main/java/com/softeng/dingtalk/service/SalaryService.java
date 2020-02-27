@@ -1,28 +1,25 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.repository.AcRecordRepository;
-import com.softeng.dingtalk.repository.DcSummaryRepository;
-import com.softeng.dingtalk.repository.TopupRepository;
-import com.softeng.dingtalk.repository.UserRepository;
-import com.softeng.dingtalk.vo.DcSummaryVO;
+import com.softeng.dingtalk.entity.DcRecord;
+import com.softeng.dingtalk.entity.DcSummary;
+import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author zhanyeye
  * @description
- * @create 2/6/2020 9:48 AM
+ * @create 2/27/2020 4:57 PM
  */
 @Service
 @Transactional
 @Slf4j
-public class PerformanceService {
+public class SalaryService {
     @Autowired
     DcSummaryRepository dcSummaryRepository;
     @Autowired
@@ -49,19 +46,7 @@ public class PerformanceService {
             base = 250;
         }
         double total = Math.round(base * dc * (1 + (ac/50)) + topup);
-        dcSummaryRepository.updateSalary(uid, ac, topup, total);
         log.debug(total + "");
-    }
-
-    public List<Map<String, Object>> listDcSummaryVO(LocalDate date) {
-        int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        log.debug(yearmonth + "");
-        return dcSummaryRepository.listDcSummary(yearmonth);
-    }
-
-
-    public List<Object> listAcSummary() {
-        return acRecordRepository.listAcSummary();
     }
 
 }

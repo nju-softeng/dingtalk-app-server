@@ -33,6 +33,21 @@ public class AuditController {
     @Autowired
     UserService userService;
 
+    /**
+     * 审核员提交审核结果
+     * @param  checkVO 审核结果信息
+     * @return void
+     * @date 9:35 AM 12/27/2019
+     **/
+    @PostMapping("/audit")
+    public void addAuditResult(@RequestBody CheckVO checkVO) {
+        log.debug(checkVO.toString());
+        log.debug("/audit" );
+        DcRecord dc = auditService.addAuditResult(checkVO); //持久化审核结果
+        auditService.updateDcSummary(dc);
+    }
+
+
 
     /**
      * 审核人更新审核记录
@@ -73,19 +88,6 @@ public class AuditController {
         return auditService.listCheckVO(uid);
     }
 
-    /**
-     * 审核员提交审核结果
-     * @param  checkVO 审核结果信息
-     * @return void
-     * @date 9:35 AM 12/27/2019
-     **/
-    @PostMapping("/audit")
-    public void addAuditResult(@RequestBody CheckVO checkVO) {
-        log.debug(checkVO.toString());
-        log.debug("/audit" );
-        DcRecord dc = auditService.addAuditResult(checkVO); //持久化审核结果
-        auditService.updateDcSummary(dc);
-    }
 
 
 

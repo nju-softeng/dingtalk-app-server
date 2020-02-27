@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -48,8 +49,7 @@ public interface AcRecordRepository extends JpaRepository<AcRecord, Integer> {
     @Query(value = "select u.id, u.name, sum(a.ac) as total from User u left join ac_record a on u.id = a.user_id group by u.id order by total DESC", nativeQuery = true)
     List<Object> listAcSummary();
 
-
-    @Query(value = "select `u`.`id` AS `id`,`u`.`name` AS `NAME`,`a`.`total` AS `total` from (`user` `u` left join (select `ac_record`.`user_id` AS `user_id`,sum(`ac_record`.`ac`) AS `total` from `ac_record` group by `ac_record`.`user_id`) `a` on((`u`.`id` = `a`.`user_id`)))", nativeQuery = true)
-    List<Object> listAcSummary1();
+    @Query(value = "select ifnull((select sum(ac) from ac_record where user_id = :uid and DATE_FORMAT(`create_time`,'%Y-%m') <= :date), 0)", nativeQuery = true)
+    Double getUserAcByDate(@Param("uid") int uid, @Param("date") LocalDate date);
 
 }
