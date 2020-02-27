@@ -30,8 +30,9 @@ public interface DcSummaryRepository extends JpaRepository<DcSummary, Integer> {
 //    @Query("select new com.softeng.dingtalk.vo.DcSummaryVO(u.name, d.yearmonth, d.week1, d.week2, d.week3, d.week4, d.week5, d.total) " +
 ////            "from User u left join DcSummary d on u.id = d.user.id  where d.yearmonth = :yearmonth")
     // SELECT u.`name`, d.week1  FROM  `user` u left  JOIN  (SELECT * FROM dc_summary WHERE yearmonth = 202002) d on u.id = d.user_id
-    @Query(value = "select u.name, d.yearmonth, d.week1, d.week2, d.week3, d.week4, d.week5, d.total from user u left join (select * from dc_summary where yearmonth = :yearmonth) d on u.id = d.user_id",nativeQuery = true)
-
+    @Query(value = "SELECT u.id, u.name, d.yearmonth, d.week1, d.week2, d.week3, d.week4, d.week5, d.total, ac.total AS ac FROM " +
+            "USER u LEFT JOIN ( SELECT user_id, sum( ac ) AS total FROM ac_record GROUP BY user_id ) AS ac ON u.id = ac.user_id " +
+            "LEFT JOIN dc_summary d ON ac.user_id = d.user_id AND d.yearmonth = :yearmonth ORDER BY total DESC",nativeQuery = true)
     List<Map<String, Object>> listDcSummary(@Param("yearmonth") int yearmonth);
 
 

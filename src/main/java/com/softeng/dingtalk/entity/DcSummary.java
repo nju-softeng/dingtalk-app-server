@@ -5,7 +5,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author zhanyeye
@@ -22,18 +25,44 @@ public class DcSummary {
     private int id;
     private int yearmonth;
     //表示用户当月第几周的 DC值
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double week1;
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double week2;
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double week3;
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double week4;
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double week5;
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double total;
+    @Column(columnDefinition="DECIMAL(10,3)")
+    private double ac;
+    @Column(columnDefinition="DECIMAL(10,3)")
+    private double topup;
+    @Column(columnDefinition="DECIMAL(10,3)")
+    private double salary;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    // Gain = Base * DC * (1+ (AC/50)) + Topup
     public void computeTotal() {
-        total = this.week1 + this.week2 + this.week3 + this.week4 + this.week5;
+        List<BigDecimal> weeks = new ArrayList<>();
+        weeks.add(BigDecimal.valueOf(week1));
+        weeks.add(BigDecimal.valueOf(week2));
+        weeks.add(BigDecimal.valueOf(week3));
+        weeks.add(BigDecimal.valueOf(week4));
+        weeks.add(BigDecimal.valueOf(week5));
+        BigDecimal sum = BigDecimal.ZERO;
+        for (BigDecimal w : weeks) {
+            sum = sum.add(w);
+        }
+        total = sum.doubleValue();
     }
+
+
 
     /**
      *  设置本月第 week 周的dc值

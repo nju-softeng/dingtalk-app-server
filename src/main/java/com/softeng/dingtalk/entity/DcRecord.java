@@ -25,10 +25,17 @@ public class DcRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double dvalue;  // Dedication Value
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double cvalue;  // Contribution Value
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double dc;
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double ac;
+
+
     private boolean status;   // 是否被审核
     private int yearmonth;     // 表示申请所属 年、月
     private int week;          // 申请所属周

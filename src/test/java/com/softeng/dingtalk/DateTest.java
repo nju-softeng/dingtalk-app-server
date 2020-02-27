@@ -1,21 +1,29 @@
-package com.softeng.dingtalk.component;
+package com.softeng.dingtalk;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
-import java.time.temporal.IsoFields;
-import java.util.Calendar;
-import java.util.Map;
 
 /**
  * @author zhanyeye
- * @description 工具类
- * @create 12/31/2019 3:54 PM
+ * @description
+ * @create 2/27/2020 1:42 PM
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
-@Component
-public class Utils {
+public class DateTest {
+
+
+    @Test
+    public void test_1() {
+        int[] arr = getTimeFlag(LocalDate.of(2020, 1, 20));
+        log.debug(arr[0]+ " " + arr[1]);
+    }
 
     public int[] getTimeFlag(LocalDate localDate) {
         LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue()); // 获取本月周日
@@ -28,4 +36,5 @@ public class Utils {
         result[1] = week;
         return result;
     }
+
 }

@@ -46,8 +46,8 @@ public class ProjectService {
     }
 
 
-    public List<Project> listProjectByAuditor(int uid) {
-        return null;
+    public List<Project> listUnfinishProjectByAuditor(int aid) {
+        return projectRepository.listUnfinishProjectByAid(aid);
     }
 
 

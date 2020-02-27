@@ -23,6 +23,7 @@ public class AcItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double ac;
     private String reason;
     private boolean status;

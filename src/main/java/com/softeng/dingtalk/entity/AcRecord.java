@@ -20,6 +20,7 @@ public class AcRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double ac;
     private String reason;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
