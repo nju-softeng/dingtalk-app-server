@@ -5,9 +5,7 @@ import com.softeng.dingtalk.component.Timer;
 import com.softeng.dingtalk.component.Utils;
 import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.repository.*;
-import com.softeng.dingtalk.service.PaperService;
-import com.softeng.dingtalk.service.UserService;
-import com.softeng.dingtalk.service.VoteService;
+import com.softeng.dingtalk.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
+
 public class TestIdea {
 
     @Autowired
@@ -64,11 +65,20 @@ public class TestIdea {
     Timer timer;
     @Autowired
     ProjectRepository projectRepository;
+    @Autowired
+    TopupRepository topupRepository;
+    @Autowired
+    DcSummaryRepository dcSummaryRepository;
+    @Autowired
+    PerformanceService performanceService;
+
 
 
 
     @Test
     public void test_1() {
+       // log.debug(acRecordRepository.getUserAcByTime(1, LocalDate.of(2020, 2,12)) +"");
+       performanceService.updateUser(4);
 
     }
 

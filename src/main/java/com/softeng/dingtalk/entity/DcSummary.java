@@ -41,7 +41,7 @@ public class DcSummary {
     private double ac;
     @Column(columnDefinition="DECIMAL(10,3)")
     private double topup;
-    @Column(columnDefinition="DECIMAL(10,3)")
+    @Column(columnDefinition="DECIMAL(10)")
     private double salary;
 
     @ManyToOne(fetch = FetchType.LAZY)
