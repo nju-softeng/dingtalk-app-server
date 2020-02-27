@@ -40,13 +40,7 @@ public class AuditService {
     UserService userService;
 
 
-
-    /**
-     * 审核人更新绩效申请
-     * @param checked
-     * @return void
-     * @Date 4:41 PM 2/1/2020
-     **/
+    // 审核人更新绩效申请
     public DcRecord updateAudit(CheckedVO checked) {
         DcRecord dc = dcRecordRepository.findById(checked.getId()).get();
         dc.update(checked.getCvalue(), checked.getDc(), checked.getAc()); // 更新 cvalue, dc, ac
@@ -63,12 +57,8 @@ public class AuditService {
         return dc;
     }
 
-    /**
-     * 审核人提交的审核结果
-     * @param checkVO
-     * @return void
-     * @Date 12:04 PM 1/28/2020
-     **/
+
+    // 审核人提交的审核结果
     public DcRecord addAuditResult(CheckVO checkVO) {
         DcRecord dc = dcRecordRepository.findById(checkVO.getId()).get();
         dc.update(checkVO.getCvalue(), checkVO.getDc(), checkVO.getAc());
@@ -85,7 +75,6 @@ public class AuditService {
     }
 
 
-
     //更新DcSummary数据
     public void updateDcSummary(DcRecord dc) {
         log.debug("update DcSummary" + dc.getId());
@@ -99,26 +88,7 @@ public class AuditService {
     }
 
 
-//    /**
-//     *  // todo 待修改
-//     * @param uid, dateTime
-//     * @return java.util.Map
-//     * @Date 11:29 AM 1/30/2020
-//     **/
-//    public Map getReport(int uid, LocalDateTime dateTime) {
-//        String userid =  userService.getUserid(uid);
-//        return dingTalkUtils.getReport(userid, dateTime);
-//    }
-
-
-
-
-    /**
-     * 审核人获取已审核申请
-     * @param uid
-     * @return java.util.List<com.softeng.dingtalk.vo.CheckedVO>
-     * @Date 8:15 PM 1/28/2020
-     **/
+    // 审核人获取已审核申请
     public List<CheckedVO> listCheckVO(int uid) {
         List<CheckedVO> checkedVOS = dcRecordRepository.listChecked(uid);
         for (CheckedVO checked : checkedVOS) {
@@ -127,12 +97,8 @@ public class AuditService {
         return checkedVOS;
     }
 
-    /**
-     * 审核人查看待审核的申请
-     * @param uid 审核人id
-     * @return java.util.List<com.softeng.dingtalk.dto.ApplicationInfo>
-     * @date 9:37 AM 12/27/2019
-     **/
+
+    // 审核人查看待审核的申请
     public List<ToCheckVO> getPendingApplication(int uid) {
         List<ToCheckVO> toCheckVOList = dcRecordRepository.listToCheckVO(uid);
         for (ToCheckVO toCheckVO : toCheckVOList) {
@@ -140,21 +106,5 @@ public class AuditService {
         }
         return toCheckVOList;
     }
-
-
-
-
-
-//    public Map getReport(int dcRecordid) {
-//        DcRecord dc = dcRecordRepository.findById(dcRecordid).get();
-//        String usercode = dc.getApplicant().getUserid();
-//        LocalDate date = dc.getWeekdate();
-//
-//
-//
-//    }
-
-
-
 
 }

@@ -49,6 +49,7 @@ public class ApplicationService {
         acItemRepository.saveAll(acItems);
     }
 
+
     // 更新申请
     public void updateApplication(ApplingVO applingVO) {
         int[] result = utils.getTimeFlag(applingVO.getDate()); //数组大小为2，result[0]: yearmonth, result[1] week
@@ -60,9 +61,6 @@ public class ApplicationService {
         }
         acItemRepository.saveAll(applingVO.getAcItems());
     }
-
-
-
 
 
     // 分页获取提交过的申请
@@ -78,8 +76,6 @@ public class ApplicationService {
     }
 
 
-
-
     // 获取指定用户的申请 ->  用于查看申请历史
     public Map getDcRecord(int uid, int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending()); //分页对象，每页10个
@@ -89,11 +85,11 @@ public class ApplicationService {
     }
 
 
-
     // 每周1个用户只能向同一审核人提交一个申请，判断数据库中是否已存在
     public boolean isExist(int uid, int aid, int yearmonth, int week) {
         return dcRecordRepository.isExist(uid, aid, yearmonth, week) != 0 ? true : false;
     }
+
 
     //todo  去掉该函数
     public List<AcItem> listAcItemBydcid(int id) {

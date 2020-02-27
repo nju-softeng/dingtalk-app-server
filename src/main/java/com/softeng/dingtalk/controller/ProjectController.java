@@ -5,10 +5,10 @@ import com.softeng.dingtalk.service.ProjectService;
 import com.softeng.dingtalk.vo.ProjectVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author zhanyeye
@@ -26,5 +26,11 @@ public class ProjectController {
     public void addProject(@RequestBody ProjectVO projectVO) {
         projectService.addProject(projectVO);
     }
+
+    @GetMapping("/project/unfinish/{aid}")
+    public List<Project> listUnfinishProjectByAuditor(@PathVariable int aid) {
+        return projectService.listUnfinishProjectByAuditor(aid);
+    }
+
 
 }

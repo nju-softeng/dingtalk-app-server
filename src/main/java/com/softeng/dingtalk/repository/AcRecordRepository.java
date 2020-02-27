@@ -49,4 +49,7 @@ public interface AcRecordRepository extends JpaRepository<AcRecord, Integer> {
     List<Object> listAcSummary();
 
 
+    @Query(value = "select `u`.`id` AS `id`,`u`.`name` AS `NAME`,`a`.`total` AS `total` from (`user` `u` left join (select `ac_record`.`user_id` AS `user_id`,sum(`ac_record`.`ac`) AS `total` from `ac_record` group by `ac_record`.`user_id`) `a` on((`u`.`id` = `a`.`user_id`)))", nativeQuery = true)
+    List<Object> listAcSummary1();
+
 }

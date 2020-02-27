@@ -24,6 +24,7 @@ public class PaperDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int num;
+    @Column(columnDefinition="DECIMAL(10,3)")
     private double ac;
     @JsonIgnoreProperties("paperDetails")
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
