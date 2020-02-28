@@ -36,7 +36,11 @@ public interface AcRecordRepository extends JpaRepository<AcRecord, Integer> {
     @Query("select a from AcRecord a where a.user.id = :uid")
     List<AcRecord> listByApplicantId(@Param("uid") int uid);
 
-    //todo 测试
+
+
+    @Query(value = "SELECT a.reason, a.ac, a.create_time, u.name as auditor FROM ac_record a LEFT JOIN user u on a.auditor_id = u.id where user_id = :uid  order by a.create_time desc", nativeQuery = true)
+    List<Map<String, Object>> listUserAc(@Param("uid") int uid);
+
     /**
      * 获取指定用户的总ac
      * @param uid
@@ -47,10 +51,13 @@ public interface AcRecordRepository extends JpaRepository<AcRecord, Integer> {
     Double getUserAcSum(@Param("uid") int uid);
 
     //"select  new com.softeng.dingtalk.vo.AcVO(a.user.id, a.user.name, sum(a.ac)) from User u left join AcRecord a  on u.id = a.user.id group by a.user.id"
-    @Query(value = "select u.id, u.name, sum(a.ac) as total from User u left join ac_record a on u.id = a.user_id group by u.id order by total DESC", nativeQuery = true)
+    @Query(value = "select u.id, u.name, ifnull(sum(a.ac), 0)  as total from User u left join ac_record a on u.id = a.user_id group by u.id order by total DESC", nativeQuery = true)
     List<Map<String, Object>> listAcSummary();
 
     @Query(value = "select ifnull((select sum(ac) from ac_record where user_id = :uid and DATE_FORMAT(`create_time`,'%Y%m') <= :yearmonth), 0)", nativeQuery = true)
     Double getUserAcByDate(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
+
+
+
 
 }
