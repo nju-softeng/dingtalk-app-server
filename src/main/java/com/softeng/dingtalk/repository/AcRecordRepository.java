@@ -38,7 +38,7 @@ public interface AcRecordRepository extends JpaRepository<AcRecord, Integer> {
 
 
 
-    @Query(value = "SELECT a.reason, a.ac, a.create_time, u.name as auditor FROM ac_record a LEFT JOIN user u on a.auditor_id = u.id where user_id = :uid  order by a.create_time desc", nativeQuery = true)
+    @Query(value = "SELECT a.reason, a.ac, a.create_time, u.name as auditor, a.classify FROM ac_record a LEFT JOIN user u on a.auditor_id = u.id where user_id = :uid  order by a.create_time desc", nativeQuery = true)
     List<Map<String, Object>> listUserAc(@Param("uid") int uid);
 
     /**
