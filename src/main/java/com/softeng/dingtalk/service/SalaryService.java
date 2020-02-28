@@ -33,20 +33,20 @@ public class SalaryService {
 
 
     // Gain = Base * DC * (1+ (AC/50)) + Topup
-    public void updateUser(int uid) {
-        LocalDate date = LocalDate.now();
-        int yearmonth = date.getYear() * 100  + date.getMonthValue();
-        double dc = dcSummaryRepository.getDcTotal(uid, yearmonth);
-        double ac = acRecordRepository.getUserAcByDate(uid, LocalDate.now()); // 获取到目前为止用户的AC总和
-        double topup = topupRepository.getByUserid(uid); // 获取用户的 Topup
-        double base;
-        if (userRepository.getUserDegree(uid) == 0) {
-            base = 150;
-        } else {
-            base = 250;
-        }
-        double total = Math.round(base * dc * (1 + (ac/50)) + topup);
-        log.debug(total + "");
-    }
+//    public void updateUser(int uid) {
+//        LocalDate date = LocalDate.now();
+//        int yearmonth = date.getYear() * 100  + date.getMonthValue();
+//        double dc = dcSummaryRepository.getDcTotal(uid, yearmonth);
+//        double ac = acRecordRepository.getUserAcByDate(uid, LocalDate.now()); // 获取到目前为止用户的AC总和
+//        double topup = topupRepository.getByUserid(uid); // 获取用户的 Topup
+//        double base;
+//        if (userRepository.getUserDegree(uid) == 0) {
+//            base = 150;
+//        } else {
+//            base = 250;
+//        }
+//        double total = Math.round(base * dc * (1 + (ac/50)) + topup);
+//        log.debug(total + "");
+//    }
 
 }
