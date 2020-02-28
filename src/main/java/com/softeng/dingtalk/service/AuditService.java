@@ -38,6 +38,8 @@ public class AuditService {
     DingTalkUtils dingTalkUtils;
     @Autowired
     UserService userService;
+    @Autowired
+    PerformanceService performanceService;
 
 
     // 审核人更新绩效申请
@@ -85,6 +87,7 @@ public class AuditService {
         }
         dcSummary.updateWeek(dc.getWeek(), dcSum);
         dcSummaryRepository.save(dcSummary);
+        performanceService.computeSalary(dc.getApplicant().getId(), dc.getYearmonth());
     }
 
 

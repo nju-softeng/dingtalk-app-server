@@ -29,11 +29,13 @@ public class PerformanceController {
         return performanceService.listDcSummaryVO(dateVO.getDate());
     }
 
-    // 拿到 dc 汇总
+    // 拿到 ac 汇总
     @GetMapping("/acsummary")
-    public List<Object> getAcSummary() {
+    public List<Map<String, Object>> getAcSummary() {
         return performanceService.listAcSummary();
     }
+
+
 
 
 

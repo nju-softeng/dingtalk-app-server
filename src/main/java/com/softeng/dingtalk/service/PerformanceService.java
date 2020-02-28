@@ -36,11 +36,9 @@ public class PerformanceService {
 
 
     // Gain = Base * DC * (1+ (AC/50)) + Topup
-    public void updateUser(int uid) {
-        LocalDate date = LocalDate.now();
-        int yearmonth = date.getYear() * 100  + date.getMonthValue();
+    public void computeSalary(int uid, int yearmonth) {
         double dc = dcSummaryRepository.getDcTotal(uid, yearmonth);
-        double ac = acRecordRepository.getUserAcByDate(uid, LocalDate.now()); // 获取到目前为止用户的AC总和
+        double ac = acRecordRepository.getUserAcByDate(uid, yearmonth); // 获取到目前为止用户的AC总和
         double topup = topupRepository.getByUserid(uid); // 获取用户的 Topup
         double base;
         if (userRepository.getUserDegree(uid) == 0) {
@@ -60,7 +58,7 @@ public class PerformanceService {
     }
 
 
-    public List<Object> listAcSummary() {
+    public List<Map<String, Object>> listAcSummary() {
         return acRecordRepository.listAcSummary();
     }
 

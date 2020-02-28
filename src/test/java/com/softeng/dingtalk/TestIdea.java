@@ -78,7 +78,7 @@ public class TestIdea {
     @Test
     public void test_1() {
        // log.debug(acRecordRepository.getUserAcByTime(1, LocalDate.of(2020, 2,12)) +"");
-       performanceService.updateUser(4);
+       //performanceService.updateUser(4);
 
     }
 
