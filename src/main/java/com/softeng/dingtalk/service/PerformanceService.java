@@ -51,6 +51,10 @@ public class PerformanceService {
         log.debug(total + "");
     }
 
+    public List<Map<String, Object>> listUserAc(int uid) {
+        return acRecordRepository.listUserAc(uid);
+    }
+
     public List<Map<String, Object>> listDcSummaryVO(LocalDate date) {
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
         log.debug(yearmonth + "");

@@ -35,6 +35,12 @@ public class PerformanceController {
         return performanceService.listAcSummary();
     }
 
+    @GetMapping("userac/{uid}")
+    public List<Map<String, Object>> listUserAc(@PathVariable int uid) {
+        return performanceService.listUserAc(uid);
+
+    }
+
 
 
 
