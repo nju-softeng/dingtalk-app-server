@@ -51,7 +51,7 @@ public interface AcRecordRepository extends JpaRepository<AcRecord, Integer> {
     Double getUserAcSum(@Param("uid") int uid);
 
     //"select  new com.softeng.dingtalk.vo.AcVO(a.user.id, a.user.name, sum(a.ac)) from User u left join AcRecord a  on u.id = a.user.id group by a.user.id"
-    @Query(value = "select u.id, u.name, ifnull(sum(a.ac), 0)  as total from User u left join ac_record a on u.id = a.user_id group by u.id order by total DESC", nativeQuery = true)
+    @Query(value = "select u.id, u.name, ifnull(sum(a.ac), 0)  as total from user u left join ac_record a on u.id = a.user_id group by u.id order by total DESC", nativeQuery = true)
     List<Map<String, Object>> listAcSummary();
 
     @Query(value = "select ifnull((select sum(ac) from ac_record where user_id = :uid and DATE_FORMAT(`create_time`,'%Y%m') <= :yearmonth), 0)", nativeQuery = true)
