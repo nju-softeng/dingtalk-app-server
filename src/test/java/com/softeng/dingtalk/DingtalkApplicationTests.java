@@ -18,12 +18,6 @@ class DingtalkApplicationTests {
     @Autowired
     DingTalkUtils dingTalkUtils;
 
-    @Test
-    public void test() {
-        List<String> test =  dingTalkUtils.listUserId();
-        for (String t : test) {
-            log.debug(t);
-        }
-    }
+
 
 }
