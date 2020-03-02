@@ -2,10 +2,7 @@ package com.softeng.dingtalk.vo;
 
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor  // 序列化用
 @Getter
 @Setter
+@ToString
 public class CheckedVO {
     private int id;         // dcRecord id
     private String name;    // 申请人姓名
