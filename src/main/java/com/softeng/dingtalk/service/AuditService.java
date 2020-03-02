@@ -87,7 +87,6 @@ public class AuditService {
         }
         dcSummary.updateWeek(dc.getWeek(), dcSum);
         dcSummaryRepository.save(dcSummary);
-        performanceService.computeSalary(dc.getApplicant().getId(), dc.getYearmonth());
     }
 
 

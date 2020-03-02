@@ -22,5 +22,6 @@ public class ApplingVO {
     private int auditorid;
     private LocalDate date;
     private double dvalue;
+    private double ac;
     private List<AcItem> acItems;     //ac值申请列表
 }
