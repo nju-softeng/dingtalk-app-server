@@ -9,10 +9,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author zhanyeye
- * @description
+ * @description  绩效变更时发送消息
  * @create 3/2/2020 9:54 AM
  */
-
 @Slf4j
 @Component
 @Aspect

@@ -97,6 +97,7 @@ public class DcRecord {
         this.applicant = new User(uid);
         this.auditor = new User(application.getAuditorid());
         this.dvalue = application.getDvalue();
+        this.ac = application.getAc();
         this.weekdate = application.getDate();
         this.yearmonth = yearmonth;
         this.week = week;

@@ -28,6 +28,7 @@ public class CheckedVO {
     private double ac;
     private int yearmonth;  // 表示申请所属 年、月
     private int week;
+    private int aid;        // 审核人id，用于通知消息中，显示审核人
     private LocalDateTime insertTime;
     private LocalDate weekdate;
     private List<AcItem> acItems;

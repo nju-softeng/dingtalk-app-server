@@ -33,7 +33,9 @@ public interface DcSummaryRepository extends JpaRepository<DcSummary, Integer> {
     @Query(value = "select ifnull((select total from dc_summary where user_id = :uid and yearmonth = :yearmonth), 0)", nativeQuery = true)
     Double getDcTotal(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
 
-    // 
+    //
+    @Query(value = "SELECT count(id) + 1 FROM dc_summary WHERE yearmonth = :yearmonth AND total > (SELECT IFNULL((SELECT total FROM dc_summary WHERE user_id = :uid and yearmonth = :yearmonth),0))", nativeQuery = true)
+    int getRank(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
 
     // 更新助研金
     @Modifying

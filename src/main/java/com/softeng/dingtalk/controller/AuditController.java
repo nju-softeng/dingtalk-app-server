@@ -41,8 +41,8 @@ public class AuditController {
      **/
     @PostMapping("/audit")
     public void addAuditResult(@RequestBody CheckVO checkVO) {
-        log.debug(checkVO.toString());
         log.debug("/audit" );
+
         DcRecord dc = auditService.addAuditResult(checkVO); //持久化审核结果
         auditService.updateDcSummary(dc);
     }
