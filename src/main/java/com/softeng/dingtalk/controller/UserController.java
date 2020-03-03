@@ -60,8 +60,9 @@ public class UserController {
     }
 
     @GetMapping("/message/page/{page}")
-    public Slice<Message> listUserMessage(@PathVariable int page, @RequestAttribute int uid) {
-        return notifyService.listUserMessage(uid, page);
+    public Map listUserMessage(@PathVariable int page, @RequestAttribute int uid) {
+        Slice<Message> messages = notifyService.listUserMessage(uid, page);
+        return Map.of("content", messages.getContent());
     }
 
 
