@@ -1,10 +1,15 @@
 package com.softeng.dingtalk.aop;
 
+
+import com.softeng.dingtalk.entity.DcRecord;
+import com.softeng.dingtalk.service.NotifyService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,17 +21,32 @@ import org.springframework.stereotype.Component;
 @Component
 @Aspect
 public class MessageAspect {
-    @After("execution(* com.softeng.dingtalk.service.AuditService.addAuditResult(..))")
-    public void addDcResultMessage(JoinPoint joinPoint) throws Throwable {
-        log.debug("切面！！！！！！！！！！！！！！");
+
+    @Autowired
+    NotifyService notifyService;
+
+
+    @Around("execution(* com.softeng.dingtalk.service.AuditService.addAuditResult(..))")
+    public Object addDcResultMessage(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
-        log.debug(args[0].toString());
+        Object object = joinPoint.proceed();
+        notifyService.reviewDcMessage((DcRecord) object);
+        return object;
     }
 
-    @After("execution(* com.softeng.dingtalk.service.AuditService.updateAudit(..))")
-    public void updateDcResultMessage(JoinPoint joinPoint) throws Throwable {
-        log.debug("切面！！！！！！！！！！！！！！");
+    @Around("execution(* com.softeng.dingtalk.service.AuditService.updateAudit(..))")
+    public Object updateDcResultMessage(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
-        log.debug(args[0].toString());
+        Object object = joinPoint.proceed();
+        notifyService.updateDcMessage((DcRecord) object);
+        return object;
     }
+
+    @After("execution(* com.softeng.dingtalk.service.PaperService.updateResult(..))")
+    public void paperResultMessage(JoinPoint joinPoint) throws Throwable {
+
+        Object[] args = joinPoint.getArgs();
+
+    }
+
 }
