@@ -1,10 +1,14 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
+import com.softeng.dingtalk.entity.Message;
+import com.softeng.dingtalk.service.NotifyService;
 import com.softeng.dingtalk.service.UserService;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +28,8 @@ public class UserController {
     UserService userService;
     @Autowired
     DingTalkUtils dingTalkUtils;
+    @Autowired
+    NotifyService notifyService;
 
 
     /**
@@ -51,6 +57,11 @@ public class UserController {
     @PostMapping("/jsapi_signature")
     public Map jspai(@RequestBody Map<String, String> map) {
         return dingTalkUtils.authentication(map.get("url"));
+    }
+
+    @GetMapping("/message/page/{page}")
+    public Slice<Message> listUserMessage(@PathVariable int page, @RequestAttribute int uid) {
+        return notifyService.listUserMessage(uid, page);
     }
 
 

@@ -9,13 +9,9 @@ import com.softeng.dingtalk.vo.CheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.ArrayList;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+
 
 /**
  * @author zhanyeye

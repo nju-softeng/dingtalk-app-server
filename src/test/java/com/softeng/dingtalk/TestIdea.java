@@ -11,19 +11,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Slice;
 import org.springframework.test.context.junit4.SpringRunner;
 
 
-import javax.transaction.Transactional;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 /**
@@ -71,14 +65,15 @@ public class TestIdea {
     DcSummaryRepository dcSummaryRepository;
     @Autowired
     PerformanceService performanceService;
+    @Autowired
+    NotifyService notifyService;
 
 
 
 
     @Test
     public void test_1() {
-       // log.debug(acRecordRepository.getUserAcByTime(1, LocalDate.of(2020, 2,12)) +"");
-       //performanceService.updateUser(4);
+       Slice<Message> aa = notifyService.listUserMessage(1,0);
 
     }
 

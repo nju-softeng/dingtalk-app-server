@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * @author zhanyeye
@@ -23,6 +24,13 @@ public class Message {
     private String content;
     private boolean status;
     private int uid; //接收人id;
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    private LocalDateTime createTime;
 
+    public Message(String title, String content, int uid) {
+        this.title = title;
+        this.content = content;
+        this.uid = uid;
+    }
 
 }
