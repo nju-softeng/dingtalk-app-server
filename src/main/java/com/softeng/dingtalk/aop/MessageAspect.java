@@ -26,6 +26,7 @@ public class MessageAspect {
     NotifyService notifyService;
 
 
+    // 审核人审核后发送消息
     @Around("execution(* com.softeng.dingtalk.service.AuditService.addAuditResult(..))")
     public Object addDcResultMessage(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
@@ -34,6 +35,7 @@ public class MessageAspect {
         return object;
     }
 
+    // 审核人更新后发送消息
     @Around("execution(* com.softeng.dingtalk.service.AuditService.updateAudit(..))")
     public Object updateDcResultMessage(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
@@ -42,11 +44,22 @@ public class MessageAspect {
         return object;
     }
 
+    // 论文结果确定后通知论文作者
     @After("execution(* com.softeng.dingtalk.service.PaperService.updateResult(..))")
     public void paperResultMessage(JoinPoint joinPoint) throws Throwable {
-
         Object[] args = joinPoint.getArgs();
-
+        notifyService.paperAcMessage((int) args[0], (boolean) args[1]);
     }
+
+    // 论文结果确定后通知投票者AC变化
+    @After("execution(* com.softeng.dingtalk.service.VoteService.computeVoteAc(..))")
+    public void voteResultMessage(JoinPoint joinPoint) throws Throwable {
+        Object[] args = joinPoint.getArgs();
+        notifyService.voteAcMessage((int) args[0], (boolean) args[1]);
+    }
+
+
+
+
 
 }

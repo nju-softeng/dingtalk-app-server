@@ -47,6 +47,7 @@ public class PaperService {
         paperDetailRepository.saveAll(papervo.getPaperDetails());
     }
 
+
     // 更新论文记录
     public void updatePaper(PaperVO paperVO) {
         Paper paper = paperRepository.findById(paperVO.getId()).get();
@@ -61,8 +62,8 @@ public class PaperService {
         if (paper.getResult() != null) {
             updateResult(paper.getId(), paper.getResult());
         }
-
     }
+
 
     // 删除论文
     public void deletePaper(int id) {
@@ -79,7 +80,6 @@ public class PaperService {
         paper.setResult(result);    //更新指定 论文的结果
         paperRepository.save(paper);
 
-
         // 计算AC
         double sum = paperLevelRepository.getvalue(paper.getLevel()); //获取论文奖励总AC
         String reason = paper.getTitle();
@@ -93,7 +93,6 @@ public class PaperService {
 
         List<AcRecord> oldacRecords = paperDetails.stream().filter(x-> x.getAcRecord() != null).map(x-> x.getAcRecord()).collect(Collectors.toList());
         acRecordRepository.deleteAll(oldacRecords);
-
 
         double[] rate = new double[]{0.5, 0.25, 0.15, 0.1};
         int i = 0;
@@ -110,6 +109,7 @@ public class PaperService {
     }
 
 
+    // 分页查看论文
     public Map listPaper(int page) {
         Pageable pageable = PageRequest.of(page, 6, Sort.by("id").descending());
         Page<Integer> pages = paperRepository.listAllId(pageable); //查询出的分页数据对象id
@@ -122,6 +122,8 @@ public class PaperService {
 
     }
 
+
+    // 获取论文的详细信息
     public Paper getPaper(int id) {
         Paper paper = paperRepository.findById(id).get();
         paper.setPaperDetails(paperDetailRepository.findByPaper(paper));
@@ -129,6 +131,7 @@ public class PaperService {
     }
 
 
+    // 获取论文对应的投票
     public Vote getVoteByPid (int pid) {
         return paperRepository.findVoteById(pid);
     }

@@ -37,7 +37,7 @@ public interface PaperRepository extends JpaRepository<Paper, Integer> {
     @Query("select p.id from Paper p")
     Page<Integer> listAllId(Pageable pageable);
 
-
+    // 根据id 获取论文title
     @Query("select p.title from Paper p where p.id = :id")
     String getPaperTitleById(@Param("id") int id);
 
@@ -63,6 +63,7 @@ public interface PaperRepository extends JpaRepository<Paper, Integer> {
 
     @Query("select p.vote from  Paper p where p.id = :id")
     Vote findVoteById(@Param("id") int id);
+
 
 
 
