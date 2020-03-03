@@ -1,8 +1,15 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.entity.Paper;
+import com.softeng.dingtalk.entity.PaperLevel;
+import com.softeng.dingtalk.repository.PaperLevelRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author zhanyeye
@@ -13,4 +20,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Slf4j
 public class InitService {
+    @Autowired
+    private PaperLevelRepository paperLevelRepository;
+
+    void initPaperLevel() {
+        if (paperLevelRepository.count() == 0) {
+            List<PaperLevel> paperLevels = new ArrayList<>();
+            paperLevels.add(new PaperLevel("Journal A", 1, 60));
+            paperLevels.add(new PaperLevel("Conference A", 2, 50));
+            paperLevels.add(new PaperLevel("Journal B", 3, 36));
+            paperLevels.add(new PaperLevel("Conference B", 4, 30));
+            paperLevels.add(new PaperLevel("Journal C", 5, 24));
+            paperLevels.add(new PaperLevel("Conference C", 6, 20));
+            paperLevelRepository.saveAll(paperLevels);
+        }
+
+    }
+
+
 }

@@ -73,7 +73,9 @@ public class TestIdea {
 
     @Test
     public void test_1() {
-       Slice<Message> aa = notifyService.listUserMessage(1,0);
+       Boolean b = true;
+       boolean c = true;
+       log.debug((b==c) + "");
 
     }
 
