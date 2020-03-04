@@ -65,7 +65,12 @@ public class UserService {
         User u = userRepository.findById(uid).get();
         double ac = acRecordRepository.getUserAcSum(uid);
         dingTalkUtils.getJsapiTicket(); // 提前拿到jsapi ticket，避免需要时再去那减少时延
-        return Map.of("name", u.getName(), "avatar", u.getAvatar(), "ac",ac);
+        if (u.getAvatar() != null) {
+            return Map.of("name", u.getName(), "avatar", u.getAvatar(), "ac",ac);
+        } else {
+            return Map.of("name", u.getName(), "ac",ac);
+        }
+
     }
 
     // 从钉钉服务器拉取用户同步到系统
@@ -90,4 +95,5 @@ public class UserService {
         }
         return id;
      }
+
 }

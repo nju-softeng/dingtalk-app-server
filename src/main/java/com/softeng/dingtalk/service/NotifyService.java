@@ -33,7 +33,7 @@ public class NotifyService {
     public void reviewDcMessage(DcRecord dc) {
 
         String title = new StringBuilder().append("第").append(dc.getWeek()).append("周绩效").toString();
-        String content = new StringBuilder().append("DC: ").append(dc.getDc()).append(",  AC: ").append(dc.getAc()).toString();
+        String content = new StringBuilder().append("C值: ").append(dc.getAc()).append(",  DC值: ").append(dc.getDc()).append(",  AC值: ").append(dc.getAc()).toString();
         Message message = new Message(title, content, dc.getApplicant().getId());
 
         messageRepository.save(message);
@@ -41,14 +41,14 @@ public class NotifyService {
 
     public void updateDcMessage(DcRecord dc) {
         String title = new StringBuilder().append("第").append(dc.getWeek()).append("周绩效 被更新").toString();
-        String content = new StringBuilder().append("DC: ").append(dc.getDc()).append(",  AC: ").append(dc.getAc()).toString();
+        String content = new StringBuilder().append("C值: ").append(dc.getAc()).append(",  DC值: ").append(dc.getDc()).append(",  AC值: ").append(dc.getAc()).toString();
         Message message = new Message(title, content, dc.getApplicant().getId());
 
         messageRepository.save(message);
     }
 
     public Slice<Message> listUserMessage(int uid, int page) {
-        Pageable pageable = PageRequest.of(page, 5, Sort.by("createTime"));
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("createTime").descending());
         return messageRepository.findByUid(uid, pageable);
 
     }
