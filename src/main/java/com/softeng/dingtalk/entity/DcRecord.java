@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
-@NamedEntityGraph(name="dcRecord.graph",attributeNodes={@NamedAttributeNode("acItems")})
+@NamedEntityGraph(name="dcRecord.graph",attributeNodes={@NamedAttributeNode("acItems"), @NamedAttributeNode("auditor")})
 public class DcRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
