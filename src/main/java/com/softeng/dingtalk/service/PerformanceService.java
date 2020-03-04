@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.entity.DcSummary;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.DcSummaryRepository;
 import com.softeng.dingtalk.repository.TopupRepository;
@@ -35,6 +36,7 @@ public class PerformanceService {
 
 
     // Gain = Base * DC * (1+ (AC/50)) + Topup
+    // 计算津贴
     public void computeSalary(int uid, int yearmonth) {
         double dc = dcSummaryRepository.getDcTotal(uid, yearmonth);
         double ac = acRecordRepository.getUserAcByDate(uid, yearmonth); // 获取到目前为止用户的AC总和
@@ -50,19 +52,38 @@ public class PerformanceService {
         log.debug(total + "");
     }
 
+    // 拿到用户所有 AC 日志
     public List<Map<String, Object>> listUserAc(int uid) {
         return acRecordRepository.listUserAc(uid);
     }
 
+    // 实验室所有人的 DC 汇总（指定月份）
     public List<Map<String, Object>> listDcSummaryVO(LocalDate date) {
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
         log.debug(yearmonth + "");
         return dcSummaryRepository.listDcSummary(yearmonth);
     }
 
-
+    // 实验室所有人的 AC 汇总
     public List<Map<String, Object>> listAcSummary() {
         return acRecordRepository.listAcSummary();
     }
+
+    // 拿到最近10条 AC 变动
+    public List<Map<String, Object>> listLastAc() {
+        return acRecordRepository.listLastAc();
+    }
+
+    // 用首页显示的绩效信息
+    public Map getUserPerformace(int uid) {
+        LocalDate date  = LocalDate.now();
+        int yearmonth = date.getYear() * 100 + date.getMonthValue();
+        DcSummary dcSummary = dcSummaryRepository.findByUserIdAndYearmonth(uid, yearmonth);
+        double dcTotal = dcSummary.
+        double acTotal = acRecordRepository.getUserAcSum(uid);
+        return Map.of("dcTotal", dcTotal, "acTotal", acTotal);
+    }
+
+
 
 }

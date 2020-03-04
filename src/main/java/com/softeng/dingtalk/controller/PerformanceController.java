@@ -22,23 +22,32 @@ public class PerformanceController {
     @Autowired
     PerformanceService performanceService;
 
-    // 拿到 dc 汇总
+    // 查询 dc 汇总
     @PostMapping("/dcsummary")
     public List<Map<String, Object>> getDcSummary(@RequestBody DateVO dateVO) {
         log.debug(dateVO.toString());
         return performanceService.listDcSummaryVO(dateVO.getDate());
     }
 
-    // 拿到 ac 汇总
+
+    // 查询 ac 汇总
     @GetMapping("/acsummary")
     public List<Map<String, Object>> getAcSummary() {
         return performanceService.listAcSummary();
     }
 
-    @GetMapping("userac/{uid}")
+
+    // 查询指定用户的所有 AC
+    @GetMapping("/userac/{uid}")
     public List<Map<String, Object>> listUserAc(@PathVariable int uid) {
         return performanceService.listUserAc(uid);
+    }
 
+
+    // 查询最近的10条AC变更
+    @GetMapping("/lastac")
+    public List<Map<String, Object>> listLastAc() {
+        return performanceService.listLastAc();
     }
 
 

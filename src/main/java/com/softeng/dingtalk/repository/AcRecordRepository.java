@@ -49,6 +49,8 @@ public interface AcRecordRepository extends JpaRepository<AcRecord, Integer> {
     Double getUserAcByDate(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
 
 
-
+    // 拿到最近10条 AC 变动
+    @Query(value = "select ac, reason, classify, create_time, u1.name as username, u2.name as auditorname from user u1 right join ac_record a on u1.id = a.user_id left join user u2 on a.auditor_id = u2.id order by a.id desc limit 10", nativeQuery = true)
+    List<Map<String, Object>> listLastAc();
 
 }
