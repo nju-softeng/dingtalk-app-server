@@ -73,9 +73,7 @@ public class TestIdea {
 
     @Test
     public void test_1() {
-       Boolean b = true;
-       boolean c = true;
-       log.debug((b==c) + "");
+
 
     }
 
