@@ -23,3 +23,8 @@ GET http://localhost:8080/api/userac/1
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
 
 ###
+
+GET http://localhost:8080/api/lastac
+token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
+
+###
