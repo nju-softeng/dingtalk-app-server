@@ -18,5 +18,6 @@ public class InitSys implements InitializingBean {
     public void afterPropertiesSet() {
         // TODO Auto-generated method stub
         initService.initPaperLevel();
+        initService.initUser();
     }
 }
