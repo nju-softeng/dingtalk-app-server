@@ -39,19 +39,19 @@ public class AuditService {
 
 
     // 审核人更新绩效申请
-    public DcRecord updateAudit(CheckedVO checked) {
-        DcRecord dc = dcRecordRepository.findById(checked.getId()).get();
-        dc.update(checked.getCvalue(), checked.getDc(), checked.getAc()); // 更新 cvalue, dc, ac
+    public DcRecord updateAudit(CheckVO checkVO) {
+        DcRecord dc = dcRecordRepository.findById(checkVO.getId()).get();
+        dc.update(checkVO.getCvalue(), checkVO.getDc(), checkVO.getAc()); // 更新 cvalue, dc, ac
         dcRecordRepository.save(dc); //持久化新的 dcRecord
         acItemRepository.deleteByDcRecord(dc); //删除旧数据
-        for (AcItem acItem : checked.getAcItems()) {
+        for (AcItem acItem : checkVO.getAcItems()) {
             acItem.setDcRecord(dc);
             if (acItem.isStatus()) {
                 AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem));
                 acItem.setAcRecord(acRecord);
             }
         }
-        acItemRepository.saveAll(checked.getAcItems());
+        acItemRepository.saveAll(checkVO.getAcItems());
         return dc;
     }
 

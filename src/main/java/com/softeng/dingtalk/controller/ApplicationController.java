@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class ApplicationController {
      * @Date 4:46 PM 2/3/2020
      **/
     @PostMapping("/application")
-    public void addApplication(@RequestAttribute int uid, @RequestBody ApplingVO application) {
+    public void addApplication(@RequestAttribute int uid,@Valid @RequestBody ApplingVO application) {
         log.debug(application.getDate().toString());
         int[] result = utils.getTimeFlag(application.getDate()); //数组大小为2，result[0]: yearmonth, result[1] week
         DcRecord dc = new DcRecord(application, uid, result[0], result[1]);
@@ -81,8 +82,9 @@ public class ApplicationController {
     }
 
 
+    // 用户更新
     @PostMapping("/application/update")
-    public void updateApplication(@RequestBody ApplingVO apply) {
+    public void updateApplication(@Valid @RequestBody ApplingVO apply) {
         log.debug(apply.toString());
         applicationService.updateApplication(apply);
     }

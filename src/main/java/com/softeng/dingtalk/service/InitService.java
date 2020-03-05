@@ -22,6 +22,8 @@ import java.util.List;
 public class InitService {
     @Autowired
     private PaperLevelRepository paperLevelRepository;
+    @Autowired
+    private UserService userService;
 
     void initPaperLevel() {
         if (paperLevelRepository.count() == 0) {
@@ -35,6 +37,10 @@ public class InitService {
             paperLevelRepository.saveAll(paperLevels);
         }
 
+    }
+
+    void initUser() {
+        userService.fetchUsers();
     }
 
 

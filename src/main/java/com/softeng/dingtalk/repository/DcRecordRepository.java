@@ -34,7 +34,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @Date 1:30 PM 2/10/2020
      **/
     @EntityGraph(value="dcRecord.graph",type= EntityGraph.EntityGraphType.FETCH)
-    @Query("select d from DcRecord d where d.id in :ids")
+    @Query("select d from DcRecord d where d.id in :ids order by d.id desc")
     List<DcRecordProjection> findAllById(List<Integer> ids);
 
 

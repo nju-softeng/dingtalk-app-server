@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class AuditController {
      * @date 9:35 AM 12/27/2019
      **/
     @PostMapping("/audit")
-    public void addAuditResult(@RequestBody CheckVO checkVO) {
+    public void addAuditResult(@Valid @RequestBody CheckVO checkVO) {
         log.debug("/audit" );
 
         DcRecord dc = auditService.addAuditResult(checkVO); //持久化审核结果
@@ -51,15 +52,15 @@ public class AuditController {
 
     /**
      * 审核人更新审核记录
-     * @param checked
+     * @param checkVO
      * @return void
      * @Date 9:13 PM 2/1/2020
      **/
     @PostMapping("/updateAudit")
-    public void updateChecked(@RequestBody CheckedVO checked) {
+    public void updateChecked(@Valid @RequestBody CheckVO checkVO) {
         log.debug("/updateAudit" );
 
-        DcRecord dc = auditService.updateAudit(checked); //持久化审核结果
+        DcRecord dc = auditService.updateAudit(checkVO); //持久化审核结果
         auditService.updateDcSummary(dc);
 
     }

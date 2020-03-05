@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.Max;
 import java.util.List;
 
 /**
@@ -20,6 +21,7 @@ import java.util.List;
 public class CheckVO {
     private int id;
     private double cvalue;
+    @Max(value = 1, message = " DC 值不能大于 1！")
     private double dc;
     private double ac;
     private List<AcItem> acItems;

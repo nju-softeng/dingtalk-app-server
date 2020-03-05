@@ -51,6 +51,12 @@ public class PerformanceController {
     }
 
 
+    // 获取首页的绩效信息
+    @GetMapping("/performance")
+    public Map getUserPerformance(@RequestAttribute int uid) {
+        return performanceService.getUserPerformace(uid);
+    }
+
 
 
 

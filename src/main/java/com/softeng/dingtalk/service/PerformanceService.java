@@ -78,10 +78,15 @@ public class PerformanceService {
     public Map getUserPerformace(int uid) {
         LocalDate date  = LocalDate.now();
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        DcSummary dcSummary = dcSummaryRepository.findByUserIdAndYearmonth(uid, yearmonth);
-        double dcTotal = dcSummary.
         double acTotal = acRecordRepository.getUserAcSum(uid);
-        return Map.of("dcTotal", dcTotal, "acTotal", acTotal);
+        DcSummary dc = dcSummaryRepository.findByUserIdAndYearmonth(uid, yearmonth);
+        if (dc == null) {
+            return Map.of("acTotal", acTotal, "dcTotal", 0, "w1", 0, "w2",0, "w3", 0, "w4", 0, "w5", 0);
+        } else {
+            return Map.of("acTotal", acTotal, "dcTotal", dc.getTotal(), "w1", dc.getWeek1(), "w2", dc.getWeek2(), "w3", dc.getWeek3(), "w4", dc.getWeek4(), "w5",dc.getWeek5());
+        }
+
+
     }
 
 

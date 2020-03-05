@@ -63,7 +63,7 @@ public class ApplicationService {
     // 分页获取提交过的申请
     public Map listDcRecord(int uid, int page) {
         // todo 排序！！！！
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending()); // 分页获取id,因为jpa分页是在内存中进行的，避免性能问题
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending()); // 分页获取id,因为jpa分页是在内存中进行的，避免性能问题
         List<Integer> ids = dcRecordRepository.listIdByUid(uid, pageable);
         if (ids.size() != 0) {
             return Map.of("list", dcRecordRepository.findAllById(ids), "total", dcRecordRepository.getCountByUid(uid));
