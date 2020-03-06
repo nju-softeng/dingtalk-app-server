@@ -55,7 +55,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @Date 7:49 PM 1/28/2020
      **/
     @Query("select new com.softeng.dingtalk.vo.CheckedVO(d.id, d.applicant.name, d.applicant.id, d.dvalue, d.cvalue, d.dc, d.ac, d.yearmonth, d.week, d.insertTime, d.weekdate) " +
-            "from DcRecord d where d.auditor.id = :uid and d.status = true")
+            "from DcRecord d where d.auditor.id = :uid and d.status = true order by d.id desc")
     List<CheckedVO> listChecked(@Param("uid")int uid);
 
 
@@ -67,7 +67,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @return java.util.List<com.softeng.dingtalk.vo.ApplicationVO>
      * @Date 8:18 PM 1/19/2020
      **/
-    @Query("select new com.softeng.dingtalk.vo.ToCheckVO(d.id, d.applicant.id, d.applicant.name, d.dvalue, d.yearmonth, d.week, d.insertTime, d.weekdate) from DcRecord d where d.auditor.id = :uid and d.status = false")
+    @Query("select new com.softeng.dingtalk.vo.ToCheckVO(d.id, d.applicant.id, d.applicant.name, d.dvalue, d.yearmonth, d.week, d.insertTime, d.weekdate) from DcRecord d where d.auditor.id = :uid and d.status = false order by d.id desc")
     List<ToCheckVO> listToCheckVO(@Param("uid") int uid);
 
 

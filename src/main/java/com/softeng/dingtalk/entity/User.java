@@ -33,16 +33,18 @@ public class User {
     private String name;      //用户姓名
     private String avatar;    //用户头像
     private int authority = USER_AUTHORITY;  //用户权限
+    private String position;
     @JsonIgnore
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;  //插入时间
     private int degree; //
 
-    public User(String userid, String name, String avatar, int authority) {
+    public User(String userid, String name, String avatar, int authority, String position) {
         this.userid = userid;
         this.name = name;
         this.avatar = avatar;
         this.authority = authority;
+        this.position = position;
     }
 
     public User(int id) {

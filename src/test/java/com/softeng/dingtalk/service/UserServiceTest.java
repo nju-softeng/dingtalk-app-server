@@ -26,8 +26,8 @@ public class UserServiceTest {
 
     @Test
     public void test_addUser() {
-        User u = new User("0001", "zhanyeye", "avatar", 0);
-        userService.addUser(u);
+      //  User u = new User("0001", "zhanyeye", "avatar", 0);
+        //userService.addUser(u);
     }
 
 
