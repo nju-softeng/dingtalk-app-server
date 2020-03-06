@@ -33,7 +33,7 @@ public class NotifyService {
     public void reviewDcMessage(DcRecord dc) {
 
         String title = new StringBuilder().append("第").append(dc.getWeek()).append("周绩效").toString();
-        String content = new StringBuilder().append("C值: ").append(dc.getAc()).append(",  DC值: ").append(dc.getDc()).append(",  AC值: ").append(dc.getAc()).toString();
+        String content = new StringBuilder().append("C值: ").append(dc.getCvalue()).append(",  DC值: ").append(dc.getDc()).append(",  AC值: ").append(dc.getAc()).toString();
         Message message = new Message(title, content, dc.getApplicant().getId());
 
         messageRepository.save(message);

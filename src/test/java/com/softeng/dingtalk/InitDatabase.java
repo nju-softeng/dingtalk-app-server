@@ -78,14 +78,14 @@ public class InitDatabase {
     @Test
     public void addTestUser() {
         List<User> users = new ArrayList<>();
-        users.add(new User("00002", "user2", "test", 1 ));
-        users.add(new User("00003", "user3", "test", 1 ));
-        users.add(new User("00004", "user4", "test", 1 ));
-        users.add(new User("00006", "user6", "test", 0 ));
-        users.add(new User("00007", "user7", "test", 0 ));
-        users.add(new User("00008", "user8", "avatar8", 0 ));
-        users.add(new User("00009", "user9", "avatar9", 0 ));
-        users.add(new User("000010", "user10", "avatar10", 0 ));
+//        users.add(new User("00002", "user2", "test", 1 ));
+//        users.add(new User("00003", "user3", "test", 1 ));
+//        users.add(new User("00004", "user4", "test", 1 ));
+//        users.add(new User("00006", "user6", "test", 0 ));
+//        users.add(new User("00007", "user7", "test", 0 ));
+//        users.add(new User("00008", "user8", "avatar8", 0 ));
+//        users.add(new User("00009", "user9", "avatar9", 0 ));
+//        users.add(new User("000010", "user10", "avatar10", 0 ));
         userRepository.saveAll(users);
     }
 

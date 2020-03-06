@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author zhanyeye
@@ -70,12 +68,17 @@ public class UserService {
         } else {
             return Map.of("name", u.getName(), "ac",ac);
         }
-
     }
 
     // 从钉钉服务器拉取用户同步到系统
     public void fetchUsers() {
-        List<String> remoteUserids = dingTalkUtils.listUserId();
+        List<String> depids = dingTalkUtils.listDepid();
+        Set<String> remoteUserids = new HashSet<>();
+
+        for (String depid : depids) {
+            remoteUserids.addAll(dingTalkUtils.listUserId(depid));
+        }
+
         List<String> localUserids = userRepository.listAllUserid();
         remoteUserids.removeAll(localUserids);
         List<User> users = new ArrayList<>();

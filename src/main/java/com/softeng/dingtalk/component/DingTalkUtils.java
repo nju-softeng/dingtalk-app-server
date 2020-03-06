@@ -173,7 +173,7 @@ public class DingTalkUtils {
             throw new RuntimeException();
         }
         int authority = response.getIsAdmin() ? User.ADMIN_AUTHORITY : User.USER_AUTHORITY;
-        User user = new User(response.getUserid(), response.getName(), response.getAvatar(), authority);
+        User user = new User(response.getUserid(), response.getName(), response.getAvatar(), authority, response.getPosition());
         return  user;
     }
 
@@ -204,12 +204,25 @@ public class DingTalkUtils {
         }
     }
 
+    // 获取部门id
+    public List<String> listDepid() {
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/department/list");
+        OapiDepartmentListRequest request = new OapiDepartmentListRequest();
+        request.setHttpMethod("GET");
+        OapiDepartmentListResponse response;
+        try {
+            response = client.execute(request, getAccessToken());
+        } catch (ApiException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取部门Id 失败");
+        }
+        return response.getDepartment().stream().map(x -> String.valueOf(x.getId())).collect(Collectors.toList());
+    }
 
     //获取整个部门的userid
-    public List<String> listUserId() {
+    public List<String> listUserId(String depid) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/getDeptMember");
         OapiUserGetDeptMemberRequest req = new OapiUserGetDeptMemberRequest();
-        req.setDeptId("1");
+        req.setDeptId(depid);
         req.setHttpMethod("GET");
         OapiUserGetDeptMemberResponse response;
         try {
