@@ -59,12 +59,25 @@ public class UserController {
         return dingTalkUtils.authentication(map.get("url"));
     }
 
+    // 获取用户的消息
     @GetMapping("/message/page/{page}")
     public Map listUserMessage(@PathVariable int page, @RequestAttribute int uid) {
         Slice<Message> messages = notifyService.listUserMessage(uid, page);
         return Map.of("content", messages.getContent());
     }
 
+    // 查询所有用户的权限
+    @GetMapping("/listrole")
+    public List<Map<String, Object>> listRole() {
+        return userService.listRoles();
+    }
+
+
+    // 更新用户权限
+    @PostMapping("/updaterole")
+    public void updateUserRole(@RequestBody Map<String, Object> map) {
+        userService.updateRole((int) map.get("uid"), (int) map.get("authority"));
+    }
 
 
 }

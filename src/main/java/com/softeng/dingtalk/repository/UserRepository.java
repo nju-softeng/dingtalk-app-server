@@ -3,6 +3,7 @@ package com.softeng.dingtalk.repository;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.vo.UserVO;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -27,22 +28,35 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     User findByUserid(@Param("userid")String userid);
 
 
-    //todo 管理员是否要被列入
-    //查找所有的具有审核权限的用户 -> 供用户提交审核申请时选择
+
+    //查找所有的具有审核权限的用户 -> 供用户提交审核申请时选择  //todo 管理员是否要被列入
     @Query(value = "select id, name from user where authority = 1", nativeQuery = true)
     List<Map<String, Object>> listAuditor();
+
 
     @Query("select new com.softeng.dingtalk.vo.UserVO(u.id, u.name) from User u")
     List<UserVO> listUserVOS();
 
+
     @Query("select u.userid from User u")
     List<String> listAllUserid();
+
 
     @Query("select u.id from User u where u.userid = :userid")
     Integer findIdByUserid(@Param("userid") String userid);
 
+
     @Query("select u.degree from User u where id = :uid")
     Integer getUserDegree(@Param("uid") int uid);
 
+
+    // 获取用户权限信息
+    @Query(value = "select id, name, avatar, position , authority from user",nativeQuery = true)
+    List<Map<String, Object>> listRole();
+
+    // 更新用户的审核权限
+    @Modifying
+    @Query("update User set authority = :authority where id = :uid")
+    void updateUserRole(@Param("uid")int uid, @Param("authority") int authority);
 
 }
