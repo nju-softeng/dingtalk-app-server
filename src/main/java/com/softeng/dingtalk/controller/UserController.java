@@ -43,10 +43,12 @@ public class UserController {
         return userService.getUserInfo(uid);
     }
 
+    // 查询审核人
     @GetMapping("/user/getAuditors")
     public Map getAuditors() {
         return userService.getAuditorUser();
     }
+
 
     @GetMapping("/userlist")
     public List<UserVO> listusers() {
