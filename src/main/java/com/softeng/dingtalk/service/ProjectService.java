@@ -44,10 +44,23 @@ public class ProjectService {
         projectDetailRepository.saveAll(projectDetails);
     }
 
-
+    // 审核人查询进行中的项目
     public List<Project> listUnfinishProjectByAuditor(int aid) {
         return projectRepository.listUnfinishProjectByAid(aid);
     }
+
+
+    // 审核人已经结束的进行中的项目
+    public List<Project> listfinishProjectByAuditor(int aid) {
+        return projectRepository.listfinishProjectByAid(aid);
+    }
+
+
+    // 用户获取正在进行的项目
+    public List<Project>  listProjectByUid(int uid) {
+        return projectDetailRepository.listProjectByUid(uid);
+    }
+
 
 
 

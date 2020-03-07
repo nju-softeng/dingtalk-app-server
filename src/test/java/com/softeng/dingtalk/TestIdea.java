@@ -69,6 +69,8 @@ public class TestIdea {
     PerformanceService performanceService;
     @Autowired
     NotifyService notifyService;
+    @Autowired
+    ProjectService projectService;
 
 
 
@@ -76,7 +78,7 @@ public class TestIdea {
     @Transactional
     @Test
     public void test_1() {
-        DcSummary dcSummary = dcSummaryRepository.findByUserIdAndYearmonth(2, 202002);
+        List<Project> test = projectService.listProjectByUid(2);
 
     }
 

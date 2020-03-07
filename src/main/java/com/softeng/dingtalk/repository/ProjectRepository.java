@@ -16,11 +16,21 @@ import java.util.Map;
  */
 public interface ProjectRepository  extends JpaRepository<Project, Integer> {
 
+    // 审核人获取进行中的项目
     @EntityGraph(value="project.graph",type= EntityGraph.EntityGraphType.FETCH)
     @Query("select p from Project p where p.auditor.id = :aid and p.status = false")
     List<Project> listUnfinishProjectByAid(@Param("aid") int aid);
 
+
+    // 审核人获取结束的项目
     @EntityGraph(value="project.graph",type= EntityGraph.EntityGraphType.FETCH)
     @Query("select p from Project p where p.auditor.id = :aid and p.status = true")
     List<Project> listfinishProjectByAid(@Param("aid") int aid);
+
+
+    // 用户获取自己参与的项目
+    @Query("select p from Project p left join ProjectDetail pd on p.id = pd.project.id where pd.user.id = :uid")
+    List<Project> listunfinishProject(@Param("uid")int uid);
+
+
 }
