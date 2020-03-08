@@ -14,7 +14,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
-
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -77,8 +77,8 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      * @return java.lang.Double
      * @Date 6:51 PM 1/17/2020
      **/
-    @Query(value = "select ifnull((select sum(dc) from dc_record where applicant_id = :uid and auditor_id = :aid and insert_time >= :stime and insert_time <= :etime), 0)", nativeQuery = true)
-    Double getByTime(@Param("uid") int uid, @Param("aid") int id, @Param("stime") String stime, @Param("etime") String etime);
+    @Query(value = "select ifnull((select sum(dc) from dc_record where applicant_id = :uid and auditor_id = :aid and weekdate >= :stime and weekdate <= :etime), 0)", nativeQuery = true)
+    Double getByTime(@Param("uid") int uid, @Param("aid") int id, @Param("stime") LocalDate stime, @Param("etime") LocalDate etime);
 
 
     /**

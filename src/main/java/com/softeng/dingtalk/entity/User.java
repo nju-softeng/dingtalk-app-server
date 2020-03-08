@@ -27,7 +27,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @JsonIgnore
     @Column(unique = true)
     private String userid;    //钉钉用户userID
     private String name;      //用户姓名

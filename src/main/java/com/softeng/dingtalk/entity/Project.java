@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
 @NamedEntityGraph(name="project.graph",attributeNodes={@NamedAttributeNode("projectDetails")})
 public class Project {
@@ -35,12 +37,11 @@ public class Project {
     private LocalDate endTime;
     private LocalDate finishTime;
     @JsonIgnoreProperties("project")
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
     private List<ProjectDetail> projectDetails;
 
-    public Project(String name, List<ProjectDetail> projectDetails) {
-        this.name = name;
-        this.projectDetails = projectDetails;
+    public Project(int id) {
+        this.id = id;
     }
 
     public Project(String name, User auditor, LocalDate beginTime, LocalDate endTime) {
