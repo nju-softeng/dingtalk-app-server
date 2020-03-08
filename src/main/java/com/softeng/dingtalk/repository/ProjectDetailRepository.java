@@ -19,4 +19,10 @@ public interface ProjectDetailRepository extends JpaRepository<ProjectDetail, In
 //    @EntityGraph(value="project.graph",type= EntityGraph.EntityGraphType.FETCH)
     @Query("select pd.project from ProjectDetail pd where pd.user.id = :uid")
     List<Project> listProjectByUid(@Param("uid") int uid);
+
+    // 删除指定project 的分配信息
+    void deleteByProjectId(int id);
+
+
+    List<ProjectDetail> findAllByProject(Project project);
 }

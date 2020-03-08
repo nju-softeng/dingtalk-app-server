@@ -18,8 +18,10 @@ import java.util.List;
 @Getter
 @Setter
 public class ProjectVO {
+    private int id;
     private String name;
     private int auditorid;
     private LocalDate[] dates;
     private List<String> dingIds;
+    private boolean updateDingIds;
 }

@@ -3,9 +3,11 @@ package com.softeng.dingtalk.repository;
 import com.softeng.dingtalk.entity.Project;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -32,5 +34,10 @@ public interface ProjectRepository  extends JpaRepository<Project, Integer> {
     @Query("select p from Project p left join ProjectDetail pd on p.id = pd.project.id where pd.user.id = :uid")
     List<Project> listunfinishProject(@Param("uid")int uid);
 
+
+    // 更新项目
+    @Modifying
+    @Query("update Project set name = :name, beginTime = :beginTime, endTime = :endTime where id = :id")
+    void updateProject(@Param("id") int id,@Param("name") String name,@Param("beginTime") LocalDate beginTime,@Param("endTime") LocalDate endTime);
 
 }

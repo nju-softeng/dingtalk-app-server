@@ -22,10 +22,15 @@ public class ProjectController {
     @Autowired
     ProjectService projectService;
 
-    // 添加项目
+    // 添加 或 更新 项目
     @PostMapping("/project")
-    public void addProject(@RequestBody ProjectVO projectVO) {
-        projectService.addProject(projectVO);
+    public void addUpdateProject(@RequestBody ProjectVO projectVO) {
+        if (projectVO.getId() == 0) {
+            projectService.addProject(projectVO);
+        } else {
+            projectService.updateProject(projectVO);
+        }
+
     }
 
 
@@ -40,6 +45,13 @@ public class ProjectController {
     @GetMapping("/project/finish/{aid}")
     public List<Project> listfinishProjectByAuditor(@PathVariable int aid) {
         return projectService.listfinishProjectByAuditor(aid);
+    }
+
+
+    // 删除项目
+    @GetMapping("/project/delete/{id}")
+    public void deleteProject(@PathVariable int id) {
+        projectService.delete(id);
     }
 
 }

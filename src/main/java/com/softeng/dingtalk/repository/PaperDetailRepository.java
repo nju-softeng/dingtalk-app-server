@@ -2,6 +2,7 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.PaperDetail;
+import com.softeng.dingtalk.entity.ProjectDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -29,5 +30,6 @@ public interface PaperDetailRepository extends JpaRepository<PaperDetail, Intege
 
     @Query("select pd.user.name from PaperDetail pd where pd.paper.id = :pid")
     List<String> listPaperAuthor(@Param("pid") int pid);
+
 
 }
