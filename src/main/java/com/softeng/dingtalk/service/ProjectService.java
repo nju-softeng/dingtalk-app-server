@@ -19,7 +19,10 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author zhanyeye
@@ -127,6 +130,24 @@ public class ProjectService {
             pd.setAcRecord(acRecord);
             projectDetailRepository.save(pd);
         }
+    }
+
+    public Object getProjectDc(int pid) {
+        Project p =  projectRepository.findById(pid).get();
+        List<Map<String, String>> dclist = projectDetailRepository.getProjectDc(pid, p.getAuditor().getId(), p.getBeginTime(), p.getEndTime());
+        Map<String, List<Map<String, String>>> maplist = dclist.stream()
+                .collect(Collectors.groupingBy(map -> map.get("name"),
+                        Collectors.mapping(map -> {
+                            Map<String, String> temp = new HashMap<String, String>(map);
+                            temp.remove("name");
+                            return temp;
+                        }, Collectors.toList())));
+
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (String key : maplist.keySet()) {
+            res.add(Map.of("name", key, "dclist", maplist.get(key)));
+        }
+        return res;
     }
 
 
