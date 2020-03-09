@@ -18,7 +18,6 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Builder
 @NoArgsConstructor
 @NamedEntityGraph(name="project.graph",attributeNodes={@NamedAttributeNode("projectDetails")})
 public class Project {

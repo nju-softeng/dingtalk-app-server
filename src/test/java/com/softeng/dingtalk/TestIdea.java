@@ -7,6 +7,7 @@ import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -71,6 +74,9 @@ public class TestIdea {
     NotifyService notifyService;
     @Autowired
     ProjectService projectService;
+    @Autowired
+    ProjectDetailRepository projectDetailRepository;
+
 
 
 
@@ -78,23 +84,45 @@ public class TestIdea {
     @Transactional
     @Test
     public void test_1() {
-        List<Project> test = projectService.listProjectByUid(2);
+       Object o =  projectService.getProjectDc(14);
+
+
 
     }
 
 
     @Test
     public void test() {
-        List<VoteDetail> voteDetails = new ArrayList<>();
-        VoteDetail v1 =  new VoteDetail();
-        VoteDetail v2 =  new VoteDetail();
-        VoteDetail v3 =  new VoteDetail();
-        v1.setAcRecord(new AcRecord());
-        v2.setAcRecord(new AcRecord());
-        voteDetails.add(v1);
-        voteDetails.add(v2);
-        voteDetails.add(v3);
-        List<AcRecord> acRecords = voteDetails.stream().filter(x -> x.getAcRecord() != null).map((x-> x.getAcRecord())).collect(Collectors.toList());
+        Map<String, String> m = new HashMap<>();
+        m.put("dateDebut", "2018-07-01T00:00:00.000+0000");
+        m.put("nom", "Julien Mannone");
+        m.put("etat", "Impayé");
+
+        Map<String, String> m2 = new HashMap<>();
+        m2.put("dateDebut", "2018-10-01T00:00:00.000+0000");
+        m2.put("nom", "Mathiew Matic");
+        m2.put("etat", "payé");
+
+        Map<String, String> m3 = new HashMap<>();
+        m3.put("dateDebut", "2018-07-01T00:00:00.000+0000");
+        m3.put("nom", "Ash Moon");
+        m3.put("etat", "payé");
+
+        List<Map<String, String>> list = new ArrayList<>();
+        list.add(m);
+        list.add(m2);
+        list.add(m3);
+
+        List<Map<String, Map<String, String>>> res = list.stream().map(it -> {
+                    Map<String, Map<String, String>> newMap = new HashMap<>();
+                    String nom = it.get("nom");
+                    it.remove("nom");
+                    newMap.put(nom, it);
+                    return newMap;
+                }
+        ).collect(Collectors.toList());
+
+        System.out.println(res);
 
     }
 

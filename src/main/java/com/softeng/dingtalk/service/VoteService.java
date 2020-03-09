@@ -124,10 +124,12 @@ public class VoteService {
     public Vote updateVote(Vote v) {
         int accept = voteDetailRepository.getAcceptCnt(v.getId());
         int total = voteDetailRepository.getCnt(v.getId());
-        voteRepository.updateStatus(v.getId(), accept, total, accept > total - accept);
+
+        v.setStatus(true);
         v.setAccept(accept);
         v.setTotal(total);
         v.setResult(accept > total - accept);
+        voteRepository.save(v);
         return v;
     }
 

@@ -23,5 +23,7 @@ public class UserInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int uid;
+    private int deliveryCnt; // 连续成功交付次数
+    private double voucher;  // 缺陷代金券
 
 }

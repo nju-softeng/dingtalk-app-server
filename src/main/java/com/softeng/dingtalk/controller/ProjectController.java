@@ -33,6 +33,11 @@ public class ProjectController {
 
     }
 
+    @GetMapping("/project/dc/{pid}")
+    public Object getProjectDc(@PathVariable int pid) {
+        return projectService.getProjectDc(pid);
+    }
+
 
     // 查询进行中的项目
     @GetMapping("/project/unfinish/{aid}")

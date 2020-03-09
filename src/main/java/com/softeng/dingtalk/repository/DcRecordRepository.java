@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -72,13 +73,16 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
 
 
     /**
-     * 计算项目期间dc值
+     * 计算项目期间累计dc值
      * @param uid, id, stime, etime
      * @return java.lang.Double
      * @Date 6:51 PM 1/17/2020
      **/
     @Query(value = "select ifnull((select sum(dc) from dc_record where applicant_id = :uid and auditor_id = :aid and weekdate >= :stime and weekdate <= :etime), 0)", nativeQuery = true)
     Double getByTime(@Param("uid") int uid, @Param("aid") int id, @Param("stime") LocalDate stime, @Param("etime") LocalDate etime);
+
+    @Query(value = "select dc, CONCAT(yearmonth, '-',`week`) as 'date' from dc_record where applicant_id = :uid and auditor_id = :aid and weekdate >= :stime and weekdate <= :etime", nativeQuery = true)
+    List<Map<String, Object>> getDcBytime(@Param("uid") int uid, @Param("aid") int id, @Param("stime") LocalDate stime, @Param("etime") LocalDate etime);
 
 
     /**
