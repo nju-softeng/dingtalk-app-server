@@ -144,9 +144,18 @@ public class ProjectService {
                         }, Collectors.toList())));
 
         List<Map<String, Object>> res = new ArrayList<>();
-        for (String key : maplist.keySet()) {
-            res.add(Map.of("name", key, "dclist", maplist.get(key)));
+
+        List<User> users = projectDetailRepository.findUserByProjectId(pid);
+
+        for (User u : users) {
+            double dctotal = dcRecordRepository.getByTime(u.getId(), p.getAuditor().getId(), p.getBeginTime(), p.getEndTime());
+            if (maplist.containsKey(u.getName())) {
+                res.add(Map.of("name", u.getName(), "dclist", maplist.get(u.getName()), "dctotal", dctotal));
+            } else {
+                res.add(Map.of("name", u.getName(), "dclist", new ArrayList(), "dctotal", dctotal));
+            }
         }
+
         return res;
     }
 
