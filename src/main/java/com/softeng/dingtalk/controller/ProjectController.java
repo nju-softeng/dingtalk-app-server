@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -36,6 +38,11 @@ public class ProjectController {
     @GetMapping("/project/dc/{pid}")
     public Object getProjectDc(@PathVariable int pid) {
         return projectService.getProjectDc(pid);
+    }
+
+    @PostMapping("/project/computeac/{pid}")
+    public Map ComputeProjectAc(@PathVariable int pid, @RequestBody Map<String, LocalDate> map) {
+        return projectService.ComputeProjectAc(pid, map.get("finishdate"));
     }
 
 

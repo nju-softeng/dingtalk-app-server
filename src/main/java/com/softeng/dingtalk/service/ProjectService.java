@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,9 +48,9 @@ public class ProjectService {
     // 添加任务
     public void addProject(ProjectVO projectVO) {
         Project project = new Project(projectVO.getName(), new User(projectVO.getAuditorid()), projectVO.getDates()[0], projectVO.getDates()[1]);
-        int day = Period.between(projectVO.getDates()[0], projectVO.getDates()[1]).getDays();
-        project.setExpectedAC(day * projectVO.getDingIds().size() / 30);
-
+        LocalDate[] dates = projectVO.getDates();
+        int day = (int) dates[0].until(dates[1], ChronoUnit.DAYS);
+        project.setExpectedAC(day * projectVO.getDingIds().size() / 30.0);
 
         projectRepository.save(project);
 
@@ -65,7 +66,14 @@ public class ProjectService {
 
     // 更新项目信息
     public void updateProject(ProjectVO projectVO) {
-        projectRepository.updateProject(projectVO.getId(), projectVO.getName(), projectVO.getDates()[0], projectVO.getDates()[1]);
+        Project p = projectRepository.findById(projectVO.getId()).get();
+        LocalDate[] dates = projectVO.getDates();
+        p.setName(projectVO.getName());
+        p.setBeginTime(dates[0]);
+        p.setEndTime(dates[1]);
+        int day = (int) dates[0].until(dates[1], ChronoUnit.DAYS);
+        p.setExpectedAC(day * projectVO.getDingIds().size() / 30.0);
+
         if (projectVO.isUpdateDingIds()) {
             projectDetailRepository.deleteByProjectId(projectVO.getId());  // 删除旧的分配信息
             List<String> userids = projectVO.getDingIds(); // 获取分配者的userid;
@@ -82,8 +90,8 @@ public class ProjectService {
     }
 
     // 统计时间段周日的次数
-    private int countSunday(LocalDate btime, LocalDate ftime) {
-        int day = Period.between(btime, ftime).getDays();
+    public int countSunday(LocalDate btime, LocalDate ftime) {
+        int day = (int) btime.until(ftime,ChronoUnit.DAYS) + 1;
         day += (btime.getDayOfWeek().getValue()-1); // 前补
 
         if (ftime.getDayOfWeek().getValue() == 7) { // 后砍
@@ -100,9 +108,10 @@ public class ProjectService {
      * 𝐴_𝑎 denotes team acutal reward
      * 𝐷_𝑖  denotes individual average DC during the iteration
      **/
-    public void computeProjectAc(Project project) {
+    public void autoSetProjectAc(Project project) {
         List<ProjectDetail> projectDetails = projectDetailRepository.findAllByProject(project);
-        int day = Period.between(project.getBeginTime(), project.getFinishTime()).getDays();
+        //int day = Period.between(project.getBeginTime(), project.getFinishTime()).getDays();
+        int day = (int) project.getBeginTime().until(project.getFinishTime(), ChronoUnit.DAYS);
         double actualAc = day * projectDetails.size() / 30; // 总ac值 = 实际时间 * 参与人数 / 30
         double totalDc = 0;
         double[] dcList = new double[projectDetails.size()]; // 记录各参与者开发周期内的dc值
@@ -122,16 +131,61 @@ public class ProjectService {
         index = 0;
         int week = countSunday(project.getBeginTime(), project.getFinishTime());
         for (ProjectDetail pd : projectDetails) {
-            double ac = actualAc * dcList[index] / totalDc * dcList[index] / week * 2; // 计算实际AC
+            // 计算实际AC
+            double ac = actualAc * dcList[index] / totalDc * dcList[index] / week * 2;
             index++;
             log.debug("个人实际ac: " + ac);
             AcRecord acRecord = new AcRecord(pd.getUser(), project.getAuditor(), ac, project.getName());
-            acRecordRepository.save(acRecord); // 实例化ac记录
+            // 实例化ac记录
+            acRecordRepository.save(acRecord);
             pd.setAcRecord(acRecord);
             projectDetailRepository.save(pd);
         }
     }
 
+    public void manualSetProjectAc() {
+
+    }
+
+
+    public Map ComputeProjectAc(int pid, LocalDate finishTime) {
+        Project p =  projectRepository.findById(pid).get();
+        List<ProjectDetail> projectDetails = projectDetailRepository.findAllByProject(p);
+        int day = (int) p.getBeginTime().until(finishTime, ChronoUnit.DAYS);
+        double actualAc = day * projectDetails.size() / 30; // 总ac值 = 实际时间 * 参与人数 / 30
+        double totalDc = 0;
+        double[] dcList = new double[projectDetails.size()]; // 记录各参与者开发周期内的dc值
+        int index = 0;
+        for (ProjectDetail pd : projectDetails) {
+            double dc = dcRecordRepository.getByTime(pd.getUser().getId(), p.getAuditor().getId(), p.getBeginTime(), finishTime);
+            dcList[index++] = dc;
+            log.debug(dc + "");
+            totalDc += dc;
+        }
+
+        if (totalDc == 0) {
+            return Map.of("valid", false);
+        }
+
+        index = 0;
+        int week = countSunday(p.getBeginTime(), finishTime);
+
+        List<Map<String, Object>> res = new ArrayList<>();
+
+        for (ProjectDetail pd : projectDetails) {
+            // 计算实际AC
+            double ac = actualAc * dcList[index] / totalDc * dcList[index] / week * 2;
+            ac = (double) (Math.round(ac * 100)/100.0);
+
+            res.add(Map.of("name", pd.getUser().getName(), "ac", ac));
+            index++;
+        }
+
+        return Map.of("valid", true, "res", res, "actualAc", actualAc, "week", week);
+    }
+
+
+    // 查询项目期间的dc值
     public Object getProjectDc(int pid) {
         Project p =  projectRepository.findById(pid).get();
         List<Map<String, String>> dclist = projectDetailRepository.getProjectDc(pid, p.getAuditor().getId(), p.getBeginTime(), p.getEndTime());
@@ -150,9 +204,9 @@ public class ProjectService {
         for (User u : users) {
             double dctotal = dcRecordRepository.getByTime(u.getId(), p.getAuditor().getId(), p.getBeginTime(), p.getEndTime());
             if (maplist.containsKey(u.getName())) {
-                res.add(Map.of("name", u.getName(), "dclist", maplist.get(u.getName()), "dctotal", dctotal));
+                res.add(Map.of("name", u.getName(), "values", maplist.get(u.getName()), "dctotal", dctotal));
             } else {
-                res.add(Map.of("name", u.getName(), "dclist", new ArrayList(), "dctotal", dctotal));
+                res.add(Map.of("name", u.getName(), "values", new ArrayList(), "dctotal", dctotal));
             }
         }
 
