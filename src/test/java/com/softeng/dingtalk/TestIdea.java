@@ -84,7 +84,15 @@ public class TestIdea {
     @Transactional
     @Test
     public void test_1() {
-       Object o =  projectService.getProjectDc(14);
+       Object o =  projectService.ComputeProjectAc(14, LocalDate.of(2020, 4, 1));
+
+
+
+    }
+
+    @Test
+    public void test_2() {
+        log.debug(" " + projectService.countSunday(LocalDate.of(2020, 2,25), LocalDate.of(2020, 3, 7)));
 
 
 
