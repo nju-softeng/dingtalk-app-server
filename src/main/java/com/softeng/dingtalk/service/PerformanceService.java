@@ -47,9 +47,9 @@ public class PerformanceService {
         } else {
             base = 250;
         }
-        double total = Math.round(base * dc * (1 + (ac/50)) + topup);
-        dcSummaryRepository.updateSalary(uid, ac, topup, total);
-        log.debug(total + "");
+        double salary = Math.round(base * dc * (1 + (ac/50)) + topup);
+        dcSummaryRepository.updateSalary(uid, ac, topup, salary);
+        log.debug(salary + "");
     }
 
     // 拿到用户所有 AC 日志

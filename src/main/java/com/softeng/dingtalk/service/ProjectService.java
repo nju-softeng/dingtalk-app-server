@@ -122,14 +122,90 @@ public class ProjectService {
         index = 0;
         int week = countSunday(project.getBeginTime(), project.getFinishTime());
         for (ProjectDetail pd : projectDetails) {
+<<<<<<< Updated upstream
             double ac = actualAc * dcList[index] / totalDc * dcList[index] / week * 2; // 计算实际AC
+=======
+            // 计算实际AC
+            if (pd.getAcRecord() != null) {
+                acRecordRepository.delete(pd.getAcRecord());
+            }
+            double ac = actualAc * dcList[index] / totalDc * dcList[index] / week * 2;
+            ac = (double) (Math.round(ac * 1000)/1000.0);
+>>>>>>> Stashed changes
             index++;
             log.debug("个人实际ac: " + ac);
             AcRecord acRecord = new AcRecord(pd.getUser(), project.getAuditor(), ac, project.getName());
             acRecordRepository.save(acRecord); // 实例化ac记录
             pd.setAcRecord(acRecord);
             projectDetailRepository.save(pd);
+<<<<<<< Updated upstream
         }
+=======
+            acRecords.add(acRecord);
+        }
+        return acRecords;
+    }
+
+    // 自定义项目的ac值
+    public List<AcRecord> manualSetProjectAc(int pid, List<ProjectDetail> projectDetails) {
+        Project project = projectRepository.findById(pid).get();
+        project.setStatus(true);
+        // 作为返回值，交给切面
+        List<AcRecord> acRecords = new ArrayList<>();
+        for (ProjectDetail pd : projectDetails) {
+            ProjectDetail projectDetail = projectDetailRepository.findById(pd.getId()).get();
+            // 删除之前的 acrecord
+            if (projectDetail.getAcRecord() != null) {
+                acRecordRepository.delete(projectDetail.getAcRecord());
+            }
+            projectDetail.setAc(pd.getAc());
+            AcRecord acRecord = new AcRecord(pd.getUser(), project.getAuditor(), pd.getAc(), "完成开发任务: " + project.getName(), AcRecord.PROJECT);
+            acRecordRepository.save(acRecord);
+            projectDetail.setAcRecord(acRecord);
+            acRecords.add(acRecord);
+        }
+        return acRecords;
+}
+
+
+    // 计算AC返回给前端
+    public Map ComputeProjectAc(int pid, LocalDate finishTime) {
+        Project p =  projectRepository.findById(pid).get();
+        List<ProjectDetail> projectDetails = projectDetailRepository.findAllByProject(p);
+        int day = (int) p.getBeginTime().until(finishTime, ChronoUnit.DAYS);
+        double actualAc = day * projectDetails.size() / 30.0; // 总ac值 = 实际时间 * 参与人数 / 30
+        double totalDc = 0;
+        double[] dcList = new double[projectDetails.size()]; // 记录各参与者开发周期内的dc值
+        int index = 0;
+        for (ProjectDetail pd : projectDetails) {
+            double dc = dcRecordRepository.getByTime(pd.getUser().getId(), p.getAuditor().getId(), p.getBeginTime(), finishTime);
+            dcList[index++] = dc;
+            totalDc += dc;
+        }
+
+        if (totalDc == 0) {
+            return Map.of("valid", false);
+        }
+
+        index = 0;
+        // 迭代周期所跨周数
+        int week = countWeek(p.getBeginTime(), finishTime);
+
+        List<Map<String, Object>> res = new ArrayList<>();
+
+        for (ProjectDetail pd : projectDetails) {
+            // 计算实际AC
+            double ac = actualAc * dcList[index] / totalDc * dcList[index] / week * 2;
+            ac = (double) (Math.round(ac * 1000)/1000.0);
+
+            res.add(Map.of("name", pd.getUser().getName(), "ac", ac, "dc", dcList[index]));
+            index++;
+        }
+
+        totalDc = (double) (Math.round(totalDc * 1000)/1000.0);
+
+        return Map.of("valid", true, "res", res, "actualAc", actualAc, "week", week, "totalDc", totalDc);
+>>>>>>> Stashed changes
     }
 
     public Object getProjectDc(int pid) {
