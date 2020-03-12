@@ -49,6 +49,12 @@ public class AuditController {
     }
 
 
+    @GetMapping("/audit/uncheckcnt")
+    public int  getUnCheckCnt(@RequestAttribute int uid) {
+        return auditService.getUnCheckCnt(uid);
+    }
+
+
 
     /**
      * 审核人更新审核记录

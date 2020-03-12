@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -104,5 +105,12 @@ public class AuditService {
         }
         return toCheckVOList;
     }
+
+
+    // 查询审核人未审核数
+    public int getUnCheckCnt(int aid) {
+        return dcRecordRepository.getUnCheckCntByAid(aid);
+    }
+
 
 }
