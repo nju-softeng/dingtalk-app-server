@@ -61,7 +61,6 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
 
 
 
-
     /**
      * 审核人查看待审核的申请  ->  根据uid(审核人)，获得待审核的申请
      * @param uid  审核人id
@@ -80,6 +79,7 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      **/
     @Query(value = "select ifnull((select sum(dc) from dc_record where applicant_id = :uid and auditor_id = :aid and weekdate >= :stime and weekdate <= :etime), 0)", nativeQuery = true)
     Double getByTime(@Param("uid") int uid, @Param("aid") int id, @Param("stime") LocalDate stime, @Param("etime") LocalDate etime);
+
 
     @Query(value = "select dc, CONCAT(yearmonth, '-',`week`) as 'date' from dc_record where applicant_id = :uid and auditor_id = :aid and weekdate >= :stime and weekdate <= :etime", nativeQuery = true)
     List<Map<String, Object>> getDcBytime(@Param("uid") int uid, @Param("aid") int id, @Param("stime") LocalDate stime, @Param("etime") LocalDate etime);
@@ -118,6 +118,16 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
      **/
     @Query("select count (d) from DcRecord d where d.applicant.id = :uid")
     Integer getCountByUid(@Param("uid") int uid);
+
+
+    /**
+     * 审核人未审核数
+     * @param aid
+     * @return java.lang.Integer
+     * @Date 10:20 PM 3/12/2020
+     **/
+    @Query("select count (d) from DcRecord d where d.auditor.id = :aid and d.status = false ")
+    Integer getUnCheckCntByAid(@Param("aid") int aid);
 
 
     /**
