@@ -25,8 +25,9 @@ public class ProjectDetail {
     private Project project; //任务
     @ManyToOne
     private User user; //开发者
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private AcRecord acRecord; //获得的ac值
+
     @Column(columnDefinition="DECIMAL(10,3)")
     private double ac;
 

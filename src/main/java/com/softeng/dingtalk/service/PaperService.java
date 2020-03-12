@@ -11,8 +11,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -77,12 +80,11 @@ public class PaperService {
     public List<Integer>  updateResult(int id, boolean result) {
 
         Paper paper = paperRepository.findById(id).get();
-<<<<<<< Updated upstream
-=======
+
         if (paper.getVote().getResult() == null || paper.getVote().getResult() == false) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
         }
->>>>>>> Stashed changes
+
         paper.setResult(result);    //更新指定 论文的结果
         paperRepository.save(paper);
 
@@ -103,9 +105,11 @@ public class PaperService {
         double[] rate = new double[]{0.5, 0.25, 0.15, 0.1};
         int i = 0;
         for (PaperDetail pd : paperDetails) {
-            if (i == 4) break;
+            if (i == 4) {
+                break;
+            }
             double ac = sum * rate[pd.getNum() - 1];
-            AcRecord acRecord = new AcRecord(pd.getUser(), null, ac, reason);
+            AcRecord acRecord = new AcRecord(pd.getUser(), null, ac, reason, AcRecord.PAPER);
             pd.setAc(ac);
             pd.setAcRecord(acRecord);
             acRecordRepository.save(acRecord);

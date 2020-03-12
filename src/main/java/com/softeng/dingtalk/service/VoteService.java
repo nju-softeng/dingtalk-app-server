@@ -148,9 +148,9 @@ public class VoteService {
             for (VoteDetail vd : voteDetails) {
                 AcRecord acRecord;
                 if (vd.getResult() == result) {
-                    acRecord = new AcRecord(vd.getUser(), 1, "投票预测成功");
+                    acRecord = new AcRecord(vd.getUser(), 1, "投票预测成功", AcRecord.VOTE);
                 } else {
-                    acRecord = new AcRecord(vd.getUser(), -1, "投票预测失败");
+                    acRecord = new AcRecord(vd.getUser(), -1, "投票预测失败", AcRecord.VOTE);
                 }
                 vd.setAcRecord(acRecord);
                 acRecords.add(acRecord);

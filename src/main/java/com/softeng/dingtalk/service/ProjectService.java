@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,9 +47,9 @@ public class ProjectService {
     // 添加任务
     public void addProject(ProjectVO projectVO) {
         Project project = new Project(projectVO.getName(), new User(projectVO.getAuditorid()), projectVO.getDates()[0], projectVO.getDates()[1]);
-        int day = Period.between(projectVO.getDates()[0], projectVO.getDates()[1]).getDays();
-        project.setExpectedAC(day * projectVO.getDingIds().size() / 30);
-
+        LocalDate[] dates = projectVO.getDates();
+        int day = (int) dates[0].until(dates[1], ChronoUnit.DAYS);
+        project.setExpectedAC(day * projectVO.getDingIds().size() / 30.0);
 
         projectRepository.save(project);
 
@@ -65,7 +65,14 @@ public class ProjectService {
 
     // 更新项目信息
     public void updateProject(ProjectVO projectVO) {
-        projectRepository.updateProject(projectVO.getId(), projectVO.getName(), projectVO.getDates()[0], projectVO.getDates()[1]);
+        Project p = projectRepository.findById(projectVO.getId()).get();
+        LocalDate[] dates = projectVO.getDates();
+        p.setName(projectVO.getName());
+        p.setBeginTime(dates[0]);
+        p.setEndTime(dates[1]);
+        int day = (int) dates[0].until(dates[1], ChronoUnit.DAYS);
+        p.setExpectedAC(day * projectVO.getDingIds().size() / 30.0);
+
         if (projectVO.isUpdateDingIds()) {
             projectDetailRepository.deleteByProjectId(projectVO.getId());  // 删除旧的分配信息
             List<String> userids = projectVO.getDingIds(); // 获取分配者的userid;
@@ -82,14 +89,20 @@ public class ProjectService {
     }
 
     // 统计时间段周日的次数
-    private int countSunday(LocalDate btime, LocalDate ftime) {
-        int day = Period.between(btime, ftime).getDays();
-        day += (btime.getDayOfWeek().getValue()-1); // 前补
-
-        if (ftime.getDayOfWeek().getValue() == 7) { // 后砍
-            return (day - ftime.getDayOfWeek().getValue()) / 7 + 1;
+    public int countWeek(LocalDate btime, LocalDate ftime) {
+        // 时间段天数
+        int day = (int) btime.until(ftime,ChronoUnit.DAYS) + 1;
+        // 开始日期的星期
+        int bweek = btime.getDayOfWeek().getValue();
+        // 结束日期的星期
+        int fweek = ftime.getDayOfWeek().getValue();
+        // 前补: (bweek + 7 - 5) % 7
+        day += (bweek + 2) % 7;
+        // 后砍
+        if (fweek == 4) {
+            return (day - (fweek + 2) % 7 - 1) / 7 + 1;
         } else {
-            return (day - ftime.getDayOfWeek().getValue()) / 7;
+            return (day - (fweek + 2) % 7 - 1) / 7;
         }
     }
 
@@ -100,47 +113,50 @@ public class ProjectService {
      * 𝐴_𝑎 denotes team acutal reward
      * 𝐷_𝑖  denotes individual average DC during the iteration
      **/
-    public void computeProjectAc(Project project) {
+    public List<AcRecord> autoSetProjectAc(int pid, LocalDate finishdate) {
+        Project project = projectRepository.findById(pid).get();
+        project.setStatus(true);
+        project.setFinishTime(finishdate);
         List<ProjectDetail> projectDetails = projectDetailRepository.findAllByProject(project);
-        int day = Period.between(project.getBeginTime(), project.getFinishTime()).getDays();
-        double actualAc = day * projectDetails.size() / 30; // 总ac值 = 实际时间 * 参与人数 / 30
+        int day = (int) project.getBeginTime().until(project.getFinishTime(), ChronoUnit.DAYS);
+        double actualAc = day * projectDetails.size() / 30.0; // 总ac值 = 实际时间 * 参与人数 / 30
         double totalDc = 0;
         double[] dcList = new double[projectDetails.size()]; // 记录各参与者开发周期内的dc值
         int index = 0;
         for (ProjectDetail pd : projectDetails) {
-            double dc = dcRecordRepository.getByTime(pd.getUser().getId(), project.getAuditor().getId(), project.getBeginTime(), project.getFinishTime());
+            double dc = dcRecordRepository.getByTime(pd.getUser().getId(), project.getAuditor().getId(), project.getBeginTime(), finishdate);
             dcList[index++] = dc;
-            log.debug(dc + "");
             totalDc += dc;
         }
         log.debug("totaldc:" + totalDc );
 
         if (totalDc == 0) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "项目参与者的总dc值为0，可能是参与者未提交dc申请，无法计算，需人工决定");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "项目参与者的总dc值为0，可能是参与者未提交dc申请，无法计算，需自定义");
         }
 
+        // 作为返回值，交给切面
+        List<AcRecord> acRecords = new ArrayList<>();
         index = 0;
-        int week = countSunday(project.getBeginTime(), project.getFinishTime());
+        int week = countWeek(project.getBeginTime(),finishdate);
         for (ProjectDetail pd : projectDetails) {
-<<<<<<< Updated upstream
-            double ac = actualAc * dcList[index] / totalDc * dcList[index] / week * 2; // 计算实际AC
-=======
+
             // 计算实际AC
             if (pd.getAcRecord() != null) {
                 acRecordRepository.delete(pd.getAcRecord());
             }
             double ac = actualAc * dcList[index] / totalDc * dcList[index] / week * 2;
+
             ac = (double) (Math.round(ac * 1000)/1000.0);
->>>>>>> Stashed changes
+
             index++;
             log.debug("个人实际ac: " + ac);
-            AcRecord acRecord = new AcRecord(pd.getUser(), project.getAuditor(), ac, project.getName());
-            acRecordRepository.save(acRecord); // 实例化ac记录
+            AcRecord acRecord = new AcRecord(pd.getUser(), project.getAuditor(), ac, "完成开发任务: " + project.getName(), AcRecord.PROJECT);
+            // 实例化ac记录
+            acRecordRepository.save(acRecord);
             pd.setAcRecord(acRecord);
+            pd.setAc(ac);
             projectDetailRepository.save(pd);
-<<<<<<< Updated upstream
-        }
-=======
+
             acRecords.add(acRecord);
         }
         return acRecords;
@@ -165,7 +181,9 @@ public class ProjectService {
             acRecords.add(acRecord);
         }
         return acRecords;
-}
+
+    }
+
 
 
     // 计算AC返回给前端
@@ -205,12 +223,33 @@ public class ProjectService {
         totalDc = (double) (Math.round(totalDc * 1000)/1000.0);
 
         return Map.of("valid", true, "res", res, "actualAc", actualAc, "week", week, "totalDc", totalDc);
->>>>>>> Stashed changes
+
+        }
+
+        index = 0;
+        // 迭代周期所跨周数
+        int week = countWeek(p.getBeginTime(), finishTime);
+
+        List<Map<String, Object>> res = new ArrayList<>();
+
+        for (ProjectDetail pd : projectDetails) {
+            // 计算实际AC
+            double ac = actualAc * dcList[index] / totalDc * dcList[index] / week * 2;
+            ac = (double) (Math.round(ac * 1000)/1000.0);
+
+            res.add(Map.of("name", pd.getUser().getName(), "ac", ac, "dc", dcList[index]));
+            index++;
+        }
+
+        return Map.of("valid", true, "res", res, "actualAc", actualAc, "week", week, "totalDc", totalDc);
+
     }
 
-    public Object getProjectDc(int pid) {
+
+    // 查询项目期间的dc值
+    public Object getProjectDc(int pid, LocalDate finishTime) {
         Project p =  projectRepository.findById(pid).get();
-        List<Map<String, String>> dclist = projectDetailRepository.getProjectDc(pid, p.getAuditor().getId(), p.getBeginTime(), p.getEndTime());
+        List<Map<String, String>> dclist = projectDetailRepository.getProjectDc(pid, p.getAuditor().getId(), p.getBeginTime(), finishTime);
         Map<String, List<Map<String, String>>> maplist = dclist.stream()
                 .collect(Collectors.groupingBy(map -> map.get("name"),
                         Collectors.mapping(map -> {
@@ -220,9 +259,20 @@ public class ProjectService {
                         }, Collectors.toList())));
 
         List<Map<String, Object>> res = new ArrayList<>();
-        for (String key : maplist.keySet()) {
-            res.add(Map.of("name", key, "dclist", maplist.get(key)));
+
+        List<User> users = projectDetailRepository.findUserByProjectId(pid);
+
+        int week = countWeek(p.getBeginTime(), finishTime);
+
+        for (User u : users) {
+            double dctotal = dcRecordRepository.getByTime(u.getId(), p.getAuditor().getId(), p.getBeginTime(), finishTime);
+            if (maplist.containsKey(u.getName())) {
+                res.add(Map.of("name", u.getName(), "values", maplist.get(u.getName()), "dctotal", dctotal));
+            } else {
+                res.add(Map.of("name", u.getName(), "values", new ArrayList(), "dctotal", dctotal));
+            }
         }
+
         return res;
     }
 
@@ -239,15 +289,15 @@ public class ProjectService {
     }
 
 
-    // 用户获取正在进行的项目
-    public List<Project>  listProjectByUid(int uid) {
-        return projectDetailRepository.listProjectByUid(uid);
-    }
-
-
     // 删除项目
     public void delete(int id) {
         projectRepository.deleteById(id);
+    }
+
+    // 开发者人获取自己参与的任务
+    public List<Project> listDevProject(int uid) {
+        List<Integer> pids = projectDetailRepository.listProjectIdByUid(uid);
+        return projectRepository.findAllById(pids);
     }
 
 
