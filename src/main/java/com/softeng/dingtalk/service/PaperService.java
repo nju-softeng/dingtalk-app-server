@@ -74,9 +74,15 @@ public class PaperService {
 
 
     // 更新论文结果, 并计算ac
-    public void  updateResult(int id, boolean result) {
+    public List<Integer>  updateResult(int id, boolean result) {
 
         Paper paper = paperRepository.findById(id).get();
+<<<<<<< Updated upstream
+=======
+        if (paper.getVote().getResult() == null || paper.getVote().getResult() == false) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
+        }
+>>>>>>> Stashed changes
         paper.setResult(result);    //更新指定 论文的结果
         paperRepository.save(paper);
 
@@ -106,6 +112,8 @@ public class PaperService {
             i++;
         }
         paperDetailRepository.saveAll(paperDetails);
+        // 用于切面更新作者绩效
+        return paperDetails.stream().map(x -> x.getUser().getId()).collect(Collectors.toList());
     }
 
 
