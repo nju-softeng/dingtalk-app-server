@@ -5,6 +5,7 @@ import com.softeng.dingtalk.service.PerformanceService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,11 +23,28 @@ public class PerformanceAspect {
     @Autowired
     PerformanceService performanceService;
 
-    @After("execution(* com.softeng.dingtalk.service.AuditService.updateDcSummary(..))")
+    // dc 值变化后更新助研金
+    @AfterReturning("execution(* com.softeng.dingtalk.service.AuditService.updateDcSummary(..))")
     public void computeSalary(JoinPoint joinPoint) throws Throwable {
         log.debug("切面computeSalary");
         Object[] args = joinPoint.getArgs();
         DcRecord dc = (DcRecord) args[0];
         performanceService.computeSalary(dc.getApplicant().getId(), dc.getYearmonth());
     }
+
+    // 论文出结果后更新助研金
+    public void computeAfterPaper() {
+
+    }
+
+
+    // 投票结果更新助研金
+
+
+
+    // 项目完成后更新助研金
+
+
+    
+
 }

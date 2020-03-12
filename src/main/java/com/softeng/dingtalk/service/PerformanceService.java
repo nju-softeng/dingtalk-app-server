@@ -64,15 +64,18 @@ public class PerformanceService {
         return dcSummaryRepository.listDcSummary(yearmonth);
     }
 
+
     // 实验室所有人的 AC 汇总
     public List<Map<String, Object>> listAcSummary() {
         return acRecordRepository.listAcSummary();
     }
 
+
     // 拿到最近10条 AC 变动
     public List<Map<String, Object>> listLastAc() {
         return acRecordRepository.listLastAc();
     }
+
 
     // 用首页显示的绩效信息
     public Map getUserPerformace(int uid) {
@@ -85,9 +88,9 @@ public class PerformanceService {
         } else {
             return Map.of("acTotal", acTotal, "dcTotal", dc.getTotal(), "w1", dc.getWeek1(), "w2", dc.getWeek2(), "w3", dc.getWeek3(), "w4", dc.getWeek4(), "w5",dc.getWeek5());
         }
-
-
     }
+
+
 
 
 

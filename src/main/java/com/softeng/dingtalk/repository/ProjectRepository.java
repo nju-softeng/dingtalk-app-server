@@ -40,4 +40,10 @@ public interface ProjectRepository  extends JpaRepository<Project, Integer> {
     @Query("update Project set name = :name, beginTime = :beginTime, endTime = :endTime where id = :id")
     void updateProject(@Param("id") int id,@Param("name") String name,@Param("beginTime") LocalDate beginTime,@Param("endTime") LocalDate endTime);
 
+
+    // 根据 pid 集合查询 project
+    @EntityGraph(value="project.graph",type= EntityGraph.EntityGraphType.FETCH)
+    @Query("select p from Project p where p.id in :pids order by p.id desc")
+    List<Project> findAllById(@Param("pids") List<Integer> ids);
+
 }
