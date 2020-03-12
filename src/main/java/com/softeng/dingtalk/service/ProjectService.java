@@ -221,28 +221,7 @@ public class ProjectService {
         }
 
         totalDc = (double) (Math.round(totalDc * 1000)/1000.0);
-
         return Map.of("valid", true, "res", res, "actualAc", actualAc, "week", week, "totalDc", totalDc);
-
-        }
-
-        index = 0;
-        // 迭代周期所跨周数
-        int week = countWeek(p.getBeginTime(), finishTime);
-
-        List<Map<String, Object>> res = new ArrayList<>();
-
-        for (ProjectDetail pd : projectDetails) {
-            // 计算实际AC
-            double ac = actualAc * dcList[index] / totalDc * dcList[index] / week * 2;
-            ac = (double) (Math.round(ac * 1000)/1000.0);
-
-            res.add(Map.of("name", pd.getUser().getName(), "ac", ac, "dc", dcList[index]));
-            index++;
-        }
-
-        return Map.of("valid", true, "res", res, "actualAc", actualAc, "week", week, "totalDc", totalDc);
-
     }
 
 
@@ -297,6 +276,9 @@ public class ProjectService {
     // 开发者人获取自己参与的任务
     public List<Project> listDevProject(int uid) {
         List<Integer> pids = projectDetailRepository.listProjectIdByUid(uid);
+        if (pids.size() == 0) {
+            return null;
+        }
         return projectRepository.findAllById(pids);
     }
 
