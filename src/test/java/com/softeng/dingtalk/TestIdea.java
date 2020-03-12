@@ -3,16 +3,13 @@ package com.softeng.dingtalk;
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Timer;
 import com.softeng.dingtalk.component.Utils;
-import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.service.*;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Slice;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,9 +81,15 @@ public class TestIdea {
     @Transactional
     @Test
     public void test_1() {
-       Object o =  projectService.getProjectDc(14);
+       Object o =  projectService.ComputeProjectAc(14, LocalDate.of(2020, 4, 1));
 
 
+
+    }
+
+    @Test
+    public void test_2() {
+        Object o = projectService.listDevProject(5);
 
     }
 

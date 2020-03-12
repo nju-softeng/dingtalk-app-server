@@ -42,3 +42,39 @@ GET http://localhost:8080/api/project/dc/14
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
 
 ###
+
+
+
+POST http://localhost:8080/api/project/computeac/14
+token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
+Content-Type: application/json
+
+{
+  "finishdate": "2020-03-29"
+}
+
+###
+POST http://localhost:8080/api/project/autosetac/14
+token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
+Content-Type: application/json
+
+{
+  "finishdate": "2020-03-29"
+}
+
+###
+
+
+POST http://localhost:8080/api/project/manualsetac/14
+token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
+Content-Type: application/json
+
+[ { "id": 66, "user": { "id": 4, "userid": "362554492621552072", "name": "哈哈哈", "avatar": "", "authority": 0, "position": "测试用户", "degree": 0 }, "ac": 7 }, { "id": 67, "user": { "id": 2, "userid": "315448673626165392", "name": "小红", "avatar": "", "authority": 0, "position": "测试用户", "degree": 0 }, "ac": 7 }, { "id": 68, "user": { "id": 5, "userid": "306147243334957616", "name": "张三", "avatar": "https://static-legacy.dingtalk.com/media/lADPDgQ9rK52m0PNAi3NAgc_519_557.jpg", "authority": 1, "position": "测试用户", "degree": 0 }, "ac": 7 } ]
+
+###
+
+
+GET http://localhost:8080/api/project/dev
+token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
+
+###

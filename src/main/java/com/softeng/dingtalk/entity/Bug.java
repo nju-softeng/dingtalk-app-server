@@ -14,4 +14,6 @@ public class Bug {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+
+
 }
