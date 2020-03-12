@@ -37,14 +37,14 @@ public class AcRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 
-    public AcRecord(User user, User auditor, double ac, String reason) {
+    public AcRecord(User user, User auditor, double ac, String reason, int classify) {
         this.user = user;
         this.auditor = auditor;
         this.ac = ac;
         this.reason = reason;
     }
 
-    public AcRecord(User user, double ac, String reason) {
+    public AcRecord(User user, double ac, String reason, int classify) {
         this.user = user;
         this.ac = ac;
         this.reason = reason;

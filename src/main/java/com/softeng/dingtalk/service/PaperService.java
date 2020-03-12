@@ -11,8 +11,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -77,6 +80,9 @@ public class PaperService {
     public void  updateResult(int id, boolean result) {
 
         Paper paper = paperRepository.findById(id).get();
+        if (paper.getVote().getResult() == false) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未通过！");
+        }
         paper.setResult(result);    //更新指定 论文的结果
         paperRepository.save(paper);
 
@@ -101,7 +107,7 @@ public class PaperService {
                 break;
             }
             double ac = sum * rate[pd.getNum() - 1];
-            AcRecord acRecord = new AcRecord(pd.getUser(), null, ac, reason);
+            AcRecord acRecord = new AcRecord(pd.getUser(), null, ac, reason, AcRecord.PAPER);
             pd.setAc(ac);
             pd.setAcRecord(acRecord);
             acRecordRepository.save(acRecord);

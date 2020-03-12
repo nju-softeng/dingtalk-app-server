@@ -9,6 +9,8 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 /**
  * @author zhanyeye
@@ -55,10 +57,12 @@ public class NotifyService {
 
     public void paperAcMessage(int pid, boolean result) {
         Paper paper = paperRepository.findById(pid).get();
+        String papertitel = paper.getTitle();
+        int len = 20 < papertitel.length() ? 20 : papertitel.length();
         for (PaperDetail pd : paper.getPaperDetails()) {
-            double acsum = acRecordRepository.getUserAcSum(pd.getUser().getId());
-            String title = "论文: " + paper.getTitle() + (result ? "投稿成功":"投稿失败");
-            String content = "AC: " + pd.getAc() + "  当前总AC: " + acsum;
+           //double acsum = acRecordRepository.getUserAcSum(pd.getUser().getId());
+            String title = "论文: " + papertitel.substring(0, len) + (result ? "... 投稿成功":"... 投稿失败");
+            String content = "AC: " + pd.getAc(); // + "  当前总AC: " + acsum;
             Message msg = new Message(title, content, pd.getUser().getId());
             messageRepository.save(msg);
         }
@@ -69,19 +73,36 @@ public class NotifyService {
         String papertitel = paperRepository.getPaperTitleById(pid);
         String title;
         String content;
+        int len = 20 < papertitel.length() ? 20 : papertitel.length();
         for (VoteDetail vd : v.getVoteDetails()) {
-            double acsum = acRecordRepository.getUserAcSum(vd.getUser().getId());
+            //double acsum = acRecordRepository.getUserAcSum(vd.getUser().getId());
             if (vd.getResult() == result) {
-                title = "投票预测正确, " + papertitel + "投稿成功";
-                content = "AC: + 1    " + "当前总AC: " + acsum;
+                title = "投票预测正确,  " + papertitel.substring(0, len) + "... 投稿成功";
+                content = "AC: + 1    "; // + "当前总AC: " + acsum;
             } else {
-                title = "投票预测错误" + papertitel + "投稿失败";
-                content = "AC: - 1    " + "当前总AC: " + acsum;
+                title = "投票预测错误,  " + papertitel.substring(0, len) + "... 投稿失败";
+                content = "AC: - 1    "; // + "当前总AC: " + acsum;
             }
             Message msg = new Message(title, content, vd.getUser().getId());
             messageRepository.save(msg);
         }
-
     }
+
+
+    public void autoSetProjectAcMessage(List<AcRecord> acRecords) {
+        for (AcRecord ac : acRecords) {
+            Message msg = new Message(ac.getReason(), "AC: + " + ac.getAc(), ac.getUser().getId());
+            messageRepository.save(msg);
+        }
+    }
+
+
+    public void manualSetProjectAcMessage(List<AcRecord> acRecords) {
+        for (AcRecord ac : acRecords) {
+            Message msg = new Message(ac.getReason(), "AC: + " + ac.getAc(), ac.getUser().getId());
+            messageRepository.save(msg);
+        }
+    }
+
 
 }

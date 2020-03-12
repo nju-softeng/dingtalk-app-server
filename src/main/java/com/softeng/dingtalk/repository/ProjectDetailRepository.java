@@ -19,9 +19,13 @@ import java.util.Map;
  */
 public interface ProjectDetailRepository extends JpaRepository<ProjectDetail, Integer> {
 
-//    @EntityGraph(value="project.graph",type= EntityGraph.EntityGraphType.FETCH)
-    @Query("select pd.project from ProjectDetail pd where pd.user.id = :uid")
-    List<Project> listProjectByUid(@Param("uid") int uid);
+////    @EntityGraph(value="project.graph",type= EntityGraph.EntityGraphType.FETCH)
+//    @Query("select pd.project from ProjectDetail pd where pd.user.id = :uid")
+//    List<Project> listProjectByUid(@Param("uid") int uid);
+
+    // 查询开发者参与的项目id
+    @Query("select pd.project.id from ProjectDetail pd where pd.user.id = :uid")
+    List<Integer> listProjectIdByUid(@Param("uid") int uid);
 
 
     // 删除指定project 的分配信息

@@ -1,16 +1,20 @@
 package com.softeng.dingtalk.aop;
 
 
+import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.service.NotifyService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author zhanyeye
@@ -27,39 +31,47 @@ public class MessageAspect {
 
 
     // 审核人审核后发送消息
-    @Around("execution(* com.softeng.dingtalk.service.AuditService.addAuditResult(..))")
-    public Object addDcResultMessage(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object[] args = joinPoint.getArgs();
-        Object object = joinPoint.proceed();
-        notifyService.reviewDcMessage((DcRecord) object);
-        return object;
+    @AfterReturning(value = "execution(* com.softeng.dingtalk.service.AuditService.addAuditResult(..))", returning = "retVal")
+    public void addDcResultMessage(JoinPoint joinPoint, Object retVal) throws Throwable {
+        notifyService.reviewDcMessage((DcRecord) retVal);
     }
+
 
     // 审核人更新后发送消息
-    @Around("execution(* com.softeng.dingtalk.service.AuditService.updateAudit(..))")
-    public Object updateDcResultMessage(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object[] args = joinPoint.getArgs();
-        Object object = joinPoint.proceed();
-        notifyService.updateDcMessage((DcRecord) object);
-        return object;
+    @AfterReturning(value = "execution(* com.softeng.dingtalk.service.AuditService.updateAudit(..))", returning = "retVal")
+    public void updateDcResultMessage(JoinPoint joinPoint, Object retVal) throws Throwable {
+        notifyService.updateDcMessage((DcRecord) retVal);
     }
 
+
     // 论文结果确定后通知论文作者
-    @After("execution(* com.softeng.dingtalk.service.PaperService.updateResult(..))")
+    @AfterReturning(value = "execution(* com.softeng.dingtalk.service.PaperService.updateResult(..))")
     public void paperResultMessage(JoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
         notifyService.paperAcMessage((int) args[0], (boolean) args[1]);
     }
 
+
     // 论文结果确定后通知投票者AC变化
-    @After("execution(* com.softeng.dingtalk.service.VoteService.computeVoteAc(..))")
+    @AfterReturning("execution(* com.softeng.dingtalk.service.VoteService.computeVoteAc(..))")
     public void voteResultMessage(JoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
         notifyService.voteAcMessage((int) args[0], (boolean) args[1]);
     }
 
 
+    // 审核人依据公式设置 通知
+    @AfterReturning(value = "execution(* com.softeng.dingtalk.service.ProjectService.autoSetProjectAc(..))", returning = "retVal")
+    public void autoSetProjectAcMessage(JoinPoint joinPoint, Object retVal) throws Throwable {
+        notifyService.autoSetProjectAcMessage((List<AcRecord>) retVal);
+    }
 
+
+    // 审核人依据公式设置 通知
+    @AfterReturning(value = "execution(* com.softeng.dingtalk.service.ProjectService.manualSetProjectAc(..))", returning = "retVal")
+    public void manualSetProjectAcMessage(JoinPoint joinPoint, Object retVal) throws Throwable {
+        notifyService.manualSetProjectAcMessage((List<AcRecord>) retVal);
+    }
 
 
 }
