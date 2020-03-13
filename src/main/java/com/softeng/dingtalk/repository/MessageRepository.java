@@ -12,5 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @date 3/2/2020
  */
 public interface MessageRepository extends JpaRepository<Message, Integer> {
-   Slice<Message> findByUid(int uid, Pageable pageable);
+   Page<Message> findByUid(int uid, Pageable pageable);
 }

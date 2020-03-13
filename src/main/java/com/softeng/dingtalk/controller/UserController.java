@@ -7,6 +7,7 @@ import com.softeng.dingtalk.service.UserService;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
@@ -62,10 +63,10 @@ public class UserController {
     }
 
     // 获取用户的消息
-    @GetMapping("/message/page/{page}")
-    public Map listUserMessage(@PathVariable int page, @RequestAttribute int uid) {
-        Slice<Message> messages = notifyService.listUserMessage(uid, page);
-        return Map.of("content", messages.getContent());
+    @GetMapping("/message/page/{page}/{size}")
+    public Map listUserMessage(@PathVariable int page, @PathVariable int size, @RequestAttribute int uid) {
+        Page<Message> messages = notifyService.listUserMessage(uid, page, size);
+        return Map.of("content", messages.getContent(), "total", messages.getTotalPages());
     }
 
     // 查询所有用户的权限
