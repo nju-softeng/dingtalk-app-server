@@ -32,29 +32,36 @@ public class NotifyService {
     @Autowired
     VoteRepository voteRepository;
 
+    // dc 审核消息
     public void reviewDcMessage(DcRecord dc) {
-
-        String title = new StringBuilder().append("第").append(dc.getWeek()).append("周绩效").toString();
+        String month =  String.valueOf(dc.getYearmonth() % 100);
+        String title = new StringBuilder().append(month).append("月第").append(dc.getWeek()).append("周绩效").toString();
         String content = new StringBuilder().append("C值: ").append(dc.getCvalue()).append(",  DC值: ").append(dc.getDc()).append(",  AC值: ").append(dc.getAc()).toString();
         Message message = new Message(title, content, dc.getApplicant().getId());
 
         messageRepository.save(message);
     }
 
+    // dc 审核结果更新消息
     public void updateDcMessage(DcRecord dc) {
-        String title = new StringBuilder().append("第").append(dc.getWeek()).append("周绩效 被更新").toString();
+        String month =  String.valueOf(dc.getYearmonth() % 100);
+        String title = new StringBuilder().append(month).append("月第").append(dc.getWeek()).append("周绩效 被更新").toString();
         String content = new StringBuilder().append("C值: ").append(dc.getAc()).append(",  DC值: ").append(dc.getDc()).append(",  AC值: ").append(dc.getAc()).toString();
         Message message = new Message(title, content, dc.getApplicant().getId());
 
         messageRepository.save(message);
     }
 
-    public Slice<Message> listUserMessage(int uid, int page) {
-        Pageable pageable = PageRequest.of(page, 5, Sort.by("createTime").descending());
+
+    // 查询指定用户的消息
+    public Page<Message> listUserMessage(int uid, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createTime").descending());
         return messageRepository.findByUid(uid, pageable);
 
     }
 
+
+    // 论文AC消息
     public void paperAcMessage(int pid, boolean result) {
         Paper paper = paperRepository.findById(pid).get();
         String papertitel = paper.getTitle();
@@ -68,6 +75,7 @@ public class NotifyService {
         }
     }
 
+    // 投票AC消息
     public void voteAcMessage(int pid, boolean result) {
         Vote v = paperRepository.findVoteById(pid);
         String papertitel = paperRepository.getPaperTitleById(pid);
@@ -88,7 +96,7 @@ public class NotifyService {
         }
     }
 
-
+    // 系统计算项目AC消息
     public void autoSetProjectAcMessage(List<AcRecord> acRecords) {
         for (AcRecord ac : acRecords) {
             Message msg = new Message(ac.getReason(), "AC: + " + ac.getAc(), ac.getUser().getId());
@@ -96,7 +104,7 @@ public class NotifyService {
         }
     }
 
-
+    // 手动计算项目AC消息
     public void manualSetProjectAcMessage(List<AcRecord> acRecords) {
         for (AcRecord ac : acRecords) {
             Message msg = new Message(ac.getReason(), "AC: + " + ac.getAc(), ac.getUser().getId());
