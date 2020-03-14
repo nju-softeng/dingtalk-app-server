@@ -40,18 +40,31 @@ public class ProjectService {
     DcRecordRepository dcRecordRepository;
     @Autowired
     AcRecordRepository acRecordRepository;
+    
 
-    // 创建项目
+    /**
+     * 创建项目
+     * @param project
+     */
     public void createProject(Project project) {
         projectRepository.save(project);
     }
 
-    // 更新项目
+
+    /**
+     * 更新项目
+     * @param project
+     */
     public void updateProject(Project project) {
         projectRepository.updateTitle(project.getId(), project.getTitle());
     }
 
-    // 创建迭代
+
+    /**
+     * 创建迭代
+     * @param pid
+     * @param vo
+     */
     public void createIteration(int pid, IterationVO vo) {
         Project p = projectRepository.findById(pid).get();
         LocalDate[] dates = vo.getDates();
@@ -59,8 +72,8 @@ public class ProjectService {
         int day = (int) dates[0].until(dates[1], ChronoUnit.DAYS);
         iteration.setExpectedAC(day * vo.getDingIds().size() / 30.0);
         iterationRepository.save(iteration);
-
-        List<String> userids = vo.getDingIds(); // 获取分配者的userid;
+        // 获取分配者的userid;
+        List<String> userids = vo.getDingIds();
         List<IterationDetail> iterationDetails = new ArrayList<>();
         for (String u : userids) {
             // 根据userid 查询 uid
@@ -71,8 +84,30 @@ public class ProjectService {
         iterationDetailRepository.saveAll(iterationDetails);
     }
 
-    // 更新迭代
-    public void updateIteration() {
+
+    /**
+     * 更新迭代
+     * @param vo 前端接收的数据
+     **/
+    public void updateIteration(IterationVO vo) {
+        Iteration it = iterationRepository.findById(vo.getId()).get();
+        LocalDate[] dates = vo.getDates();
+        it.setTitle(vo.getTitle());
+        it.setBeginTime(vo.getDates()[0]);
+        it.setEndTime(vo.getDates()[1]);
+        int day = (int) dates[0].until(dates[1], ChronoUnit.DAYS);
+        it.setExpectedAC(day * vo.getDingIds().size() / 30.0);
+        if (vo.isUpdateDingIds()) {
+            // 删除旧的 iterationDetail
+            iterationDetailRepository.deleteByIterationId(vo.getId());
+            List<IterationDetail> iterationDetails = new ArrayList<>();
+            for (String u : vo.getDingIds()) {
+                int uid = userService.getIdByUserid(u);
+                IterationDetail itd = new IterationDetail(it, new User(uid));
+                iterationDetails.add(itd);
+            }
+            iterationDetailRepository.saveAll(iterationDetails);
+        }
 
     }
 

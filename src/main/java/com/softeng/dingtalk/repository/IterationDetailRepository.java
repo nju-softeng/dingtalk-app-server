@@ -9,4 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @date 3/14/2020
  */
 public interface IterationDetailRepository extends JpaRepository<IterationDetail, Integer> {
+
+    /**
+     * 删除Iteration 的所有 iterationDetail
+     * @param id 主键
+     **/
+    void deleteByIterationId(int id);
 }
