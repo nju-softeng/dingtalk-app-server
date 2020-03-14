@@ -20,9 +20,6 @@ public class ProjectDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @JsonIgnoreProperties("proejctDetails")
-    @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
-    private Project project; //任务
     @ManyToOne
     private User user; //开发者
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
@@ -31,9 +28,6 @@ public class ProjectDetail {
     @Column(columnDefinition="DECIMAL(10,3)")
     private double ac;
 
-    public ProjectDetail(Project project, User user) {
-        this.project = project;
-        this.user = user;
-    }
+
 
 }

@@ -77,21 +77,21 @@ public class TestIdea {
 
 
 
-
-    @Transactional
-    @Test
-    public void test_1() {
-       Object o =  projectService.ComputeProjectAc(14, LocalDate.of(2020, 4, 1));
-
-
-
-    }
-
-    @Test
-    public void test_2() {
-        Object o = projectService.listDevProject(5);
-
-    }
+//
+//    @Transactional
+//    @Test
+//    public void test_1() {
+//       Object o =  projectService.ComputeProjectAc(14, LocalDate.of(2020, 4, 1));
+//
+//
+//
+//    }
+//
+//    @Test
+//    public void test_2() {
+//        Object o = projectService.listDevProject(5);
+//
+//    }
 
 
     @Test
