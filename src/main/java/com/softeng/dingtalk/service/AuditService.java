@@ -96,6 +96,15 @@ public class AuditService {
         return checkedVOS;
     }
 
+    // 审核人根据时间筛选已审核申请
+    public List<CheckedVO> listCheckedByDate(int uid, int yearmonth, int week) {
+        List<CheckedVO> checkedVOS = dcRecordRepository.listCheckedByDate(uid, yearmonth, week);
+        for (CheckedVO checked : checkedVOS) {
+            checked.setAcItems(acItemRepository.findAllByDcRecordID(checked.getId()));
+        }
+        return checkedVOS;
+    }
+
 
     // 审核人查看待审核的申请
     public List<ToCheckVO> getPendingApplication(int uid) {

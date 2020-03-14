@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
+import com.softeng.dingtalk.component.Utils;
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.UserService;
@@ -33,6 +34,8 @@ public class AuditController {
     DingTalkUtils dingTalkUtils;
     @Autowired
     UserService userService;
+    @Autowired
+    Utils utils;
 
     /**
      * 审核员提交审核结果
@@ -62,7 +65,7 @@ public class AuditController {
      * @return void
      * @Date 9:13 PM 2/1/2020
      **/
-    @PostMapping("/updateAudit")
+    @PostMapping("/audit/update")
     public void updateChecked(@Valid @RequestBody CheckVO checkVO) {
         log.debug("/updateAudit" );
 
@@ -77,7 +80,7 @@ public class AuditController {
      * @return java.util.List<com.softeng.dingtalk.dto.ApplicationInfo>
      * @Date 10:06 AM 12/28/2019
      **/
-    @GetMapping("/pending_audit")
+    @GetMapping("/audit/pending")
     public List<ToCheckVO> getAuditApplication(@RequestAttribute int uid) {
         log.debug("/pending_audit uid:" + uid);
         return auditService.getPendingApplication(uid);
@@ -89,13 +92,19 @@ public class AuditController {
      * @return java.util.List<com.softeng.dingtalk.vo.CheckedVO>
      * @Date 8:41 PM 1/29/2020
      **/
-    @GetMapping("/checked")
+    @GetMapping("/audit/checked")
     public List<CheckedVO> listChecked(@RequestAttribute int uid) {
-        log.debug("/checked uid:" + uid );
         return auditService.listCheckVO(uid);
     }
 
-
+    // 审核人根据时间筛选已经审核的申请
+    @PostMapping("/audit/checked/date")
+    public List<CheckedVO> listCheckedByDate(@RequestAttribute int uid, @RequestBody Map<String, LocalDate> map) {
+        int[] date = utils.getTimeFlag(map.get("date"));
+        int yearmonth = date[0];
+        int week = date[1];
+        return auditService.listCheckedByDate(uid, yearmonth, week);
+    }
 
 
     /**
@@ -104,7 +113,7 @@ public class AuditController {
      * @return java.util.Map
      * @Date 9:12 PM 2/4/2020
      **/
-    @PostMapping("/getreport/{uid}")
+    @PostMapping("/audit/report/{uid}")
     public Map getReport(@PathVariable int uid, @RequestBody Map<String, LocalDate> map) {
         String userid = userService.getUserid(uid);
         return dingTalkUtils.getReport(userid, map.get("date"));

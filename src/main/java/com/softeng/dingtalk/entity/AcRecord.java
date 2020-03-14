@@ -42,12 +42,14 @@ public class AcRecord {
         this.auditor = auditor;
         this.ac = ac;
         this.reason = reason;
+        this.classify = classify;
     }
 
     public AcRecord(User user, double ac, String reason, int classify) {
         this.user = user;
         this.ac = ac;
         this.reason = reason;
+        this.classify = classify;
     }
 
     public AcRecord(DcRecord dcRecord, AcItem acItem) {
