@@ -28,40 +28,40 @@ public class ProjectAspect {
     @Autowired
     PerformanceService performanceService;
 
-
-    // 审核人依据公式设置 通知
-    @AfterReturning(value = "execution(* com.softeng.dingtalk.service.ProjectService.autoSetProjectAc(..))", returning = "retVal")
-    public void AfterAutoSetProjectAc(JoinPoint joinPoint, Object retVal) throws Throwable {
-        // 发送消息
-        List<AcRecord> acRecords = (List<AcRecord>) retVal;
-        notifyService.autoSetProjectAcMessage(acRecords);
-
-        // 计算助研金
-        LocalDate date = LocalDate.now();
-        List<Integer> ids = acRecords.stream().map(x -> x.getUser().getId()).collect(Collectors.toList());
-        int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        for (Integer id : ids) {
-            performanceService.computeSalary(id, yearmonth);
-        }
-
-    }
-
-
-    // 审核人依据公式设置 通知
-    @AfterReturning(value = "execution(* com.softeng.dingtalk.service.ProjectService.manualSetProjectAc(..))", returning = "retVal")
-    public void AfterManualSetProjectAc(JoinPoint joinPoint, Object retVal) throws Throwable {
-        // 发送消息
-        List<AcRecord> acRecords = (List<AcRecord>) retVal;
-        notifyService.manualSetProjectAcMessage(acRecords);
-
-        // 计算助研金
-        LocalDate date = LocalDate.now();
-        List<Integer> ids = acRecords.stream().map(x -> x.getUser().getId()).collect(Collectors.toList());
-        int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        for (Integer id : ids) {
-            performanceService.computeSalary(id, yearmonth);
-        }
-    }
+//
+//    // 审核人依据公式设置 通知
+//    @AfterReturning(value = "execution(* com.softeng.dingtalk.service.ProjectService.autoSetProjectAc(..))", returning = "retVal")
+//    public void AfterAutoSetProjectAc(JoinPoint joinPoint, Object retVal) throws Throwable {
+//        // 发送消息
+//        List<AcRecord> acRecords = (List<AcRecord>) retVal;
+//        notifyService.autoSetProjectAcMessage(acRecords);
+//
+//        // 计算助研金
+//        LocalDate date = LocalDate.now();
+//        List<Integer> ids = acRecords.stream().map(x -> x.getUser().getId()).collect(Collectors.toList());
+//        int yearmonth = date.getYear() * 100 + date.getMonthValue();
+//        for (Integer id : ids) {
+//            performanceService.computeSalary(id, yearmonth);
+//        }
+//
+//    }
+//
+//
+//    // 审核人依据公式设置 通知
+//    @AfterReturning(value = "execution(* com.softeng.dingtalk.service.ProjectService.manualSetProjectAc(..))", returning = "retVal")
+//    public void AfterManualSetProjectAc(JoinPoint joinPoint, Object retVal) throws Throwable {
+//        // 发送消息
+//        List<AcRecord> acRecords = (List<AcRecord>) retVal;
+//        notifyService.manualSetProjectAcMessage(acRecords);
+//
+//        // 计算助研金
+//        LocalDate date = LocalDate.now();
+//        List<Integer> ids = acRecords.stream().map(x -> x.getUser().getId()).collect(Collectors.toList());
+//        int yearmonth = date.getYear() * 100 + date.getMonthValue();
+//        for (Integer id : ids) {
+//            performanceService.computeSalary(id, yearmonth);
+//        }
+//    }
 
 
 }
