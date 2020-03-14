@@ -31,7 +31,11 @@ public class ProjectController {
 
 
 
-    // 审核人创建或更新项目
+
+    /**
+     * 审核人创建或更新项目
+     * @param project, uid
+     **/
     @PostMapping("/project")
     public void createOrUpdateProject(@RequestBody Project project, @RequestAttribute int uid) {
         if (project.getId() == 0) {
@@ -42,13 +46,19 @@ public class ProjectController {
         }
     }
 
-    // 创建或修改迭代
+
+    /**
+     * 创建或修改迭代
+     * @param pid, iterationVO
+     **/
     @PostMapping("/project/{pid}/iteration")
     public void createIteration(@PathVariable int pid, @RequestBody IterationVO iterationVO) {
         if(iterationVO.getId() == 0) {
-
+            // 创建迭代
+            projectService.createIteration(pid, iterationVO);
         } else {
-
+            // 更新迭代
+            projectService.updateIteration(iterationVO);
         }
     }
 
