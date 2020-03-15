@@ -24,7 +24,7 @@ public class Iteration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String title;
+    private int cnt; // 第几次迭代
     private boolean status;
     private LocalDate beginTime;
     private LocalDate endTime;
@@ -47,8 +47,8 @@ public class Iteration {
         this.id = id;
     }
 
-    public Iteration(String title, User auditor, LocalDate beginTime, LocalDate endTime) {
-        this.title = title;
+    public Iteration(int cnt, User auditor, LocalDate beginTime, LocalDate endTime) {
+        this.cnt = cnt;
         this.auditor = auditor;
         this.beginTime = beginTime;
         this.endTime = endTime;

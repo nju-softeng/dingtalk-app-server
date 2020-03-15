@@ -19,10 +19,18 @@ import java.util.Map;
 public interface ProjectRepository  extends JpaRepository<Project, Integer> {
 
 
-
+    /**
+     * 修改项目标题
+     * @param id
+     * @param title
+     */
     @Modifying
     @Query("update Project set title = :title where id = :id")
     void updateTitle(@Param("id") int id, @Param("title") String title);
+
+
+    @Query(value = "SELECT p.id, p.title, p.success_cnt, p.cnt, i.begin_time, i.end_time, i.expectedac, i.status FROM project p LEFT JOIN iteration i ON p.auditor_id = :aid AND p.cur_iteration = i.id order by p.id desc ", nativeQuery = true)
+    List<Map<String, Object>> listProjectInfo(@Param("aid") int aid);
 
 //    // 审核人获取进行中的项目
 //    @EntityGraph(value="project.graph",type= EntityGraph.EntityGraphType.FETCH)
