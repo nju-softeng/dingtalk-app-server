@@ -52,6 +52,19 @@ public class ProjectService {
 
 
     /**
+     * 删除项目
+     * @param pid
+     */
+    public void rmProjecj(int pid) {
+        Project p = projectRepository.findById(pid).get();
+        if (p.getCnt() != 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "项目的迭代不为空,无法删除");
+        }
+        projectRepository.deleteById(pid);
+    }
+
+
+    /**
      * 更新项目
      * @param project
      */
@@ -68,11 +81,15 @@ public class ProjectService {
     public void createIteration(int pid, IterationVO vo) {
         Project p = projectRepository.findById(pid).get();
         LocalDate[] dates = vo.getDates();
-        Iteration iteration = new Iteration(vo.getTitle(), p.getAuditor(), dates[0], dates[1]);
+        Iteration iteration = new Iteration(p.getCnt() + 1, p.getAuditor(), dates[0], dates[1]);
         int day = (int) dates[0].until(dates[1], ChronoUnit.DAYS);
         iteration.setExpectedAC(day * vo.getDingIds().size() / 30.0);
+        iteration.setProject(p);
         iterationRepository.save(iteration);
+        // 更新项目的迭代
+        p.setCurIteration(iteration.getId());
         // 获取分配者的userid;
+        p.setCnt(p.getCnt()+1);
         List<String> userids = vo.getDingIds();
         List<IterationDetail> iterationDetails = new ArrayList<>();
         for (String u : userids) {
@@ -92,7 +109,6 @@ public class ProjectService {
     public void updateIteration(IterationVO vo) {
         Iteration it = iterationRepository.findById(vo.getId()).get();
         LocalDate[] dates = vo.getDates();
-        it.setTitle(vo.getTitle());
         it.setBeginTime(vo.getDates()[0]);
         it.setEndTime(vo.getDates()[1]);
         int day = (int) dates[0].until(dates[1], ChronoUnit.DAYS);
@@ -110,6 +126,16 @@ public class ProjectService {
         }
 
     }
+
+    /**
+     * 查询审核人创建的项目
+     * @param aid 审核人id
+     * @return
+     */
+    public List<Map<String, Object>> listProjectInfo(int aid) {
+        return projectRepository.listProjectInfo(aid);
+    }
+
 
 
 

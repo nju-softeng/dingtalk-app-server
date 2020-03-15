@@ -26,6 +26,7 @@ public class Project {
     private String title; // 项目名
     private int successCnt; // 连续按时交付数
     private int curIteration; // 该项目当前迭代版本id
+    private int cnt; // 当前迭代次数
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
     private User auditor;
 
