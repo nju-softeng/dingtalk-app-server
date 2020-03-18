@@ -4,6 +4,7 @@ import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.projection.DcRecordProjection;
 import com.softeng.dingtalk.repository.DcSummaryRepository;
 import com.softeng.dingtalk.service.ApplicationService;
@@ -44,10 +45,6 @@ public class ApplicationController {
     @Autowired
     DcSummaryRepository dcSummaryRepository;
 
-//    @GetMapping("/dcsummary/{yearmonth}")
-//    public List<DcSummaryVO>  getDcSummary(@PathVariable int yearmonth) {
-//        return dcSummaryRepository.listDcSummary(yearmonth);
-//    }
 
 
     /**
@@ -69,23 +66,26 @@ public class ApplicationController {
      * @Date 4:46 PM 2/3/2020
      **/
     @PostMapping("/application")
-    public void addApplication(@RequestAttribute int uid,@Valid @RequestBody ApplingVO application) {
-        log.debug(application.getDate().toString());
-        int[] result = utils.getTimeFlag(application.getDate()); //数组大小为2，result[0]: yearmonth, result[1] week
-        DcRecord dc = new DcRecord(application, uid, result[0], result[1]);
-
-        if (!applicationService.isExist(uid, application.getAuditorid(), result[0], result[1])) {
-            applicationService.addApplication(dc, application.getAcItems());    //持久化绩效申请
+    public void addApplication(@RequestAttribute int uid,@Valid @RequestBody ApplingVO vo) {
+        int[] result = utils.getTimeFlag(vo.getDate()); //数组大小为2，result[0]: yearmonth, result[1] week
+        int dateCode = utils.getTimeCode(vo.getDate());
+        DcRecord dc = DcRecord.builder().applicant(new User(uid)).auditor(new User(vo.getAuditorid()))
+                .dvalue(vo.getDvalue()).ac(vo.getAc()).weekdate(vo.getDate()).yearmonth(result[0])
+                .week(result[1]).dateCode(dateCode).build();
+        if (!applicationService.isExist(uid, vo.getAuditorid(), result[0], result[1])) {
+            applicationService.addApplication(dc, vo.getAcItems());    //持久化绩效申请
         } else {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
         }
     }
 
 
-    // 用户更新
+    /**
+     * 用户更新
+     * @param apply
+     */
     @PostMapping("/application/update")
     public void updateApplication(@Valid @RequestBody ApplingVO apply) {
-        log.debug(apply.toString());
         applicationService.updateApplication(apply);
     }
 

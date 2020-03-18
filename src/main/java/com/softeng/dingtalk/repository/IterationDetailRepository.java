@@ -15,4 +15,7 @@ public interface IterationDetailRepository extends JpaRepository<IterationDetail
      * @param id 主键
      **/
     void deleteByIterationId(int id);
+
+
+
 }

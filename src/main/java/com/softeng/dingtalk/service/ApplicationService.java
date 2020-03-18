@@ -50,8 +50,9 @@ public class ApplicationService {
     // 更新申请
     public void updateApplication(ApplingVO applingVO) {
         int[] result = utils.getTimeFlag(applingVO.getDate()); //数组大小为2，result[0]: yearmonth, result[1] week
+        int dateCode = utils.getTimeCode(applingVO.getDate());
         DcRecord dc = dcRecordRepository.findById(applingVO.getId()).get();
-        dc.reApply(applingVO.getAuditorid(), applingVO.getDvalue(), applingVO.getDate(), result[0], result[1]);
+        dc.reApply(applingVO.getAuditorid(), applingVO.getDvalue(), applingVO.getDate(), result[0], result[1], dateCode);
         acItemRepository.deleteByDcRecord(dc);  //删除之前的记录
         for (AcItem acItem : applingVO.getAcItems()) {
             acItem.setDcRecord(dc);
