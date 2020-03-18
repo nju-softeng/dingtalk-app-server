@@ -5,6 +5,7 @@ import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.projection.DcRecordProjection;
 import com.softeng.dingtalk.vo.AppliedVO;
 import com.softeng.dingtalk.vo.CheckedVO;
+import com.softeng.dingtalk.vo.DcVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -76,18 +77,37 @@ public interface DcRecordRepository extends JpaRepository<DcRecord, Integer> {
 
 
     /**
-     * 计算项目期间累计dc值
-     * @param uid, id, stime, etime
-     * @return java.lang.Double
-     * @Date 6:51 PM 1/17/2020
-     **/
-    @Query(value = "select ifnull((select sum(dc) from dc_record where applicant_id = :uid and auditor_id = :aid and weekdate >= :stime and weekdate <= :etime), 0)", nativeQuery = true)
-    Double getByTime(@Param("uid") int uid, @Param("aid") int id, @Param("stime") LocalDate stime, @Param("etime") LocalDate etime);
+     * 查询用户指定时间段的 dc
+     * @param uid   用户id
+     * @param begin 开始年月周
+     * @param end   结束年月周
+     * @return
+     */
+    @Query("select new com.softeng.dingtalk.vo.DcVO(d.dateCode, d.dc) from DcRecord d where d.applicant.id = :uid and d.auditor.id = :aid and d.dateCode >= :begin and d.dateCode <= :end")
+    List<DcVO> listUserDcByDate(@Param("uid") int uid, @Param("aid") int aid, @Param("begin") int begin, @Param("end") int end);
+
+    /**
+     * 查询用户指定时间段的 dc和
+     * @param uid
+     * @param aid
+     * @param begin
+     * @param end
+     * @return
+     */
+    @Query("select coalesce(sum(d.dc), 0)  from DcRecord d where d.applicant.id = :uid and d.auditor.id = :aid and d.dateCode >= :begin and d.dateCode <= :end")
+    double getUserDcSumByDate(@Param("uid") int uid, @Param("aid") int aid, @Param("begin") int begin, @Param("end") int end);
 
 
-    @Query(value = "select dc, CONCAT(yearmonth, '-',`week`) as 'date' from dc_record where applicant_id = :uid and auditor_id = :aid and weekdate >= :stime and weekdate <= :etime", nativeQuery = true)
-    List<Map<String, Object>> getDcBytime(@Param("uid") int uid, @Param("aid") int id, @Param("stime") LocalDate stime, @Param("etime") LocalDate etime);
-
+    /**
+     * 查询个人指定时间的dc
+     * @param uid
+     * @param aid
+     * @param datecode
+     * @return
+     * select coalesce(d.dc, 0)  from DcRecord d where d.applicant.id = :uid and d.auditor.id = :aid and d.dateCode = :datecode
+     */
+    @Query(value = "SELECT IFNULL((SELECT dc FROM dc_record WHERE applicant_id = :uid and auditor_id = :aid AND date_code = :datecode), 0)", nativeQuery = true)
+    double getUserDcByWeek(@Param("uid") int uid, @Param("aid") int aid, @Param("datecode") int datecode);
 
     /**
      * 查询是否存在某条记录，

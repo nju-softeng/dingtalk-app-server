@@ -47,7 +47,7 @@ public class ProjectController {
     }
 
 
-    @GetMapping("/project/delete/{pid}")
+    @GetMapping("/project/{pid}/delete")
     public void rmProject(@PathVariable int pid) {
         projectService.rmProjecj(pid);
     }
@@ -80,6 +80,28 @@ public class ProjectController {
     }
 
 
+    /**
+     * 获取项目及迭代信息
+     * @param pid
+     * @return
+     */
+    @GetMapping("project/{pid}/detail")
+    public Map getProjectDetail(@PathVariable int pid) {
+        return projectService.listProjectDetail(pid);
+    }
+
+
+    @GetMapping("project/iteration/{itid}/delete")
+    public void rmIteration(@PathVariable int itid) {
+        projectService.rmIteration(itid);
+    }
+
+
+    // 确认项目完成，并自动计算Ac
+    @PostMapping("/project/autosetac/{itid}")
+    public void autoSetProjectAc(@PathVariable int itid, @RequestBody Map<String, LocalDate> map) {
+        projectService.setIterationAc(itid, map.get("finishdate"));
+    }
 
 
 //
@@ -93,11 +115,7 @@ public class ProjectController {
 //        return projectService.ComputeProjectAc(pid, map.get("finishdate"));
 //    }
 //
-//    // 确认项目完成，并自动计算Ac
-//    @PostMapping("/project/autosetac/{pid}")
-//    public void autoSetProjectAc(@PathVariable int pid, @RequestBody Map<String, LocalDate> map) {
-//        projectService.autoSetProjectAc(pid, map.get("finishdate"));
-//    }
+
 //
 //    // 确认项目完成，手动设置Ac
 //    @PostMapping("/project/manualsetac/{pid}")

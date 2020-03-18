@@ -28,4 +28,12 @@ public class Utils {
         result[1] = week;
         return result;
     }
+
+    public int getTimeCode(LocalDate localDate) {
+        LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue()); // 获取本月周日
+        int year = sunday.getYear();        //年
+        int month = sunday.getMonthValue(); //月
+        int week = sunday.getDayOfMonth() / 7 + 1;
+        return year * 1000 + month * 10 + week;
+    }
 }

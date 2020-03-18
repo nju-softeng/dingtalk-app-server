@@ -29,7 +29,7 @@ public interface ProjectRepository  extends JpaRepository<Project, Integer> {
     void updateTitle(@Param("id") int id, @Param("title") String title);
 
 
-    @Query(value = "SELECT p.id, p.title, p.success_cnt, p.cnt, i.begin_time, i.end_time, i.expectedac, i.status FROM project p LEFT JOIN iteration i ON p.auditor_id = :aid AND p.cur_iteration = i.id order by p.id desc ", nativeQuery = true)
+    @Query(value = "SELECT p.id, p.title, p.success_cnt, p.cnt, i.begin_time, i.end_time, i.expectedac, i.status FROM (SELECT * FROM project WHERE auditor_id = :aid) p LEFT JOIN iteration i ON  p.cur_iteration = i.id order by p.id desc", nativeQuery = true)
     List<Map<String, Object>> listProjectInfo(@Param("aid") int aid);
 
 //    // 审核人获取进行中的项目

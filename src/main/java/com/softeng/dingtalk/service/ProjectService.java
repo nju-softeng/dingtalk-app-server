@@ -1,7 +1,9 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.component.Utils;
 import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.repository.*;
+import com.softeng.dingtalk.vo.DcVO;
 import com.softeng.dingtalk.vo.IterationVO;
 import com.softeng.dingtalk.vo.ProjectVO;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +42,8 @@ public class ProjectService {
     DcRecordRepository dcRecordRepository;
     @Autowired
     AcRecordRepository acRecordRepository;
+    @Autowired
+    Utils utils;
     
 
     /**
@@ -137,7 +141,134 @@ public class ProjectService {
     }
 
 
+    /**
+     * 查询项目详细信息
+     * @param pid
+     * @return
+     */
+    public Map listProjectDetail(int pid) {
+        List<Iteration> iterations = iterationRepository.listIterationByPid(pid);
+        Project p = projectRepository.findById(pid).get();
+        return Map.of("iterations", iterations, "title", p.getTitle(),"icnt", p.getCnt(), "success", p.getSuccessCnt());
+    }
 
+    /**
+     * 删除迭代
+     * @param itid
+     */
+    public void rmIteration(int itid) {
+        Iteration it = iterationRepository.findById(itid).get();
+        Project p = it.getProject();
+        // 修改项目迭代次数
+        p.setCnt(p.getCnt() - 1);
+        // 修改项目当前迭代版本
+        p.setCurIteration(it.getPrevIteration());
+        projectRepository.save(p);
+        iterationRepository.deleteById(itid);
+    }
+
+    //int day = (int) btime.until(ftime,ChronoUnit.DAYS) + 1;
+    private static int fib(int n) {
+        if(n==1 || n==2){
+            return 1;
+        }
+        int sec=1;//第二项
+        int fir=1;//第一项
+        int temp=0;//临时项
+        for (int i = 3; i <= n; i++) {
+            temp=sec;
+            sec=fir+sec;
+            fir=temp;
+        }
+        return sec;
+    }
+
+
+    //
+
+    /**
+     * 计算迭代AC值
+     * @param itid
+     * @param finishdate
+     */
+    public void setIterationAc(int itid, LocalDate finishdate) {
+        Iteration iteration = iterationRepository.findById(itid).get();
+        Project project = iteration.getProject();
+        int predictDay = (int) iteration.getBeginTime().until(iteration.getEndTime(), ChronoUnit.DAYS) + 1;
+        int actualDay = (int) iteration.getBeginTime().until(finishdate, ChronoUnit.DAYS) + 1;
+
+        // AC扣除
+        double AcReduce = 0;
+        if (predictDay >= actualDay) {
+            log.debug("按时交付");
+            // 连续按时交付次数加 1
+            project.setSuccessCnt(project.getSuccessCnt() + 1);
+        } else {
+            log.debug("延期交付");
+            // 连续奖励中断
+            project.setSuccessCnt(0);
+            int delay = (int) iteration.getEndTime().until(iteration.getFinishTime(), ChronoUnit.DAYS);
+            if (Math.ceil(delay / 7.0) < 1.0) {
+                AcReduce = Math.ceil(delay / 7.0) * 0.15;
+            } else {
+                AcReduce = Math.ceil(delay / 7.0) * 0.25;
+            }
+        }
+        //迭代人数
+        int num = iteration.getIterationDetails().size();
+        // 预期AC
+        double AcPredict = predictDay * num / 30.0;
+        // 实际AC
+        double AcActual = actualDay * num /30.0;
+        // AC奖励
+        double AcAward = fib(project.getSuccessCnt());
+
+
+        double[] dclist = new double[num];
+
+        int begin = utils.getTimeCode(iteration.getBeginTime());
+        int end = utils.getTimeCode(finishdate);
+        int index = 0;
+        double dcSum = 0;
+        for (IterationDetail itd : iteration.getIterationDetails()) {
+            double dcAll = dcRecordRepository.getUserDcSumByDate(itd.getUser().getId(), project.getAuditor().getId(), begin, end);
+            double dcBeginWeek = dcRecordRepository.getUserDcByWeek(itd.getUser().getId(), project.getAuditor().getId(), begin);
+            double dcEndWeek = dcRecordRepository.getUserDcByWeek(itd.getUser().getId(), project.getAuditor().getId(), end);
+            double deduct = (dcBeginWeek * (iteration.getBeginTime().getDayOfWeek().getValue() - 1) + dcEndWeek * (7 - finishdate.getDayOfWeek().getValue())) / 7.0;
+            // 开发期间周dc均值
+            dclist[index] = (dcAll - deduct) * 7.0 / actualDay;
+            dcSum += dclist[index];
+            index ++;
+        }
+
+        if (dcSum == 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "项目参与者的总dc值为0，可能是参与者未提交dc申请，无法计算，需自定义");
+        }
+
+        double dcSumAvg = dcSum / (double) num;
+        index = 0;
+        List<AcRecord> acRecords = new ArrayList<>();
+        for (IterationDetail itd : iteration.getIterationDetails()) {
+            if (itd.getAcRecord() != null) {
+                acRecordRepository.delete(itd.getAcRecord());
+            }
+            // AC 计算公式
+            double ac = (AcActual + AcAward - AcReduce) * dclist[index] /dcSumAvg * dclist[index] * 2;
+            AcRecord acRecord = new AcRecord(itd.getUser(), project.getAuditor(), ac, "完成开发任务: " + project.getTitle() + " 第" + project.getCnt() + "迭代" , AcRecord.PROJECT);
+            // 实例化ac记录
+            acRecordRepository.save(acRecord);
+            itd.setAcRecord(acRecord);
+            itd.setAc(ac);
+            iterationDetailRepository.save(itd);
+            acRecords.add(acRecord);
+            index ++;
+        }
+
+        //更新论文和迭代状态
+        iteration.setFinishTime(finishdate);
+        iteration.setStatus(true);
+
+    }
 
 
 //    // 更新项目信息
