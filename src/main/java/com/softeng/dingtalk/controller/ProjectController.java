@@ -48,6 +48,10 @@ public class ProjectController {
     }
 
 
+    /**
+     * 删除项目
+     * @param pid
+     */
     @GetMapping("/project/{pid}/delete")
     public void rmProject(@PathVariable int pid) {
         projectService.rmProject(pid);
@@ -79,6 +83,18 @@ public class ProjectController {
     public List<Map<String, Object>> listProjectInfo(@RequestAttribute("uid") int uid) {
         return iterationService.listProjectInfo(uid);
     }
+
+
+    /**
+     * 查询迭代
+     * @param id
+     * @return
+     */
+    @GetMapping("/project/iteration/{id}")
+    public Iteration getIteration(@PathVariable int id) {
+        return iterationService.getIterationById(id);
+    }
+
 
 
     /**
