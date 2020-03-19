@@ -34,3 +34,5 @@ build/
 .mvn/wrapper/MavenWrapperDownloader.java
 mvnw
 mvnw.cmd
+hs_err_pid14652.log
+replay_pid14652.log

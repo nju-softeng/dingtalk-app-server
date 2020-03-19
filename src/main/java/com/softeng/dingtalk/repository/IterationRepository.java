@@ -28,7 +28,8 @@ public interface IterationRepository extends JpaRepository<Iteration, Integer> {
     @Query("select it from Iteration it where it.project.id = :pid order by it.id desc")
     List<Iteration> listIterationByPid(@Param("pid") int pid);
 
-
+    @Query("select i.conSuccess from Iteration i where i.id = :id")
+    Integer getConSucessCntById(@Param("id") int id);
 
 
 //    // 审核人获取进行中的项目

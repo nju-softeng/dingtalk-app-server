@@ -36,4 +36,12 @@ public class Utils {
         int week = sunday.getDayOfMonth() / 7 + 1;
         return year * 1000 + month * 10 + week;
     }
+
+    public String getTimeStr(LocalDate localDate) {
+        LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue()); // 获取本月周日
+        int month = sunday.getMonthValue(); //月
+        int week = sunday.getDayOfMonth() / 7 + 1;
+        return month + " 月 第 " + week + " 周";
+    }
+
 }

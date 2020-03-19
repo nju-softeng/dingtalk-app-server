@@ -1,10 +1,9 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.entity.Iteration;
-import com.softeng.dingtalk.entity.Project;
-import com.softeng.dingtalk.entity.ProjectDetail;
-import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.entity.*;
+import com.softeng.dingtalk.service.IterationService;
 import com.softeng.dingtalk.service.ProjectService;
+import com.softeng.dingtalk.vo.IterateAcVO;
 import com.softeng.dingtalk.vo.IterationVO;
 import com.softeng.dingtalk.vo.ProjectVO;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +27,8 @@ import java.util.Map;
 public class ProjectController {
     @Autowired
     ProjectService projectService;
+    @Autowired
+    IterationService iterationService;
 
 
 
@@ -49,7 +50,7 @@ public class ProjectController {
 
     @GetMapping("/project/{pid}/delete")
     public void rmProject(@PathVariable int pid) {
-        projectService.rmProjecj(pid);
+        projectService.rmProject(pid);
     }
 
 
@@ -62,10 +63,10 @@ public class ProjectController {
     public void createIteration(@PathVariable int pid, @RequestBody IterationVO iterationVO) {
         if(iterationVO.getId() == 0) {
             // 创建迭代
-            projectService.createIteration(pid, iterationVO);
+            iterationService.createIteration(pid, iterationVO);
         } else {
             // 更新迭代
-            projectService.updateIteration(iterationVO);
+            iterationService.updateIteration(iterationVO);
         }
     }
 
@@ -76,7 +77,7 @@ public class ProjectController {
      */
     @GetMapping("/project")
     public List<Map<String, Object>> listProjectInfo(@RequestAttribute("uid") int uid) {
-        return projectService.listProjectInfo(uid);
+        return iterationService.listProjectInfo(uid);
     }
 
 
@@ -87,21 +88,43 @@ public class ProjectController {
      */
     @GetMapping("project/{pid}/detail")
     public Map getProjectDetail(@PathVariable int pid) {
-        return projectService.listProjectDetail(pid);
+        return iterationService.listProjectDetail(pid);
     }
 
 
     @GetMapping("project/iteration/{itid}/delete")
     public void rmIteration(@PathVariable int itid) {
-        projectService.rmIteration(itid);
+        iterationService.rmIteration(itid);
     }
 
 
     // 确认项目完成，并自动计算Ac
     @PostMapping("/project/autosetac/{itid}")
-    public void autoSetProjectAc(@PathVariable int itid, @RequestBody Map<String, LocalDate> map) {
-        projectService.setIterationAc(itid, map.get("finishdate"));
+    public void autoSetProjectAc(@PathVariable int itid, @RequestBody Map<String, LocalDate> map, boolean update) {
+        iterationService.setIterationAc(itid, map.get("finishdate"));
     }
+
+
+
+    // 确认项目完成，手动输入AC
+    @PostMapping("/project/manualsetac/{itid}")
+    public void manualSetProjectAc(@PathVariable int itid, @Valid @RequestBody IterateAcVO vo) {
+        iterationService.manualSetIterationAc(itid, vo.getIterationDetails(), vo.getFinishdate());
+    }
+
+
+    /**
+     * 计算项目Ac，返回给前端
+     * @param itid
+     * @param map
+     * @return
+     */
+    @PostMapping("/project/iteration/{itid}/computeac")
+    public Map computeIterationAc(@PathVariable int itid, @RequestBody Map<String, LocalDate> map, boolean update) {
+        return iterationService.computeIterationAc(itid, map.get("finishdate"));
+    }
+
+
 
 
 //
