@@ -44,6 +44,16 @@ public class IterationService {
 
 
     /**
+     * 根据id查询迭代
+     * @param id
+     * @return
+     */
+    public Iteration getIterationById(int id) {
+        return iterationRepository.getIterationById(id);
+    }
+
+
+    /**
      * 创建迭代
      * @param pid
      * @param vo
@@ -221,7 +231,7 @@ public class IterationService {
         } else {
             int beginWeek = iteration.getBeginTime().getDayOfWeek().getValue();
             int endWeek = finishdate.getDayOfWeek().getValue();
-            info = "第1周有效占比: " + (7 - beginWeek + 1) + "/7   " + "   结束束周有效占比: " + endWeek + "/7";
+            info = "第1周有效占比: " + (7 - beginWeek + 1) + "/7   " + "   结束周有效占比: " + endWeek + "/7";
         }
 
         int index = 0;
@@ -254,7 +264,7 @@ public class IterationService {
             index ++;
         }
 
-        return Map.of( "status", false, "info", info, "AcActual", AcActual, "AcReduce", AcReduce, "AcAward", AcAward, "totalAc", totalAc, "period",  period, "dcSum", dcSum, "iterateInfos", iterateInfoVOS);
+        return Map.of( "status", true, "info", info, "AcActual", AcActual, "AcReduce", AcReduce, "AcAward", AcAward, "totalAc", totalAc, "period",  period, "dcSum", dcSum, "iterateInfos", iterateInfoVOS);
     }
 
 
