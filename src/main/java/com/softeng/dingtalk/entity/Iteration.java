@@ -32,6 +32,7 @@ public class Iteration {
     @Column(columnDefinition="DECIMAL(10,3)")
     private double expectedAC;
     private int prevIteration; // 上一个迭代版本id
+    private int conSuccess;    // 持续成功次数
 
 
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID

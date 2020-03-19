@@ -32,6 +32,12 @@ Content-Type: application/json
 
 ###
 
+
+
+
+
+###
+
 GET http://localhost:8080/api/project/unfinish/5
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
 
@@ -55,8 +61,16 @@ token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430
 ###
 
 
+POST http://localhost:8080/api/project/manualsetac/1/
+token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
+Content-Type: application/json
 
-POST http://localhost:8080/api/project/computeac/14
+[]
+
+###
+
+
+POST http://localhost:8080/api/project/iteration/3/computeac
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
 Content-Type: application/json
 
