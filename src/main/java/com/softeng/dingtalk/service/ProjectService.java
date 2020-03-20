@@ -55,6 +55,22 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
+    /**
+     * 查询审核人创建的项目
+     * @param aid 审核人id
+     * @return
+     */
+    public List<Map<String, Object>> listProjectInfo(int aid) {
+        return projectRepository.listProjectInfo(aid);
+    }
+
+    /**
+     * 查询所有项目信息
+     * @return
+     */
+    public List<Map<String, Object>> listAllProjectInfo() {
+        return projectRepository.listAllProjectInfo();
+    }
 
     /**
      * 删除项目

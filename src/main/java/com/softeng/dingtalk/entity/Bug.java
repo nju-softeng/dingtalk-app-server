@@ -19,9 +19,8 @@ import java.time.LocalDateTime;
 public class Bug {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     private String title;
-    private String description;
     private boolean status;
     private int classify;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)

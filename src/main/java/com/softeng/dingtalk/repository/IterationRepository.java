@@ -46,11 +46,15 @@ public interface IterationRepository extends JpaRepository<Iteration, Integer> {
     Iteration getIterationById(@Param("id") int id);
 
 
-//    // 审核人获取进行中的项目
+    // 用户获取自己参与的迭代
+    @Query("select p from Iteration p left join IterationDetail pd on p.id = pd.iteration.id where pd.user.id = :uid")
+    List<Iteration> listunfinishIteration(@Param("uid")int uid);
+
+//    // 审核人获取进行中的迭代
 //    @EntityGraph(value="iteration.graph",type= EntityGraph.EntityGraphType.FETCH)
 //    @Query("select i from Iteration i where i.auditor.id = :aid and i.status = false")
 //    List<Iteration> listUnfinishIterationByAid(@Param("aid") int aid);
-//
+////
 //
 //    // 审核人获取结束的项目
 //    @EntityGraph(value="iteration.graph",type= EntityGraph.EntityGraphType.FETCH)
@@ -58,16 +62,9 @@ public interface IterationRepository extends JpaRepository<Iteration, Integer> {
 //    List<Iteration> listfinishIterationByAid(@Param("aid") int aid);
 //
 //
-//    // 用户获取自己参与的项目
-//    @Query("select p from Iteration p left join IterationDetail pd on p.id = pd.iteration.id where pd.user.id = :uid")
-//    List<Iteration> listunfinishIteration(@Param("uid")int uid);
-//
-//
-//    // 更新项目
-//    @Modifying
-//    @Query("update Iteration set name = :name, beginTime = :beginTime, endTime = :endTime where id = :id")
-//    void updateIteration(@Param("id") int id, @Param("name") String name, @Param("beginTime") LocalDate beginTime, @Param("endTime") LocalDate endTime);
-//
+
+
+
 //
 //    // 根据 pid 集合查询 iteration
 //    @EntityGraph(value="iteration.graph",type= EntityGraph.EntityGraphType.FETCH)

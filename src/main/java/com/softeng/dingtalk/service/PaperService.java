@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,6 +40,10 @@ public class PaperService {
     AcRecordRepository acRecordRepository;
     @Autowired
     VoteRepository voteRepository;
+    @Autowired
+    NotifyService notifyService;
+    @Autowired
+    PerformanceService performanceService;
 
     // 添加论文记录
     public void addPaper(PaperVO papervo) {
@@ -77,7 +82,7 @@ public class PaperService {
 
 
     // 更新论文结果, 并计算ac
-    public List<Integer>  updateResult(int id, boolean result) {
+    public void updateResult(int id, boolean result) {
 
         Paper paper = paperRepository.findById(id).get();
 
@@ -116,8 +121,15 @@ public class PaperService {
             i++;
         }
         paperDetailRepository.saveAll(paperDetails);
-        // 用于切面更新作者绩效
-        return paperDetails.stream().map(x -> x.getUser().getId()).collect(Collectors.toList());
+        // 发送消息
+        notifyService.paperAcMessage(id, result);
+        // 计算助研金
+        LocalDate date = LocalDate.now();
+        int yearmonth = date.getYear() * 100 + date.getMonthValue();
+        for (PaperDetail pd : paperDetails) {
+            performanceService.computeSalary(pd.getUser().getId(), yearmonth);
+        }
+
     }
 
 

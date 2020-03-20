@@ -17,6 +17,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author zhanyeye
@@ -41,6 +42,10 @@ public class IterationService {
     AcRecordRepository acRecordRepository;
     @Autowired
     Utils utils;
+    @Autowired
+    NotifyService notifyService;
+    @Autowired
+    PerformanceService performanceService;
 
 
     /**
@@ -110,14 +115,7 @@ public class IterationService {
     }
 
 
-    /**
-     * 查询审核人创建的项目
-     * @param aid 审核人id
-     * @return
-     */
-    public List<Map<String, Object>> listProjectInfo(int aid) {
-        return projectRepository.listProjectInfo(aid);
-    }
+
 
 
     /**
@@ -286,8 +284,6 @@ public class IterationService {
             successCnt = iterationRepository.getConSucessCntById(iteration.getPrevIteration()); // 上一个迭代的连续按时发布数
         }
 
-
-
         //迭代人数
         int num = iteration.getIterationDetails().size();
         // 预期AC
@@ -362,6 +358,15 @@ public class IterationService {
         iteration.setFinishTime(finishdate);
         iteration.setStatus(true);
 
+        // 发送消息
+        notifyService.autoSetProjectAcMessage(acRecords);
+        // 计算助研金
+        LocalDate date = LocalDate.now();
+        int yearmonth = date.getYear() * 100 + date.getMonthValue();
+        for (AcRecord ac : acRecords) {
+            performanceService.computeSalary(ac.getUser().getId(), yearmonth);
+        }
+
     }
 
 
@@ -390,7 +395,7 @@ public class IterationService {
         iteration.setConSuccess(successCnt);
         project.setSuccessCnt(successCnt);
 
-        // 作为返回值，交给切面
+        // 用于发送消息，计算助研金
         List<AcRecord> acRecords = new ArrayList<>();
         for (IterationDetail td : iterationDetails) {
             IterationDetail iterationDetail = iterationDetailRepository.findById(td.getId()).get();
@@ -405,8 +410,18 @@ public class IterationService {
             iterationDetail.setAcRecord(acRecord);
             acRecords.add(acRecord);
         }
-        return acRecords;
 
+
+        // 发送消息
+        notifyService.manualSetProjectAcMessage(acRecords);
+        // 计算助研金
+        LocalDate date = LocalDate.now();
+        int yearmonth = date.getYear() * 100 + date.getMonthValue();
+        for (AcRecord ac : acRecords) {
+            performanceService.computeSalary(ac.getUser().getId(), yearmonth);
+        }
+
+        return acRecords;
     }
 
 }

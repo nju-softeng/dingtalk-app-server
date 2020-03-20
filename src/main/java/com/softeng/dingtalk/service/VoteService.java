@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.ArrayList;
@@ -42,6 +43,10 @@ public class VoteService {
     DingTalkUtils dingTalkUtils;
     @Autowired
     AcRecordRepository acRecordRepository;
+    @Autowired
+    NotifyService notifyService;
+    @Autowired
+    PerformanceService performanceService;
 
 
     // 创建投票并钉钉发送消息
@@ -135,7 +140,7 @@ public class VoteService {
 
 
     // 根据论文最终结果计算投票者的ac
-    public List<Integer> computeVoteAc(int pid, boolean result) {
+    public void computeVoteAc(int pid, boolean result) {
         Vote vote = paperRepository.findVoteById(pid);
         if (vote != null) {
             List<VoteDetail> voteDetails = voteDetailRepository.listByVid(vote.getId());
@@ -157,7 +162,16 @@ public class VoteService {
             }
             acRecordRepository.saveAll(acRecords);
             voteDetailRepository.saveAll(voteDetails);
-            return voteDetails.stream().map(x -> x.getUser().getId()).collect(Collectors.toList());
+
+            // 发送消息
+            notifyService.voteAcMessage(pid, result);
+            // 计算助研金
+            LocalDate date = LocalDate.now();
+            int yearmonth = date.getYear() * 100 + date.getMonthValue();
+            for (VoteDetail vd : voteDetails) {
+                performanceService.computeSalary(vd.getUser().getId() , yearmonth);
+            }
+
         } else {
             throw new RuntimeException("未发起投票");
         }

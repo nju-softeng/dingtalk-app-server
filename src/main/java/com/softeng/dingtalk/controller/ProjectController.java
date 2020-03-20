@@ -76,14 +76,19 @@ public class ProjectController {
 
 
     /**
-     * 查询项目
+     * 审核人查询项目
      * @param uid
      */
     @GetMapping("/project")
     public List<Map<String, Object>> listProjectInfo(@RequestAttribute("uid") int uid) {
-        return iterationService.listProjectInfo(uid);
+        return projectService.listProjectInfo(uid);
     }
 
+
+    @GetMapping("/project/all")
+    public List<Map<String, Object>> listAllProjectInfo() {
+        return projectService.listAllProjectInfo();
+    }
 
     /**
      * 查询迭代
@@ -155,13 +160,7 @@ public class ProjectController {
 //    }
 //
 
-//
-//    // 确认项目完成，手动设置Ac
-//    @PostMapping("/project/manualsetac/{pid}")
-//    public void manualSetProjectAc(@PathVariable int pid,@Valid @RequestBody List<ProjectDetail> projectDetails) {
-//        projectService.manualSetProjectAc(pid, projectDetails);
-//    }
-//
+
 //    // 查询进行中的项目
 //    @GetMapping("/project/unfinish/{aid}")
 //    public List<Project> listUnfinishProjectByAuditor(@PathVariable int aid) {
