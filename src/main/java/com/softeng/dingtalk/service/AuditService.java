@@ -37,6 +37,8 @@ public class AuditService {
     UserService userService;
     @Autowired
     PerformanceService performanceService;
+    @Autowired
+    NotifyService notifyService;
 
 
     // 审核人更新绩效申请
@@ -53,6 +55,8 @@ public class AuditService {
             }
         }
         acItemRepository.saveAll(checkVO.getAcItems());
+        notifyService.updateDcMessage(dc);  // 发送消息
+        performanceService.computeSalary(dc.getApplicant().getId(), dc.getYearmonth());  //重新计算助研金
         return dc;
     }
 
@@ -70,6 +74,8 @@ public class AuditService {
             }
         }
         acItemRepository.saveAll(checkVO.getAcItems());
+        notifyService.reviewDcMessage(dc);
+        performanceService.computeSalary(dc.getApplicant().getId(), dc.getYearmonth());
         return dc;
     }
 

@@ -23,11 +23,6 @@ import java.util.Map;
 @Repository
 public interface PaperRepository extends JpaRepository<Paper, Integer> {
 
-
-
-
-
-
     // paper select in 会默认升序排序
     @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
     @Query("select p from Paper p where p.id in :ids order by p.id desc")
@@ -44,6 +39,7 @@ public interface PaperRepository extends JpaRepository<Paper, Integer> {
 
     @Query(value = "select p.id, p.title from paper p where p.vote_id = :vid", nativeQuery = true)
     Map<String, Object> getPaperInfo(@Param("vid") int vid);
+
 
     @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
     @Query(value = "select * from paper", nativeQuery = true)

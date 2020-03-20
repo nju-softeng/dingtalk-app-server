@@ -35,8 +35,13 @@ public class PerformanceService {
 
 
 
-    // Gain = Base * DC * (1+ (AC/50)) + Topup
-    // 计算津贴
+
+    /**
+     * Gain = Base * DC * (1+ (AC/50)) + Topup
+     * 计算津贴
+     * @param uid 用户id
+     * @param yearmonth 年月
+     */
     public void computeSalary(int uid, int yearmonth) {
         double dc = dcSummaryRepository.getDcTotal(uid, yearmonth);
         double ac = acRecordRepository.getUserAcByDate(uid, yearmonth); // 获取到目前为止用户的AC总和

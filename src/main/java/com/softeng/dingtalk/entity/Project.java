@@ -30,30 +30,5 @@ public class Project {
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
     private User auditor;
 
-//    private String name;
-//    private String description;
-//    @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
-//    private User auditor;
-//    private int num;
-//    @Column(columnDefinition="DECIMAL(10,3)")
-//    private double expectedAC;
-//    private boolean status;
-//    private LocalDate beginTime;
-//    private LocalDate endTime;
-//    private LocalDate finishTime;
-//    @JsonIgnoreProperties("project")
-//    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
-//    private List<ProjectDetail> projectDetails;
-//
-//    public Project(int id) {
-//        this.id = id;
-//    }
-//
-//    public Project(String name, User auditor, LocalDate beginTime, LocalDate endTime) {
-//        this.name = name;
-//        this.auditor = auditor;
-//        this.beginTime = beginTime;
-//        this.endTime = endTime;
-//    }
 
 }
