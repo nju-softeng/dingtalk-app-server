@@ -55,8 +55,6 @@ public class AuditService {
             }
         }
         acItemRepository.saveAll(checkVO.getAcItems());
-        notifyService.updateDcMessage(dc);  // 发送消息
-        performanceService.computeSalary(dc.getApplicant().getId(), dc.getYearmonth());  //重新计算助研金
         return dc;
     }
 
@@ -74,8 +72,6 @@ public class AuditService {
             }
         }
         acItemRepository.saveAll(checkVO.getAcItems());
-        notifyService.reviewDcMessage(dc);
-        performanceService.computeSalary(dc.getApplicant().getId(), dc.getYearmonth());
         return dc;
     }
 
@@ -90,6 +86,8 @@ public class AuditService {
         }
         dcSummary.updateWeek(dc.getWeek(), dcSum);
         dcSummaryRepository.save(dcSummary);
+        notifyService.updateDcMessage(dc);  // 发送消息
+        performanceService.computeSalary(dc.getApplicant().getId(), dc.getYearmonth());  //重新计算助研金
     }
 
 
