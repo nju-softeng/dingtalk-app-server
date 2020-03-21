@@ -31,8 +31,6 @@ public class ProjectController {
     IterationService iterationService;
 
 
-
-
     /**
      * 审核人创建或更新项目
      * @param project, uid
@@ -56,7 +54,6 @@ public class ProjectController {
     public void rmProject(@PathVariable int pid) {
         projectService.rmProject(pid);
     }
-
 
 
     /**
@@ -90,6 +87,7 @@ public class ProjectController {
         return projectService.listAllProjectInfo();
     }
 
+
     /**
      * 查询迭代
      * @param id
@@ -99,7 +97,6 @@ public class ProjectController {
     public Iteration getIteration(@PathVariable int id) {
         return iterationService.getIterationById(id);
     }
-
 
 
     /**
@@ -124,7 +121,6 @@ public class ProjectController {
     public void autoSetProjectAc(@PathVariable int itid, @RequestBody Map<String, LocalDate> map, boolean update) {
         iterationService.setIterationAc(itid, map.get("finishdate"));
     }
-
 
 
     // 确认项目完成，手动输入AC

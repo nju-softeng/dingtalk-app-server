@@ -37,7 +37,7 @@ public interface ProjectRepository  extends JpaRepository<Project, Integer> {
      * 查询所有项目
      * @return
      */
-    @Query(value = "SELECT p.id, p.title, p.success_cnt, p.cnt, i.id as itid, i.begin_time, i.end_time, i.finish_time, i.expectedac, i.status FROM project p LEFT JOIN iteration i ON  p.cur_iteration = i.id order by p.id desc", nativeQuery = true)
+    @Query(value = "SELECT p.id, p.title, p.success_cnt, p.cnt, u.name, i.id as itid, i.begin_time, i.end_time, i.finish_time, i.expectedac, i.status FROM project p LEFT JOIN iteration i ON  p.cur_iteration = i.id LEFT JOIN user u on p.auditor_id = u.id order by p.id desc", nativeQuery = true)
     List<Map<String, Object>> listAllProjectInfo();
 
 

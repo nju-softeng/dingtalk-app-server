@@ -115,9 +115,6 @@ public class IterationService {
     }
 
 
-
-
-
     /**
      * 查询项目详细信息
      * @param pid
@@ -126,8 +123,9 @@ public class IterationService {
     public Map listProjectDetail(int pid) {
         List<Iteration> iterations = iterationRepository.listIterationByPid(pid);
         Project p = projectRepository.findById(pid).get();
-        return Map.of("iterations", iterations, "title", p.getTitle(),"icnt", p.getCnt(), "success", p.getSuccessCnt());
+        return Map.of("iterations", iterations, "authorid", p.getAuditor().getId()  , "title", p.getTitle(),"icnt", p.getCnt(), "success", p.getSuccessCnt());
     }
+
 
     /**
      * 删除迭代
@@ -149,6 +147,7 @@ public class IterationService {
         iterationRepository.deleteById(itid);
     }
 
+
     // 斐波那契数列
     private static int fib(int n) {
         if (n == 0) {
@@ -167,8 +166,6 @@ public class IterationService {
         }
         return sec;
     }
-
-
 
 
     /**
@@ -266,7 +263,6 @@ public class IterationService {
     }
 
 
-
     /**
      * 计算或更新迭代AC值
      * @param itid
@@ -277,7 +273,6 @@ public class IterationService {
         Project project = iteration.getProject();
         int predictDay = (int) iteration.getBeginTime().until(iteration.getEndTime(), ChronoUnit.DAYS) + 1; // 预期时间
         int actualDay = (int) iteration.getBeginTime().until(finishdate, ChronoUnit.DAYS) + 1; // 实际时间
-
 
         int successCnt = 0;  //连续按时完成次数
         if (iteration.getPrevIteration() != 0) { //是否有前驱

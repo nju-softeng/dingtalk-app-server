@@ -73,12 +73,17 @@ public class TestIdea {
     ProjectService projectService;
     @Autowired
     ProjectDetailRepository projectDetailRepository;
+    @Autowired
+    BugRepository bugRepository;
 
 
 
+    @Test
+    public void test_3() {
+        Object o =  bugRepository.listBugByAuditor(5);
+    }
 
 
-    @Transactional
     @Test
     public void test_1() {
        Object o =  dcRecordRepository.getUserDcByWeek(1, 1, 2020021);
