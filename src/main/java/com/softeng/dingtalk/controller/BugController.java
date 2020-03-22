@@ -41,6 +41,13 @@ public class BugController {
         return bugService.listProjectBugByAuditor(aid);
     }
 
+
+    @GetMapping("/bug/{id}/rm")
+    public void deleteBug(@PathVariable int id) {
+        bugService.rmbug(id);
+    }
+
+
     @PostMapping("/bug/check")
     public void checkBug(@RequestBody BugCheckVO vo) {
         bugService.checkbug(vo);

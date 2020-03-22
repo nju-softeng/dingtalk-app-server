@@ -18,10 +18,11 @@ import java.util.List;
 @Repository
 public interface BugRepository extends JpaRepository<Bug, Integer> {
     @EntityGraph(value="bug.graph",type= EntityGraph.EntityGraphType.FETCH)
-    List<Bug> findAllByProjectId(int id);
+    @Query("select b from Bug b where b.project.id = :pid order by b.id desc")
+    List<Bug> findAllByProjectId(@Param("pid") int pid);
 
     @EntityGraph(value="bug.graph",type= EntityGraph.EntityGraphType.FETCH)
-    @Query("select b from Bug b where b.project.auditor.id = :aid")
+    @Query("select b from Bug b where b.project.auditor.id = :aid order by b.id desc")
     List<Bug> listBugByAuditor(@Param("aid") int aid);
 
     @Modifying
