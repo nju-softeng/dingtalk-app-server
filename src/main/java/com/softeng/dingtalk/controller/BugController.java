@@ -3,6 +3,7 @@ package com.softeng.dingtalk.controller;
 import com.softeng.dingtalk.entity.Bug;
 import com.softeng.dingtalk.repository.BugRepository;
 import com.softeng.dingtalk.service.BugService;
+import com.softeng.dingtalk.vo.BugCheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,10 @@ public class BugController {
         return bugService.listProjectBugByAuditor(aid);
     }
 
+    @PostMapping("/bug/check")
+    public void checkBug(@RequestBody BugCheckVO vo) {
+        bugService.checkbug(vo);
+    }
 
 
 }

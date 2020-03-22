@@ -127,6 +127,11 @@ public class IterationService {
     }
 
 
+    public List<Iteration> listProjectIterations(int pid) {
+        return iterationRepository.listIterationByPid(pid);
+    }
+
+
     /**
      * 删除迭代
      * @param itid
