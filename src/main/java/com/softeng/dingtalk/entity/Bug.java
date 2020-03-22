@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,14 +25,20 @@ public class Bug {
     private int id;
     private String title; // 标题
     private String description; // 描述
-    private boolean status; // 状态
+    private Boolean status; // 状态
     private int reporterid; // 报告人id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Project project; // bug 所属项目
 
-    @OneToMany(mappedBy = "bug")
+    @JsonIgnoreProperties("bug")
+    @OneToMany(mappedBy = "bug", cascade = CascadeType.REMOVE)
     private List<BugDetail> bugDetails;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;
+
+    public Bug(int id) {
+        this.id = id;
+    }
+
 }

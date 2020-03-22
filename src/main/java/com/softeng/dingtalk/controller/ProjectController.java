@@ -109,6 +109,16 @@ public class ProjectController {
         return iterationService.listProjectDetail(pid);
     }
 
+    /**
+     * 查询项目的所有迭代
+     * @param pid
+     * @return
+     */
+    @GetMapping("project/{pid}/iteration")
+    public List<Iteration> listProjectIterations(@PathVariable int pid) {
+        return iterationService.listProjectIterations(pid);
+    }
+
 
     @GetMapping("project/iteration/{itid}/delete")
     public void rmIteration(@PathVariable int itid) {

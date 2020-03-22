@@ -22,6 +22,7 @@ public class AcRecord {
     public static final int PROJECT = 1;
     public static final int PAPER = 2;
     public static final int VOTE = 3;
+    public static final int BUG = 4;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
