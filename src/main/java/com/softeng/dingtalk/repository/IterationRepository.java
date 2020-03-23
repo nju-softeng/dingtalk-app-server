@@ -50,6 +50,15 @@ public interface IterationRepository extends JpaRepository<Iteration, Integer> {
     @Query("select p from Iteration p left join IterationDetail pd on p.id = pd.iteration.id where pd.user.id = :uid")
     List<Iteration> listunfinishIteration(@Param("uid")int uid);
 
+
+
+    // 根据 id 集合查询 iteration
+    @EntityGraph(value="iteration.graph",type= EntityGraph.EntityGraphType.FETCH)
+    @Query("select i from Iteration i where i.id in :ids order by i.id desc")
+    List<Iteration> findAllById(@Param("ids") List<Integer> ids);
+
+
+
 //    // 审核人获取进行中的迭代
 //    @EntityGraph(value="iteration.graph",type= EntityGraph.EntityGraphType.FETCH)
 //    @Query("select i from Iteration i where i.auditor.id = :aid and i.status = false")
@@ -65,11 +74,6 @@ public interface IterationRepository extends JpaRepository<Iteration, Integer> {
 
 
 
-//
-//    // 根据 pid 集合查询 iteration
-//    @EntityGraph(value="iteration.graph",type= EntityGraph.EntityGraphType.FETCH)
-//    @Query("select p from Iteration p where p.id in :pids order by p.id desc")
-//    List<Iteration> findAllById(@Param("pids") List<Integer> ids);
-//
+
 
 }
