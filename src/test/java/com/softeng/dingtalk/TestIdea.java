@@ -75,6 +75,8 @@ public class TestIdea {
     ProjectDetailRepository projectDetailRepository;
     @Autowired
     BugRepository bugRepository;
+    @Autowired
+    IterationDetailRepository iterationDetailRepository;
 
 
 
@@ -89,11 +91,11 @@ public class TestIdea {
        Object o =  dcRecordRepository.getUserDcByWeek(1, 1, 2020021);
     }
 
-//    @Test
-//    public void test_2() {
-//       Object o =  projectService.computeIterationAc(3, LocalDate.of(2020, 3, 26));
-//
-//    }
+    @Test
+    public void test_2() {
+       Object o =  iterationDetailRepository.listIterationIdByUid(100);
+
+    }
 
 
     @Test

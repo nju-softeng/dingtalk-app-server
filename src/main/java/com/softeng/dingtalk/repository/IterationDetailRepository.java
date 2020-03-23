@@ -1,7 +1,9 @@
 package com.softeng.dingtalk.repository;
 
+import com.softeng.dingtalk.entity.Iteration;
 import com.softeng.dingtalk.entity.IterationDetail;
 import com.softeng.dingtalk.entity.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,6 +27,14 @@ public interface IterationDetailRepository extends JpaRepository<IterationDetail
     @Query("select itd.user from IterationDetail itd where itd.iteration.id = :id")
     List<User> listUserByIterationId(@Param("id") int id);
 
+
+    /**
+     * 查询用户所参与迭代的id
+     * @param uid
+     * @return
+     */
+    @Query("select itd.iteration.id from IterationDetail itd where itd.user.id = :uid")
+    List<Integer> listIterationIdByUid(@Param("uid") int uid);
 
 
 }

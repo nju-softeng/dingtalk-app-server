@@ -59,6 +59,20 @@ public class IterationService {
 
 
     /**
+     * 查询开发者参与的迭代
+     * @return
+     */
+    public List<Iteration> listUserIteration(int uid) {
+         List<Integer> ids = iterationDetailRepository.listIterationIdByUid(uid);
+         if (ids.size() != 0) {
+             return iterationRepository.findAllById(ids);
+         } else {
+             return null;
+         }
+    }
+
+
+    /**
      * 创建迭代
      * @param pid
      * @param vo
@@ -126,7 +140,11 @@ public class IterationService {
         return Map.of("iterations", iterations, "authorid", p.getAuditor().getId()  , "title", p.getTitle(),"icnt", p.getCnt(), "success", p.getSuccessCnt());
     }
 
-
+    /**
+     * 查询项目迭代
+     * @param pid
+     * @return
+     */
     public List<Iteration> listProjectIterations(int pid) {
         return iterationRepository.listIterationByPid(pid);
     }

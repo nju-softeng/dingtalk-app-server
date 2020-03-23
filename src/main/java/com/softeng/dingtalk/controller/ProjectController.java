@@ -140,17 +140,16 @@ public class ProjectController {
     }
 
 
-    /**
-     * 计算项目Ac，返回给前端
-     * @param itid
-     * @param map
-     * @return
-     */
+    // 计算项目Ac，返回给前端
     @PostMapping("/project/iteration/{itid}/computeac")
     public Map computeIterationAc(@PathVariable int itid, @RequestBody Map<String, LocalDate> map, boolean update) {
         return iterationService.computeIterationAc(itid, map.get("finishdate"));
     }
 
+    @GetMapping("/project/iteration/user")
+    public List<Iteration> listUserIteration(@RequestAttribute int uid) {
+        return iterationService.listUserIteration(uid);
+    }
 
 
 
