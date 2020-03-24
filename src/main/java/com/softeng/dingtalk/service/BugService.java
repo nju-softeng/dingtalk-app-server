@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,10 @@ public class BugService {
     BugDetailRepository bugDetailRepository;
     @Autowired
     AcRecordRepository acRecordRepository;
+    @Autowired
+    NotifyService notifyService;
+    @Autowired
+    PerformanceService performanceService;
 
 
     // 用户提交bug
@@ -98,6 +103,14 @@ public class BugService {
             bugDetailRepository.saveAll(bugDetails);
 
             // todo 发送消息
+            notifyService.bugMessage(acRecords);
+            LocalDate date = LocalDate.now();
+            int yearmonth = date.getYear() * 100 + date.getMonthValue();
+            for (AcRecord a : acRecords) {
+                performanceService.computeSalary(a.getUser().getId(), yearmonth);
+            }
+
+
         }
     }
 
