@@ -36,28 +36,19 @@ public class BugService {
     AcRecordRepository acRecordRepository;
 
 
-    /**
-     * 用户提交bug
-     * @param bug
-     */
+    // 用户提交bug
     public void submitBug(Bug bug) {
         bugRepository.save(bug);
     }
 
 
-    /**
-     * 查询指定项目的bug
-     * @param pid
-     */
+    // 查询指定项目的bug
     public List<Bug> listProjectBug(int pid) {
         return bugRepository.findAllByProjectId(pid);
     }
 
 
-    /**
-     * 用户删除bug
-     * @param id
-     */
+    // 用户删除bug
     public void rmbug(int id) {
         Bug bug = bugRepository.findById(id).get();
         if (bug.getStatus() != null) {
@@ -74,7 +65,7 @@ public class BugService {
 
 
     // 审核人确认bug
-    public void checkbug(@RequestBody BugCheckVO vo) {
+    public void checkbug(BugCheckVO vo) {
         bugDetailRepository.deleteBugDetailByBugId(vo.getId());
         if (vo.isStatus() == false) { // bug 不存在
             bugRepository.updateBugStatus(vo.getId(), false);
@@ -105,6 +96,20 @@ public class BugService {
             }
             acRecordRepository.saveAll(acRecords);
             bugDetailRepository.saveAll(bugDetails);
+
+            // todo 发送消息
+        }
+    }
+
+
+
+    // 查询指定用户的 bug
+    public List<Bug> listUserBug(int uid) {
+        List<Integer> ids = bugDetailRepository.listBugidByuid(uid);
+        if (ids.size() != 0) {
+            return bugRepository.findAllById(ids);
+        } else {
+            return null;
         }
     }
 

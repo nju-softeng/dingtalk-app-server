@@ -30,5 +30,10 @@ public interface BugRepository extends JpaRepository<Bug, Integer> {
     void updateBugStatus(@Param("id") int id, @Param("status") boolean status);
 
 
+    @EntityGraph(value="bug.graph",type= EntityGraph.EntityGraphType.FETCH)
+    @Query("select b from Bug b where b.id in :ids order by b.id desc")
+    List<Bug> findAllById(@Param("ids") List<Integer> ids);
+
+
 
 }

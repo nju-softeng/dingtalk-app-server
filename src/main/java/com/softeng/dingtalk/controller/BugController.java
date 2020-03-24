@@ -53,5 +53,9 @@ public class BugController {
         bugService.checkbug(vo);
     }
 
+    @GetMapping("/bug/user")
+    public void listUserBug(@RequestAttribute int uid) {
+        bugService.listUserBug(uid);
+    }
 
 }
