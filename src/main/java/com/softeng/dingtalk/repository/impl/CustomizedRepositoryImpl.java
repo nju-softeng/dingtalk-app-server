@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 /**
  * @author zhanyeye
@@ -13,11 +14,11 @@ import javax.persistence.EntityManager;
  */
 public class CustomizedRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID> implements CustomizedRepository<T, ID> {
 
-    private EntityManager entityManager;
+    private EntityManager em;
 
     public CustomizedRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {
         super(entityInformation, entityManager);
-        this.entityManager = entityManager;
+        this.em = entityManager;
     }
 
     /**
@@ -27,8 +28,18 @@ public class CustomizedRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID> 
      **/
     @Override
     public T refresh(T t) {
-        entityManager.refresh(t);
+        em.refresh(t);
         return t;
+    }
+
+    @Override
+    public void saveBatch(List<T> entities) {
+        for (int i = 0; i < entities.size(); i++) {
+            em.persist(entities.get(i));
+            if ((i % 20) == 0) {
+                em.flush();
+            }
+        }
     }
 
 }

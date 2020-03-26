@@ -56,9 +56,7 @@ public interface ProjectRepository  extends JpaRepository<Project, Integer> {
 //    List<Project> listfinishProjectByAid(@Param("aid") int aid);
 //
 //
-//    // 用户获取自己参与的项目
-//    @Query("select p from Project p left join ProjectDetail pd on p.id = pd.project.id where pd.user.id = :uid")
-//    List<Project> listunfinishProject(@Param("uid")int uid);
+
 //
 //
 //    // 根据 pid 集合查询 project

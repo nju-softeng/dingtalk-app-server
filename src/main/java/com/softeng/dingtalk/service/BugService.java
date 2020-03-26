@@ -126,5 +126,10 @@ public class BugService {
         }
     }
 
+    // 审核人待审核bug数
+    public int getAuditorBugCnt(int uid) {
+        return bugRepository.getAuditorPendingBugCnt(uid);
+    }
+
 
 }

@@ -71,18 +71,22 @@ public class TestIdea {
     NotifyService notifyService;
     @Autowired
     ProjectService projectService;
-    @Autowired
-    ProjectDetailRepository projectDetailRepository;
+
     @Autowired
     BugRepository bugRepository;
     @Autowired
     IterationDetailRepository iterationDetailRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
+
+
 
 
     @Test
-    public void test_3() {
-        Object o =  bugRepository.listBugByAuditor(5);
+    public void test_delete() {
+        userRepository.deleteById(4);
     }
 
 

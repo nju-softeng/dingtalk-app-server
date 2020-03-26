@@ -58,4 +58,10 @@ public class BugController {
         bugService.listUserBug(uid);
     }
 
+    // 查询审核人待审核bug
+    @GetMapping("/bug/aduitor/cnt")
+    public int getAuditorBugCnt(@RequestAttribute int uid) {
+        return bugService.getAuditorBugCnt(uid);
+    }
+
 }

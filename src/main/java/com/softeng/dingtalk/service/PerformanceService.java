@@ -1,10 +1,7 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.DcSummary;
-import com.softeng.dingtalk.repository.AcRecordRepository;
-import com.softeng.dingtalk.repository.DcSummaryRepository;
-import com.softeng.dingtalk.repository.TopupRepository;
-import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +28,8 @@ public class PerformanceService {
     TopupRepository topupRepository;
     @Autowired
     UserRepository userRepository;
-
+    @Autowired
+    BugRepository bugRepository;
 
 
 
@@ -88,6 +86,7 @@ public class PerformanceService {
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
         double acTotal = acRecordRepository.getUserAcSum(uid);
         DcSummary dc = dcSummaryRepository.findByUserIdAndYearmonth(uid, yearmonth);
+
         if (dc == null) {
             return Map.of("acTotal", acTotal, "dcTotal", 0, "w1", 0, "w2",0, "w3", 0, "w4", 0, "w5", 0);
         } else {
