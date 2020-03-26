@@ -183,7 +183,7 @@ public class DingTalkUtils {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
         OapiReportListRequest request = new OapiReportListRequest();
         request.setUserid(userid);
-        Long startTime = LocalDateTime.of(date, LocalTime.of(12,0)).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        Long startTime = LocalDateTime.of(date, LocalTime.of(8,0)).toInstant(ZoneOffset.of("+8")).toEpochMilli();
         request.setStartTime(startTime); //开始时间
         request.setEndTime(startTime + TimeUnit.DAYS.toMillis(5));  //结束时间
         request.setCursor(0L);

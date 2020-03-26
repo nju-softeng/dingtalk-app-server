@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@SQLDelete(sql = "update `user` set is_deleted = 1 where id = ?")
 public class User {
     //定义静态常量表示用户权限
     public static final int USER_AUTHORITY = 0;
@@ -37,6 +39,11 @@ public class User {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;  //插入时间
     private int degree; //
+
+    @Column(nullable = false, name = "is_deleted")
+    private boolean deleted;  // 软删除标识
+
+
 
     public User(String userid, String name, String avatar, int authority, String position) {
         this.userid = userid;

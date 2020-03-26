@@ -28,24 +28,27 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     User findByUserid(@Param("userid")String userid);
 
 
-
     //查找所有的具有审核权限的用户 -> 供用户提交审核申请时选择  //todo 管理员是否要被列入
-    @Query(value = "select id, name from user where authority = 1", nativeQuery = true)
+    @Query(value = "select id, name from user where authority = 1 and is_deleted = 0", nativeQuery = true)
     List<Map<String, Object>> listAuditor();
 
 
-    @Query("select new com.softeng.dingtalk.vo.UserVO(u.id, u.name) from User u")
+    // 查询系统中所有用户
+    @Query("select new com.softeng.dingtalk.vo.UserVO(u.id, u.name) from User u where is_deleted = 0")
     List<UserVO> listUserVOS();
 
 
+    // 查询系统中所用户的 userid
     @Query("select u.userid from User u")
     List<String> listAllUserid();
 
 
+    // 根据userid 查询用户系统 uid
     @Query("select u.id from User u where u.userid = :userid")
     Integer findIdByUserid(@Param("userid") String userid);
 
 
+    // 查询用户学位
     @Query("select u.degree from User u where id = :uid")
     Integer getUserDegree(@Param("uid") int uid);
 
@@ -53,6 +56,7 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     // 获取用户权限信息
     @Query(value = "select id, name, avatar, position , authority from user",nativeQuery = true)
     List<Map<String, Object>> listRole();
+
 
     // 更新用户的审核权限
     @Modifying
