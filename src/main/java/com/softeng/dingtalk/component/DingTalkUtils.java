@@ -6,6 +6,7 @@ import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.enums.PositionType;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -173,7 +174,16 @@ public class DingTalkUtils {
             throw new RuntimeException();
         }
         int authority = response.getIsAdmin() ? User.ADMIN_AUTHORITY : User.USER_AUTHORITY;
-        User user = new User(response.getUserid(), response.getName(), response.getAvatar(), authority, response.getPosition());
+        PositionType position;
+        switch (response.getPosition()){
+            case "本" : position = PositionType.UNDERGRADUATE; break;
+            case "硕" : position = PositionType.POSTGRADUATE;  break;
+            case "博" : position = PositionType.DOCTOR;  break;
+            default: position = PositionType.OTHER;  break;
+        }
+
+
+        User user = new User(response.getUserid(), response.getName(), response.getAvatar(), authority, position);
         return  user;
     }
 
@@ -217,6 +227,21 @@ public class DingTalkUtils {
         }
         return response.getDepartment().stream().map(x -> String.valueOf(x.getId())).collect(Collectors.toList());
     }
+
+    // 查询所有部门信息
+    public List<OapiDepartmentListResponse.Department> fetchDeptInfo() {
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/department/list");
+        OapiDepartmentListRequest request = new OapiDepartmentListRequest();
+        request.setHttpMethod("GET");
+        OapiDepartmentListResponse response;
+        try {
+            response = client.execute(request, getAccessToken());
+        } catch (ApiException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取部门Id 失败");
+        }
+        return response.getDepartment();
+    }
+
 
     //获取整个部门的userid
     public List<String> listUserId(String depid) {
@@ -277,15 +302,11 @@ public class DingTalkUtils {
 
         try {
             OapiChatSendResponse response = client.execute(request, getAccessToken());
-
-
-            log.debug(response.getBody());
         } catch (ApiException e) {
             e.printStackTrace();
         }
 
     }
-
 
 
     // 发送投票结果
@@ -325,8 +346,6 @@ public class DingTalkUtils {
     }
 
 
-
-
     // 字节数组转化成十六进制字符串
     private String bytesToHex(final byte[] hash) {
         Formatter formatter = new Formatter();
@@ -338,6 +357,7 @@ public class DingTalkUtils {
         return result;
     }
 
+    // 计算鉴权 signature
     private String sign(String ticket, String nonceStr, long timeStamp, String url)  {
         String plain = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + String.valueOf(timeStamp)
                 + "&url=" + url;
@@ -354,6 +374,7 @@ public class DingTalkUtils {
         return null;
     }
 
+    // 返回鉴权结果
     public Map authentication(String url) {
         long timeStamp = System.currentTimeMillis();
         String nonceStr = "todowhatliesclearathand";

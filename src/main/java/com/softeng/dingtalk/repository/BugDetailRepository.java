@@ -1,7 +1,6 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.BugDetail;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,7 +13,7 @@ import java.util.List;
  * @date 3/22/2020
  */
 @Repository
-public interface BugDetailRepository extends JpaRepository<BugDetail, Integer> {
+public interface BugDetailRepository extends CustomizedRepository<BugDetail, Integer> {
     void deleteBugDetailByBugId(int id);
 
     // 指定用户被确认bug的Id

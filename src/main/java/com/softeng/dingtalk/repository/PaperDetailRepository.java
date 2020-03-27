@@ -2,7 +2,6 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.PaperDetail;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,7 +15,7 @@ import java.util.List;
  * @date 2/5/2020
  */
 @Repository
-public interface PaperDetailRepository extends JpaRepository<PaperDetail, Integer> {
+public interface PaperDetailRepository extends CustomizedRepository<PaperDetail, Integer> {
     void deleteByPaper(Paper paper);
     List<PaperDetail> findByPaper(Paper paper);
 

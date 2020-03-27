@@ -1,7 +1,6 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.AcRecord;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,7 +15,7 @@ import java.util.Map;
  * @date 12/27/2019
  */
 @Repository
-public interface AcRecordRepository extends JpaRepository<AcRecord, Integer> {
+public interface AcRecordRepository extends CustomizedRepository<AcRecord, Integer> {
 
     // todo 未被使用
     // 审核人获取自己审核的AC日志

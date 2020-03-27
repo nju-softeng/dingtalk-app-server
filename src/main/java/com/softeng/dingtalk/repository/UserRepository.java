@@ -2,7 +2,6 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.vo.UserVO;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +16,7 @@ import java.util.Map;
  * @date 12/7/2019
  */
 @Repository
-public interface UserRepository extends CustomizedRepository<User, Integer>, JpaRepository<User, Integer> {
+public interface UserRepository extends CustomizedRepository<User, Integer> {
     /**
      * 通过 userid（钉钉用户码） 查找用户 -> 通过用户进入系统时调用API获得的userid查询用户，判断用户是否在系统中，还是新用户
      * @param userid 钉钉用户码
