@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.DcSummary;
+import com.softeng.dingtalk.enums.PositionType;
 import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +45,12 @@ public class PerformanceService {
         double dc = dcSummaryRepository.getDcTotal(uid, yearmonth);
         double ac = acRecordRepository.getUserAcByDate(uid, yearmonth); // 获取到目前为止用户的AC总和
         double topup = topupRepository.getByUserid(uid); // 获取用户的 Topup
-        double base;
-        if (userRepository.getUserDegree(uid) == 0) {
-            base = 150;
-        } else {
+        double base = 0;
+        PositionType position = userRepository.getUserPosition(uid);
+        if (position == PositionType.DOCTOR) {
             base = 250;
+        } else if (position == PositionType.POSTGRADUATE){
+            base = 150;
         }
         double salary = Math.round(base * dc * (1 + (ac/50)) + topup);
         dcSummaryRepository.updateSalary(uid, ac, topup, salary);

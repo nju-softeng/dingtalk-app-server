@@ -1,10 +1,8 @@
 package com.softeng.dingtalk.repository;
 
-import com.softeng.dingtalk.entity.Iteration;
+
 import com.softeng.dingtalk.entity.IterationDetail;
 import com.softeng.dingtalk.entity.User;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,7 +13,7 @@ import java.util.List;
  * @description
  * @date 3/14/2020
  */
-public interface IterationDetailRepository extends JpaRepository<IterationDetail, Integer> {
+public interface IterationDetailRepository extends CustomizedRepository<IterationDetail, Integer> {
 
     /**
      * 删除Iteration 的所有 iterationDetail

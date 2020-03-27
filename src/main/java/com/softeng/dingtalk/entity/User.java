@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.softeng.dingtalk.enums.PositionType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,7 +35,8 @@ public class User {
     private String name;      //用户姓名
     private String avatar;    //用户头像
     private int authority = USER_AUTHORITY;  //用户权限
-    private String position;
+    @Enumerated(EnumType.STRING)//枚举字符串
+    private PositionType position;
     @JsonIgnore
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;  //插入时间
@@ -45,7 +47,7 @@ public class User {
 
 
 
-    public User(String userid, String name, String avatar, int authority, String position) {
+    public User(String userid, String name, String avatar, int authority, PositionType position) {
         this.userid = userid;
         this.name = name;
         this.avatar = avatar;

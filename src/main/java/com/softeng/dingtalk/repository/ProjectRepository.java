@@ -1,8 +1,6 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Project;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,7 +14,7 @@ import java.util.Map;
  * @description
  * @date 2/25/2020
  */
-public interface ProjectRepository  extends JpaRepository<Project, Integer> {
+public interface ProjectRepository  extends CustomizedRepository<Project, Integer> {
 
 
     /**

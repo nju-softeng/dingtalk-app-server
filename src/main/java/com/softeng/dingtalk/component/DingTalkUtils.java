@@ -6,6 +6,7 @@ import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.enums.PositionType;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -153,14 +154,8 @@ public class DingTalkUtils {
         return userId;
     }
 
-
-    /**
-     * 通过 userid （钉钉的用户码），获取钉钉中用户信息
-     * @param userid
-     * @return com.softeng.dingtalk.entity.User
-     * @Date 5:09 PM 1/13/2020
-     **/
-    public User getNewUser(String userid) {
+    // 根据 userid 获取用户详细信息
+    public OapiUserGetResponse fetchUserDetail(String userid) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/get");
         OapiUserGetRequest request = new OapiUserGetRequest();
         request.setUserid(userid);
@@ -172,11 +167,8 @@ public class DingTalkUtils {
             log.error("getUserDetail fail", e);
             throw new RuntimeException();
         }
-        int authority = response.getIsAdmin() ? User.ADMIN_AUTHORITY : User.USER_AUTHORITY;
-        User user = new User(response.getUserid(), response.getName(), response.getAvatar(), authority, response.getPosition());
-        return  user;
+        return response;
     }
-
 
     // 获取周报信息
     public Map getReport(String userid, LocalDate date) {
@@ -204,6 +196,7 @@ public class DingTalkUtils {
         }
     }
 
+
     // 获取部门id
     public List<String> listDepid() {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/department/list");
@@ -217,6 +210,22 @@ public class DingTalkUtils {
         }
         return response.getDepartment().stream().map(x -> String.valueOf(x.getId())).collect(Collectors.toList());
     }
+
+
+    // 查询所有部门信息
+    public List<OapiDepartmentListResponse.Department> fetchDeptInfo() {
+        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/department/list");
+        OapiDepartmentListRequest request = new OapiDepartmentListRequest();
+        request.setHttpMethod("GET");
+        OapiDepartmentListResponse response;
+        try {
+            response = client.execute(request, getAccessToken());
+        } catch (ApiException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取部门Id 失败");
+        }
+        return response.getDepartment();
+    }
+
 
     //获取整个部门的userid
     public List<String> listUserId(String depid) {
@@ -277,15 +286,11 @@ public class DingTalkUtils {
 
         try {
             OapiChatSendResponse response = client.execute(request, getAccessToken());
-
-
-            log.debug(response.getBody());
         } catch (ApiException e) {
             e.printStackTrace();
         }
 
     }
-
 
 
     // 发送投票结果
@@ -325,8 +330,6 @@ public class DingTalkUtils {
     }
 
 
-
-
     // 字节数组转化成十六进制字符串
     private String bytesToHex(final byte[] hash) {
         Formatter formatter = new Formatter();
@@ -338,6 +341,7 @@ public class DingTalkUtils {
         return result;
     }
 
+    // 计算鉴权 signature
     private String sign(String ticket, String nonceStr, long timeStamp, String url)  {
         String plain = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + String.valueOf(timeStamp)
                 + "&url=" + url;
@@ -354,6 +358,7 @@ public class DingTalkUtils {
         return null;
     }
 
+    // 返回鉴权结果
     public Map authentication(String url) {
         long timeStamp = System.currentTimeMillis();
         String nonceStr = "todowhatliesclearathand";

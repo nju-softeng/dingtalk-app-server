@@ -1,8 +1,6 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.DcSummary;
-import com.softeng.dingtalk.vo.DcSummaryVO;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +15,7 @@ import java.util.Map;
  * @date 12/29/2019
  */
 @Repository
-public interface DcSummaryRepository extends JpaRepository<DcSummary, Integer> {
+public interface DcSummaryRepository extends CustomizedRepository<DcSummary, Integer> {
 
     // 获取用户指定月份的 dcSummary
     @Query("select  d from DcSummary d where d.user.id = :uid and d.yearmonth = :yearmonth")

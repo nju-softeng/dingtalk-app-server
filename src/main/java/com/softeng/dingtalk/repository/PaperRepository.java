@@ -6,7 +6,6 @@ import com.softeng.dingtalk.projection.PaperProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,7 +20,7 @@ import java.util.Map;
  * @date 2/5/2020
  */
 @Repository
-public interface PaperRepository extends JpaRepository<Paper, Integer> {
+public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
 
     // paper select in 会默认升序排序
     @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)

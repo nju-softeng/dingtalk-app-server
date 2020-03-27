@@ -3,6 +3,7 @@ package com.softeng.dingtalk;
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Timer;
 import com.softeng.dingtalk.component.Utils;
+import com.softeng.dingtalk.enums.PositionType;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.service.*;
 import lombok.extern.slf4j.Slf4j;
@@ -86,7 +87,8 @@ public class TestIdea {
 
     @Test
     public void test_delete() {
-        userRepository.deleteById(4);
+
+        Object o =  userService.multiQueryUser("", PositionType.DOCTOR);
     }
 
 
