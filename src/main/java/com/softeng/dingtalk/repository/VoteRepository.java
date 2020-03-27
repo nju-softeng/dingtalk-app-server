@@ -1,7 +1,6 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Vote;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,7 +15,7 @@ import java.util.List;
  * @date 2/5/2020
  */
 @Repository
-public interface VoteRepository extends JpaRepository<Vote, Integer> {
+public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
 
     //拿到所有状态没有结束的投票
     @Query("select v from Vote v where v.status = false ")

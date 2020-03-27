@@ -59,8 +59,7 @@ public class LoginController {
         String userid = dingTalkUtils.getUserId((String) authcode.get("authcode"));  //根据免登授权码获取userid
         User user = userService.getUser(userid); //去数据库查找用户
         if (user == null) { //如果用户不存在，调用钉钉API获取用户信息，将用户导入数据库
-            user = dingTalkUtils.getNewUser(userid);
-            userService.addUser(user);
+            user = userService.addNewUser(userid);
         }
         Map map = Map.of("uid", user.getId(), "authorityid", user.getAuthority());
         // 生成加密token
