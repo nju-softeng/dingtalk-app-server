@@ -3,6 +3,7 @@ package com.softeng.dingtalk.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +21,8 @@ import javax.persistence.Id;
 @NoArgsConstructor
 public class Dept {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "deptid")
+    @GenericGenerator(name = "deptid", strategy = "com.softeng.dingtalk.entity.CustomIDGenerator")
     private Long id;
     private String name;
     private Long parentid;
