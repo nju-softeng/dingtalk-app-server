@@ -154,14 +154,8 @@ public class DingTalkUtils {
         return userId;
     }
 
-
-    /**
-     * 通过 userid （钉钉的用户码），获取钉钉中用户信息
-     * @param userid
-     * @return com.softeng.dingtalk.entity.User
-     * @Date 5:09 PM 1/13/2020
-     **/
-    public User getNewUser(String userid) {
+    // 根据 userid 获取用户详细信息
+    public OapiUserGetResponse fetchUserDetail(String userid) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/get");
         OapiUserGetRequest request = new OapiUserGetRequest();
         request.setUserid(userid);
@@ -173,20 +167,8 @@ public class DingTalkUtils {
             log.error("getUserDetail fail", e);
             throw new RuntimeException();
         }
-        int authority = response.getIsAdmin() ? User.ADMIN_AUTHORITY : User.USER_AUTHORITY;
-        PositionType position;
-        switch (response.getPosition()){
-            case "本" : position = PositionType.UNDERGRADUATE; break;
-            case "硕" : position = PositionType.POSTGRADUATE;  break;
-            case "博" : position = PositionType.DOCTOR;  break;
-            default: position = PositionType.OTHER;  break;
-        }
-
-
-        User user = new User(response.getUserid(), response.getName(), response.getAvatar(), authority, position);
-        return  user;
+        return response;
     }
-
 
     // 获取周报信息
     public Map getReport(String userid, LocalDate date) {
@@ -214,6 +196,7 @@ public class DingTalkUtils {
         }
     }
 
+
     // 获取部门id
     public List<String> listDepid() {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/department/list");
@@ -227,6 +210,7 @@ public class DingTalkUtils {
         }
         return response.getDepartment().stream().map(x -> String.valueOf(x.getId())).collect(Collectors.toList());
     }
+
 
     // 查询所有部门信息
     public List<OapiDepartmentListResponse.Department> fetchDeptInfo() {

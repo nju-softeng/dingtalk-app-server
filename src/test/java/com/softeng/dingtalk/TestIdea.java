@@ -88,7 +88,7 @@ public class TestIdea {
     @Test
     public void test_delete() {
 
-        userService.fetchDeptInfo();
+        Object o =  userService.multiQueryUser("", PositionType.DOCTOR);
     }
 
 
