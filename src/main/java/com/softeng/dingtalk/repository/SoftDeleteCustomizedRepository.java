@@ -1,6 +1,5 @@
 package com.softeng.dingtalk.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +13,7 @@ import java.util.Optional;
  * @date 3/26/2020
  */
 @NoRepositoryBean
-public interface SoftDeleteCustomizedRepository<T, ID>  extends JpaRepository<T, ID> {
+public interface SoftDeleteCustomizedRepository<T, ID>  extends CustomizedRepository<T, ID> {
     @Override
     @Transactional
     @Query("select e from #{#entityName} e where e.id = ?1 and e.deleted = false")

@@ -11,19 +11,24 @@ import javax.persistence.Id;
 
 /**
  * @author zhanyeye
- * @description
- * @create 2/25/2020 12:29 PM
+ * @description 部门
+ * @create 3/27/2020 9:05 AM
  */
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
-public class UserInfo {
+public class Dept {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private int uid;
-    private int deliveryCnt; // 连续成功交付次数
-    private double voucher;  // 缺陷代金券
+    private Long id;
+    private String name;
+    private Long parentid;
+
+    public Dept(Long id, String name, Long parentid) {
+        this.id = id;
+        this.name = name;
+        this.parentid = parentid;
+    }
 
 }

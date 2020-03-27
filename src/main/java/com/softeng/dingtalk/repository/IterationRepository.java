@@ -1,15 +1,10 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Iteration;
-import com.softeng.dingtalk.entity.Project;
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -17,7 +12,7 @@ import java.util.List;
  * @description
  * @date 3/14/2020
  */
-public interface IterationRepository extends JpaRepository<Iteration, Integer> {
+public interface IterationRepository extends CustomizedRepository<Iteration, Integer> {
 
     /**
      * 查询项目的所有迭代
