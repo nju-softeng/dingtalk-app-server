@@ -3,7 +3,6 @@ package com.softeng.dingtalk;
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Timer;
 import com.softeng.dingtalk.component.Utils;
-import com.softeng.dingtalk.enums.PositionType;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.service.*;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +11,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +85,8 @@ public class TestIdea {
     @Test
     public void test_delete() {
 
-        Object o =  userService.multiQueryUser("", PositionType.DOCTOR);
+
+        Object o =  userService.multiQueryUser("", null);
     }
 
 
