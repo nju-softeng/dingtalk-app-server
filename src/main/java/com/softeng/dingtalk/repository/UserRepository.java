@@ -1,7 +1,6 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.enums.PositionType;
 import com.softeng.dingtalk.vo.UserVO;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,12 +18,9 @@ import java.util.Map;
  */
 @Repository
 public interface UserRepository extends CustomizedRepository<User, Integer>, JpaSpecificationExecutor<User> {
-    /**
-     * 通过 userid（钉钉用户码） 查找用户 -> 通过用户进入系统时调用API获得的userid查询用户，判断用户是否在系统中，还是新用户
-     * @param userid 钉钉用户码
-     * @return com.softeng.dingtalk.entity.User
-     * @Date 9:10 PM 1/10/2020
-     **/
+
+
+    // 通过 userid（钉钉用户码） 查找用户 -> 通过用户进入系统时调用API获得的userid查询用户，判断用户是否在系统中，还是新用户
     @Query("select u from User u where u.userid = :userid")
     User findByUserid(@Param("userid")String userid);
 
@@ -51,21 +47,17 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
 
     // 查询用户学位
     @Query("select u.position from User u where id = :uid")
-    PositionType getUserPosition(@Param("uid") int uid);
+    String getUserPosition(@Param("uid") int uid);
 
 
-    // 获取用户权限信息
-    @Query(value = "select id, name, avatar, position , authority from user where authority != 2",nativeQuery = true)
-    List<Map<String, Object>> listRole();
+//    // 获取用户权限信息
+//    @Query(value = "select id, name, avatar, position , authority from user where authority != 2",nativeQuery = true)
+//    List<Map<String, Object>> listRole();
 
 
     // 更新用户的审核权限
     @Modifying
     @Query("update User set authority = :authority where id = :uid")
     void updateUserRole(@Param("uid")int uid, @Param("authority") int authority);
-
-
-
-
 
 }
