@@ -168,23 +168,25 @@ public class UserService {
         // 从钉钉服务器拉取用户同步到系统
         fetchUsers();
 
+
+
         List<String> userids = userRepository.listAllUserid();
 
     }
 
 
     // 多条件查询用户信息
-    public Page<User> multiQueryUser(int page, String name, String position) {
+    public Page<User> multiQueryUser(int page, int size, String name, String position) {
         Specification<User> spec = new Specification<User>() {
             @Override
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
                 predicates.add(criteriaBuilder.notEqual(root.get("authority"), User.ADMIN_AUTHORITY));
-                if (null != name && "" != name) {
+                if ("" != name) {
                     // 根据姓名模糊查询
                     predicates.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
                 }
-                if (null != position) {
+                if ("" != position) {
                     // 根据学位模糊查询
                     predicates.add(criteriaBuilder.equal(root.get("position"), position));
                 }
@@ -193,10 +195,8 @@ public class UserService {
             }
         };
 
-
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
-        Page<User> page = userRepository.findAll(spec, pageable);
-        return page;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return userRepository.findAll(spec, pageable);
     }
 
 

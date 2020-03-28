@@ -58,7 +58,6 @@ public class PerformanceService {
     // 实验室所有人的 DC 汇总（指定月份）
     public List<Map<String, Object>> listDcSummaryVO(LocalDate date) {
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        log.debug(yearmonth + "");
         return dcSummaryRepository.listDcSummary(yearmonth);
     }
 

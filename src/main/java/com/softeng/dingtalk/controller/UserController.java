@@ -69,14 +69,8 @@ public class UserController {
     @GetMapping("/message/page/{page}/{size}")
     public Map listUserMessage(@PathVariable int page, @PathVariable int size, @RequestAttribute int uid) {
         Page<Message> messages = notifyService.listUserMessage(uid, page, size);
-        return Map.of("content", messages.getContent(), "total", messages.getTotalPages());
+        return Map.of("content", messages.getContent(), "total", messages.getTotalElements());
     }
-
-//    // 查询所有用户的权限
-//    @GetMapping("/listrole")
-//    public List<Map<String, Object>> listRole() {
-//        return userService.listRoles();
-//    }
 
 
     // 更新用户权限
@@ -87,9 +81,9 @@ public class UserController {
 
     // 根据条件分页筛选用户
     @PostMapping("/user/query/{page}")
-    public Map queryUser(@RequestBody QueryUserVO vo, @RequestAttribute int page) {
-        Page<User> pages = userService.multiQueryUser(page, vo.getName(), vo.getPosition());
-        return Map.of("content", pages.getContent(), "total", pages.getTotalPages());
+    public Map queryUser(@RequestBody QueryUserVO vo, @PathVariable int page) {
+        Page<User> pages = userService.multiQueryUser(page, 10, vo.getName(), vo.getPosition());
+        return Map.of("content", pages.getContent(), "total", pages.getTotalElements());
     }
 
 
