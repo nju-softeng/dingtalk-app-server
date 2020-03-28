@@ -85,8 +85,6 @@ public class TestIdea {
     @Test
     public void test_delete() {
 
-
-        Object o =  userService.multiQueryUser("", null);
     }
 
 
