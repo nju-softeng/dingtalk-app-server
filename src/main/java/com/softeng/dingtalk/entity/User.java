@@ -26,7 +26,7 @@ public class User {
     public static final int ADMIN_AUTHORITY = 2;
 
     // 表示用户学位的静态常量
-    public static final String OTHER = "未设置";
+    public static final String OTHER = "其他";
     public static final String UNDERGRADUATE = "本科生";
     public static final String POSTGRADUATE = "硕士生";
     public static final String DOCTOR = "博士生";
