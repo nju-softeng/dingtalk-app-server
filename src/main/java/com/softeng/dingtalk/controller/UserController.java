@@ -86,6 +86,18 @@ public class UserController {
         return Map.of("content", pages.getContent(), "total", pages.getTotalElements());
     }
 
+    // 获取用户信息
+    @GetMapping("/user/detail")
+    public Map getUserDetail(@RequestAttribute int uid){
+        return userService.getUserDetail(uid);
+    }
+
+
+    @GetMapping("/user/fetch")
+    public void fetchUser() {
+        userService.fetchUsers();
+    }
+
 
 
 }

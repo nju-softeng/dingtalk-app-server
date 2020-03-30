@@ -115,13 +115,17 @@ public class UserService {
         } else {
             authority = User.USER_AUTHORITY;
         }
-
-        switch (response.getPosition()){
-            case "本" : position = User.UNDERGRADUATE; break;
-            case "硕" : position = User.POSTGRADUATE;  break;
-            case "博" : position = User.DOCTOR;  break;
-            default: position = User.OTHER;  break;
+        if (response.getPosition() == null) {
+            position = User.OTHER;
+        } else {
+            switch (response.getPosition()){
+                case "本" : position = User.UNDERGRADUATE; break;
+                case "硕" : position = User.POSTGRADUATE;  break;
+                case "博" : position = User.DOCTOR;  break;
+                default: position = User.OTHER;  break;
+            }
         }
+
 
         User u = userRepository.save(new User(response.getUserid(), response.getName(), response.getAvatar(), authority, position));
         return userRepository.refresh(u);
@@ -138,11 +142,6 @@ public class UserService {
         return id;
     }
 
-
-//    // 获取用户权限信息
-//    public List<Map<String, Object>> listRoles() {
-//        return userRepository.listRole();
-//     }
 
 
     // 更新用户权限
@@ -197,6 +196,12 @@ public class UserService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         return userRepository.findAll(spec, pageable);
+    }
+
+    // 查询用户详情
+    public Map getUserDetail(int uid) {
+        User u = userRepository.findById(uid).get();
+        return Map.of("name", u.getName(), "avatar", u.getAvatar(), "position",u.getPosition());
     }
 
 
