@@ -2,8 +2,10 @@ package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.Message;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.service.NotifyService;
 import com.softeng.dingtalk.service.UserService;
+import com.softeng.dingtalk.vo.QueryUserVO;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,7 @@ public class UserController {
     }
 
 
+    // 查询系统中所有可用用户
     @GetMapping("/userlist")
     public List<UserVO> listusers() {
         return userService.listUserVO();
@@ -66,13 +69,7 @@ public class UserController {
     @GetMapping("/message/page/{page}/{size}")
     public Map listUserMessage(@PathVariable int page, @PathVariable int size, @RequestAttribute int uid) {
         Page<Message> messages = notifyService.listUserMessage(uid, page, size);
-        return Map.of("content", messages.getContent(), "total", messages.getTotalPages());
-    }
-
-    // 查询所有用户的权限
-    @GetMapping("/listrole")
-    public List<Map<String, Object>> listRole() {
-        return userService.listRoles();
+        return Map.of("content", messages.getContent(), "total", messages.getTotalElements());
     }
 
 
@@ -81,6 +78,26 @@ public class UserController {
     public void updateUserRole(@RequestBody Map<String, Object> map) {
         userService.updateRole((int) map.get("uid"), (int) map.get("authority"));
     }
+
+    // 根据条件分页筛选用户
+    @PostMapping("/user/query/{page}")
+    public Map queryUser(@RequestBody QueryUserVO vo, @PathVariable int page) {
+        Page<User> pages = userService.multiQueryUser(page, 10, vo.getName(), vo.getPosition());
+        return Map.of("content", pages.getContent(), "total", pages.getTotalElements());
+    }
+
+    // 获取用户信息
+    @GetMapping("/user/detail")
+    public Map getUserDetail(@RequestAttribute int uid){
+        return userService.getUserDetail(uid);
+    }
+
+
+    @GetMapping("/user/fetch")
+    public void fetchUser() {
+        userService.fetchUsers();
+    }
+
 
 
 }

@@ -5,7 +5,6 @@ import com.dingtalk.api.response.OapiUserGetResponse;
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.Dept;
 import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.enums.PositionType;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.DeptDetailRepository;
 import com.softeng.dingtalk.repository.DeptRepository;
@@ -47,19 +46,18 @@ public class UserService {
     @Autowired
     private DeptDetailRepository deptDetailRepository;
 
-
+    // 查询系统可用用户
     public List<UserVO> listUserVO() {
         return userRepository.listUserVOS();
     }
 
-
-    //获取用户的userID -> 从钉钉API获取用户信息时，要根据userID获取  （获取周报）
+    // 获取用户的userID （获取周报）
     public String getUserid(int id) {
         return userRepository.findById(id).get().getUserid();
     }
 
 
-    //通过useID获取用户 -> 通过用户进入系统时调用API获得的userID查询用户，判断用户是否在系统中，还是新用户
+    // 通过useID获取用户 -> 通过用户进入系统时调用API获得的userID查询用户，判断用户是否在系统中，还是新用户
     public User getUser(String userid) {
         return userRepository.findByUserid(userid);
     }
@@ -108,7 +106,7 @@ public class UserService {
         // 权限
         int authority;
         // 职位
-        PositionType position;
+        String position;
 
         if (response.getIsBoss()) { // 是否为企业的老板
             authority = User.ADMIN_AUTHORITY;
@@ -117,13 +115,17 @@ public class UserService {
         } else {
             authority = User.USER_AUTHORITY;
         }
-
-        switch (response.getPosition()){
-            case "本" : position = PositionType.UNDERGRADUATE; break;
-            case "硕" : position = PositionType.POSTGRADUATE;  break;
-            case "博" : position = PositionType.DOCTOR;  break;
-            default: position = PositionType.OTHER;  break;
+        if (response.getPosition() == null) {
+            position = User.OTHER;
+        } else {
+            switch (response.getPosition()){
+                case "本" : position = User.UNDERGRADUATE; break;
+                case "硕" : position = User.POSTGRADUATE;  break;
+                case "博" : position = User.DOCTOR;  break;
+                default: position = User.OTHER;  break;
+            }
         }
+
 
         User u = userRepository.save(new User(response.getUserid(), response.getName(), response.getAvatar(), authority, position));
         return userRepository.refresh(u);
@@ -141,17 +143,11 @@ public class UserService {
     }
 
 
-    // 获取用户权限信息
-    public List<Map<String, Object>> listRoles() {
-        return userRepository.listRole();
-     }
-
 
     // 更新用户权限
     public void updateRole(int uid, int authority) {
         userRepository.updateUserRole(uid, authority);
     }
-
 
 
     // 拉取组织架构
@@ -171,21 +167,26 @@ public class UserService {
         // 从钉钉服务器拉取用户同步到系统
         fetchUsers();
 
+
+
         List<String> userids = userRepository.listAllUserid();
 
     }
 
 
     // 多条件查询用户信息
-    public Page<User> multiQueryUser(String name, PositionType position) {
+    public Page<User> multiQueryUser(int page, int size, String name, String position) {
         Specification<User> spec = new Specification<User>() {
             @Override
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
-                if (null != name && "" != name) {
+                predicates.add(criteriaBuilder.notEqual(root.get("authority"), User.ADMIN_AUTHORITY));
+                if ("" != name) {
+                    // 根据姓名模糊查询
                     predicates.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
                 }
-                if (null != position) {
+                if ("" != position) {
+                    // 根据学位模糊查询
                     predicates.add(criteriaBuilder.equal(root.get("position"), position));
                 }
                 Predicate[] arr = new Predicate[predicates.size()];
@@ -193,13 +194,15 @@ public class UserService {
             }
         };
 
-
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
-        Page<User> page = userRepository.findAll(spec, pageable);
-        return page;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return userRepository.findAll(spec, pageable);
     }
 
-
+    // 查询用户详情
+    public Map getUserDetail(int uid) {
+        User u = userRepository.findById(uid).get();
+        return Map.of("name", u.getName(), "avatar", u.getAvatar(), "position",u.getPosition());
+    }
 
 
 }

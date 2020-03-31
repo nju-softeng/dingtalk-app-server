@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.DcSummary;
-import com.softeng.dingtalk.enums.PositionType;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,23 +33,16 @@ public class PerformanceService {
     BugRepository bugRepository;
 
 
-
-
-    /**
-     * Gain = Base * DC * (1+ (AC/50)) + Topup
-     * 计算津贴
-     * @param uid 用户id
-     * @param yearmonth 年月
-     */
+    // 计算助研金 Gain = Base * DC * (1+ (AC/50)) + Topup
     public void computeSalary(int uid, int yearmonth) {
         double dc = dcSummaryRepository.getDcTotal(uid, yearmonth);
         double ac = acRecordRepository.getUserAcByDate(uid, yearmonth); // 获取到目前为止用户的AC总和
         double topup = topupRepository.getByUserid(uid); // 获取用户的 Topup
         double base = 0;
-        PositionType position = userRepository.getUserPosition(uid);
-        if (position == PositionType.DOCTOR) {
+        String position = userRepository.getUserPosition(uid);
+        if (position == User.DOCTOR) {
             base = 250;
-        } else if (position == PositionType.POSTGRADUATE){
+        } else if (position == User.POSTGRADUATE){
             base = 150;
         }
         double salary = Math.round(base * dc * (1 + (ac/50)) + topup);
@@ -65,7 +58,6 @@ public class PerformanceService {
     // 实验室所有人的 DC 汇总（指定月份）
     public List<Map<String, Object>> listDcSummaryVO(LocalDate date) {
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        log.debug(yearmonth + "");
         return dcSummaryRepository.listDcSummary(yearmonth);
     }
 
