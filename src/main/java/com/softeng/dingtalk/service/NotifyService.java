@@ -57,7 +57,6 @@ public class NotifyService {
     public Page<Message> listUserMessage(int uid, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createTime").descending());
         return messageRepository.findByUid(uid, pageable);
-
     }
 
 
