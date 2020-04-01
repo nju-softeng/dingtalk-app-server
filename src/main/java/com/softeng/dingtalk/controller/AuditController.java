@@ -10,9 +10,7 @@ import com.softeng.dingtalk.vo.CheckVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -44,45 +42,30 @@ public class AuditController {
      * @date 9:35 AM 12/27/2019
      **/
     @PostMapping("/audit")
-    public void addAuditResult(@Valid @RequestBody CheckVO checkVO) {
-        log.debug("/audit" );
-
-        DcRecord dc = auditService.addAuditResult(checkVO); //持久化审核结果
+    public void submitAuditResult(@Valid @RequestBody CheckVO checkVO) {
+        DcRecord dc = auditService.submitAudit(checkVO); //持久化审核结果
         auditService.updateDcSummary(dc);
     }
 
 
+    /**
+     * 未审核申请数量
+     * @param uid
+     * @return
+     */
     @GetMapping("/audit/uncheckcnt")
     public int  getUnCheckCnt(@RequestAttribute int uid) {
         return auditService.getUnCheckCnt(uid);
     }
 
 
-
-    /**
-     * 审核人更新审核记录
-     * @param checkVO
-     * @return void
-     * @Date 9:13 PM 2/1/2020
-     **/
-    @PostMapping("/audit/update")
-    public void updateChecked(@Valid @RequestBody CheckVO checkVO) {
-        log.debug("/updateAudit" );
-
-        DcRecord dc = auditService.updateAudit(checkVO); //持久化审核结果
-        auditService.updateDcSummary(dc);
-
-    }
-
     /**
      * 审核人获取待审核的申请
      * @param uid
-     * @return java.util.List<com.softeng.dingtalk.dto.ApplicationInfo>
-     * @Date 10:06 AM 12/28/2019
-     **/
+     * @return
+     */
     @GetMapping("/audit/pending")
     public List<ToCheckVO> getAuditApplication(@RequestAttribute int uid) {
-        log.debug("/pending_audit uid:" + uid);
         return auditService.getPendingApplication(uid);
     }
 
@@ -92,9 +75,9 @@ public class AuditController {
      * @return java.util.List<com.softeng.dingtalk.vo.CheckedVO>
      * @Date 8:41 PM 1/29/2020
      **/
-    @GetMapping("/audit/checked")
-    public List<CheckedVO> listChecked(@RequestAttribute int uid) {
-        return auditService.listCheckVO(uid);
+    @GetMapping("/audit/checked/page/{page}")
+    public Map listChecked(@RequestAttribute int uid, @PathVariable int page) {
+        return auditService.listCheckedVO(uid, page, 10);
     }
 
     // 审核人根据时间筛选已经审核的申请
