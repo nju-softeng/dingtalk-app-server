@@ -9,14 +9,18 @@ import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.repository.DcRecordRepository;
 import com.softeng.dingtalk.vo.AppliedVO;
 import com.softeng.dingtalk.vo.ApplingVO;
+import com.softeng.dingtalk.vo.ApplyVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.Map;
 
@@ -37,28 +41,46 @@ public class ApplicationService {
     Utils utils;
 
 
-    // 添加申请
-    public void addApplication(DcRecord dcRecord, List<AcItem> acItems) {
-        dcRecordRepository.save(dcRecord);
-        for (int i = 0; i < acItems.size(); i++) { // 持久化ac申请，并将绩效申请作为外键
-            acItems.get(i).setDcRecord(dcRecord);
+    // 添加 / 更新 申请
+    public DcRecord submitApplication(ApplyVO vo, int uid) {
+        // 获取申请时间的时间标志, 数组大小为2, result[0]: yearmonth, result[1] week
+        int[] result = utils.getTimeFlag(vo.getDate());
+        int dateCode = utils.getTimeCode(vo.getDate());
+        // 返回提交或更新的结果
+        DcRecord res = null;
+        if (vo.getId() == 0) {
+            // 提交新的申请
+            if (isExist(uid, vo.getAuditorid(), result[0], result[1])) {
+                // 一周只能向审核人提交一次
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
+            }
+            DcRecord dc = DcRecord.builder().applicant(new User(uid)).auditor(new User(vo.getAuditorid()))
+                    .dvalue(vo.getDvalue()).ac(vo.getAc()).weekdate(vo.getDate()).yearmonth(result[0])
+                    .week(result[1]).dateCode(dateCode).build();
+            res = dcRecordRepository.save(dc);
+            for (AcItem acItem : vo.getAcItems()) {
+                // 持久化ac申请，并将绩效申请作为外键
+                acItem.setDcRecord(dc);
+            }
+            acItemRepository.saveAll(vo.getAcItems());
+        } else {
+            // 更新申请
+            DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
+            dc.reApply(vo.getAuditorid(), vo.getDvalue(), vo.getDate(), result[0], result[1], dateCode);
+            res = dcRecordRepository.save(dc);
+            // 强制存入数据库
+            dcRecordRepository.flush();
+            acItemRepository.deleteByDcRecord(dc);  //删除之前的记录
+            for (AcItem acItem : vo.getAcItems()) {
+                acItem.setDcRecord(dc);
+            }
+            acItemRepository.saveAll(vo.getAcItems());
         }
-        acItemRepository.saveAll(acItems);
+        res =  dcRecordRepository.refresh(res);
+        res.setAcItems(vo.getAcItems());
+        return res;
     }
 
-
-    // 更新申请
-    public void updateApplication(ApplingVO applingVO) {
-        int[] result = utils.getTimeFlag(applingVO.getDate()); //数组大小为2，result[0]: yearmonth, result[1] week
-        int dateCode = utils.getTimeCode(applingVO.getDate());
-        DcRecord dc = dcRecordRepository.findById(applingVO.getId()).get();
-        dc.reApply(applingVO.getAuditorid(), applingVO.getDvalue(), applingVO.getDate(), result[0], result[1], dateCode);
-        acItemRepository.deleteByDcRecord(dc);  //删除之前的记录
-        for (AcItem acItem : applingVO.getAcItems()) {
-            acItem.setDcRecord(dc);
-        }
-        acItemRepository.saveAll(applingVO.getAcItems());
-    }
 
 
     // 分页获取提交过的申请
@@ -88,11 +110,6 @@ public class ApplicationService {
         return dcRecordRepository.isExist(uid, aid, yearmonth, week) != 0 ? true : false;
     }
 
-
-    //todo  去掉该函数
-    public List<AcItem> listAcItemBydcid(int id) {
-        return acItemRepository.findAllByDcRecordID(id);
-    }
 
 
 }

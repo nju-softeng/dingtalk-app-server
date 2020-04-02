@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
-
 public class TestIdea {
 
     @Autowired
@@ -77,6 +76,8 @@ public class TestIdea {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    AuditService auditService;
 
 
 
@@ -84,64 +85,10 @@ public class TestIdea {
 
     @Test
     public void test_delete() {
-
+        Object o =  auditService.listCheckedVO(1, 0, 4);
     }
 
 
-    @Test
-    public void test_1() {
-       Object o =  dcRecordRepository.getUserDcByWeek(1, 1, 2020021);
-    }
 
-    @Test
-    public void test_2() {
-       Object o =  iterationDetailRepository.listIterationIdByUid(100);
-
-    }
-
-
-    @Test
-    public void test() {
-        Map<String, String> m = new HashMap<>();
-        m.put("dateDebut", "2018-07-01T00:00:00.000+0000");
-        m.put("nom", "Julien Mannone");
-        m.put("etat", "Impayé");
-
-        Map<String, String> m2 = new HashMap<>();
-        m2.put("dateDebut", "2018-10-01T00:00:00.000+0000");
-        m2.put("nom", "Mathiew Matic");
-        m2.put("etat", "payé");
-
-        Map<String, String> m3 = new HashMap<>();
-        m3.put("dateDebut", "2018-07-01T00:00:00.000+0000");
-        m3.put("nom", "Ash Moon");
-        m3.put("etat", "payé");
-
-        List<Map<String, String>> list = new ArrayList<>();
-        list.add(m);
-        list.add(m2);
-        list.add(m3);
-
-        List<Map<String, Map<String, String>>> res = list.stream().map(it -> {
-                    Map<String, Map<String, String>> newMap = new HashMap<>();
-                    String nom = it.get("nom");
-                    it.remove("nom");
-                    newMap.put(nom, it);
-                    return newMap;
-                }
-        ).collect(Collectors.toList());
-
-        System.out.println(res);
-
-    }
-
-    @Test
-    public void test_listVoteName() {
-        List<String> names = voteDetailRepository.listAcceptNamelist(1001);
-        log.debug(names.size() + "");
-        for (String str : names) {
-            log.debug(str);
-        }
-    }
 
 }

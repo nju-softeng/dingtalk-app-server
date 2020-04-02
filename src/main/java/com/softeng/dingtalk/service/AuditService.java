@@ -8,6 +8,10 @@ import com.softeng.dingtalk.vo.ToCheckVO;
 import com.softeng.dingtalk.vo.CheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -41,34 +45,23 @@ public class AuditService {
     NotifyService notifyService;
 
 
-    // 审核人更新绩效申请
-    public DcRecord updateAudit(CheckVO checkVO) {
+    // 审核人提交或更新绩效申请
+    public DcRecord submitAudit(CheckVO checkVO) {
         DcRecord dc = dcRecordRepository.findById(checkVO.getId()).get();
-        dc.update(checkVO.getCvalue(), checkVO.getDc(), checkVO.getAc()); // 更新 cvalue, dc, ac
-        dcRecordRepository.save(dc); //持久化新的 dcRecord
-        acItemRepository.deleteByDcRecord(dc); //删除旧数据
+        if (dc.isStatus()) {
+            // status为真，表示此次提交为更新 -> 删除旧的AcItems， 同时级联删除相关AcRecord
+            acItemRepository.deleteByDcRecord(dc);
+        }
+        // 更新 cvalue, dc, ac
+        dc.update(checkVO.getCvalue(), checkVO.getDc(), checkVO.getAc());
+        dcRecordRepository.save(dc); // 持久化新的 dcRecord
         for (AcItem acItem : checkVO.getAcItems()) {
+            // 前端传来的没有dcRecord属性, 手动添加
             acItem.setDcRecord(dc);
             if (acItem.isStatus()) {
+                // ac申请被同意
                 AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem));
                 acItem.setAcRecord(acRecord);
-            }
-        }
-        acItemRepository.saveAll(checkVO.getAcItems());
-        return dc;
-    }
-
-
-    // 审核人提交的审核结果
-    public DcRecord addAuditResult(CheckVO checkVO) {
-        DcRecord dc = dcRecordRepository.findById(checkVO.getId()).get();
-        dc.update(checkVO.getCvalue(), checkVO.getDc(), checkVO.getAc());
-        dcRecordRepository.save(dc);
-        for (AcItem a : checkVO.getAcItems()) {
-            a.setDcRecord(dc); //前端传来的没有dcRecord属性
-            if (a.isStatus()) {
-                AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, a));
-                a.setAcRecord(acRecord);
             }
         }
         acItemRepository.saveAll(checkVO.getAcItems());
@@ -91,13 +84,16 @@ public class AuditService {
     }
 
 
-    // 审核人获取已审核申请
-    public List<CheckedVO> listCheckVO(int uid) {
-        List<CheckedVO> checkedVOS = dcRecordRepository.listChecked(uid);
-        for (CheckedVO checked : checkedVOS) {
+    // 审核人分页获取已审核申请
+    public Map listCheckedVO(int uid, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        Page<CheckedVO> pages = dcRecordRepository.listChecked(uid, pageable);
+
+        List<CheckedVO> content = pages.getContent();
+        for (CheckedVO checked : content) {
             checked.setAcItems(acItemRepository.findAllByDcRecordID(checked.getId()));
         }
-        return checkedVOS;
+        return Map.of("content", content, "total", pages.getTotalElements());
     }
 
     // 审核人根据时间筛选已审核申请

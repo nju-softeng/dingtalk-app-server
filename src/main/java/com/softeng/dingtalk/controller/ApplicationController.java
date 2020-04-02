@@ -2,21 +2,15 @@ package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
-import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
-import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.projection.DcRecordProjection;
 import com.softeng.dingtalk.repository.DcSummaryRepository;
 import com.softeng.dingtalk.service.ApplicationService;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.UserService;
-import com.softeng.dingtalk.vo.ApplingVO;
-import com.softeng.dingtalk.vo.DcSummaryVO;
+import com.softeng.dingtalk.vo.ApplyVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -46,13 +40,11 @@ public class ApplicationController {
     DcSummaryRepository dcSummaryRepository;
 
 
-
     /**
      * 返回请求中的时间时本月第几周
      * @param date
      * @return int[] 数组大小为2，第一个时yearmonth, 第二个时week
-     * @Date 4:44 PM 2/3/2020
-     **/
+     */
     @PostMapping("/getdate")
     public int[] getdate(@RequestBody LocalDate date) {
         return utils.getTimeFlag(date);
@@ -60,53 +52,26 @@ public class ApplicationController {
 
 
     /**
-     * 用户提交申请
-     * @param uid, application
-     * @return void
-     * @Date 4:46 PM 2/3/2020
-     **/
-    @PostMapping("/application")
-    public void addApplication(@RequestAttribute int uid,@Valid @RequestBody ApplingVO vo) {
-        int[] result = utils.getTimeFlag(vo.getDate()); //数组大小为2，result[0]: yearmonth, result[1] week
-        int dateCode = utils.getTimeCode(vo.getDate());
-        DcRecord dc = DcRecord.builder().applicant(new User(uid)).auditor(new User(vo.getAuditorid()))
-                .dvalue(vo.getDvalue()).ac(vo.getAc()).weekdate(vo.getDate()).yearmonth(result[0])
-                .week(result[1]).dateCode(dateCode).build();
-        if (!applicationService.isExist(uid, vo.getAuditorid(), result[0], result[1])) {
-            applicationService.addApplication(dc, vo.getAcItems());    //持久化绩效申请
-        } else {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
-        }
-    }
-
-
-    /**
-     * 用户更新
-     * @param apply
+     * 提交或更新dc申请
+     * @param uid
+     * @param vo
      */
-    @PostMapping("/application/update")
-    public void updateApplication(@Valid @RequestBody ApplingVO apply) {
-        applicationService.updateApplication(apply);
+    @PostMapping("/application")
+    public DcRecord submitApplication(@RequestAttribute int uid, @Valid @RequestBody ApplyVO vo) {
+        return applicationService.submitApplication(vo, uid);
     }
 
 
     /**
      * 用户分页查询已提交的申请
-     * @param uid, page
-     * @return java.util.Map
-     * @Date 1:50 PM 2/10/2020
-     **/
+     * @param uid
+     * @param page
+     * @return
+     */
     @GetMapping("/application/page/{page}")
     public Map getUserApplication(@RequestAttribute int uid, @PathVariable int page) {
         return applicationService.listDcRecord(uid, page);
     }
 
-
-
-
-    @GetMapping("/application/{id}")
-    public List<AcItem> listAcItems(@PathVariable int id) {
-        return applicationService.listAcItemBydcid(id);
-    }
 
 }

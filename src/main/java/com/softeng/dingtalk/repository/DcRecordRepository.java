@@ -7,6 +7,7 @@ import com.softeng.dingtalk.vo.AppliedVO;
 import com.softeng.dingtalk.vo.CheckedVO;
 import com.softeng.dingtalk.vo.DcVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
@@ -57,7 +58,7 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integ
      **/
     @Query("select new com.softeng.dingtalk.vo.CheckedVO(d.id, d.applicant.name, d.applicant.id, d.dvalue, d.cvalue, d.dc, d.ac, d.yearmonth, d.week, d.insertTime, d.weekdate) " +
             "from DcRecord d where d.auditor.id = :uid and d.status = true order by d.id desc")
-    List<CheckedVO> listChecked(@Param("uid")int uid);
+    Page<CheckedVO> listChecked(@Param("uid")int uid, Pageable pageable);
 
     // 查询审核人指定时间的申请
     @Query("select new com.softeng.dingtalk.vo.CheckedVO(d.id, d.applicant.name, d.applicant.id, d.dvalue, d.cvalue, d.dc, d.ac, d.yearmonth, d.week, d.insertTime, d.weekdate) " +
