@@ -37,6 +37,6 @@ jobs:
           cd target/
           ../stop.sh
           nohup java -jar dingtalk-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod &
-          logout
+          exit
           
           
