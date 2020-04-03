@@ -12,6 +12,8 @@ import com.softeng.dingtalk.repository.UserRepository;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -81,23 +83,6 @@ public class UserService {
         }
     }
 
-
-    // 从钉钉服务器拉取用户同步到系统
-    public void fetchUsers() {
-        List<String> depids = dingTalkUtils.listDepid();
-        Set<String> remoteUserids = new HashSet<>();
-
-        for (String depid : depids) {
-            remoteUserids.addAll(dingTalkUtils.listUserId(depid));
-        }
-
-        List<String> localUserids = userRepository.listAllUserid();
-        remoteUserids.removeAll(localUserids);
-        List<User> users = new ArrayList<>();
-        for (String userid : remoteUserids) {
-            addNewUser(userid);
-        }
-    }
 
 
     // 添加新用户
@@ -174,7 +159,28 @@ public class UserService {
     }
 
 
+    // 从钉钉服务器拉取用户同步到系统
+    @CacheEvict(value = "allUser", allEntries = true)
+    public void fetchUsers() {
+        List<String> depids = dingTalkUtils.listDepid();
+        Set<String> remoteUserids = new HashSet<>();
+
+        for (String depid : depids) {
+            remoteUserids.addAll(dingTalkUtils.listUserId(depid));
+        }
+
+        List<String> localUserids = userRepository.listAllUserid();
+        remoteUserids.removeAll(localUserids);
+        List<User> users = new ArrayList<>();
+        for (String userid : remoteUserids) {
+            addNewUser(userid);
+        }
+    }
+
+
     // 多条件查询用户信息
+    // 单不是依据 name 查询时，进行缓存
+    @Cacheable(value = "allUser", condition = "#name == ''")
     public Page<User> multiQueryUser(int page, int size, String name, String position) {
         Specification<User> spec = new Specification<User>() {
             @Override
