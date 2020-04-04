@@ -7,6 +7,8 @@ import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.VoteVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -50,18 +52,41 @@ public class VoteService {
 
 
     // 创建投票并钉钉发送消息
+    @CacheEvict(value = "allVote", allEntries = true)
     public void createVote(VoteVO voteVO) {
+        log.debug("创建新投票，清空缓存");
         Vote vote = new Vote(voteVO.getEndTime());
         voteRepository.save(vote);
         paperRepository.updatePaperVote(voteVO.getPaperid(), vote.getId());
-
         // 发送投票信息
-        new Thread(()-> {
-            String title = paperRepository.getPaperTitleById(voteVO.getPaperid());
-            List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
-            dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), title, vote.getEndTime().toString(), namelist);
-        }).start();
+        String title = paperRepository.getPaperTitleById(voteVO.getPaperid());
+        List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
+        dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), title, vote.getEndTime().toString(), namelist);
     }
+
+    // 查询没有结束的投票
+    @Cacheable(value = "allVote")
+    public List<Vote> listUnderwayVote() {
+        log.debug("从数据库查询未结束投票");
+        return voteRepository.listByStatus(); //拿到没有结束的投票
+    }
+
+
+    // 更新投票的最终结果，投票截止后调用
+    @CacheEvict(value = "allVote", allEntries = true)
+    public Vote updateVote(Vote v) {
+        log.debug("投票结果更新，清空缓存");
+        int accept = voteDetailRepository.getAcceptCnt(v.getId());
+        int total = voteDetailRepository.getCnt(v.getId());
+
+        v.setStatus(true);
+        v.setAccept(accept);
+        v.setTotal(total);
+        v.setResult(accept > total - accept);
+        voteRepository.save(v);
+        return v;
+    }
+
 
     // 用户投票
     public Map poll(int vid, int uid, VoteDetail voteDetail) {
@@ -125,18 +150,7 @@ public class VoteService {
     }
 
 
-    // 更新投票的最终结果，投票截止后调用
-    public Vote updateVote(Vote v) {
-        int accept = voteDetailRepository.getAcceptCnt(v.getId());
-        int total = voteDetailRepository.getCnt(v.getId());
 
-        v.setStatus(true);
-        v.setAccept(accept);
-        v.setTotal(total);
-        v.setResult(accept > total - accept);
-        voteRepository.save(v);
-        return v;
-    }
 
 
     // 根据论文最终结果计算投票者的ac
@@ -177,6 +191,9 @@ public class VoteService {
         }
 
     }
+
+
+
 
 
 

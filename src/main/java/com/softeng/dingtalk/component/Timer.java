@@ -37,7 +37,7 @@ public class Timer {
 
     @Scheduled(cron = "0 * * * * ?")
     public void checkVote() {
-        List<Vote> votes = voteRepository.listByStatus(); //拿到没有结束的投票
+        List<Vote> votes = voteService.listUnderwayVote(); //拿到没有结束的投票
         if (votes.size() != 0) {
             LocalTime nowtime = LocalTime.now();
             log.debug("定时器执行：" + nowtime.toString());
