@@ -7,12 +7,12 @@
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
 
-POST http://localhost:8080/api/getreport/1
+POST http://localhost:8080/api/audit/report/1
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
 Content-Type: application/json
 
 {
-"date": "2020-01-30"
+"date": "2020-04-25"
 }
 
 ###

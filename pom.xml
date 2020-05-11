@@ -16,6 +16,7 @@
 
     <properties>
         <java.version>11</java.version>
+        <docker.image.prefix>zhanyeye</docker.image.prefix>
     </properties>
 
     <dependencies>
@@ -106,6 +107,46 @@
                     <includeSystemScope>true</includeSystemScope>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.2.2</version>
+                <configuration>
+                    <!-- 镜像名称  zhanyeye/dingtalk-->
+                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <!--指定标签-->
+                    <imageTags>
+                        <imageTag>latest</imageTag>
+                    </imageTags>
+                    <!-- 基础镜像jdk 11-->
+                    <baseImage>lpicanco/java11-alpine</baseImage>
+                    <!-- 制作者提供本人信息 -->
+                    <maintainer>zhanyeye zhanyeye@qq.com</maintainer>
+                    <!--切换到/ROOT目录 -->
+                    <workdir>/ROOT</workdir>
+                    <cmd>["java", "-version"]</cmd>
+                    <entryPoint>["java", "-jar", "${project.build.finalName}.jar", "--spring.profiles.active=prod"]</entryPoint>
+
+<!--                    <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>-->
+
+                    <!--指定远程 docker api地址-->
+                    <dockerHost>https://122.51.151.6:2375</dockerHost>
+                    <!--证书位置-->
+                    <dockerCertPath>C:/Users/zhanyeye/Documents/private_key/docker</dockerCertPath>
+                    <!-- 这里是复制 jar 包到 docker 容器指定目录配置 -->
+                    <resources>
+                        <resource>
+                            <targetPath>/ROOT</targetPath>
+                            <!--用于指定需要复制的根目录，${project.build.directory}表示target目录-->
+                            <directory>${project.build.directory}</directory>
+                            <!--用于指定需要复制的文件。${project.build.finalName}.jar指的是打包后的jar包文件。-->
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
