@@ -114,7 +114,7 @@ public class NotifyService {
     // 项目bug消息
     public void bugMessage(List<AcRecord> acRecords) {
         for (AcRecord ac : acRecords) {
-            Message msg = new Message(ac.getReason(), "AC: + " + ac.getAc(), ac.getUser().getId());
+            Message msg = new Message(ac.getReason(), "AC: " + ac.getAc(), ac.getUser().getId());
             messageRepository.save(msg);
         }
     }

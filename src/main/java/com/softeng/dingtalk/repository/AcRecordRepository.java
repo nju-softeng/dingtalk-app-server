@@ -39,7 +39,7 @@ public interface AcRecordRepository extends CustomizedRepository<AcRecord, Integ
 
 
     // 所有用户的总AC
-    @Query(value = "select u.id, u.name, ifnull(sum(a.ac), 0)  as total from user u left join ac_record a on u.id = a.user_id group by u.id order by total DESC", nativeQuery = true)
+    @Query(value = "select u.id, u.name, ifnull(sum(a.ac), 0)  as total from user u left join ac_record a on u.id = a.user_id  group by u.id order by total DESC", nativeQuery = true)
     List<Map<String, Object>> listAcSummary();
 
 
