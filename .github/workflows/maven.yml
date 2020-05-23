@@ -23,5 +23,8 @@ jobs:
       run: mvn -B package --file pom.xml
     - name: test
       run: |
-        docker build -t zhanyeye/dingtalk_back_end .
+        docker build -t dingtalk_back_end .
         docker images
+        docker login --username=${{DOCKER_USER}} registry.cn-hangzhou.aliyuncs.com -p ${{DOCKER_PASSWORD}}
+        docker tag dingtalk_back_end registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end
+        docker push registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end
