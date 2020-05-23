@@ -41,5 +41,6 @@ jobs:
           docker pull registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end
           docker container stop ${{ secrets.DOCKER_CONTAINER }}
 
+
           docker run -d --rm -–net=host --name ${{ secrets.DOCKER_CONTAINER }} ${{ secrets.DOCKER_IMAGE }}
           docker image prune
