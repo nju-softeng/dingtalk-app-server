@@ -50,5 +50,5 @@ jobs:
           docker container stop ${{ secrets.DOCKER_CONTAINER }}
 
           echo "run new docker container"
-          docker run -d --rm --net=host -e PROFILES="test" --name ${{ secrets.DOCKER_CONTAINER }} ${{ secrets.DOCKER_IMAGE }}
+          docker run -d --rm --net=host  --name ${{ secrets.DOCKER_CONTAINER }}  ${{ secrets.DOCKER_IMAGE }}
           docker image prune -f
