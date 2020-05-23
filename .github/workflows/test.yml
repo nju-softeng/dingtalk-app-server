@@ -42,5 +42,4 @@ jobs:
           docker container stop ${{ secrets.DOCKER_CONTAINER }}
 
           docker run -d --rm -–net=host --name ${{ secrets.DOCKER_CONTAINER }} ${{ secrets.DOCKER_IMAGE }}
-
           docker image prune
