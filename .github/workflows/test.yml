@@ -33,7 +33,7 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.TEST_HOST }}
-        username: ${{ secrets.USERNAME }}
+        username: ${{ secrets.TEST_USER }}
         key: ${{ secrets.TEST_KEY }}
         port: ${{ secrets.PORT }}
         script: |
