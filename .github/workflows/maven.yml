@@ -5,9 +5,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ master ]
+    branches: [ test ]
   pull_request:
-    branches: [ master ]
+    branches: [ test ]
 
 jobs:
   build:
@@ -28,3 +28,14 @@ jobs:
         docker login --username=${{ secrets.DOCKER_USER }} registry.cn-hangzhou.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
         docker tag dingtalk_back_end registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end
         docker push registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end
+      # Run SSH
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.TEST_HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.TEST_KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          docker login --username=15776698528 registry.cn-hangzhou.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
+          docker pull registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end
