@@ -22,4 +22,6 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: test
-      run: ls 
+      run: |
+        docker build -t zhanyeye/dingtalk_back_end
+        docker images
