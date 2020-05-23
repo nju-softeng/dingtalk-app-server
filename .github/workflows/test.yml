@@ -1,8 +1,5 @@
-# This workflow will build a Java project with Maven
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
-name: Java CI with Maven
-
+name:  Test Environment
+# 触发事件
 on:
   push:
     branches: [ test ]
@@ -11,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -21,15 +17,22 @@ jobs:
         java-version: 11
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-    - name: test
+
+    - name: Build Docker image
+      run:  docker build -t ${{ secrets.DOCKER_IMAGE }} .
+
+    - name: Tag Docker Image
       run: |
-        docker build -t dingtalk_back_end .
-        docker images
-        docker login --username=${{ secrets.DOCKER_USER }} registry.cn-hangzhou.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
-        docker tag dingtalk_back_end registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end
-        docker push registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end
-      # Run SSH
-    - name: executing remote ssh commands using ssh key
+        docker login -u=${{ secrets.DOCKER_USER }} registry.cn-hangzhou.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
+        docker tag ${{ secrets.DOCKER_IMAGE }} registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end:${{ github.sha }}
+        docker tag ${{ secrets.DOCKER_IMAGE }} registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end:latest
+
+    - name: Push Docker Image
+      run: |
+        docker push registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end:${{ github.sha }}
+        docker push registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end:latest
+
+    - name: executing remote ssh commands
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.TEST_HOST }}
@@ -37,10 +40,9 @@ jobs:
         key: ${{ secrets.TEST_KEY }}
         port: ${{ secrets.PORT }}
         script: |
-          docker login --username=15776698528 registry.cn-hangzhou.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
+          docker login -u=${{ secrets.DOCKER_USER }} registry.cn-hangzhou.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
           docker pull registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end
           docker container stop ${{ secrets.DOCKER_CONTAINER }}
 
-
-          docker run -d --rm -–net=host --name ${{ secrets.DOCKER_CONTAINER }} ${{ secrets.DOCKER_IMAGE }}
+          docker run -d --rm --net=host -e PROFILES="test"  --name ${{ secrets.DOCKER_CONTAINER }} ${{ secrets.DOCKER_IMAGE }}
           docker image prune
