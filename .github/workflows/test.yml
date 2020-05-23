@@ -39,3 +39,8 @@ jobs:
         script: |
           docker login --username=15776698528 registry.cn-hangzhou.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
           docker pull registry.cn-hangzhou.aliyuncs.com/zhanyeye/dingtalk_back_end
+          docker container stop ${{ secrets.DOCKER_CONTAINER }}
+
+          docker run -d --rm -–net=host --name ${{ secrets.DOCKER_CONTAINER }} ${{ secrets.DOCKER_IMAGE }}
+
+          docker image prune
