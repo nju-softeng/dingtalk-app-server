@@ -40,9 +40,15 @@ jobs:
         key: ${{ secrets.TEST_KEY }}
         port: ${{ secrets.PORT }}
         script: |
+          echo "login docker repository"
           docker login -u=${{ secrets.DOCKER_USER }} registry.cn-hongkong.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
+
+          echo "pull docker image"
           docker pull registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back_end
+
+          echo "stop docker old container"
           docker container stop ${{ secrets.DOCKER_CONTAINER }}
 
-          docker run -d --rm --net=host -e PROFILES="test"  --name ${{ secrets.DOCKER_CONTAINER }} ${{ secrets.DOCKER_IMAGE }}
-          docker image prune
+          echo "run new docker container"
+          docker run -d --rm --net=host -e PROFILES="test" --name ${{ secrets.DOCKER_CONTAINER }} ${{ secrets.DOCKER_IMAGE }}
+          docker image prune -f
