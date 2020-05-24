@@ -46,9 +46,10 @@ jobs:
           echo "pull docker image"
           docker pull registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back
 
-          echo "stop docker old container"
+          echo "stop and remove docker old container"
           docker container stop ${{ secrets.DOCKER_CONTAINER }}
+          docker container rm ${{ secrets.DOCKER_CONTAINER }}
 
           echo "run new docker container"
-          docker run -d --rm --net=host  --name ${{ secrets.DOCKER_CONTAINER }}  ${{ secrets.DOCKER_IMAGE }}
+          docker run -d --net=host  --name ${{ secrets.DOCKER_CONTAINER }}  -e PROFILES="test" ${{ secrets.DOCKER_IMAGE }}
           docker image prune -f
