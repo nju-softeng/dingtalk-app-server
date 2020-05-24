@@ -1,4 +1,3 @@
-# 拉取镜像速度太慢，不用docker了
 name: Production Environment
 on:
   push:
@@ -14,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-
+      # 拉取镜像速度太慢，不用docker了
       - name: executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
         with:
