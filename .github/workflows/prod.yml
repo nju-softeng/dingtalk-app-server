@@ -39,6 +39,7 @@ jobs:
           key: ${{ secrets.PROD_KEY }}
           port: ${{ secrets.PORT }}
           script: |
+            whoami
             echo "login docker repository"
             docker login -u=${{ secrets.DOCKER_USER }} registry.cn-hongkong.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
 
@@ -50,5 +51,5 @@ jobs:
             docker container rm ${{ secrets.DOCKER_CONTAINER }}
 
             echo "run new docker container"
-            docker run -d --net=host  --name ${{ secrets.DOCKER_CONTAINER }}  -e PROFILES="test" ${{ secrets.DOCKER_IMAGE }}
+            docker run -d --net=host  --name ${{ secrets.DOCKER_CONTAINER }}  -e PROFILES="prod" ${{ secrets.DOCKER_IMAGE }}
             docker image prune -f
