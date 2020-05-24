@@ -1,5 +1,4 @@
-name:  Test Environment
-# 触发事件
+name: Test Environment
 on:
   push:
     branches: [ test ]
