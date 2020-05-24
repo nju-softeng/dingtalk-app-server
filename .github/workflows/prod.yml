@@ -1,0 +1,54 @@
+name: Production Environment
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Build Docker image
+        run:  docker build -t ${{ secrets.DOCKER_IMAGE }} .
+
+      - name: Tag Docker Image
+        run: |
+          docker login -u=${{ secrets.DOCKER_USER }} registry.cn-hongkong.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
+          docker tag ${{ secrets.DOCKER_IMAGE }} registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back:${{ github.sha }}
+          docker tag ${{ secrets.DOCKER_IMAGE }} registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back:latest
+
+      - name: Push Docker Image
+        run: |
+          docker push registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back:${{ github.sha }}
+          docker push registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back:latest
+
+      - name: Pull Docker And Run Container With SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            echo "login docker repository"
+            docker login -u=${{ secrets.DOCKER_USER }} registry.cn-hongkong.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
+
+            echo "pull docker image"
+            docker pull registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back
+
+            echo "stop and remove docker old container"
+            docker container stop ${{ secrets.DOCKER_CONTAINER }}
+            docker container rm ${{ secrets.DOCKER_CONTAINER }}
+
+            echo "run new docker container"
+            docker run -d --net=host  --name ${{ secrets.DOCKER_CONTAINER }}  -e PROFILES="test" ${{ secrets.DOCKER_IMAGE }}
+            docker image prune -f
