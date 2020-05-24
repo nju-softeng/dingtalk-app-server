@@ -39,9 +39,8 @@ jobs:
           key: ${{ secrets.PROD_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            whoami
             echo "login docker repository"
-            docker login -u=${{ secrets.DOCKER_USER }} registry.cn-hongkong.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
+              docker login -u=${{ secrets.DOCKER_USER }} registry.cn-hongkong.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
 
             echo "pull docker image"
             docker pull registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back
