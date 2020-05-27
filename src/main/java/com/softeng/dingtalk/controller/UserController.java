@@ -79,12 +79,7 @@ public class UserController {
         userService.updateRole((int) map.get("uid"), (int) map.get("authority"));
     }
 
-    // 根据条件分页筛选用户
-    @PostMapping("/user/query/{page}")
-    public Map queryUser(@RequestBody QueryUserVO vo, @PathVariable int page) {
-        Page<User> pages = userService.multiQueryUser(page, 10, vo.getName(), vo.getPosition());
-        return Map.of("content", pages.getContent(), "total", pages.getTotalElements());
-    }
+
 
     // 获取用户信息
     @GetMapping("/user/detail")
@@ -93,10 +88,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/user/fetch")
-    public void fetchUser() {
-        userService.fetchUsers();
-    }
+
 
 
 

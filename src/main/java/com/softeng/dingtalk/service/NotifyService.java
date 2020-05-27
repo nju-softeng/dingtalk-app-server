@@ -32,7 +32,11 @@ public class NotifyService {
     @Autowired
     VoteRepository voteRepository;
 
-    // dc 审核消息
+
+    /**
+     * dc 审核消息
+     * @param dc
+     */
     public void reviewDcMessage(DcRecord dc) {
         String month =  String.valueOf(dc.getYearmonth() % 100);
         String title = new StringBuilder().append(month).append("月第").append(dc.getWeek()).append("周绩效").toString();
@@ -42,7 +46,11 @@ public class NotifyService {
         messageRepository.save(message);
     }
 
-    // dc 审核结果更新消息
+
+    /**
+     * dc 审核结果更新消息
+     * @param dc
+     */
     public void updateDcMessage(DcRecord dc) {
         String month =  String.valueOf(dc.getYearmonth() % 100);
         String title = new StringBuilder().append(month).append("月第").append(dc.getWeek()).append("周绩效 被更新").toString();
@@ -53,14 +61,24 @@ public class NotifyService {
     }
 
 
-    // 查询指定用户的消息
+    /**
+     * 查询指定用户的消息
+     * @param uid
+     * @param page
+     * @param size
+     * @return
+     */
     public Page<Message> listUserMessage(int uid, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createTime").descending());
         return messageRepository.findByUid(uid, pageable);
     }
 
 
-    // 论文AC消息
+    /**
+     * 论文AC消息
+     * @param pid
+     * @param result
+     */
     public void paperAcMessage(int pid, boolean result) {
         Paper paper = paperRepository.findById(pid).get();
         String papertitel = paper.getTitle();
@@ -74,7 +92,12 @@ public class NotifyService {
         }
     }
 
-    // 投票AC消息
+
+    /**
+     * 投票AC消息
+     * @param pid
+     * @param result
+     */
     public void voteAcMessage(int pid, boolean result) {
         Vote v = paperRepository.findVoteById(pid);
         String papertitel = paperRepository.getPaperTitleById(pid);
@@ -95,7 +118,11 @@ public class NotifyService {
         }
     }
 
-    // 系统计算项目AC消息
+
+    /**
+     * 系统计算项目AC消息
+     * @param acRecords
+     */
     public void autoSetProjectAcMessage(List<AcRecord> acRecords) {
         for (AcRecord ac : acRecords) {
             Message msg = new Message(ac.getReason(), "AC: + " + ac.getAc(), ac.getUser().getId());
