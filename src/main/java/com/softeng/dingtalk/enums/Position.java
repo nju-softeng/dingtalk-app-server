@@ -1,11 +1,9 @@
 package com.softeng.dingtalk.enums;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 
-@Getter
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+
 public enum Position {
     DOCTOR("博士生"),
     POSTGRADUATE("研究生"),
@@ -14,5 +12,10 @@ public enum Position {
     private String title;
     private Position(String title) {
         this.title = title;
+    }
+
+    @JsonValue
+    public String getTitle() {
+        return title;
     }
 }
