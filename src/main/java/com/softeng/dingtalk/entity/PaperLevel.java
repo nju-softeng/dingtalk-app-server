@@ -20,10 +20,19 @@ public class PaperLevel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String title;  // 级别名称
-    private int level;     // 数字代号表示
+    /**
+     * 级别名称
+     */
+    private String title;
+    /**
+     * 数字代号表示
+     */
+    private int level;
+    /**
+     * 最高可获得的AC
+     */
     @Column(columnDefinition="DECIMAL(10,3)")
-    private double total;  // 最高可获得的AC
+    private double total;
 
     public PaperLevel(String title, int level, double total) {
         this.title = title;

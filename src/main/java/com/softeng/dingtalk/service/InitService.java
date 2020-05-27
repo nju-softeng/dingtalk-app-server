@@ -23,7 +23,7 @@ public class InitService {
     @Autowired
     private PaperLevelRepository paperLevelRepository;
     @Autowired
-    private UserService userService;
+    private SystemService systemService;
 
     void initPaperLevel() {
         if (paperLevelRepository.count() == 0) {
@@ -40,7 +40,7 @@ public class InitService {
     }
 
     void initUser() {
-        userService.fetchUsers();
+        systemService.fetchUsers();
     }
 
 

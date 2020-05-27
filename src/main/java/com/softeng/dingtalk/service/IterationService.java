@@ -35,6 +35,8 @@ public class IterationService {
     @Autowired
     IterationDetailRepository iterationDetailRepository;
     @Autowired
+    SystemService systemService;
+    @Autowired
     UserService userService;
     @Autowired
     DcRecordRepository dcRecordRepository;
@@ -94,7 +96,7 @@ public class IterationService {
         List<IterationDetail> iterationDetails = new ArrayList<>();
         for (String u : userids) {
             // 根据userid 查询 uid
-            int uid = userService.getIdByUserid(u);
+            int uid = systemService.getIdByUserid(u);
             IterationDetail itd = new IterationDetail(iteration, new User(uid));
             iterationDetails.add(itd);
         }
@@ -119,7 +121,7 @@ public class IterationService {
             iterationDetailRepository.deleteByIterationId(vo.getId());
             List<IterationDetail> iterationDetails = new ArrayList<>();
             for (String u : vo.getDingIds()) {
-                int uid = userService.getIdByUserid(u);
+                int uid = systemService.getIdByUserid(u);
                 IterationDetail itd = new IterationDetail(it, new User(uid));
                 iterationDetails.add(itd);
             }
