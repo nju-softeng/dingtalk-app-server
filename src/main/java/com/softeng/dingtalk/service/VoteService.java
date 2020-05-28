@@ -51,7 +51,11 @@ public class VoteService {
     PerformanceService performanceService;
 
 
-    // 创建投票并钉钉发送消息
+
+    /**
+     * 创建投票并钉钉发送消息
+     * @param voteVO
+     */
     @CacheEvict(value = "allVote", allEntries = true)
     public void createVote(VoteVO voteVO) {
         log.debug("创建新投票，清空缓存");
@@ -64,15 +68,24 @@ public class VoteService {
         dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), title, vote.getEndTime().toString(), namelist);
     }
 
-    // 查询没有结束的投票
+
+    /**
+     * 查询没有结束的投票
+     * @return
+     */
     @Cacheable(value = "allVote")
     public List<Vote> listUnderwayVote() {
         log.debug("从数据库查询未结束投票");
-        return voteRepository.listByStatus(); //拿到没有结束的投票
+        //拿到没有结束的投票
+        return voteRepository.listByStatus();
     }
+    
 
-
-    // 更新投票的最终结果，投票截止后调用
+    /**
+     * 更新投票的最终结果，投票截止后调用
+     * @param v
+     * @return
+     */
     @CacheEvict(value = "allVote", allEntries = true)
     public Vote updateVote(Vote v) {
         log.debug("投票结果更新，清空缓存");

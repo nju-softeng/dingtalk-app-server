@@ -2,6 +2,7 @@ package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.service.NotifyService;
 import com.softeng.dingtalk.service.SystemService;
 import com.softeng.dingtalk.service.UserService;
@@ -44,6 +45,8 @@ public class SystemController {
     public void fetchUser() {
         systemService.fetchUsers();
     }
+
+
 
 
 

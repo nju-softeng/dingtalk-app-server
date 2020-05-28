@@ -1,13 +1,11 @@
 package com.softeng.dingtalk.entity;
 
+import com.softeng.dingtalk.enums.Position;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * @author zhanyeye
@@ -22,7 +20,21 @@ public class SubsidyLevel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int level;
+    /**
+     * 学位
+     */
+    private Position position;
+
+    /**
+     * 津贴
+     */
+    @Column(columnDefinition="DECIMAL(10,3)")
+    private double subsidy;
+
+    public SubsidyLevel(Position position, double subsidy) {
+        this.position = position;
+        this.subsidy = subsidy;
+    }
 
 
 }

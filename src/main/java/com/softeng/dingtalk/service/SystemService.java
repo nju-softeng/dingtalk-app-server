@@ -8,6 +8,7 @@ import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.repository.DeptDetailRepository;
 import com.softeng.dingtalk.repository.DeptRepository;
+import com.softeng.dingtalk.repository.SubsidyLevelRepository;
 import com.softeng.dingtalk.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,20 +46,19 @@ public class SystemService {
     @Autowired
     private DingTalkUtils dingTalkUtils;
     @Autowired
-    DeptRepository deptRepository;
-    @Autowired
-    DeptDetailRepository deptDetailRepository;
+    SubsidyLevelRepository subsidyLevelRepository;
 
 
 
     /**
-     * 将 userid 变为 uid，前端用 jsapi 选人，若数据库中没有，从数据库中更新
+     * 根据钉钉 userid 获取系统 uid，前端JSAPI选人
      * @param userid
      * @return
      */
     public int getIdByUserid(String userid) {
         Integer id = userRepository.findIdByUserid(userid);
         if (id == null) {
+            // 如果该用户不在系统中，重新拉取
             User user = addNewUser(userid);
             return user.getId();
         }
@@ -66,9 +66,8 @@ public class SystemService {
     }
 
 
-
     /**
-     * 从钉钉服务器拉取用户同步到系统
+     * 从钉钉服务器拉取所有用户同步到系统
      */
     @CacheEvict(value = "allUser", allEntries = true)
     public void fetchUsers() {
@@ -121,11 +120,9 @@ public class SystemService {
             }
         }
 
-
         User u = userRepository.save(new User(response.getUserid(), response.getName(), response.getAvatar(), authority, position));
         return userRepository.refresh(u);
     }
-
 
 
     /**
@@ -161,28 +158,12 @@ public class SystemService {
         return userRepository.findAll(spec, pageable);
     }
 
-
-    /**
-     * 拉取组织架构
-     * todo 待开发
-     */
-    public void fetchDeptInfo() {
-        List<OapiDepartmentListResponse.Department> departments = dingTalkUtils.fetchDeptInfo();
-        List<Dept> depts = new ArrayList<>();
-        Set<String> remoteUserids = new HashSet<>();
-
-        // 清空所有部门详情
-        deptDetailRepository.deleteAll();
-
-        for (OapiDepartmentListResponse.Department d : departments) {
-            depts.add(new Dept(d.getId(), d.getName(), d.getParentid()));
-        }
-        deptRepository.saveAll(depts);
-
-        // 从钉钉服务器拉取用户同步到系统
-        fetchUsers();
-        List<String> userids = userRepository.listAllUserid();
-
+    @Cacheable(value="subsidy", key = "#position")
+    public double getSubsidy(Position position) {
+        return subsidyLevelRepository.getSubsidy(position);
     }
+
+
+
 
 }
