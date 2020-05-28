@@ -158,11 +158,25 @@ public class SystemService {
         return userRepository.findAll(spec, pageable);
     }
 
+    /**
+     * 查询绩效标准
+     * @param position
+     * @return double
+     */
     @Cacheable(value="subsidy", key = "#position")
     public double getSubsidy(Position position) {
         return subsidyLevelRepository.getSubsidy(position);
     }
 
+    /**
+     * 更新绩效标准
+     * @param position
+     * @param subsidy
+     */
+    @CacheEvict(value = "subsidy", key = "#position")
+    public void setSubsidy(Position position, double subsidy) {
+        subsidyLevelRepository.updateSubsidy(position, subsidy);
+    }
 
 
 

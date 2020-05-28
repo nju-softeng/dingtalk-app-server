@@ -3,6 +3,7 @@ package com.softeng.dingtalk.controller;
 import com.softeng.dingtalk.entity.Test;
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.repository.TestRepository;
+import com.softeng.dingtalk.service.SystemService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,8 @@ public class TestController {
 
     @Autowired
     TestRepository testRepository;
+    @Autowired
+    SystemService systemService;
 
     @GetMapping("/test/enums")
     public Position test_enums() {
@@ -37,6 +40,16 @@ public class TestController {
     @GetMapping("/test/query_enums_str")
     public Position getTest1() {
         return testRepository.test();
+    }
+
+    @GetMapping("/test/sub1")
+    public double test1() {
+        return systemService.getSubsidy(Position.OTHER);
+    }
+
+    @GetMapping("/test/sub2")
+    public void test2() {
+        systemService.setSubsidy(Position.OTHER, 220);
     }
 
 }
