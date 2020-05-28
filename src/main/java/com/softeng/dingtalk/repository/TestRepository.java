@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Test;
+import com.softeng.dingtalk.enums.Position;
 import org.springframework.data.jpa.repository.Query;
 
 /**
@@ -10,6 +11,6 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface TestRepository extends CustomizedRepository<Test, Integer> {
     @Query("select t.position from Test t where t.id = 1")
-    String test();
+    Position test();
 
 }

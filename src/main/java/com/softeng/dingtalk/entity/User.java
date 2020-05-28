@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.softeng.dingtalk.enums.Position;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,13 +28,13 @@ public class User {
     public static final int AUDITOR_AUTHORITY = 1;
     public static final int ADMIN_AUTHORITY = 2;
 
-    /**
-     * 表示用户学位的静态常量
-     */
-    public static final String OTHER = "其他";
-    public static final String UNDERGRADUATE = "本科生";
-    public static final String POSTGRADUATE = "硕士生";
-    public static final String DOCTOR = "博士生";
+//    /**
+//     * 表示用户学位的静态常量
+//     */
+//    public static final String OTHER = "其他";
+//    public static final String UNDERGRADUATE = "本科生";
+//    public static final String POSTGRADUATE = "硕士生";
+//    public static final String DOCTOR = "博士生";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,7 +64,7 @@ public class User {
     /**
      * 用户职（学）位
      */
-    private String position = User.OTHER;
+    private Position position = Position.OTHER;
 
     /**
      * 插入时间
@@ -79,7 +80,7 @@ public class User {
     private boolean deleted;
 
 
-    public User(String userid, String name, String avatar, int authority, String position) {
+    public User(String userid, String name, String avatar, int authority, Position position) {
         this.userid = userid;
         this.name = name;
         this.avatar = avatar;
