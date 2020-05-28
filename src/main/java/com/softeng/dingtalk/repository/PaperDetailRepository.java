@@ -20,7 +20,10 @@ public interface PaperDetailRepository extends CustomizedRepository<PaperDetail,
     List<PaperDetail> findByPaper(Paper paper);
 
 
-    //更具 paperid 删除
+    /**
+     * 删除论文记录
+     * @param id
+     */
     @Modifying
     @Query("delete from PaperDetail pd where pd.paper.id = :id")
     void deleteByPaperid(@Param("id") int id);

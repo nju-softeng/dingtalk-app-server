@@ -79,7 +79,7 @@ public class VoteService {
         //拿到没有结束的投票
         return voteRepository.listByStatus();
     }
-    
+
 
     /**
      * 更新投票的最终结果，投票截止后调用
