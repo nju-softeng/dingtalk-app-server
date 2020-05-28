@@ -15,5 +15,5 @@ import lombok.Setter;
 @Setter
 public class QueryUserVO {
     private String name;
-    private Position position;
+    private String position;
 }

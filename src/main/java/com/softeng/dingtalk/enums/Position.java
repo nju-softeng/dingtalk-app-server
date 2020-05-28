@@ -24,4 +24,5 @@ public enum Position {
     public String getTitle() {
         return title;
     }
+
 }
