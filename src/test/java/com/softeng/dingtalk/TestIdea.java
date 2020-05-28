@@ -33,10 +33,19 @@ public class TestIdea {
 
     @Autowired
     TestRepository testRepository;
+    @Autowired
+    SubsidyLevelRepository subsidyLevelRepository;
+    @Autowired
+    SystemService systemService;
 
     @Test
     public void test_create_enums() {
         testRepository.save(new com.softeng.dingtalk.entity.Test());
+    }
+
+    @Test
+    public void test1() {
+
     }
 
 

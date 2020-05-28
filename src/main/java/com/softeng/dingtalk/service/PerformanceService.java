@@ -32,6 +32,8 @@ public class PerformanceService {
     UserRepository userRepository;
     @Autowired
     BugRepository bugRepository;
+    @Autowired
+    SystemService systemService;
 
 
     /**
@@ -45,13 +47,9 @@ public class PerformanceService {
         double ac = acRecordRepository.getUserAcByDate(uid, yearmonth);
         // 获取用户的 Topup
         double topup = topupRepository.getByUserid(uid);
-        double base = 0;
         Position position = userRepository.getUserPosition(uid);
-        if (position == Position.DOCTOR) {
-            base = 250;
-        } else if (position == Position.POSTGRADUATE){
-            base = 150;
-        }
+        double base = systemService.getSubsidy(position);
+        log.debug("base subsidy : " + base);
         double salary = Math.round(base * dc * (1 + (ac/50)) + topup);
         dcSummaryRepository.updateSalary(uid, ac, topup, salary);
         log.debug(salary + "");
@@ -102,16 +100,17 @@ public class PerformanceService {
      * @param uid
      * @return
      */
-    public Map getUserPerformace(int uid) {
+    public Map getUserPerformance(int uid) {
         LocalDate date  = LocalDate.now();
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
         double acTotal = acRecordRepository.getUserAcSum(uid);
         DcSummary dc = dcSummaryRepository.findByUserIdAndYearmonth(uid, yearmonth);
-
         if (dc == null) {
             return Map.of("acTotal", acTotal, "dcTotal", 0, "w1", 0, "w2",0, "w3", 0, "w4", 0, "w5", 0);
         } else {
             return Map.of("acTotal", acTotal, "dcTotal", dc.getTotal(), "w1", dc.getWeek1(), "w2", dc.getWeek2(), "w3", dc.getWeek3(), "w4", dc.getWeek4(), "w5",dc.getWeek5());
         }
     }
+
+
 }
