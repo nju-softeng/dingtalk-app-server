@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.vo;
 
+import com.softeng.dingtalk.enums.Position;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,5 +15,5 @@ import lombok.Setter;
 @Setter
 public class QueryUserVO {
     private String name;
-    private String position;
+    private Position position;
 }

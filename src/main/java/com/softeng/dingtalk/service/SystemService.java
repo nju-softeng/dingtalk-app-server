@@ -5,6 +5,7 @@ import com.dingtalk.api.response.OapiUserGetResponse;
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.Dept;
 import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.repository.DeptDetailRepository;
 import com.softeng.dingtalk.repository.DeptRepository;
 import com.softeng.dingtalk.repository.UserRepository;
@@ -94,25 +95,29 @@ public class SystemService {
      */
     public User addNewUser(String userid) {
         OapiUserGetResponse response =  dingTalkUtils.fetchUserDetail(userid);
+
         // 权限
         int authority;
-        // 职位
-        String position;
-        if (response.getIsBoss()) { // 是否为企业的老板
+        if (response.getIsBoss()) {
+            // 是否为企业的老板
             authority = User.ADMIN_AUTHORITY;
-        } else if (response.getIsLeaderInDepts().indexOf("true") != -1) { // 是否为管理员
+        } else if (response.getIsLeaderInDepts().indexOf("true") != -1) {
+            // 是否为管理员
             authority = User.AUDITOR_AUTHORITY;
         } else {
             authority = User.USER_AUTHORITY;
         }
+
+        // 职位
+        Position position;
         if (response.getPosition() == null) {
-            position = User.OTHER;
+            position = Position.OTHER;
         } else {
             switch (response.getPosition()){
-                case "本" : position = User.UNDERGRADUATE; break;
-                case "硕" : position = User.POSTGRADUATE;  break;
-                case "博" : position = User.DOCTOR;  break;
-                default: position = User.OTHER;  break;
+                case "本" : position = Position.UNDERGRADUATE; break;
+                case "硕" : position = Position.POSTGRADUATE;  break;
+                case "博" : position = Position.DOCTOR;  break;
+                default: position = Position.OTHER;  break;
             }
         }
 
@@ -122,10 +127,18 @@ public class SystemService {
     }
 
 
-    // 多条件查询用户信息
-    // 单不是依据 name 查询时，进行缓存
+
+    /**
+     * 多条件查询用户信息
+     * 单不是依据 name 查询时，进行缓存
+     * @param page
+     * @param size
+     * @param name
+     * @param position
+     * @return
+     */
     @Cacheable(value = "allUser", condition = "#name == ''")
-    public Page<User> multiQueryUser(int page, int size, String name, String position) {
+    public Page<User> multiQueryUser(int page, int size, String name, Position position) {
         Specification<User> spec = new Specification<User>() {
             @Override
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -135,7 +148,7 @@ public class SystemService {
                     // 根据姓名模糊查询
                     predicates.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
                 }
-                if ("" != position) {
+                if (null != position) {
                     // 根据学位模糊查询
                     predicates.add(criteriaBuilder.equal(root.get("position"), position));
                 }
@@ -149,7 +162,10 @@ public class SystemService {
     }
 
 
-    // 拉取组织架构
+    /**
+     * 拉取组织架构
+     * todo 待开发
+     */
     public void fetchDeptInfo() {
         List<OapiDepartmentListResponse.Department> departments = dingTalkUtils.fetchDeptInfo();
         List<Dept> depts = new ArrayList<>();
@@ -165,9 +181,6 @@ public class SystemService {
 
         // 从钉钉服务器拉取用户同步到系统
         fetchUsers();
-
-
-
         List<String> userids = userRepository.listAllUserid();
 
     }

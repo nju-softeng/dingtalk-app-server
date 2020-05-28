@@ -35,7 +35,7 @@ public class TestController {
 
 
     @GetMapping("/test/query_enums_str")
-    public String getTest1() {
+    public Position getTest1() {
         return testRepository.test();
     }
 

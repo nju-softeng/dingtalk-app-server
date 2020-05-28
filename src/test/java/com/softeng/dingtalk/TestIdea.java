@@ -40,10 +40,4 @@ public class TestIdea {
     }
 
 
-    @Test
-    public void test_query_enumsString() {
-        String str = testRepository.test();
-    }
-
-
 }
