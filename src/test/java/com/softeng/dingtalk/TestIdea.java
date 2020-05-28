@@ -45,7 +45,7 @@ public class TestIdea {
 
     @Test
     public void test1() {
-        systemService.setSubsidy(Position.OTHER, 0);
+        Position p = Position.valueOf("OTHER");
     }
 
 

@@ -101,7 +101,13 @@ public class VoteService {
     }
 
 
-    // 用户投票
+    /**
+     * 用户投票
+     * @param vid
+     * @param uid
+     * @param voteDetail
+     * @return
+     */
     public Map poll(int vid, int uid, VoteDetail voteDetail) {
         LocalDateTime now = LocalDateTime.now();
         log.debug("now" + now.toString());
@@ -112,7 +118,8 @@ public class VoteService {
         log.debug("ddl" + now.toString());
 
         if (now.isBefore(ddl)) {
-            voteDetail.setUser(new User(uid)); // 标明这一票是谁投的
+            // 标明这一票是谁投的
+            voteDetail.setUser(new User(uid));
             voteDetailRepository.save(voteDetail);
         } else {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "投票已经截止！");
@@ -121,39 +128,60 @@ public class VoteService {
         // 返回当前的投票结果
         List<String> acceptlist =  voteDetailRepository.listAcceptNamelist(vid);
         List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
-        int accept = acceptlist.size();  // accept 票数
-        int reject = rejectlist.size();  // reject 票数
-        int total = accept + reject;     // 总投票数
+        // accept 票数
+        int accept = acceptlist.size();
+        // reject 票数
+        int reject = rejectlist.size();
+        // 总投票数
+        int total = accept + reject;
         return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "result", voteDetail.getResult(),"acceptnames",acceptlist,"rejectnames", rejectlist);
     }
 
 
-    //投票还未结束,用户获取投票信息
+    /**
+     * 投票还未结束,用户获取投票信息
+     * @param vid
+     * @param uid
+     * @return
+     */
     public Map  getVotingDetail(int vid, int uid){
         Boolean myresult = voteDetailRepository.getVoteDetail(vid, uid);
-        if (myresult != null) { //用户已经投票，可以查看结果
+        if (myresult != null) {
+            //用户已经投票，可以查看结果
             List<String> acceptlist =  voteDetailRepository.listAcceptNamelist(vid);
             List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
-            int accept = acceptlist.size();  // accept 票数
-            int reject = rejectlist.size();  // reject 票数
-            int total = accept + reject;     // 总投票数
-
+            // accept 票数
+            int accept = acceptlist.size();
+            // reject 票数
+            int reject = rejectlist.size();
+            // 总投票数
+            int total = accept + reject;
 
             return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist);
-        } else { //用户没有投票，不可以查看结果
+        } else {
+            //用户没有投票，不可以查看结果
             return Map.of("status", false);
         }
     }
 
 
-    // 获取已经结束的投票信息
+    /**
+     * 获取已经结束的投票信息
+     * @param vid
+     * @param uid
+     * @return
+     */
     public Map getVotedDetail(int vid, int uid) {
         List<String> acceptlist =  voteDetailRepository.listAcceptNamelist(vid);
         List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
-        int accept = acceptlist.size();  // accept 票数
-        int reject = rejectlist.size();  // reject 票数
-        int total = accept + reject;     // 总投票数
-        Boolean myresult = voteDetailRepository.getVoteDetail(vid, uid); // 用户本人的投票情况：accept, reject, 未参与(null)
+        // accept 票数
+        int accept = acceptlist.size();
+        // reject 票数
+        int reject = rejectlist.size();
+        // 总投票数
+        int total = accept + reject;
+        // 用户本人的投票情况：accept, reject, 未参与(null)
+        Boolean myresult = voteDetailRepository.getVoteDetail(vid, uid);
         if (myresult == null) {
             return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist);
         } else {
@@ -163,10 +191,11 @@ public class VoteService {
     }
 
 
-
-
-
-    // 根据论文最终结果计算投票者的ac
+    /**
+     * 根据论文最终结果计算投票者的ac
+     * @param pid
+     * @param result
+     */
     public void computeVoteAc(int pid, boolean result) {
         Vote vote = paperRepository.findVoteById(pid);
         if (vote != null) {
@@ -175,7 +204,8 @@ public class VoteService {
 
             List<AcRecord> oldAcRecord = Optional.ofNullable(voteDetails).map(List::stream).orElseGet(Stream::empty)
                     .filter(x -> x.getAcRecord() != null).map(x -> x.getAcRecord()).collect(Collectors.toList());
-            acRecordRepository.deleteAll(oldAcRecord); // 删除旧的 acRecord
+            // 删除旧的 acRecord
+            acRecordRepository.deleteAll(oldAcRecord);
 
             for (VoteDetail vd : voteDetails) {
                 AcRecord acRecord;
@@ -204,10 +234,6 @@ public class VoteService {
         }
 
     }
-
-
-
-
 
 
 }

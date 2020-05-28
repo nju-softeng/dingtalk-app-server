@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * @author zhanyeye
@@ -135,7 +136,7 @@ public class SystemService {
      * @return
      */
     @Cacheable(value = "allUser", condition = "#name == ''")
-    public Page<User> multiQueryUser(int page, int size, String name, Position position) {
+    public Page<User> multiQueryUser(int page, int size, String name, String position) {
         Specification<User> spec = new Specification<User>() {
             @Override
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -145,9 +146,13 @@ public class SystemService {
                     // 根据姓名模糊查询
                     predicates.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
                 }
-                if (null != position) {
+                if ("" != position) {
                     // 根据学位模糊查询
-                    predicates.add(criteriaBuilder.equal(root.get("position"), position));
+                    Position eposition = Stream.of(Position.values())
+                            .filter(c -> c.getTitle().equals(position))
+                            .findFirst()
+                            .orElseThrow(IllegalArgumentException::new);
+                    predicates.add(criteriaBuilder.equal(root.get("position"), eposition));
                 }
                 Predicate[] arr = new Predicate[predicates.size()];
                 return criteriaBuilder.and(predicates.toArray(arr));
