@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/zhanyeye/dingtalk-springboot/workflows/CI/badge.svg)
 
-tips: 代码开始与 2019.11， 当时官方demo还是17年的代码。然而 2020.2 官方对 demo 进行了更新。相比之下建议参考官方新demo😢
+
 
 ###### 2020.05.23
 添加测试分支，主要分支介绍如下
