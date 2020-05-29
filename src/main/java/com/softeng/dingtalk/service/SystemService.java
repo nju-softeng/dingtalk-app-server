@@ -4,6 +4,7 @@ import com.dingtalk.api.response.OapiDepartmentListResponse;
 import com.dingtalk.api.response.OapiUserGetResponse;
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.Dept;
+import com.softeng.dingtalk.entity.SubsidyLevel;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.repository.DeptDetailRepository;
@@ -48,7 +49,6 @@ public class SystemService {
     private DingTalkUtils dingTalkUtils;
     @Autowired
     SubsidyLevelRepository subsidyLevelRepository;
-
 
 
     /**
@@ -163,6 +163,7 @@ public class SystemService {
         return userRepository.findAll(spec, pageable);
     }
 
+
     /**
      * 查询绩效标准
      * @param position
@@ -173,14 +174,25 @@ public class SystemService {
         return subsidyLevelRepository.getSubsidy(position);
     }
 
+
     /**
      * 更新绩效标准
-     * @param position
-     * @param subsidy
+     * @param subsidyLevelList
      */
-    @CacheEvict(value = "subsidy", key = "#position")
-    public void setSubsidy(Position position, double subsidy) {
-        subsidyLevelRepository.updateSubsidy(position, subsidy);
+    @CacheEvict(value = "subsidy", allEntries = true)
+    public void setSubsidy(List<SubsidyLevel> subsidyLevelList) {
+        for (SubsidyLevel sl : subsidyLevelList) {
+            subsidyLevelRepository.updateSubsidy(sl.getPosition(), sl.getSubsidy());
+        }
+    }
+
+
+    /**
+     * 获取所有的绩效标准
+     * @return List<SubsidyLevel>
+     */
+    public List<SubsidyLevel> listSubsidy() {
+        return subsidyLevelRepository.findAll();
     }
 
 
