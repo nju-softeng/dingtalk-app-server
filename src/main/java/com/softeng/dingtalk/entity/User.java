@@ -49,6 +49,11 @@ public class User {
     private String avatar;
 
     /**
+     * 学号
+     */
+    private String stuNum;
+
+    /**
      * 用户权限
      */
     private int authority = USER_AUTHORITY;

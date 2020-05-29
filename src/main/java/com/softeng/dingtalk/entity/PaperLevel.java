@@ -25,7 +25,7 @@ public class PaperLevel {
      */
     private String title;
     /**
-     * 数字代号表示
+     * 论文类别
      */
     private int level;
     /**
