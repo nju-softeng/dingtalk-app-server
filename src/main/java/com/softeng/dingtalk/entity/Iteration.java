@@ -24,15 +24,24 @@ public class Iteration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int cnt; // 第几次迭代
+    /**
+     * 第几次迭代
+     */
+    private int cnt;
     private boolean status;
     private LocalDate beginTime;
     private LocalDate endTime;
     private LocalDate finishTime;
     @Column(columnDefinition="DECIMAL(10,3)")
     private double expectedAC;
-    private int prevIteration; // 上一个迭代版本id
-    private int conSuccess;    // 持续成功次数
+    /**
+     * 上一个迭代版本id
+     */
+    private int prevIteration;
+    /**
+     * 持续成功次数
+     */
+    private int conSuccess;
 
 
     @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID

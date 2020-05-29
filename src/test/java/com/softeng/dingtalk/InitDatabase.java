@@ -44,17 +44,7 @@ public class InitDatabase {
     PaperLevelRepository paperLevelRepository;
 
 
-    @Test
-    public void fetchUsrs() {
-        userService.fetchUsers();
-    }
 
-    @Test
-    public void init() {
-        userService.fetchUsers();
-        addpaperLevel();
-
-    }
 
     @Autowired
     public void addpaperLevel() {

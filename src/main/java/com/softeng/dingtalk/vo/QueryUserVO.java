@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.vo;
 
+import com.softeng.dingtalk.enums.Position;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
