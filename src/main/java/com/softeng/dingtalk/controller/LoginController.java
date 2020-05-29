@@ -3,6 +3,7 @@ package com.softeng.dingtalk.controller;
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.EncryptorComponent;
 import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.service.SystemService;
 import com.softeng.dingtalk.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class LoginController {
     UserService userService;
     @Autowired
     EncryptorComponent encryptorComponent;
+    @Autowired
+    SystemService systemService;
 
     @GetMapping("/login_test/{uid}")
     public void testlogin(@PathVariable int uid, HttpServletResponse response) {
@@ -59,7 +62,7 @@ public class LoginController {
         String userid = dingTalkUtils.getUserId((String) authcode.get("authcode"));  //根据免登授权码获取userid
         User user = userService.getUser(userid); //去数据库查找用户
         if (user == null) { //如果用户不存在，调用钉钉API获取用户信息，将用户导入数据库
-            user = userService.addNewUser(userid);
+            user = systemService.addNewUser(userid);
         }
         Map map = Map.of("uid", user.getId(), "authorityid", user.getAuthority());
         // 生成加密token

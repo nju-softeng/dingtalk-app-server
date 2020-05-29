@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.softeng.dingtalk.enums.Position;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,36 +9,32 @@ import javax.persistence.*;
 
 /**
  * @author zhanyeye
- * @description
- * @create 2/5/2020 10:49 PM
+ * @description 津贴标准
+ * @create 5/27/2020 6:32 PM
  */
-
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
-public class PaperLevel {
+public class SubsidyLevel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     /**
-     * 级别名称
+     * 学位
      */
-    private String title;
+    private Position position;
+
     /**
-     * 数字代号表示
-     */
-    private int level;
-    /**
-     * 最高可获得的AC
+     * 津贴
      */
     @Column(columnDefinition="DECIMAL(10,3)")
-    private double total;
+    private double subsidy;
 
-    public PaperLevel(String title, int level, double total) {
-        this.title = title;
-        this.level = level;
-        this.total = total;
+    public SubsidyLevel(Position position, double subsidy) {
+        this.position = position;
+        this.subsidy = subsidy;
     }
+
 
 }
