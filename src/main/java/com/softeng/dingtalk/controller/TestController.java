@@ -49,7 +49,7 @@ public class TestController {
 
     @GetMapping("/test/sub2")
     public void test2() {
-        systemService.setSubsidy(Position.OTHER, 220);
+
     }
 
 }
