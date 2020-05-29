@@ -35,9 +35,21 @@ public class Paper {
     private String title;
     private String journal;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
-    private LocalDateTime insertTime;  //插入时间
-    private LocalDate issueDate;       //出刊时间
+    /**
+     * 插入时间
+     */
+    private LocalDateTime insertTime;
+    /**
+     * 出刊时间
+     */
+    private LocalDate issueDate;
+    /**
+     * 论文等级
+     */
     private int level;
+    /**
+     * 投稿结果
+     */
     private Boolean result;
 
     @JsonIgnoreProperties("paper")
