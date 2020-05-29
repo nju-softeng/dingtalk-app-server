@@ -12,7 +12,7 @@ public enum Position {
     DOCTOR("博士生"),
     POSTGRADUATE("硕士生"),
     UNDERGRADUATE("本科生"),
-    OTHER("其他");
+    OTHER("待定");
 
     private String title;
 

@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
+import com.softeng.dingtalk.entity.SubsidyLevel;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.service.NotifyService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,13 +40,35 @@ public class SystemController {
         return Map.of("content", pages.getContent(), "total", pages.getTotalElements());
     }
 
+
     /**
-     *
+     * 从钉钉同步用户
      */
     @GetMapping("/system/fetchuser")
     public void fetchUser() {
         systemService.fetchUsers();
     }
+
+
+    /**
+     * 查询所有的绩效标准
+     * @return List<SubsidyLevel>
+     */
+    @GetMapping("/system/subsidy")
+    public List<SubsidyLevel> getSubsidy() {
+        return systemService.listSubsidy();
+    }
+
+
+    /**
+     * 更新绩效标准
+     * @param subsidyLevel
+     */
+    @PostMapping("/system/subsidy")
+    public void updateSubsidy(@RequestBody List<SubsidyLevel> subsidyLevels) {
+        systemService.setSubsidy(subsidyLevels);
+    }
+
 
 
 
