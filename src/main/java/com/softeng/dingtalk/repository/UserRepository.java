@@ -22,7 +22,8 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
 
 
     /**
-     * 通过 userid（钉钉用户码） 查找用户 -> 通过用户进入系统时调用API获得的userid查询用户，判断用户是否在系统中，还是新用户
+     * 通过 userid（钉钉用户码） 查找用户
+     * 通过用户进入系统时调用API获得的userid查询用户，判断用户是否在系统中，还是新用户
      * @param userid
      * @return
      */
@@ -31,7 +32,8 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
 
 
     /**
-     * 查找所有的具有审核权限的用户 -> 供用户提交审核申请时选择
+     * 查找所有的具有审核权限的用户
+     * 供用户提交审核申请时选择
      * @return
      */
     @Query(value = "select id, name from user where authority = 1 and is_deleted = 0", nativeQuery = true)
@@ -80,5 +82,18 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     @Modifying
     @Query("update User set authority = :authority where id = :uid")
     void updateUserRole(@Param("uid")int uid, @Param("authority") int authority);
+
+
+    /**
+     * 修改用户信息
+     * @param uid
+     * @param stuName
+     * @param authority
+     */
+    @Modifying
+    @Query("update User set stuNum = :stunum, position = :position, authority = :authority where id = :uid")
+    void updateUserInfo(@Param("uid") int uid,@Param("stunum") String stuName, @Param("position") Position position , @Param("authority") int authority);
+
+
 
 }

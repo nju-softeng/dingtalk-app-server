@@ -214,5 +214,14 @@ public class SystemService {
         }
     }
 
+    /**
+     * 更新用户信息
+     * @param u
+     */
+    @CacheEvict(value = "allUser", allEntries = true)
+    public void updateUserInfo(User u) {
+        log.debug(u.toString());
+        userRepository.updateUserInfo(u.getId(), u.getStuNum(), u.getPosition(), u.getAuthority());
+    }
 
 }
