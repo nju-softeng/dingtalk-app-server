@@ -27,7 +27,7 @@ import java.util.Optional;
 public class LoginController {
     //为了防止伪造角色
     private static final String USER_ROLE = "bb63e5f7e0f2ffae845c";
-    private static final String AUDITOR_AUTHORITY = "pb53e2f7g0f2hfanp4sx";
+    private static final String AUDITOR_ROLE = "pb53e2f7g0f2hfanp4sx";
     private static final String ADMIN_ROLE = "6983f953b49c88210cb9";
 
     @Autowired
@@ -47,7 +47,7 @@ public class LoginController {
     @GetMapping("/login_test/{uid}")
     public void testlogin(@PathVariable int uid, HttpServletResponse response) {
         log.debug("测试登陆" + uid);
-        Map map = Map.of("uid", uid, "authorityid", User.USER_AUTHORITY);
+        Map map = Map.of("uid", uid, "authorityid", User.NORMAL_AUTHORITY);
         // 生成加密token
         String token = encryptorComponent.encrypt(map);
         // 在header创建自定义的权限
@@ -78,10 +78,10 @@ public class LoginController {
         // 在header创建自定义的权限
         response.setHeader("token",token);
         String role = null;
-        if (user.getAuthority() == User.USER_AUTHORITY) {
+        if (user.getAuthority() == User.NORMAL_AUTHORITY) {
             role = USER_ROLE;
         } else if (user.getAuthority() == User.AUDITOR_AUTHORITY) {
-            role = AUDITOR_AUTHORITY;
+            role = AUDITOR_ROLE;
         } else {
             role = ADMIN_ROLE;
         }

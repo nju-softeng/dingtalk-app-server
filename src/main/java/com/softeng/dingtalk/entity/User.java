@@ -24,7 +24,7 @@ public class User {
     /**
      * 表示用户权限的静态常量
      */
-    public static final int USER_AUTHORITY = 0;
+    public static final int NORMAL_AUTHORITY = 0;
     public static final int AUDITOR_AUTHORITY = 1;
     public static final int ADMIN_AUTHORITY = 2;
 
@@ -56,7 +56,7 @@ public class User {
     /**
      * 用户权限
      */
-    private int authority = USER_AUTHORITY;
+    private int authority = NORMAL_AUTHORITY;
 
     /**
      * 用户职（学）位
