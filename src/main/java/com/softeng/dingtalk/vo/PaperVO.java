@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.vo;
 
 import com.softeng.dingtalk.entity.PaperDetail;
+import com.softeng.dingtalk.enums.PaperType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +23,7 @@ public class PaperVO {
     private Integer id;
     private String title;
     private String journal;
-    private int level;
+    private PaperType paperType;
     private LocalDate issueDate;
     private List<PaperDetail> paperDetails;
 }

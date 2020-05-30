@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DingTalkUtils;
+import com.softeng.dingtalk.entity.PaperLevel;
 import com.softeng.dingtalk.entity.SubsidyLevel;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.enums.Position;
@@ -55,20 +56,39 @@ public class SystemController {
      * @return List<SubsidyLevel>
      */
     @GetMapping("/system/subsidy")
-    public List<SubsidyLevel> getSubsidy() {
+    public List<SubsidyLevel> listSubsidy() {
         return systemService.listSubsidy();
     }
 
 
     /**
      * 更新绩效标准
-     * @param subsidyLevel
+     * @param subsidyLevels
      */
     @PostMapping("/system/subsidy")
     public void updateSubsidy(@RequestBody List<SubsidyLevel> subsidyLevels) {
         systemService.setSubsidy(subsidyLevels);
     }
 
+
+    /**
+     * 查询所有的论文AC标准
+     * @return
+     */
+    @GetMapping("/system/paperlevel")
+    public List<PaperLevel> listPaperLevel() {
+        return systemService.listPaperLevel();
+    }
+
+
+    /**
+     * 更新论文绩效标准
+     * @param paperLevels
+     */
+    @PostMapping("/system/paperlevel")
+    public void updatePaperLevel(@RequestBody List<PaperLevel> paperLevels) {
+        systemService.updatePaperLevel(paperLevels);
+    }
 
 
 

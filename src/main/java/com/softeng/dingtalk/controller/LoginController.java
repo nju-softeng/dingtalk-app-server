@@ -39,6 +39,11 @@ public class LoginController {
     @Autowired
     SystemService systemService;
 
+    /**
+     * 开发环境下登陆
+     * @param uid
+     * @param response
+     */
     @GetMapping("/login_test/{uid}")
     public void testlogin(@PathVariable int uid, HttpServletResponse response) {
         log.debug("测试登陆" + uid);
@@ -59,9 +64,12 @@ public class LoginController {
      **/
     @PostMapping("/login")
     public void login(@RequestBody Map authcode, HttpServletResponse response) {
-        String userid = dingTalkUtils.getUserId((String) authcode.get("authcode"));  //根据免登授权码获取userid
-        User user = userService.getUser(userid); //去数据库查找用户
-        if (user == null) { //如果用户不存在，调用钉钉API获取用户信息，将用户导入数据库
+        //根据免登授权码获取userid
+        String userid = dingTalkUtils.getUserId((String) authcode.get("authcode"));
+        //去数据库查找用户
+        User user = userService.getUser(userid);
+        if (user == null) {
+            //如果用户不存在，调用钉钉API获取用户信息，将用户导入数据库
             user = systemService.addNewUser(userid);
         }
         Map map = Map.of("uid", user.getId(), "authorityid", user.getAuthority());
