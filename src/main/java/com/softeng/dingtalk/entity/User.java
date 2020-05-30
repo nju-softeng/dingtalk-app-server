@@ -5,6 +5,7 @@ import com.softeng.dingtalk.enums.Position;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @NoArgsConstructor
+@ToString
 @SQLDelete(sql = "update `user` set is_deleted = 1 where id = ?")
 public class User {
     /**

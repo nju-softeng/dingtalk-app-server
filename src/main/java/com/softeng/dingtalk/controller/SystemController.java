@@ -90,7 +90,10 @@ public class SystemController {
         systemService.updatePaperLevel(paperLevels);
     }
 
-
+    @PostMapping("/system/userinfo")
+    public void updateUserInfo(@RequestBody User user) {
+        systemService.updateUserInfo(user);
+    }
 
 
 
