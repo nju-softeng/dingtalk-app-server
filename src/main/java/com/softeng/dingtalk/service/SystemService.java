@@ -1,14 +1,12 @@
 package com.softeng.dingtalk.service;
 
-import com.dingtalk.api.response.OapiDepartmentListResponse;
 import com.dingtalk.api.response.OapiUserGetResponse;
 import com.softeng.dingtalk.component.DingTalkUtils;
-import com.softeng.dingtalk.entity.Dept;
+import com.softeng.dingtalk.entity.PaperLevel;
 import com.softeng.dingtalk.entity.SubsidyLevel;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.DeptDetailRepository;
-import com.softeng.dingtalk.repository.DeptRepository;
+import com.softeng.dingtalk.repository.PaperLevelRepository;
 import com.softeng.dingtalk.repository.SubsidyLevelRepository;
 import com.softeng.dingtalk.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +47,8 @@ public class SystemService {
     private DingTalkUtils dingTalkUtils;
     @Autowired
     SubsidyLevelRepository subsidyLevelRepository;
+    @Autowired
+    PaperLevelRepository paperLevelRepository;
 
 
     /**
@@ -195,6 +195,24 @@ public class SystemService {
         return subsidyLevelRepository.findAll();
     }
 
+
+    /**
+     * 查询论文AC标准
+     * @return
+     */
+    public List<PaperLevel> listPaperLevel() {
+        return paperLevelRepository.findAll();
+    }
+
+    /**
+     * 更新论文AC标准
+     * @param paperLevels
+     */
+    public void updatePaperLevel(List <PaperLevel> paperLevels) {
+        for (PaperLevel pl : paperLevels) {
+            paperLevelRepository.updatePaperLevel(pl.getPaperType(), pl.getTotal());
+        }
+    }
 
 
 }

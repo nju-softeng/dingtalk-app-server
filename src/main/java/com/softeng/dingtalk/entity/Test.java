@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.softeng.dingtalk.enums.PaperType;
 import com.softeng.dingtalk.enums.Position;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,6 @@ public class Test {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private Position position = Position.UNDERGRADUATE;
+    private PaperType paperType;
 
 }

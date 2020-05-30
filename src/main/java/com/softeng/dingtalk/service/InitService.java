@@ -3,6 +3,7 @@ package com.softeng.dingtalk.service;
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.PaperLevel;
 import com.softeng.dingtalk.entity.SubsidyLevel;
+import com.softeng.dingtalk.enums.PaperType;
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.repository.PaperLevelRepository;
 import com.softeng.dingtalk.repository.SubsidyLevelRepository;
@@ -36,12 +37,12 @@ public class InitService {
     public void initPaperLevel() {
         if (paperLevelRepository.count() == 0) {
             List<PaperLevel> paperLevels = new ArrayList<>();
-            paperLevels.add(new PaperLevel("Journal A", 1, 60));
-            paperLevels.add(new PaperLevel("Conference A", 2, 50));
-            paperLevels.add(new PaperLevel("Journal B", 3, 36));
-            paperLevels.add(new PaperLevel("Conference B", 4, 30));
-            paperLevels.add(new PaperLevel("Journal C", 5, 24));
-            paperLevels.add(new PaperLevel("Conference C", 6, 20));
+            paperLevels.add(new PaperLevel("Journal A", PaperType.JOURNAL_A, 60));
+            paperLevels.add(new PaperLevel("Conference A", PaperType.CONFERENCE_A, 50));
+            paperLevels.add(new PaperLevel("Journal B", PaperType.JOURNAL_B, 36));
+            paperLevels.add(new PaperLevel("Conference B", PaperType.CONFERENCE_B, 30));
+            paperLevels.add(new PaperLevel("Journal C", PaperType.JOURNAL_C, 24));
+            paperLevels.add(new PaperLevel("Conference C", PaperType.CONFERENCE_C, 20));
             paperLevelRepository.saveAll(paperLevels);
         }
     }

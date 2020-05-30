@@ -2,6 +2,7 @@ package com.softeng.dingtalk.entity;
 
         import com.fasterxml.jackson.annotation.JsonIgnore;
         import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+        import com.softeng.dingtalk.enums.PaperType;
         import com.softeng.dingtalk.vo.PaperVO;
         import lombok.Getter;
         import lombok.NoArgsConstructor;
@@ -34,11 +35,25 @@ public class Paper {
     private int id;
     private String title;
     private String journal;
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
-    private LocalDateTime insertTime;  //插入时间
-    private LocalDate issueDate;       //出刊时间
-    private int level;
+
+    /**
+     * 出刊时间
+     */
+    private LocalDate issueDate;
+
+    /**
+     * 论文等级
+     */
+    @Enumerated(EnumType.STRING)
+    private PaperType paperType;
+
+    /**
+     * 投稿结果
+     */
     private Boolean result;
+
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    private LocalDateTime insertTime;
 
     @JsonIgnoreProperties("paper")
     @OneToOne(cascade = CascadeType.REMOVE)
@@ -56,16 +71,16 @@ public class Paper {
     public Paper(PaperVO paperVO) {
         this.title = paperVO.getTitle();
         this.journal = paperVO.getJournal();
-        this.level = paperVO.getLevel();
+        this.paperType = paperVO.getPaperType();
         this.issueDate = paperVO.getIssueDate();
     }
 
 
 
-    public void update(String title, String journal, int level, LocalDate issueDate) {
+    public void update(String title, String journal, PaperType paperType, LocalDate issueDate) {
         this.title = title;
         this.journal = journal;
-        this.level = level;
+        this.paperType = paperType;
         this.issueDate = issueDate;
     }
 
