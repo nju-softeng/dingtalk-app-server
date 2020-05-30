@@ -105,7 +105,7 @@ public class SystemService {
             // 是否为管理员
             authority = User.AUDITOR_AUTHORITY;
         } else {
-            authority = User.USER_AUTHORITY;
+            authority = User.NORMAL_AUTHORITY;
         }
 
         // 职位
