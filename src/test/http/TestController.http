@@ -6,12 +6,16 @@
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
-GET http://localhost:8080/api/test/sub1
+GET http://localhost:8080/api/test/enums
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
 
 ###
 
-GET http://localhost:8080/api/test/sub2
+POST http://localhost:8080/api/test/post
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
+Content-Type: application/json
 
+{
+  "paperType" : "JOURNAL_A"
+}
 ###

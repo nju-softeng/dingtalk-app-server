@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
  * @date 5/28/2020
  */
 public interface TestRepository extends CustomizedRepository<Test, Integer> {
-    @Query("select t.position from Test t where t.id = 1")
+    @Query("select t.paperType from Test t where t.id = 1")
     Position test();
 
 }

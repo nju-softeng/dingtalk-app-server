@@ -27,7 +27,11 @@ public class PaperController {
     @Autowired
     VoteService voteService;
 
-    // 添加或更新论文记录
+
+    /**
+     * 添加或更新论文记录
+     * @param papervo
+     */
     @PostMapping("/paper")
     public void addPaper(@RequestBody PaperVO papervo) {
         log.debug("/paper");
@@ -42,15 +46,21 @@ public class PaperController {
     }
 
 
-    //删除论文记录
+    /**
+     * 删除论文记录
+     * @param id
+     */
     @GetMapping("/paper/delete/{id}")
     public void deletePaper(@PathVariable int id) {
         paperService.deletePaper(id);
     }
 
 
-
-    // 论文参与者或审核人更新论文投稿结果
+    /**
+     * 论文参与者或审核人更新论文投稿结果
+     * @param pid
+     * @param map
+     */
     @PostMapping("/paper_result/{pid}")
     public void updateResult(@PathVariable int pid, @RequestBody Map<String, Boolean> map) {
         paperService.updateResult(pid, map.get("data"));
@@ -58,22 +68,27 @@ public class PaperController {
         // todo 发送论文消息
     }
 
-    // 分页获取论文
+
+    /**
+     * 分页获取论文
+     * @param page
+     * @return
+     */
     @GetMapping("/paper/page/{page}")
     public Map listPaper(@PathVariable int page) {
         return paperService.listPaper(page);
     }
 
 
-    // 获取某个论文的详细信息
+    /**
+     * 获取某个论文的详细信息
+     * @param id
+     * @return
+     */
     @GetMapping("/paper/{id}")
     public Paper getPaper(@PathVariable int id) {
         return paperService.getPaper(id);
     }
-
-
-
-
 
 
 }
