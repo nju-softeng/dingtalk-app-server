@@ -2,6 +2,7 @@ package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Review;
+import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.projection.PaperProjection;
 import com.softeng.dingtalk.repository.ReviewRepository;
 import com.softeng.dingtalk.service.PaperService;
@@ -136,6 +137,17 @@ public class PaperController {
     @GetMapping("/paper/review/delete/{id}")
     public void deleteReview(@PathVariable int id, @RequestAttribute int uid) {
         paperService.deleteReview(id, uid);
+    }
+
+
+    /**
+     * 获取论文投票
+     * @param id
+     * @return
+     */
+    @GetMapping("/paper/{id}/vote")
+    public Vote getPaperVote(@PathVariable int id) {
+        return paperService.getVoteByPid(id);
     }
 
 

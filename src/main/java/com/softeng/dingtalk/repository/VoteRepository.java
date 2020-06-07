@@ -17,7 +17,10 @@ import java.util.List;
 @Repository
 public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
 
-    //拿到所有状态没有结束的投票
+    /**
+     * 拿到所有状态没有结束的投票
+     * @return
+     */
     @Query("select v from Vote v where v.status = false ")
     List<Vote> listByStatus();
 

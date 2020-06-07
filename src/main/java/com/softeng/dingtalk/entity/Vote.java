@@ -32,6 +32,9 @@ public class Vote {
     private Boolean result;
     private int accept;
     private int total;
+    /**
+     * 投票是否截止
+     */
     private boolean status;
     /**
      * 投票是否截止

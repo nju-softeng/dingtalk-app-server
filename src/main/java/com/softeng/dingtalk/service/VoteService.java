@@ -112,12 +112,14 @@ public class VoteService {
      * @return
      */
     public Map poll(int vid, int uid, VoteDetail voteDetail) {
+        // 收到投票的时间
         LocalDateTime now = LocalDateTime.now();
         log.debug("now" + now.toString());
 
         Vote vote = voteRepository.findById(vid).get();
-        LocalDateTime ddl = LocalDateTime.of(vote.getStartTime(), vote.getEndTime()).plusMinutes(1);
 
+        // 投票的截止时间
+        LocalDateTime ddl = LocalDateTime.of(vote.getStartTime(), vote.getEndTime()).plusMinutes(1);
         log.debug("ddl" + now.toString());
 
         if (now.isBefore(ddl)) {
