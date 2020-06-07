@@ -252,7 +252,7 @@ public class DingTalkUtils {
 
         StringBuffer pcurl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
                 .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
-                .append(DOMAIN).append("/paper/vote/").append(pid);
+                .append(DOMAIN).append("/paper/detail/").append(pid).append("/vote");
 
         log.debug(pcurl.toString());
 
