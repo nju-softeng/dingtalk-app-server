@@ -54,10 +54,11 @@ public class VoteService {
 
     /**
      * 创建投票并钉钉发送消息
+     * 同时清空清空未结束投票缓存
      * @param voteVO
      */
-    @CacheEvict(value = "allVote", allEntries = true)
-    public void createVote(VoteVO voteVO) {
+    @CacheEvict(value = "voting", allEntries = true)
+    public Vote createVote(VoteVO voteVO) {
         log.debug("创建新投票，清空缓存");
         Vote vote = new Vote(voteVO.getEndTime());
         voteRepository.save(vote);
@@ -66,14 +67,16 @@ public class VoteService {
         String title = paperRepository.getPaperTitleById(voteVO.getPaperid());
         List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
         dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), title, vote.getEndTime().toString(), namelist);
+        return voteRepository.refresh(vote);
     }
 
 
     /**
      * 查询没有结束的投票
+     * 缓存未结束的投票，用于减少查询数据的次数，当创建新投票后要清空缓存
      * @return
      */
-    @Cacheable(value = "allVote")
+    @Cacheable(value = "voting")
     public List<Vote> listUnderwayVote() {
         log.debug("从数据库查询未结束投票");
         //拿到没有结束的投票
@@ -86,7 +89,7 @@ public class VoteService {
      * @param v
      * @return
      */
-    @CacheEvict(value = "allVote", allEntries = true)
+    @CacheEvict(value = "voting", allEntries = true)
     public Vote updateVote(Vote v) {
         log.debug("投票结果更新，清空缓存");
         int accept = voteDetailRepository.getAcceptCnt(v.getId());
@@ -109,12 +112,14 @@ public class VoteService {
      * @return
      */
     public Map poll(int vid, int uid, VoteDetail voteDetail) {
+        // 收到投票的时间
         LocalDateTime now = LocalDateTime.now();
         log.debug("now" + now.toString());
 
         Vote vote = voteRepository.findById(vid).get();
-        LocalDateTime ddl = LocalDateTime.of(vote.getStartTime(), vote.getEndTime()).plusMinutes(1);
 
+        // 投票的截止时间
+        LocalDateTime ddl = LocalDateTime.of(vote.getStartTime(), vote.getEndTime()).plusMinutes(1);
         log.debug("ddl" + now.toString());
 
         if (now.isBefore(ddl)) {
