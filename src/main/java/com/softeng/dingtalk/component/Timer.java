@@ -37,13 +37,15 @@ public class Timer {
 
     @Scheduled(cron = "0 * * * * ?")
     public void checkVote() {
-        List<Vote> votes = voteService.listUnderwayVote(); //拿到没有结束的投票
+        //拿到没有结束的投票
+        List<Vote> votes = voteService.listUnderwayVote();
         if (votes.size() != 0) {
             LocalTime nowtime = LocalTime.now();
             log.debug("定时器执行：" + nowtime.toString());
             for (Vote v : votes) {
                 if (v.getEndTime().isBefore(nowtime)) {
-                    v = voteService.updateVote(v); //更新
+                    //更新
+                    v = voteService.updateVote(v);
                     // todo 钉钉发送消息
                     log.debug("钉钉发送消息");
                     Map map = paperRepository.getPaperInfo(v.getId());
