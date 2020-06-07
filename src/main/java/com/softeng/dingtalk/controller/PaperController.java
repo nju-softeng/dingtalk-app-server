@@ -1,14 +1,18 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.entity.Paper;
+import com.softeng.dingtalk.entity.Review;
 import com.softeng.dingtalk.projection.PaperProjection;
+import com.softeng.dingtalk.repository.ReviewRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,7 @@ public class PaperController {
     PaperService paperService;
     @Autowired
     VoteService voteService;
+
 
 
     /**
@@ -88,6 +93,49 @@ public class PaperController {
     @GetMapping("/paper/{id}")
     public Paper getPaper(@PathVariable int id) {
         return paperService.getPaper(id);
+    }
+
+
+    /**
+     * 提交评审记录
+     * @return
+     */
+    @PostMapping("/paper/review")
+    public void submitReview(@RequestBody Review review, @RequestAttribute int uid) {
+        paperService.submitReview(review, uid);
+    }
+
+    /**
+     * 查询指定论文的评审意见
+     * @param id
+     * @return
+     */
+    @GetMapping("/paper/{id}/review")
+    public List<Review> listReview(@PathVariable int id) {
+        return paperService.listReview(id);
+    }
+
+    /**
+     * 更新评审建议
+     * @param review
+     * @param uid
+     */
+    @PostMapping("/paper/{id}/review/update")
+    public void updateReview(@RequestBody Review review, @RequestAttribute int uid) {
+        if (uid != review.getUser().getId()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "无修改权限");
+        }
+        paperService.updateReview(review);
+    }
+
+    /**
+     * 删除评审意见
+     * @param id
+     * @param uid
+     */
+    @GetMapping("/paper/review/delete/{id}")
+    public void deleteReview(@PathVariable int id, @RequestAttribute int uid) {
+        paperService.deleteReview(id, uid);
     }
 
 

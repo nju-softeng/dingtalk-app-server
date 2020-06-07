@@ -52,7 +52,7 @@ public class LoginController {
         String token = encryptorComponent.encrypt(map);
         // 在header创建自定义的权限
         response.setHeader("token",token);
-        response.setHeader("role", USER_ROLE);
+        response.setHeader("role", ADMIN_ROLE);
         response.setHeader("uid", uid + "");
     }
 
