@@ -26,10 +26,16 @@ public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private Boolean result;   //投票最终结果
+    /**
+     * 投票最终结果
+     */
+    private Boolean result;
     private int accept;
     private int total;
-    private boolean status;   //投票是否截止
+    private boolean status;
+    /**
+     * 投票是否截止
+     */
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDate startTime;
     @Column(nullable = false)

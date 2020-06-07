@@ -31,14 +31,27 @@ public class VoteController {
     private ObjectMapper objectMapper;
 
 
-    // 创建一个投票
+
+    /**
+     * 创建一个投票
+     * @param voteVO
+     * @return
+     */
     @PostMapping("/vote")
-    public void addvote(@RequestBody VoteVO voteVO) {
+    public Vote addvote(@RequestBody VoteVO voteVO) {
         log.debug(voteVO.toString());
-        voteService.createVote(voteVO);
+        return voteService.createVote(voteVO);
     }
 
-    // 用户投票
+
+    /**
+     * 用户投票
+     * @param vid
+     * @param uid
+     * @param voteDetail
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/vote/{vid}")
     public Map addpoll(@PathVariable int vid, @RequestAttribute int uid, @RequestBody VoteDetail voteDetail) throws IOException {
         Map map = voteService.poll(vid, uid, voteDetail);
@@ -46,13 +59,21 @@ public class VoteController {
         return map;
     }
 
-    //获取投票详情
+
+    /**
+     * 获取投票详情
+     * @param pid
+     * @param uid
+     * @return
+     */
     @GetMapping("/vote/{pid}/detail")
     public Map getVoteDetail(@PathVariable int pid, @RequestAttribute int uid) {
         Vote vote = paperService.getVoteByPid(pid);
-        if (vote.isStatus()) { //如果投票已经结束
+        if (vote.isStatus()) {
+            //如果投票已经结束
             return voteService.getVotedDetail(vote.getId(), uid);
-        } else { //如果投票未结束
+        } else {
+            //如果投票未结束
             return voteService.getVotingDetail(vote.getId(),uid);
         }
     }
