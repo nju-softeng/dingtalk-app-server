@@ -49,10 +49,11 @@ public class Timer {
                     // todo 钉钉发送消息
                     log.debug("钉钉发送消息");
                     Map map = paperRepository.getPaperInfo(v.getId());
-                    int pid = (int)map.get("id");
-                    String title = map.get("title").toString();
-                    dingTalkUtils.sendVoteResult(pid, title, v.getResult(), v.getAccept(), v.getTotal());
-
+                    if (map.size() != 0) {
+                        int pid = (int)map.get("id");
+                        String title = map.get("title").toString();
+                        dingTalkUtils.sendVoteResult(pid, title, v.getResult(), v.getAccept(), v.getTotal());
+                    }
                 }
             }
         }
