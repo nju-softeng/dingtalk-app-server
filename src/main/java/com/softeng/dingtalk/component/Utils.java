@@ -19,9 +19,13 @@ public class Utils {
 
     public int[] getTimeFlag(LocalDate localDate) {
         LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue()); // 获取本月周日
-        int year = sunday.getYear();        //年
-        int month = sunday.getMonthValue(); //月
-        int week = sunday.getDayOfMonth() / 7 + 1;
+        //年
+        int year = sunday.getYear();
+        //月
+        int month = sunday.getMonthValue();
+        //天
+        int day = sunday.getDayOfMonth();
+        int week = day / 7 + (day % 7 == 0 ? 0 : 1);
 
         int[] result = new int[2];
         result[0] = year * 100 + month;
@@ -31,16 +35,20 @@ public class Utils {
 
     public int getTimeCode(LocalDate localDate) {
         LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue()); // 获取本月周日
-        int year = sunday.getYear();        //年
-        int month = sunday.getMonthValue(); //月
-        int week = sunday.getDayOfMonth() / 7 + 1;
+        //年
+        int year = sunday.getYear();
+        //月
+        int month = sunday.getMonthValue();
+        int day = sunday.getDayOfMonth();
+        int week = day / 7 + (day % 7 == 0 ? 0 : 1);
         return year * 1000 + month * 10 + week;
     }
 
     public String getTimeStr(LocalDate localDate) {
         LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue()); // 获取本月周日
-        int month = sunday.getMonthValue(); //月
-        int week = sunday.getDayOfMonth() / 7 + 1;
+        int month = sunday.getMonthValue();
+        int day = sunday.getDayOfMonth();
+        int week = day / 7 + (day % 7 == 0 ? 0 : 1);
         return month + " 月 第 " + week + " 周";
     }
 
