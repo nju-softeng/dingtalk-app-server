@@ -244,11 +244,11 @@ public class DingTalkUtils {
         request.setChatid(CHAT_ID);
         OapiChatSendRequest.ActionCard actionCard = new OapiChatSendRequest.ActionCard();
 
-        StringBuffer content = new StringBuffer().append(" ## 投票 \n ##### 论文： ").append(title).append(" \n ##### 作者： ");
+        StringBuffer content = new StringBuffer().append(" #### 投票 \n ##### 论文： ").append(title).append(" \n ##### 作者： ");
         for (String name : namelist) {
             content.append(name).append(", ");
         }
-        content.append(" \n 截止时间: ").append(endtime);
+        content.append(" \n 截止时间: ").append(endtime).append("\n > 若移动端无法进入，建议更新钉钉");
 
         StringBuffer pcurl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
                 .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
@@ -256,7 +256,7 @@ public class DingTalkUtils {
 
         log.debug(pcurl.toString());
 
-        actionCard.setTitle("评审投票");
+        actionCard.setTitle("内部评审投票");
         actionCard.setMarkdown(content.toString());
 
 //        actionCard.setBtnOrientation("1");
@@ -271,7 +271,7 @@ public class DingTalkUtils {
 //        btnJsonList.add(btn2);
 //        actionCard.setBtnJsonList(btnJsonList);
 
-        actionCard.setSingleTitle("目前支持PC端");
+        actionCard.setSingleTitle("前往投票");
         actionCard.setSingleUrl(pcurl.toString());
 
         request.setActionCard(actionCard);
