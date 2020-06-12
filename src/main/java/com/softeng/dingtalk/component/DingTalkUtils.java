@@ -248,7 +248,7 @@ public class DingTalkUtils {
         for (String name : namelist) {
             content.append(name).append(", ");
         }
-        content.append(" \n 截止时间: ").append(endtime).append("\n > 若移动端无法进入，建议更新钉钉");
+        content.append(" \n 截止时间: ").append(endtime);
 
         StringBuffer pcurl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
                 .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
