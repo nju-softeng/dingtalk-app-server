@@ -20,17 +20,14 @@ jobs:
     - name: Build Docker image
       run:  docker build -t ${{ secrets.DOCKER_IMAGE }} .
 
-    - name: Tag Docker Image
-      run: |
-        docker login -u=${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} swr.cn-north-4.myhuaweicloud.com
-        docker tag ${{ secrets.DOCKER_IMAGE }} swr.cn-north-4.myhuaweicloud.com/zhanyeye/dingtalk_springboot:${{ github.sha }}
-        docker tag ${{ secrets.DOCKER_IMAGE }} swr.cn-north-4.myhuaweicloud.com/zhanyeye/dingtalk_springboot:latest
-
     - name: Push Docker Image
       run: |
-        docker push swr.cn-north-4.myhuaweicloud.com/zhanyeye/dingtalk_springboot:${{ github.sha }}
-        docker push swr.cn-north-4.myhuaweicloud.com/zhanyeye/dingtalk_springboot:latest
+        docker login -u=${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} swr.cn-north-4.myhuaweicloud.com
+        docker push ${{ secrets.DOCKER_IMAGE }}
 
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
     - name: Pull Docker And Run Container With SSH
       uses: appleboy/ssh-action@master
       with:
@@ -43,7 +40,7 @@ jobs:
           docker login -u=${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} swr.cn-north-4.myhuaweicloud.com
 
           echo "pull docker image"
-          docker pull swr.cn-north-4.myhuaweicloud.com/zhanyeye/dingtalk_springboot:latest
+          docker pull ${{ secrets.DOCKER_IMAGE }}:latest
 
           echo "stop and remove docker old container"
           docker container stop ${{ secrets.DOCKER_CONTAINER }}
