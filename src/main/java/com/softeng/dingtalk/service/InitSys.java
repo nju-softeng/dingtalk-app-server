@@ -16,8 +16,8 @@ public class InitSys implements InitializingBean {
     private InitService initService;
     @Override
     public void afterPropertiesSet() {
-        // TODO Auto-generated method stub
         initService.initPaperLevel();
         initService.initUser();
+        initService.initSubsidyLevel();
     }
 }

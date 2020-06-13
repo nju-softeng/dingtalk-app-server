@@ -19,10 +19,14 @@ import java.util.Set;
  * @create 3/5/2020 5:09 PM
  */
 @Slf4j
-@RestControllerAdvice  //整合@ControllerAdvice & @ResponseBody，直接返回json数据;  @ControllerAdvice，用于统一处理所有controller组件的相关操作
+@RestControllerAdvice
 public class ExceptionController {
 
-    //属性校验失败异常
+    /**
+     * 属性校验失败异常
+     * @param exception
+     * @return
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)  //MethodArgumentNotValidException 校验失败异常
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map handleValidException(MethodArgumentNotValidException exception) {
@@ -38,7 +42,12 @@ public class ExceptionController {
         return Map.of("message", strBuilder.toString());
     }
 
-    //jackson json类型转换异常
+
+    /**
+     * jackson json类型转换异常
+     * @param exception
+     * @return
+     */
     @ExceptionHandler(InvalidFormatException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map handleInvalidFormatException(InvalidFormatException exception) {
@@ -54,7 +63,12 @@ public class ExceptionController {
         return Map.of("message", strBuilder.toString());
     }
 
-    //方法级参数校验失败异常
+
+    /**
+     * 方法级参数校验失败异常
+     * @param exception
+     * @return
+     */
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map handleConstraintViolationException(ConstraintViolationException exception) {

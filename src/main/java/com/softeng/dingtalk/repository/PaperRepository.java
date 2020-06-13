@@ -45,10 +45,6 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
     List<Map<String, Object>> test();
 
 
-    // todo delete
-    @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
-    List<PaperProjection> findPaperBy();
-
     @Modifying
     @Query(value = "update paper set vote_id = :vid where id = :id", nativeQuery = true)
     void updatePaperVote(@Param("id") int id, @Param("vid") int vid);

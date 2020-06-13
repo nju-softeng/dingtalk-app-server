@@ -1,0 +1,34 @@
+name: Production Environment
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'src/**'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'src/**'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      # 拉取镜像速度太慢，不用docker了
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd ~/dingtalk-springboot
+            git pull origin master
+            mvn package
+            cd target/
+            ../stop.sh
+            nohup java -jar dingtalk-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod >/dev/null 2>&1 &
+            exit
+
+
+
