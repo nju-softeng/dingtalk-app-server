@@ -57,5 +57,5 @@ jobs:
           docker container rm ${{ secrets.DOCKER_CONTAINER }}
 
           echo "run new docker container"
-          docker run -d --link mysql  --name ${{ secrets.DOCKER_CONTAINER }}  -e PROFILES="test" ${{ secrets.DOCKER_IMAGE }}
+          docker run -d --net dingtalk-net --name ${{ secrets.DOCKER_CONTAINER }}  -e PROFILES="test" ${{ secrets.DOCKER_IMAGE }}
           docker image prune -f
