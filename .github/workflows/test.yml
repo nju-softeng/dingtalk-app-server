@@ -1,5 +1,4 @@
-name:  Test Environment
-# 触发事件
+name: Test Environment
 on:
   push:
     branches: [ test ]
@@ -23,14 +22,14 @@ jobs:
 
     - name: Tag Docker Image
       run: |
-        docker login -u=${{ secrets.DOCKER_USER }} registry.cn-hongkong.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
-        docker tag ${{ secrets.DOCKER_IMAGE }} registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back:${{ github.sha }}
-        docker tag ${{ secrets.DOCKER_IMAGE }} registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back:latest
+        docker login -u=${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} swr.cn-north-4.myhuaweicloud.com
+        docker tag ${{ secrets.DOCKER_IMAGE }} swr.cn-north-4.myhuaweicloud.com/zhanyeye/dingtalk_springboot:${{ github.sha }}
+        docker tag ${{ secrets.DOCKER_IMAGE }} swr.cn-north-4.myhuaweicloud.com/zhanyeye/dingtalk_springboot:latest
 
     - name: Push Docker Image
       run: |
-        docker push registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back:${{ github.sha }}
-        docker push registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back:latest
+        docker push swr.cn-north-4.myhuaweicloud.com/zhanyeye/dingtalk_springboot:${{ github.sha }}
+        docker push swr.cn-north-4.myhuaweicloud.com/zhanyeye/dingtalk_springboot:latest
 
     - name: Pull Docker And Run Container With SSH
       uses: appleboy/ssh-action@master
@@ -41,15 +40,15 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
           echo "login docker repository"
-          docker login -u=${{ secrets.DOCKER_USER }} registry.cn-hongkong.aliyuncs.com -p ${{ secrets.DOCKER_PASSWORD }}
+          docker login -u=${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} swr.cn-north-4.myhuaweicloud.com
 
           echo "pull docker image"
-          docker pull registry.cn-hongkong.aliyuncs.com/zhanyeye/dingtalk_back
+          docker pull swr.cn-north-4.myhuaweicloud.com/zhanyeye/dingtalk_springboot:latest
 
           echo "stop and remove docker old container"
           docker container stop ${{ secrets.DOCKER_CONTAINER }}
           docker container rm ${{ secrets.DOCKER_CONTAINER }}
 
           echo "run new docker container"
-          docker run -d --net=host  --name ${{ secrets.DOCKER_CONTAINER }}  -e PROFILES="test" ${{ secrets.DOCKER_IMAGE }}
+          docker run -d --link mysql  --name ${{ secrets.DOCKER_CONTAINER }}  -e PROFILES="test" ${{ secrets.DOCKER_IMAGE }}
           docker image prune -f

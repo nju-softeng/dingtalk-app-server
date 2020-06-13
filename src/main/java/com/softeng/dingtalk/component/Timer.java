@@ -37,20 +37,23 @@ public class Timer {
 
     @Scheduled(cron = "0 * * * * ?")
     public void checkVote() {
-        List<Vote> votes = voteService.listUnderwayVote(); //拿到没有结束的投票
+        //拿到没有结束的投票
+        List<Vote> votes = voteService.listUnderwayVote();
         if (votes.size() != 0) {
             LocalTime nowtime = LocalTime.now();
             log.debug("定时器执行：" + nowtime.toString());
             for (Vote v : votes) {
                 if (v.getEndTime().isBefore(nowtime)) {
-                    v = voteService.updateVote(v); //更新
+                    //更新
+                    v = voteService.updateVote(v);
                     // todo 钉钉发送消息
                     log.debug("钉钉发送消息");
                     Map map = paperRepository.getPaperInfo(v.getId());
-                    int pid = (int)map.get("id");
-                    String title = map.get("title").toString();
-                    dingTalkUtils.sendVoteResult(pid, title, v.getResult(), v.getAccept(), v.getTotal());
-
+                    if (map.size() != 0) {
+                        int pid = (int)map.get("id");
+                        String title = map.get("title").toString();
+                        dingTalkUtils.sendVoteResult(pid, title, v.getResult(), v.getAccept(), v.getTotal());
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.softeng.dingtalk.enums.PaperType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,14 +21,27 @@ public class PaperLevel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String title;  // 级别名称
-    private int level;     // 数字代号表示
-    @Column(columnDefinition="DECIMAL(10,3)")
-    private double total;  // 最高可获得的AC
 
-    public PaperLevel(String title, int level, double total) {
+    /**
+     * 级别名称
+     */
+    private String title;
+
+    /**
+     * 论文类别
+     */
+    @Enumerated(EnumType.STRING)
+    private PaperType paperType;
+
+    /**
+     * 最高可获得的AC
+     */
+    @Column(columnDefinition="DECIMAL(10,3)")
+    private double total;
+
+    public PaperLevel(String title, PaperType paperType, double total) {
         this.title = title;
-        this.level = level;
+        this.paperType = paperType;
         this.total = total;
     }
 

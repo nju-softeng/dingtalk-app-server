@@ -80,7 +80,13 @@ public class AuditController {
         return auditService.listCheckedVO(uid, page, 10);
     }
 
-    // 审核人根据时间筛选已经审核的申请
+
+    /**
+     * 审核人根据时间筛选已经审核的申请
+     * @param uid
+     * @param map
+     * @return
+     */
     @PostMapping("/audit/checked/date")
     public List<CheckedVO> listCheckedByDate(@RequestAttribute int uid, @RequestBody Map<String, LocalDate> map) {
         int[] date = utils.getTimeFlag(map.get("date"));

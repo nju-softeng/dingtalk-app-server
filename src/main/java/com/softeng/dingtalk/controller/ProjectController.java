@@ -153,44 +153,6 @@ public class ProjectController {
 
 
 
-//
-//    @PostMapping("/project/dc/{pid}")
-//    public Object getProjectDc(@PathVariable int pid, @RequestBody Map<String, LocalDate> map) {
-//        return projectService.getProjectDc(pid, map.get("finishdate"));
-//    }
-//
-//    @PostMapping("/project/computeac/{pid}")
-//    public Map ComputeProjectAc(@PathVariable int pid, @RequestBody Map<String, LocalDate> map) {
-//        return projectService.ComputeProjectAc(pid, map.get("finishdate"));
-//    }
-//
 
-
-//    // 查询进行中的项目
-//    @GetMapping("/project/unfinish/{aid}")
-//    public List<Project> listUnfinishProjectByAuditor(@PathVariable int aid) {
-//        return projectService.listUnfinishProjectByAuditor(aid);
-//    }
-//
-//
-//    // 查询已经结束的项目
-//    @GetMapping("/project/finish/{aid}")
-//    public List<Project> listfinishProjectByAuditor(@PathVariable int aid) {
-//        return projectService.listfinishProjectByAuditor(aid);
-//    }
-//
-//
-//    // 删除项目
-//    @GetMapping("/project/delete/{id}")
-//    public void deleteProject(@PathVariable int id) {
-//        projectService.delete(id);
-//    }
-//
-//
-//    // 开发者查询自己的项目
-//    @GetMapping("/project/dev")
-//    public List<Project> listDevProject(@RequestAttribute int uid) {
-//        return projectService.listDevProject(uid);
-//    }
 
 }

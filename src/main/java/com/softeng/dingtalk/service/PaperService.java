@@ -44,8 +44,14 @@ public class PaperService {
     NotifyService notifyService;
     @Autowired
     PerformanceService performanceService;
+    @Autowired
+    ReviewRepository reviewRepository;
 
-    // 添加论文记录
+
+    /**
+     * 添加论文记录
+     * @param papervo
+     */
     public void addPaper(PaperVO papervo) {
         Paper paper = new Paper(papervo);
         paperRepository.save(paper);
@@ -56,13 +62,19 @@ public class PaperService {
     }
 
 
-    // 更新论文记录
+    /**
+     * 更新论文记录
+     * @param paperVO
+     */
     public void updatePaper(PaperVO paperVO) {
         Paper paper = paperRepository.findById(paperVO.getId()).get();
-        paper.update(paperVO.getTitle(), paperVO.getJournal(), paperVO.getLevel(), paperVO.getIssueDate());
-        paperRepository.save(paper); //更新
-        paperDetailRepository.deleteByPaper(paper); // 删除paperDetail
-        for (PaperDetail pd : paperVO.getPaperDetails()) { // 重新添加paperDetail
+        paper.update(paperVO.getTitle(), paperVO.getJournal(), paperVO.getPaperType(), paperVO.getIssueDate());
+        //更新
+        paperRepository.save(paper);
+        // 删除paperDetail
+        paperDetailRepository.deleteByPaper(paper);
+        // 重新添加paperDetail
+        for (PaperDetail pd : paperVO.getPaperDetails()) {
             pd.setPaper(paper);
         }
         paperDetailRepository.saveAll(paperVO.getPaperDetails());
@@ -73,7 +85,10 @@ public class PaperService {
     }
 
 
-    // 删除论文
+    /**
+     * 删除论文
+     * @param id
+     */
     public void deletePaper(int id) {
         // paperDetailRepository.deleteByPaperid(id);
         paperDetailRepository.deleteByPaper(new Paper(id));
@@ -81,7 +96,11 @@ public class PaperService {
     }
 
 
-    // 更新论文结果, 并计算ac
+    /**
+     * 更新论文结果, 并计算ac
+     * @param id
+     * @param result
+     */
     public void updateResult(int id, boolean result) {
 
         Paper paper = paperRepository.findById(id).get();
@@ -89,20 +108,23 @@ public class PaperService {
         if (paper.getVote().getResult() == null || paper.getVote().getResult() == false) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
         }
-
-        paper.setResult(result);    //更新指定 论文的结果
+        //更新指定 论文的结果
+        paper.setResult(result);
         paperRepository.save(paper);
 
         // 计算AC
-        double sum = paperLevelRepository.getvalue(paper.getLevel()); //获取论文奖励总AC
+        //获取论文奖励总AC
+        double sum = paperLevelRepository.getvalue(paper.getPaperType());
         String reason = paper.getTitle();
-        if (result == false) { //如果被拒绝则扣分
+        if (result == false) {
+            //如果被拒绝则扣分
             sum *= -0.5;
             reason += " Reject";
         } else {
             reason += " Accept";
         }
-        List<PaperDetail> paperDetails = paperDetailRepository.findByPaper(new Paper(id)); //获取论文参与者
+        //获取论文参与者
+        List<PaperDetail> paperDetails = paperDetailRepository.findByPaper(new Paper(id));
 
         List<AcRecord> oldacRecords = paperDetails.stream().filter(x-> x.getAcRecord() != null).map(x-> x.getAcRecord()).collect(Collectors.toList());
         acRecordRepository.deleteAll(oldacRecords);
@@ -133,10 +155,17 @@ public class PaperService {
     }
 
 
-    // 分页查看论文
+
+
+    /**
+     * 分页查看论文
+     * @param page
+     * @return
+     */
     public Map listPaper(int page) {
         Pageable pageable = PageRequest.of(page, 6, Sort.by("id").descending());
-        Page<Integer> pages = paperRepository.listAllId(pageable); //查询出的分页数据对象id
+        //查询出的分页数据对象id
+        Page<Integer> pages = paperRepository.listAllId(pageable);
         List<Integer> ids = pages.getContent();
         if (ids.size() != 0) {
             return Map.of("content", paperRepository.findAllById(ids), "total", pages.getTotalElements());
@@ -147,7 +176,11 @@ public class PaperService {
     }
 
 
-    // 获取论文的详细信息
+    /**
+     * 获取论文的详细信息
+     * @param id
+     * @return
+     */
     public Paper getPaper(int id) {
         Paper paper = paperRepository.findById(id).get();
         paper.setPaperDetails(paperDetailRepository.findByPaper(paper));
@@ -155,12 +188,58 @@ public class PaperService {
     }
 
 
-    // 获取论文对应的投票
+    /**
+     * 获取论文对应的投票
+     * @param pid
+     * @return
+     */
     public Vote getVoteByPid (int pid) {
         return paperRepository.findVoteById(pid);
     }
 
 
+    /**
+     * 提交论文评审建议
+     * @param review
+     * @param uid
+     * @return
+     */
+    public void submitReview(Review review, int uid) {
+        User user = new User(uid);
+        review.setUser(user);
+        reviewRepository.save(review);
+    }
+
+
+    /**
+     * 查询指定论文的评审意见
+     * @param paperid
+     * @return
+     */
+    public List<Review> listReview(int paperid) {
+        return reviewRepository.findAllByPaperid(paperid, Sort.by("id").descending());
+    }
+
+    /**
+     * 更新评审意见
+     * @param review
+     */
+    public void updateReview(Review review) {
+       reviewRepository.save(review);
+    }
+
+    /**
+     * 删除评审意见
+     * @param id
+     * @param uid
+     */
+    public void deleteReview(int id, int uid) {
+        Review review = reviewRepository.findById(id).get();
+        if (uid != review.getUser().getId()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "无删除权限");
+        }
+        reviewRepository.deleteById(id);
+    }
 
 
 }
