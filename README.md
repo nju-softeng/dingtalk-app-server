@@ -1,7 +1,10 @@
 # dingtalk-springboot
 
-![CI](https://github.com/zhanyeye/dingtalk-springboot/workflows/CI/badge.svg)
+![Production Environment](https://github.com/zhanyeye/dingtalk-springboot/workflows/Production%20Environment/badge.svg)
+![Test Environment](https://github.com/zhanyeye/dingtalk-springboot/workflows/Test%20Environment/badge.svg)
 
+###### 2020.05.23
+测试环境的CD搭建
 
 
 ###### 2020.05.23
