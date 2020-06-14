@@ -1,7 +1,7 @@
 # dingtalk-springboot
 
-![Prod](https://github.com/zhanyeye/dingtalk-springboot/workflows/Prod/badge.svg)
-![Test](https://github.com/zhanyeye/dingtalk-springboot/workflows/Test/badge.svg)
+![Prod](https://github.com/zhanyeye/dingtalk-springboot/workflows/Prod/badge.svg?branch=master)
+![Test](https://github.com/zhanyeye/dingtalk-springboot/workflows/Test/badge.svg?branch=test)
 
 ###### 2020.06.14
 测试环境的CD搭建
