@@ -1,4 +1,4 @@
-name: Test Environment
+name: Test
 on:
   push:
     branches: [ test ]
