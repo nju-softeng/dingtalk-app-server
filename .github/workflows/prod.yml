@@ -1,4 +1,4 @@
-name: Production Environment
+name: Prod
 on:
   push:
     branches: [ master ]
