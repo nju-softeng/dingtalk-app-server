@@ -2,8 +2,12 @@ name: Test Environment
 on:
   push:
     branches: [ test ]
+    paths:
+      - 'src/**'
   pull_request:
     branches: [ test ]
+    paths:
+      - 'src/**'
 
 jobs:
   build:
