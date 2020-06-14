@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,14 +56,13 @@ public class VoteService {
      */
     @CacheEvict(value = "voting", allEntries = true)
     public Vote createVote(VoteVO voteVO) {
-        log.debug("创建新投票，清空缓存");
-        Vote vote = new Vote(voteVO.getEndTime());
+        Vote vote = new Vote(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
         voteRepository.save(vote);
         paperRepository.updatePaperVote(voteVO.getPaperid(), vote.getId());
         // 发送投票信息
         String title = paperRepository.getPaperTitleById(voteVO.getPaperid());
         List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
-        dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), title, vote.getEndTime().toString(), namelist);
+        dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), title, voteVO.getEndTime().toString(), namelist);
         return voteRepository.refresh(vote);
     }
 
@@ -112,17 +108,17 @@ public class VoteService {
      * @return
      */
     public Map poll(int vid, int uid, VoteDetail voteDetail) {
+
         // 收到投票的时间
         LocalDateTime now = LocalDateTime.now();
-        log.debug("now" + now.toString());
-
         Vote vote = voteRepository.findById(vid).get();
 
-        // 投票的截止时间
-        LocalDateTime ddl = LocalDateTime.of(vote.getStartTime(), vote.getEndTime()).plusMinutes(1);
-        log.debug("ddl" + now.toString());
+        Set<Integer> authorids = paperDetailRepository.listAuthorIdByPid(vote.getPid());
+        if (authorids.contains(Integer.valueOf(uid))) {
 
-        if (now.isBefore(ddl)) {
+        }
+
+        if (now.isBefore(vote.getDeadline())) {
             // 标明这一票是谁投的
             voteDetail.setUser(new User(uid));
             voteDetailRepository.save(voteDetail);
