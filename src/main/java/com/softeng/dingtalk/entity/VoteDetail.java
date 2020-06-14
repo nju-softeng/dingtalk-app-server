@@ -17,6 +17,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @NamedEntityGraph(name="voteDetail.graph",attributeNodes={@NamedAttributeNode("acRecord")})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"vote_id", "user_id"})})
 public class VoteDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,12 +25,14 @@ public class VoteDetail {
     private Boolean result;
 
     @JsonIgnoreProperties("voteDetails")
-    @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
+    @ManyToOne(fetch = FetchType.LAZY)
     private Vote vote;
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    // 投票对应的ac值
+    /**
+     * 投票对应的ac值
+     */
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private AcRecord acRecord;
 }
