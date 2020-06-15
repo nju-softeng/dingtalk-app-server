@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author zhanyeye
@@ -17,8 +18,16 @@ import java.util.List;
 @Repository
 public interface PaperDetailRepository extends CustomizedRepository<PaperDetail, Integer> {
     void deleteByPaper(Paper paper);
+
     List<PaperDetail> findByPaper(Paper paper);
 
+    /**
+     * 查询论文的作者id
+     * @param pid 论文id
+     * @return
+     */
+    @Query("select pd.user.id from PaperDetail pd where pd.paper.id = :pid")
+    Set<Integer> listAuthorIdByPid(@Param("pid") int pid);
 
     /**
      * 删除论文记录

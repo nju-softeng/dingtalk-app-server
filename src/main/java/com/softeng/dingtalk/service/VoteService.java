@@ -46,11 +46,14 @@ public class VoteService {
     NotifyService notifyService;
     @Autowired
     PerformanceService performanceService;
+    @Autowired
+    PaperService paperService;
 
 
 
     /**
-     * 创建投票并钉钉发送消息
+     * 创建投票
+     * 钉钉发送消息
      * 同时清空清空未结束投票缓存
      * @param voteVO
      */
@@ -108,27 +111,29 @@ public class VoteService {
      * @return
      */
     public Map poll(int vid, int uid, VoteDetail voteDetail) {
-
         // 收到投票的时间
         LocalDateTime now = LocalDateTime.now();
         Vote vote = voteRepository.findById(vid).get();
 
-        Set<Integer> authorids = paperDetailRepository.listAuthorIdByPid(vote.getPid());
+        // 判断投票人是否为论文作者
+        Set<Integer> authorids = paperService.listAuthorid(vote.getPid());
         if (authorids.contains(Integer.valueOf(uid))) {
-
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "论文作者不能参与投票！");
         }
 
+
         if (now.isBefore(vote.getDeadline())) {
-            // 标明这一票是谁投的
-            voteDetail.setUser(new User(uid));
+            // 投票未截止
             voteDetailRepository.save(voteDetail);
         } else {
+            // 投票已截止
             throw new ResponseStatusException(HttpStatus.CONFLICT, "投票已经截止！");
         }
 
         // 返回当前的投票结果
         List<String> acceptlist =  voteDetailRepository.listAcceptNamelist(vid);
         List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
+        
         // accept 票数
         int accept = acceptlist.size();
         // reject 票数
@@ -173,7 +178,7 @@ public class VoteService {
      * @return
      */
     public Map getVotedDetail(int vid, int uid) {
-        List<String> acceptlist =  voteDetailRepository.listAcceptNamelist(vid);
+        List<String> acceptlist = voteDetailRepository.listAcceptNamelist(vid);
         List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
         // accept 票数
         int accept = acceptlist.size();
