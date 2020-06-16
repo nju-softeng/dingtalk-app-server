@@ -30,26 +30,42 @@ public class Vote {
      * 投票最终结果
      */
     private Boolean result;
+    /**
+     * 支持人数
+     */
     private int accept;
+    /**
+     * 总投票人数
+     */
     private int total;
     /**
      * 投票是否截止
      */
     private boolean status;
     /**
-     * 投票是否截止
+     * 投票截止时间
      */
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
-    private LocalDate startTime;
-    @Column(nullable = false)
-    private LocalTime endTime;
+    private LocalDateTime createTime;
+    /**
+     * 投票截止时间
+     */
+    //@Column(nullable = false)
+    private LocalDateTime deadline;
+
+    /**
+     * 投票对应的论文id
+     */
+    private int pid;
 
     @JsonIgnoreProperties("vote")
     @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)
     private List<VoteDetail> voteDetails;
 
-    public Vote(LocalTime endTime) {
-        this.endTime = endTime;
+
+    public Vote(LocalDateTime deadline, int pid) {
+        this.deadline = deadline;
+        this.pid = pid;
     }
 
 }

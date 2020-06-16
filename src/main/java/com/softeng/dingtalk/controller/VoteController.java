@@ -54,6 +54,8 @@ public class VoteController {
      */
     @PostMapping("/vote/{vid}")
     public Map addpoll(@PathVariable int vid, @RequestAttribute int uid, @RequestBody VoteDetail voteDetail) throws IOException {
+        // 标明这一票是谁投的
+        voteDetail.setUser(new User(uid));
         Map map = voteService.poll(vid, uid, voteDetail);
         WebSocketController.sendInfo(objectMapper.writeValueAsString(map));
         return map;
