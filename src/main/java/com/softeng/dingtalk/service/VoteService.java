@@ -133,7 +133,7 @@ public class VoteService {
         // 返回当前的投票结果
         List<String> acceptlist =  voteDetailRepository.listAcceptNamelist(vid);
         List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
-        
+
         // accept 票数
         int accept = acceptlist.size();
         // reject 票数
