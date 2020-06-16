@@ -7,6 +7,8 @@ import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -66,6 +69,7 @@ public class PaperService {
      * 更新论文记录
      * @param paperVO
      */
+    @CacheEvict(value =  "authors_id" , key = "#paperVO.id")
     public void updatePaper(PaperVO paperVO) {
         Paper paper = paperRepository.findById(paperVO.getId()).get();
         paper.update(paperVO.getTitle(), paperVO.getJournal(), paperVO.getPaperType(), paperVO.getIssueDate());
@@ -240,6 +244,19 @@ public class PaperService {
         }
         reviewRepository.deleteById(id);
     }
+
+
+    /**
+     * 查询指定论文的作者id
+     * 缓存查询的结果
+     * @param pid
+     * @return
+     */
+    @Cacheable(value = "authors_id", key = "#pid")
+    public Set<Integer> listAuthorid(int pid) {
+        return paperDetailRepository.listAuthorIdByPid(pid);
+    }
+
 
 
 }
