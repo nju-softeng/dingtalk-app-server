@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +41,10 @@ public class Timer {
         //拿到没有结束的投票
         List<Vote> votes = voteService.listUnderwayVote();
         if (votes.size() != 0) {
-            LocalTime nowtime = LocalTime.now();
-            log.debug("定时器执行：" + nowtime.toString());
+            LocalDateTime now = LocalDateTime.now();
+            log.debug("定时器执行：" + now.toString());
             for (Vote v : votes) {
-                if (v.getEndTime().isBefore(nowtime)) {
+                if (v.getDeadline().isBefore(now)) {
                     //更新
                     v = voteService.updateVote(v);
                     // todo 钉钉发送消息

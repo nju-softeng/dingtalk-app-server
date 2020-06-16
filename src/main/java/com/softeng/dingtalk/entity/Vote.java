@@ -45,7 +45,12 @@ public class Vote {
     /**
      * 投票截止时间
      */
-    @Column(nullable = false)
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    private LocalDateTime createTime;
+    /**
+     * 投票截止时间
+     */
+    //@Column(nullable = false)
     private LocalDateTime deadline;
 
     /**
