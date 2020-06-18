@@ -18,14 +18,20 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 @Slf4j
 @Component
-@ServerEndpoint("/websocket")
+@ServerEndpoint("/wsapi")
 public class WebSocketController {
 
-    // 静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
+    /**
+     * 静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
+     */
     private static int onlineCount = 0;
-    // concurrent包的线程安全Set，用来存放每个客户端对应的WebSocketController对象。
+    /**
+     * concurrent包的线程安全Set，用来存放每个客户端对应的WebSocketController对象。
+     */
     private static CopyOnWriteArraySet<WebSocketController> webSocketSet = new CopyOnWriteArraySet<WebSocketController>();
-    // 与某个客户端的连接会话，需要通过它来给客户端发送数据
+    /**
+     * 与某个客户端的连接会话，需要通过它来给客户端发送数据
+     */
     private Session session;
 
     /**
@@ -36,16 +42,20 @@ public class WebSocketController {
      **/
     @OnOpen
     public void onOpen(Session session) {
+        //加入set中
         this.session = session;
-        webSocketSet.add(this);  //加入set中
-        addOnlineCount(); //添加在线人数
+        webSocketSet.add(this);
+        //添加在线人数
+        addOnlineCount();
         log.info("新连接接入。当前在线人数为："+getOnlineCount());
     }
 
     @OnClose
     public void onClose() {
-        webSocketSet.remove(this); //从set中删除
-        subOnlineCount(); //在线数减1
+        //从set中删除
+        webSocketSet.remove(this);
+        //在线数减1
+        subOnlineCount();
         log.info("有连接关闭。当前在线人数为："+getOnlineCount());
     }
 
