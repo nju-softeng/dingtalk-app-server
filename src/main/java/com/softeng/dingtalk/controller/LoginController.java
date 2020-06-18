@@ -39,22 +39,22 @@ public class LoginController {
     @Autowired
     SystemService systemService;
 
-//    /**
-//     * 开发环境下登陆
-//     * @param uid
-//     * @param response
-//     */
-//    @GetMapping("/login_test/{uid}")
-//    public void testlogin(@PathVariable int uid, HttpServletResponse response) {
-//        log.debug("测试登陆" + uid);
-//        Map map = Map.of("uid", uid, "authorityid", User.NORMAL_AUTHORITY);
-//        // 生成加密token
-//        String token = encryptorComponent.encrypt(map);
-//        // 在header创建自定义的权限
-//        response.setHeader("token",token);
-//        response.setHeader("role", ADMIN_ROLE);
-//        response.setHeader("uid", uid + "");
-//    }
+    /**
+     * 开发环境下登陆
+     * @param uid
+     * @param response
+     */
+    @GetMapping("/login_test/{uid}")
+    public void testlogin(@PathVariable int uid, HttpServletResponse response) {
+        log.debug("测试登陆" + uid);
+        Map map = Map.of("uid", uid, "authorityid", User.NORMAL_AUTHORITY);
+        // 生成加密token
+        String token = encryptorComponent.encrypt(map);
+        // 在header创建自定义的权限
+        response.setHeader("token",token);
+        response.setHeader("role", ADMIN_ROLE);
+        response.setHeader("uid", uid + "");
+    }
 
     /**
      * @description 用户登录

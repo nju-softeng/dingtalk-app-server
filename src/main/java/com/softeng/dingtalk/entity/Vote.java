@@ -50,7 +50,7 @@ public class Vote {
     /**
      * 投票截止时间
      */
-    //@Column(nullable = false)
+    @Column(nullable = false)
     private LocalDateTime deadline;
 
     /**
