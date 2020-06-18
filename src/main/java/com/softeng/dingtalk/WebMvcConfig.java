@@ -25,10 +25,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/login")
                 .excludePathPatterns("/api/login_test/**")
                 .excludePathPatterns("/websocket");
-        //todo 添加测试用登陆白名单
     }
 
-    //webSocket
+    /**
+     * webSocket
+     * @return
+     */
     @Bean
     public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
