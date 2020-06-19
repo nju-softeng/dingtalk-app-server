@@ -66,14 +66,26 @@ public class DingTalkUtils {
         DOMAIN = domain;
     }
 
-
-
-    private static final long cacheTime = 1000 * 60 * 55 * 2; //缓存时间 1小时 50分钟
-
-    private static String accessToken;  //缓存的accessToken: 不可直接调用，以防过期
-    private static long tokenTime;      //缓存时间
-    private static String jsapiTicket;  //缓存的accessToken jsapi_ticket: 不可直接调用，以防过期
-    private static long ticketTime;     //缓存时间
+    /**
+     * 缓存时间 1小时 50分钟
+     */
+    private static final long cacheTime = 1000 * 60 * 55 * 2;
+    /**
+     * 缓存的accessToken: 不可直接调用，以防过期
+     */
+    private static String accessToken;
+    /**
+     * 缓存时间
+     */
+    private static long tokenTime;
+    /**
+     * 缓存的accessToken jsapi_ticket: 不可直接调用，以防过期
+     */
+    private static String jsapiTicket;
+    /**
+     * 缓存时间
+     */
+    private static long ticketTime;
 
 
     /**
@@ -147,7 +159,12 @@ public class DingTalkUtils {
         return userId;
     }
 
-    // 根据 userid 获取用户详细信息
+
+    /**
+     * 根据 userid 获取用户详细信息
+     * @param userid
+     * @return
+     */
     public OapiUserGetResponse fetchUserDetail(String userid) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/get");
         OapiUserGetRequest request = new OapiUserGetRequest();
@@ -163,7 +180,13 @@ public class DingTalkUtils {
         return response;
     }
 
-    // 获取周报信息
+
+    /**
+     * 获取周报信息
+     * @param userid
+     * @param date
+     * @return
+     */
     public Map getReport(String userid, LocalDate date) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
         OapiReportListRequest request = new OapiReportListRequest();
@@ -190,7 +213,10 @@ public class DingTalkUtils {
     }
 
 
-    // 获取部门id
+    /**
+     * 获取部门id
+     * @return
+     */
     public List<String> listDepid() {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/department/list");
         OapiDepartmentListRequest request = new OapiDepartmentListRequest();
@@ -205,7 +231,10 @@ public class DingTalkUtils {
     }
 
 
-    // 查询所有部门信息
+    /**
+     * 查询所有部门信息
+     * @return
+     */
     public List<OapiDepartmentListResponse.Department> fetchDeptInfo() {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/department/list");
         OapiDepartmentListRequest request = new OapiDepartmentListRequest();
@@ -220,7 +249,11 @@ public class DingTalkUtils {
     }
 
 
-    //获取整个部门的userid
+    /**
+     * 获取整个部门的userid
+     * @param depid
+     * @return
+     */
     public List<String> listUserId(String depid) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/getDeptMember");
         OapiUserGetDeptMemberRequest req = new OapiUserGetDeptMemberRequest();
@@ -237,7 +270,13 @@ public class DingTalkUtils {
     }
 
 
-    // 发起投票时向群中发送消息
+    /**
+     * 发起投票时向群中发送消息
+     * @param pid
+     * @param title
+     * @param endtime
+     * @param namelist
+     */
     public void sendVoteMsg(int pid, String title, String endtime, List<String> namelist) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
         OapiChatSendRequest request = new OapiChatSendRequest();
@@ -286,7 +325,14 @@ public class DingTalkUtils {
     }
 
 
-    // 发送投票结果
+    /**
+     * 发送投票结果
+     * @param pid
+     * @param title
+     * @param result
+     * @param accept
+     * @param total
+     */
     public void sendVoteResult(int pid, String title, boolean result, int accept, int total) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
         OapiChatSendRequest request = new OapiChatSendRequest();
