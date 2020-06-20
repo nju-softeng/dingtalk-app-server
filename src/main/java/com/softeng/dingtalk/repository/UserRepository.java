@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author zhanyeye
@@ -19,6 +20,14 @@ import java.util.Map;
  */
 @Repository
 public interface UserRepository extends CustomizedRepository<User, Integer>, JpaSpecificationExecutor<User> {
+
+    /**
+     * 查询职位不是待定的所有用户id
+     * 目前可以理解为查询所有学生的id
+     * @return
+     */
+    @Query(value = "SELECT id FROM `user` WHERE position != '待定'", nativeQuery = true)
+    Set<Integer> listStudentId();
 
 
     /**
@@ -94,6 +103,12 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     @Query("update User set stuNum = :stunum, position = :position, authority = :authority where id = :uid")
     void updateUserInfo(@Param("uid") int uid,@Param("stunum") String stuName, @Param("position") Position position , @Param("authority") int authority);
 
-
+    /**
+     * 通过id集合去查询用户名集合
+     * @param ids
+     * @return
+     */
+    @Query("select u.name from User u where u.id in :ids")
+    Set<String> listNameByids(Set<Integer> ids);
 
 }
