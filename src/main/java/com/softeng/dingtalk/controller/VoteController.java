@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -71,7 +72,7 @@ public class VoteController {
     @GetMapping("/vote/{pid}/detail")
     public Map getVoteDetail(@PathVariable int pid, @RequestAttribute int uid) {
         Vote vote = paperService.getVoteByPid(pid);
-        if (vote.isStatus()) {
+        if (vote.getDeadline().isBefore(LocalDateTime.now())) {
             //如果投票已经结束
             return voteService.getVotedDetail(vote.getId(), uid);
         } else {
