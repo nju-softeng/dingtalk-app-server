@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author zhanyeye
@@ -15,6 +16,14 @@ import java.util.List;
  */
 @Repository
 public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, Integer> {
+
+    /**
+     * 查询参与制定投票的用户id
+     * @param vid
+     * @return
+     */
+    @Query("select vd.user.id from VoteDetail vd where vd.vote.id = :vid")
+    Set<Integer> findVoteUserid(@Param("vid") int vid);
 
     @Query(value = "select count(id) from vote_detail where vote_id = :vid and result = true", nativeQuery = true)
     Integer getAcceptCnt(@Param("vid") int vid);
