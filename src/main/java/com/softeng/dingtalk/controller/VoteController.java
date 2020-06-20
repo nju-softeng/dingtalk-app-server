@@ -74,7 +74,7 @@ public class VoteController {
         Vote vote = paperService.getVoteByPid(pid);
         if (vote.getDeadline().isBefore(LocalDateTime.now())) {
             //如果投票已经结束
-            return voteService.getVotedDetail(vote.getId(), uid);
+            return voteService.getVotedDetail(vote.getId(), pid, uid);
         } else {
             //如果投票未结束
             return voteService.getVotingDetail(vote.getId(),uid);
