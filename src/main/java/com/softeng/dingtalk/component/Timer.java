@@ -47,7 +47,6 @@ public class Timer {
                 if (v.getDeadline().isBefore(now)) {
                     //更新
                     v = voteService.updateVote(v);
-                    // todo 钉钉发送消息
                     log.debug("钉钉发送消息");
                     Map map = paperRepository.getPaperInfo(v.getId());
                     if (map.size() != 0) {
