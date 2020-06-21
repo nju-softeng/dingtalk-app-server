@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.softeng.dingtalk.vo.VoteVO;
 import lombok.Getter;
@@ -50,6 +51,7 @@ public class Vote {
     /**
      * 投票截止时间
      */
+    @JsonFormat
     @Column(nullable = false)
     private LocalDateTime deadline;
 
