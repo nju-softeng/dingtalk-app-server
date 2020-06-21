@@ -1,7 +1,6 @@
 FROM lpicanco/java11-alpine
 MAINTAINER zhanyeye zhanyeye@qq.com
 WORKDIR /ROOT
-RUN echo "Asia/Shanghai" > /etc/timezone
 ADD ./target/dingtalk-0.0.1-SNAPSHOT.jar /ROOT/
 ENV PROFILES="prod"
 EXPOSE 8080
