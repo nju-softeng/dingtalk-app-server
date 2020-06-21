@@ -212,6 +212,8 @@ public class PaperService {
         User user = new User(uid);
         review.setUser(user);
         reviewRepository.save(review);
+        reviewRepository.refresh(review);
+        log.debug(review.getUpdateTime().toString());
     }
 
 
