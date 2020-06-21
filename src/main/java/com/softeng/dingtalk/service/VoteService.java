@@ -48,6 +48,8 @@ public class VoteService {
     PerformanceService performanceService;
     @Autowired
     PaperService paperService;
+    @Autowired
+    UserRepository userRepository;
 
 
 
@@ -180,7 +182,7 @@ public class VoteService {
      * @param uid
      * @return
      */
-    public Map getVotedDetail(int vid, int uid) {
+    public Map getVotedDetail(int vid, int pid, int uid) {
         List<String> acceptlist = voteDetailRepository.listAcceptNamelist(vid);
         List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
         // accept 票数
@@ -191,10 +193,24 @@ public class VoteService {
         int total = accept + reject;
         // 用户本人的投票情况：accept, reject, 未参与(null)
         Boolean myresult = voteDetailRepository.getVoteDetail(vid, uid);
+
+        // 未投票人员名单
+        // 1. 查询所有不是待定用户的id 和 已经投票的用户的id
+        Set<Integer> totalIds = userRepository.listStudentId();
+        Set<Integer> votedIds = voteDetailRepository.findVoteUserid(vid);
+        Set<Integer> authorids = paperService.listAuthorid(pid);
+        // 2. 减去所有投票用户和论文作者的id
+        totalIds.removeAll(votedIds);
+        totalIds.removeAll(authorids);
+        Set<String> names = userRepository.listNameByids(totalIds);
+        // 3. 通过为投票用户id集合去查询用户姓名
+
+
+
         if (myresult == null) {
-            return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist);
+            return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", names);
         } else {
-            return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist);
+            return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", names);
         }
 
     }

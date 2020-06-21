@@ -56,5 +56,5 @@ jobs:
             docker container stop ${{ secrets.DOCKER_CONTAINER }}
             docker container rm ${{ secrets.DOCKER_CONTAINER }}
             echo "run new docker container"
-            docker run -d --net dingtalk-net --name ${{ secrets.DOCKER_CONTAINER }}  -e PROFILES="test" ${{ secrets.DOCKER_IMAGE }}
+            docker run -d --net dingtalk-net --name ${{ secrets.DOCKER_CONTAINER }} -v /etc/localtime:/etc/localtime -e PROFILES="test" ${{ secrets.DOCKER_IMAGE }}
             docker image prune -f

@@ -4,17 +4,46 @@ on:
     branches: [ master ]
     paths:
       - 'src/**'
+      - '.github/workflows/**'
   pull_request:
     branches: [ master ]
     paths:
       - 'src/**'
+      - '.github/workflows/**'
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      # 拉取镜像速度太慢，不用docker了
-      - name: executing remote ssh commands using ssh key
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ hashFiles('**/pom.xml') }}
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Build Docker image
+        run:  docker build -t ${{ secrets.DOCKER_IMAGE }} .
+
+
+      - name: Push Docker Image
+        run: |
+          docker login -u=${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} swr.cn-north-4.myhuaweicloud.com
+          docker push ${{ secrets.DOCKER_IMAGE }}
+          
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull Docker And Run Container With SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PROD_HOST }}
@@ -22,13 +51,13 @@ jobs:
           key: ${{ secrets.PROD_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ~/dingtalk-springboot
-            git pull origin master
-            mvn package
-            cd target/
-            ../stop.sh
-            nohup java -jar dingtalk-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod >/dev/null 2>&1 &
-            exit
-
-
-
+            echo "login docker repository"
+            docker login -u=${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} swr.cn-north-4.myhuaweicloud.com
+            echo "pull docker image"
+            docker pull ${{ secrets.DOCKER_IMAGE }}:latest
+            echo "stop and remove docker old container"
+            docker container stop ${{ secrets.DOCKER_CONTAINER }}
+            docker container rm ${{ secrets.DOCKER_CONTAINER }}
+            echo "run new docker container"
+            docker run -d --net dingtalk-net --name ${{ secrets.DOCKER_CONTAINER }} -v /etc/localtime:/etc/localtime -e PROFILES="prod" ${{ secrets.DOCKER_IMAGE }}
+            docker image prune -f
