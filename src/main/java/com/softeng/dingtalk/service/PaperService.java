@@ -230,6 +230,7 @@ public class PaperService {
      */
     public void updateReview(Review review) {
        reviewRepository.save(review);
+       log.debug(review.getUpdateTime().toString());
     }
 
     /**
