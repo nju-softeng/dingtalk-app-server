@@ -28,7 +28,6 @@ public class UserService {
     private DingTalkUtils dingTalkUtils;
 
 
-
     /**
      * 查询系统可用用户
      * @return
