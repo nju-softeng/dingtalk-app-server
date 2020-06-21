@@ -5,11 +5,13 @@ on:
     paths:
       - 'src/**'
       - '.github/workflows/**'
+      - 'Dockerfile'
   pull_request:
     branches: [ master ]
     paths:
       - 'src/**'
       - '.github/workflows/**'
+      - 'Dockerfile'
 
 jobs:
   build:
