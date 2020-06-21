@@ -23,7 +23,7 @@ jobs:
           key: ${{ secrets.PROD_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ~/dingtalk_springboot/
+            cd ~/dingtalk-springboot/
             git pull origin master
             mvn package
             docker build -t dingtalk_springboot .
