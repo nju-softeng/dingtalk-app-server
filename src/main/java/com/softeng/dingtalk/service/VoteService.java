@@ -60,6 +60,9 @@ public class VoteService {
     @CacheEvict(value = "voting", allEntries = true)
     public Vote createVote(VoteVO voteVO) {
         Vote vote = new Vote(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
+        log.debug(LocalDate.now().toString());
+        log.debug(voteVO.getEndTime().toString());
+        log.debug(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()).toString());
         voteRepository.save(vote);
         paperRepository.updatePaperVote(voteVO.getPaperid(), vote.getId());
         // 发送投票信息
