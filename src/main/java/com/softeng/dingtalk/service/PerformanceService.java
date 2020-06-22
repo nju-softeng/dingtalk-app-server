@@ -62,8 +62,12 @@ public class PerformanceService {
      * @param topup
      */
     public void updateTopup(int uid, int yearmonth, double topup) {
-
-
+        DcSummary dcSummary = dcSummaryRepository.getDcSummary(uid, yearmonth);
+        if (dcSummary == null) {
+            dcSummary = new DcSummary(uid, yearmonth);
+        }
+        dcSummary.setTotal(topup);
+        dcSummaryRepository.save(dcSummary);
     }
 
 
