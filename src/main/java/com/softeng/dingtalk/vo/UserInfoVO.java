@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.vo;
 
+import com.softeng.dingtalk.enums.Position;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class UserInfoVO {
-    private int id;
     private String name;
-    private List<String> dept;
+    private String avatar;
+    private Position position;
+    private String stuNum;
 }

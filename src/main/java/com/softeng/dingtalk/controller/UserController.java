@@ -4,6 +4,7 @@ import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.Message;
 import com.softeng.dingtalk.service.NotifyService;
 import com.softeng.dingtalk.service.UserService;
+import com.softeng.dingtalk.vo.UserInfoVO;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,8 +105,14 @@ public class UserController {
      * @return
      */
     @GetMapping("/user/detail")
-    public Map getUserDetail(@RequestAttribute int uid){
+    public UserInfoVO getUserDetail(@RequestAttribute int uid){
         return userService.getUserDetail(uid);
+    }
+
+
+    @PostMapping("/user/update")
+    public void updateUserInfo(@RequestBody UserInfoVO userInfoVO, @RequestAttribute int uid) {
+        userService.updateUserInfo(userInfoVO, uid);
     }
 
 

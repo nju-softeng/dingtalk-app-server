@@ -4,6 +4,7 @@ import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.vo.UserInfoVO;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,9 +99,17 @@ public class UserService {
      * @param uid
      * @return
      */
-    public Map getUserDetail(int uid) {
+    public UserInfoVO getUserDetail(int uid) {
         User u = userRepository.findById(uid).get();
-        return Map.of("name", u.getName(), "avatar", u.getAvatar(), "position",u.getPosition());
+        return new UserInfoVO(u.getName(), u.getAvatar(), u.getPosition(), u.getStuNum());
+    }
+
+
+    public void updateUserInfo(UserInfoVO userInfoVO, int uid) {
+        User u = userRepository.findById(uid).get();
+        u.setStuNum(userInfoVO.getStuNum());
+        u.setName(userInfoVO.getName());
+        userRepository.save(u);
     }
 
 
