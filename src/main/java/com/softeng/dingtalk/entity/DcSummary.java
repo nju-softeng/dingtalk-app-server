@@ -86,4 +86,9 @@ public class DcSummary {
         this.user = user;
     }
 
+    public DcSummary(int uid, int yearmonth) {
+        this.yearmonth = yearmonth;
+        this.user = new User(uid);
+    }
+
 }
