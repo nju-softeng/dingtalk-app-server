@@ -17,32 +17,70 @@ import java.util.Map;
 @Repository
 public interface DcSummaryRepository extends CustomizedRepository<DcSummary, Integer> {
 
-    // 获取用户指定月份的 dcSummary
+    /**
+     * 获取用户指定月份的 dcSummary
+     * @param uid
+     * @param yearmonth
+     * @return
+     */
     @Query("select  d from DcSummary d where d.user.id = :uid and d.yearmonth = :yearmonth")
     DcSummary getDcSummary(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
 
-
-    // 获取指定月份所有用户的绩效汇总
+    /**
+     * 获取指定月份所有用户的绩效汇总
+     * @param yearmonth
+     * @return
+     */
     @Query(value = "SELECT u.id, d.yearmonth,  u.name, d.salary, d.week1, d.week2, d.week3, d.week4, d.week5,d.ac, d.total as total,d.topup FROM user u LEFT JOIN dc_summary d ON u.id = d.user_id AND d.yearmonth = :yearmonth ORDER BY total DESC",nativeQuery = true)
     List<Map<String, Object>> listDcSummary(@Param("yearmonth") int yearmonth);
 
-
-    // 获取指定月份的 总dc
+    /**
+     * 获取指定月份的 总dc
+     * @param uid
+     * @param yearmonth
+     * @return
+     */
     @Query(value = "select ifnull((select total from dc_summary where user_id = :uid and yearmonth = :yearmonth), 0)", nativeQuery = true)
     Double getDcTotal(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
 
-
-    // 获取dc排名
+    /**
+     * 获取dc排名
+     * @param uid
+     * @param yearmonth
+     * @return
+     */
     @Query(value = "SELECT count(id) + 1 FROM dc_summary WHERE yearmonth = :yearmonth AND total > (SELECT IFNULL((SELECT total FROM dc_summary WHERE user_id = :uid and yearmonth = :yearmonth),0))", nativeQuery = true)
     int getRank(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
 
-
-    // 更新助研金
+    /**
+     * 更新助研金
+     * @param uid
+     * @param ac
+     * @param topup
+     * @param salary
+     */
     @Modifying
     @Query(value = "update DcSummary d set d.ac = :ac, d.topup = :topup, d.salary = :salary where d.user.id = :uid")
     void updateSalary(@Param("uid") int uid,@Param("ac") double ac, @Param("topup") double topup, @Param("salary") double salary);
 
-
+    /**
+     * 查询用户制定月的各周dc
+     * @param uid
+     * @param yearmonth
+     * @return
+     */
     DcSummary findByUserIdAndYearmonth(int uid, int yearmonth);
+
+    /**
+     * 查询用户指定月份的 topup
+     * @param uid
+     * @param yearmonth
+     * @return
+     */
+    @Query(value = "select ifnull((select topup from dc_summary where user_id = :uid and yearmonth = :yearmonth), 0)", nativeQuery = true)
+    Double findTopup(int uid, int yearmonth);
+
+
+
 
 }

@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @create 1/29/2020 2:36 PM
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
 public class PerformanceServiceTest {
     @Autowired
@@ -22,7 +22,8 @@ public class PerformanceServiceTest {
 
     @Test
     public void test() {
-        dcSummaryRepository.listDcSummary(202001);
+        Double d =  dcSummaryRepository.findTopup(1, 202006);
+        log.debug(d.toString());
     }
 
 }
