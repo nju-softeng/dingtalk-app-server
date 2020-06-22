@@ -46,13 +46,24 @@ public class PerformanceService {
         // 获取到目前为止用户的AC总和
         double ac = acRecordRepository.getUserAcByDate(uid, yearmonth);
         // 获取用户的 Topup
-        double topup = topupRepository.getByUserid(uid);
+        double topup = dcSummaryRepository.findTopup(uid, yearmonth);
         Position position = userRepository.getUserPosition(uid);
         double base = systemService.getSubsidy(position);
         log.debug("base subsidy : " + base);
         double salary = Math.round(base * dc * (1 + (ac/50)) + topup);
         dcSummaryRepository.updateSalary(uid, ac, topup, salary);
         log.debug(salary + "");
+    }
+
+    /**
+     * 更新指定用户指定月份的topup
+     * @param uid
+     * @param yearmonth
+     * @param topup
+     */
+    public void updateTopup(int uid, int yearmonth, double topup) {
+
+
     }
 
 
