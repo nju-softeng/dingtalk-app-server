@@ -40,8 +40,12 @@ public class ApplicationService {
     @Autowired
     Utils utils;
 
-
-    // 添加 / 更新 申请
+    /**
+     * 添加 / 更新 申请
+     * @param vo
+     * @param uid
+     * @return
+     */
     public DcRecord submitApplication(ApplyVO vo, int uid) {
         // 获取申请时间的时间标志, 数组大小为2, result[0]: yearmonth, result[1] week
         int[] result = utils.getTimeFlag(vo.getDate());
@@ -70,7 +74,8 @@ public class ApplicationService {
             res = dcRecordRepository.save(dc);
             // 强制存入数据库
             dcRecordRepository.flush();
-            acItemRepository.deleteByDcRecord(dc);  //删除之前的记录
+            //删除之前的记录
+            acItemRepository.deleteByDcRecord(dc);
             for (AcItem acItem : vo.getAcItems()) {
                 acItem.setDcRecord(dc);
             }
@@ -82,11 +87,15 @@ public class ApplicationService {
     }
 
 
-
-    // 分页获取提交过的申请
+    /**
+     * 分页获取提交过的申请
+     * @param uid
+     * @param page
+     * @return
+     */
     public Map listDcRecord(int uid, int page) {
-        // todo 排序！！！！
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending()); // 分页获取id,因为jpa分页是在内存中进行的，避免性能问题
+        // 分页获取id,因为jpa分页是在内存中进行的，避免性能问题
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
         List<Integer> ids = dcRecordRepository.listIdByUid(uid, pageable);
         if (ids.size() != 0) {
             return Map.of("list", dcRecordRepository.findAllById(ids), "total", dcRecordRepository.getCountByUid(uid));
@@ -96,20 +105,16 @@ public class ApplicationService {
     }
 
 
-    // 获取指定用户的申请 ->  用于查看申请历史
-    public Map getDcRecord(int uid, int page) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending()); //分页对象，每页10个
-        List<AppliedVO> appliedVOS =  dcRecordRepository.listByUid(uid, pageable);
-        int amount = dcRecordRepository.getCountByUid(uid);
-        return  Map.of("dcRecords", appliedVOS, "amount", amount);
-    }
-
-
-    // 每周1个用户只能向同一审核人提交一个申请，判断数据库中是否已存在
+    /**
+     * 用户每周只能向同一审核人提交一个申请，判断数据库中是否已存在
+     * @param uid
+     * @param aid
+     * @param yearmonth
+     * @param week
+     * @return
+     */
     public boolean isExist(int uid, int aid, int yearmonth, int week) {
         return dcRecordRepository.isExist(uid, aid, yearmonth, week) != 0 ? true : false;
     }
-
-
 
 }

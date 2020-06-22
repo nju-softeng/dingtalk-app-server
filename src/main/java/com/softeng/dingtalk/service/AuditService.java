@@ -45,16 +45,21 @@ public class AuditService {
     NotifyService notifyService;
 
 
-    // 审核人提交或更新绩效申请
+    /**
+     * 审核人提交或更新绩效申请
+     * @param checkVO
+     * @return
+     */
     public DcRecord submitAudit(CheckVO checkVO) {
         DcRecord dc = dcRecordRepository.findById(checkVO.getId()).get();
         if (dc.isStatus()) {
-            // status为真，表示此次提交为更新 -> 删除旧的AcItems， 同时级联删除相关AcRecord
+            // status为真，表示之前审核过，此次提交为更新 -> 删除旧的AcItems， 同时级联删除相关AcRecord
             acItemRepository.deleteByDcRecord(dc);
         }
         // 更新 cvalue, dc, ac
         dc.update(checkVO.getCvalue(), checkVO.getDc(), checkVO.getAc());
-        dcRecordRepository.save(dc); // 持久化新的 dcRecord
+        // 持久化新的 dcRecord
+        dcRecordRepository.save(dc);
         for (AcItem acItem : checkVO.getAcItems()) {
             // 前端传来的没有dcRecord属性, 手动添加
             acItem.setDcRecord(dc);
@@ -69,7 +74,10 @@ public class AuditService {
     }
 
 
-    //更新DcSummary数据
+    /**
+     * 更新DcSummary数据
+     * @param dc
+     */
     public void updateDcSummary(DcRecord dc) {
         log.debug("update DcSummary" + dc.getId());
         Double dcSum = dcRecordRepository.getUserWeekTotalDc(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
@@ -79,12 +87,20 @@ public class AuditService {
         }
         dcSummary.updateWeek(dc.getWeek(), dcSum);
         dcSummaryRepository.save(dcSummary);
-        notifyService.updateDcMessage(dc);  // 发送消息
-        performanceService.computeSalary(dc.getApplicant().getId(), dc.getYearmonth());  //重新计算助研金
+        // 发送消息
+        notifyService.updateDcMessage(dc);
+        //重新计算助研金
+        performanceService.computeSalary(dc.getApplicant().getId(), dc.getYearmonth());
     }
 
 
-    // 审核人分页获取已审核申请
+    /**
+     * 审核人分页获取已审核申请
+     * @param uid
+     * @param page
+     * @param size
+     * @return
+     */
     public Map listCheckedVO(int uid, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         Page<CheckedVO> pages = dcRecordRepository.listChecked(uid, pageable);
@@ -96,7 +112,14 @@ public class AuditService {
         return Map.of("content", content, "total", pages.getTotalElements());
     }
 
-    // 审核人根据时间筛选已审核申请
+
+    /**
+     * 审核人根据时间筛选已审核申请
+     * @param uid
+     * @param yearmonth
+     * @param week
+     * @return
+     */
     public List<CheckedVO> listCheckedByDate(int uid, int yearmonth, int week) {
         List<CheckedVO> checkedVOS = dcRecordRepository.listCheckedByDate(uid, yearmonth, week);
         for (CheckedVO checked : checkedVOS) {
@@ -106,7 +129,11 @@ public class AuditService {
     }
 
 
-    // 审核人查看待审核的申请
+    /**
+     * 审核人查看待审核的申请
+     * @param uid
+     * @return
+     */
     public List<ToCheckVO> getPendingApplication(int uid) {
         List<ToCheckVO> toCheckVOList = dcRecordRepository.listToCheckVO(uid);
         for (ToCheckVO toCheckVO : toCheckVOList) {
@@ -116,7 +143,11 @@ public class AuditService {
     }
 
 
-    // 查询审核人未审核数
+    /**
+     * 查询审核人未审核数
+     * @param aid
+     * @return
+     */
     public int getUnCheckCnt(int aid) {
         return dcRecordRepository.getUnCheckCntByAid(aid);
     }
