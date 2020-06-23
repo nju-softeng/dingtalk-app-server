@@ -45,7 +45,11 @@ public class TestIdea {
 
     @Test
     public void test1() {
-        Position p = Position.valueOf("OTHER");
+        systemService.enableUser(2);
+        systemService.enableUser(3);
+        systemService.enableUser(4);
+        systemService.enableUser(5);
+
     }
 
 
