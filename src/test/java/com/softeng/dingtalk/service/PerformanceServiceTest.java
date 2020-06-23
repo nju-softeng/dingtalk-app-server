@@ -1,12 +1,17 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.DcSummaryRepository;
+import com.softeng.dingtalk.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * @author zhanyeye
@@ -21,6 +26,10 @@ public class PerformanceServiceTest {
     DcSummaryRepository dcSummaryRepository;
     @Autowired
     PerformanceService performanceService;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    SystemService systemService;
 
     @Test
     public void test1() {
@@ -28,10 +37,6 @@ public class PerformanceServiceTest {
         log.debug(d.toString());
     }
 
-    @Test
-    public void test2() {
-        performanceService.updateTopup(1,202006, 200);
-    }
 
 
 }
