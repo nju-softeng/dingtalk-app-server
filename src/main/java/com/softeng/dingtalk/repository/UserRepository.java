@@ -111,4 +111,11 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     @Query("select u.name from User u where u.id in :ids")
     Set<String> listNameByids(Set<Integer> ids);
 
+    /**
+     * 查询出职位是待定以外的所有用户id
+     * @return
+     */
+    @Query("select u.id from User u where u.position <> '待定'")
+    Set<Integer> listUserids();
+
 }

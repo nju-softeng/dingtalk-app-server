@@ -3,6 +3,7 @@ package com.softeng.dingtalk.component;
 import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.repository.PaperRepository;
 import com.softeng.dingtalk.repository.VoteRepository;
+import com.softeng.dingtalk.service.InitService;
 import com.softeng.dingtalk.service.VoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ public class Timer {
     PaperRepository paperRepository;
     @Autowired
     DingTalkUtils dingTalkUtils;
+    @Autowired
+    InitService initService;
 
 
     @Scheduled(cron = "0 * * * * ?")
@@ -57,6 +60,13 @@ public class Timer {
                 }
             }
         }
+    }
+
+
+
+    @Scheduled(cron = "0 0 3 1 * ?")
+    public void initMonthlyDcSummary() {
+        initService.initDcSummary();
     }
 
 

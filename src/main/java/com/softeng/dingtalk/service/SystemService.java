@@ -2,10 +2,12 @@ package com.softeng.dingtalk.service;
 
 import com.dingtalk.api.response.OapiUserGetResponse;
 import com.softeng.dingtalk.component.DingTalkUtils;
+import com.softeng.dingtalk.entity.DcSummary;
 import com.softeng.dingtalk.entity.PaperLevel;
 import com.softeng.dingtalk.entity.SubsidyLevel;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.enums.Position;
+import com.softeng.dingtalk.repository.DcSummaryRepository;
 import com.softeng.dingtalk.repository.PaperLevelRepository;
 import com.softeng.dingtalk.repository.SubsidyLevelRepository;
 import com.softeng.dingtalk.repository.UserRepository;
@@ -25,6 +27,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,6 +53,8 @@ public class SystemService {
     SubsidyLevelRepository subsidyLevelRepository;
     @Autowired
     PaperLevelRepository paperLevelRepository;
+    @Autowired
+    DcSummaryRepository dcSummaryRepository;
 
 
     /**
@@ -223,5 +229,7 @@ public class SystemService {
         log.debug(u.toString());
         userRepository.updateUserInfo(u.getId(), u.getStuNum(), u.getPosition(), u.getAuthority());
     }
+
+
 
 }
