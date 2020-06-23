@@ -17,38 +17,44 @@ import java.util.Map;
 @Repository
 public interface AcRecordRepository extends CustomizedRepository<AcRecord, Integer> {
 
-    // todo 未被使用
-    // 审核人获取自己审核的AC日志
-    @Query("select a from AcRecord a where a.auditor.id = :uid")
-    List<AcRecord> listByAuditorId(@Param("uid") int uid);
-
-    // todo 修改
-    // 申请人获取自己的AC日志
-    @Query("select a from AcRecord a where a.user.id = :uid")
-    List<AcRecord> listByApplicantId(@Param("uid") int uid);
-
-
-    // 获取所有用户的AC日志
+    /**
+     * 获取所有用户的AC日志
+     * @param uid
+     * @return
+     */
     @Query(value = "SELECT a.reason, a.ac, a.create_time, u.name as auditor, a.classify FROM ac_record a LEFT JOIN user u on a.auditor_id = u.id where user_id = :uid  order by a.create_time desc", nativeQuery = true)
     List<Map<String, Object>> listUserAc(@Param("uid") int uid);
 
-
-    // 获取指定用户的总ac
+    /**
+     * 获取指定用户的总ac
+     * @param uid
+     * @return
+     */
     @Query(value = "select ifnull((select sum(ac) from ac_record where user_id = :uid), 0)", nativeQuery = true)
     Double getUserAcSum(@Param("uid") int uid);
 
-
-    // 所有用户的总AC
-    @Query(value = "select u.id, u.name, ifnull(sum(a.ac), 0)  as total from user u left join ac_record a on u.id = a.user_id  group by u.id order by total DESC", nativeQuery = true)
+    /**
+     * 所有用户的总AC
+     * @return
+     */
+    @Query(value = "select u.id, u.name, ifnull(sum(a.ac), 0)  as total from" +
+            " (SELECT id, name FROM `user` WHERE position != '待定') u left join" +
+            " ac_record a on u.id = a.user_id  group by u.id order by total DESC", nativeQuery = true)
     List<Map<String, Object>> listAcSummary();
 
-
-    // 获取用户指定日期前的 AC和，用于计算绩效
+    /**
+     * 获取用户指定日期前的 AC和，用于计算绩效
+     * @param uid
+     * @param yearmonth
+     * @return
+     */
     @Query(value = "select ifnull((select sum(ac) from ac_record where user_id = :uid and DATE_FORMAT(`create_time`,'%Y%m') <= :yearmonth), 0)", nativeQuery = true)
     Double getUserAcByDate(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
 
-
-    // 拿到最近10条 AC 变动
+    /**
+     * 拿到最近10条 AC 变动
+     * @return
+     */
     @Query(value = "select ac, reason, classify, create_time, u1.name as username, u2.name as auditorname from user u1 right join ac_record a on u1.id = a.user_id left join user u2 on a.auditor_id = u2.id order by a.id desc limit 10", nativeQuery = true)
     List<Map<String, Object>> listLastAc();
 
