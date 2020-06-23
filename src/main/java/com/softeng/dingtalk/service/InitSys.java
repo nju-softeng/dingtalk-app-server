@@ -19,5 +19,6 @@ public class InitSys implements InitializingBean {
         initService.initPaperLevel();
         initService.initUser();
         initService.initSubsidyLevel();
+        initService.initDcSummary();
     }
 }

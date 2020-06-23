@@ -1,19 +1,24 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.entity.DcSummary;
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.PaperLevel;
 import com.softeng.dingtalk.entity.SubsidyLevel;
 import com.softeng.dingtalk.enums.PaperType;
 import com.softeng.dingtalk.enums.Position;
+import com.softeng.dingtalk.repository.DcSummaryRepository;
 import com.softeng.dingtalk.repository.PaperLevelRepository;
 import com.softeng.dingtalk.repository.SubsidyLevelRepository;
+import com.softeng.dingtalk.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author zhanyeye
@@ -30,6 +35,10 @@ public class InitService {
     private SubsidyLevelRepository subsidyLevelRepository;
     @Autowired
     private SystemService systemService;
+    @Autowired
+    DcSummaryRepository dcSummaryRepository;
+    @Autowired
+    UserRepository userRepository;
 
     /**
      * 初始化论文级别信息
@@ -67,5 +76,22 @@ public class InitService {
             subsidyLevelRepository.saveBatch(subsidyLevels);
         }
     }
+
+    /**
+     * 每月初始化DcSummary
+     */
+    public void initDcSummary() {
+        LocalDate now = LocalDate.now();
+        int yearmonth = now.getYear()*100 + now.getMonthValue();
+        Set<Integer> existed = dcSummaryRepository.findIdsByDate(yearmonth);
+        Set<Integer> total = userRepository.listUserids();
+        total.removeAll(existed);
+        List<DcSummary> dcSummaries = new ArrayList<>();
+        for (Integer id : total) {
+            dcSummaries.add(new DcSummary(id, yearmonth));
+        }
+        dcSummaryRepository.saveBatch(dcSummaries);
+    }
+
 
 }

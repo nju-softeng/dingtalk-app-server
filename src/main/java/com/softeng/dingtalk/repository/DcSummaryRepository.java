@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author zhanyeye
@@ -83,6 +84,13 @@ public interface DcSummaryRepository extends CustomizedRepository<DcSummary, Int
     @Query(value = "select ifnull((select topup from dc_summary where user_id = :uid and yearmonth = :yearmonth), 0)", nativeQuery = true)
     Double findTopup(int uid, int yearmonth);
 
+    /**
+     * 查询指定月份，已经存在的 dc_summary 的用户id
+     * @param yearmonth
+     * @return
+     */
+    @Query("select dc.user.id from DcSummary dc where dc.yearmonth = :yearmonth")
+    Set<Integer> findIdsByDate(int yearmonth);
 
 
 
