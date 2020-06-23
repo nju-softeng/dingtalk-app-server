@@ -19,11 +19,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class PerformanceServiceTest {
     @Autowired
     DcSummaryRepository dcSummaryRepository;
+    @Autowired
+    PerformanceService performanceService;
 
     @Test
-    public void test() {
+    public void test1() {
         Double d =  dcSummaryRepository.findTopup(1, 202006);
         log.debug(d.toString());
     }
+
+    @Test
+    public void test2() {
+        performanceService.updateTopup(1,202006, 200);
+    }
+
 
 }
