@@ -31,7 +31,10 @@ public interface DcSummaryRepository extends CustomizedRepository<DcSummary, Int
      * @param yearmonth
      * @return
      */
-    @Query(value = "SELECT u.id AS uid,  d.yearmonth, u.stu_num,  u.name, d.salary, d.week1, d.week2, d.week3, d.week4, d.week5,d.ac, d.total as total,d.topup FROM user u LEFT JOIN dc_summary d ON u.id = d.user_id AND d.yearmonth = :yearmonth ORDER BY total DESC",nativeQuery = true)
+    @Query(value = "SELECT u.id AS uid, u.stu_num,  u.name, d.salary," +
+            " d.week1, d.week2, d.week3, d.week4, d.week5, d.ac, d.total as total, d.topup " +
+            "FROM (SELECT id, name, stu_num FROM `user` WHERE position != '待定') u LEFT JOIN dc_summary d ON u.id = d.user_id AND" +
+            " d.yearmonth = :yearmonth ORDER BY total DESC",nativeQuery = true)
     List<Map<String, Object>> listDcSummary(@Param("yearmonth") int yearmonth);
 
     /**
