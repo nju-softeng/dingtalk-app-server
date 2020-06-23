@@ -60,7 +60,13 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integ
             "from DcRecord d where d.auditor.id = :uid and d.status = true order by d.id desc")
     Page<CheckedVO> listChecked(@Param("uid")int uid, Pageable pageable);
 
-    // 查询审核人指定时间的申请
+    /**
+     * 查询审核人指定时间的申请
+     * @param uid
+     * @param yearmonth
+     * @param week
+     * @return
+     */
     @Query("select new com.softeng.dingtalk.vo.CheckedVO(d.id, d.applicant.name, d.applicant.id, d.dvalue, d.cvalue, d.dc, d.ac, d.yearmonth, d.week, d.insertTime, d.weekdate) " +
             "from DcRecord d where d.auditor.id = :uid and d.yearmonth = :yearmonth and d.week = :week and d.status = true order by d.id desc")
     List<CheckedVO> listCheckedByDate(@Param("uid")int uid, @Param("yearmonth") int yearmonth, @Param("week") int week);

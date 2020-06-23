@@ -13,5 +13,9 @@ import java.util.List;
  */
 @Repository
 public interface ReviewRepository  extends CustomizedRepository<Review, Integer> {
-    public List<Review> findAllByPaperid(int paperid, Sort sort);
+
+    List<Review> findAllByPaperid(int paperid, Sort sort);
+
+    void deleteByPaperid(int pid);
+
 }

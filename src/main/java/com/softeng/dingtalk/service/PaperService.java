@@ -94,9 +94,9 @@ public class PaperService {
      * @param id
      */
     public void deletePaper(int id) {
-        // paperDetailRepository.deleteByPaperid(id);
         paperDetailRepository.deleteByPaper(new Paper(id));
         paperRepository.deleteById(id);
+        reviewRepository.deleteByPaperid(id);
     }
 
 

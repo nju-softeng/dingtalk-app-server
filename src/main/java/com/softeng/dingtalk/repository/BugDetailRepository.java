@@ -14,9 +14,14 @@ import java.util.List;
  */
 @Repository
 public interface BugDetailRepository extends CustomizedRepository<BugDetail, Integer> {
+
     void deleteBugDetailByBugId(int id);
 
-    // 指定用户被确认bug的Id
+    /**
+     * 指定用户被确认bug的Id
+     * @param uid
+     * @return
+     */
     @Query("select bd.bug.id from BugDetail bd where bd.user.id = :uid")
     List<Integer> listBugidByuid(@Param("uid") int uid);
 }

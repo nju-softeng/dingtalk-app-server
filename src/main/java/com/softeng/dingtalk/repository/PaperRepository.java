@@ -22,16 +22,30 @@ import java.util.Map;
 @Repository
 public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
 
-    // paper select in 会默认升序排序
+    /**
+     * paper select in 会默认升序排序
+     * @param ids
+     * @return
+     */
     @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
     @Query("select p from Paper p where p.id in :ids order by p.id desc")
     List<Paper> findAllById(@Param("ids") List <Integer> ids);
 
-    // 分页获取id
+
+    /**
+     * 分页获取id
+     * @param pageable
+     * @return
+     */
     @Query("select p.id from Paper p")
     Page<Integer> listAllId(Pageable pageable);
 
-    // 根据id 获取论文title
+
+    /**
+     * 根据id 获取论文title
+     * @param id
+     * @return
+     */
     @Query("select p.title from Paper p where p.id = :id")
     String getPaperTitleById(@Param("id") int id);
 

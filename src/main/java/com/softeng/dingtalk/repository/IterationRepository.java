@@ -41,34 +41,23 @@ public interface IterationRepository extends CustomizedRepository<Iteration, Int
     Iteration getIterationById(@Param("id") int id);
 
 
-    // 用户获取自己参与的迭代
+    /**
+     * 用户获取自己参与的迭代
+     * @param uid
+     * @return
+     */
     @Query("select p from Iteration p left join IterationDetail pd on p.id = pd.iteration.id where pd.user.id = :uid")
     List<Iteration> listunfinishIteration(@Param("uid")int uid);
 
 
-
-    // 根据 id 集合查询 iteration
+    /**
+     * 根据 id 集合查询 iteration
+     * @param ids
+     * @return
+     */
     @EntityGraph(value="iteration.graph",type= EntityGraph.EntityGraphType.FETCH)
     @Query("select i from Iteration i where i.id in :ids order by i.id desc")
     List<Iteration> findAllById(@Param("ids") List<Integer> ids);
-
-
-
-//    // 审核人获取进行中的迭代
-//    @EntityGraph(value="iteration.graph",type= EntityGraph.EntityGraphType.FETCH)
-//    @Query("select i from Iteration i where i.auditor.id = :aid and i.status = false")
-//    List<Iteration> listUnfinishIterationByAid(@Param("aid") int aid);
-////
-//
-//    // 审核人获取结束的项目
-//    @EntityGraph(value="iteration.graph",type= EntityGraph.EntityGraphType.FETCH)
-//    @Query("select i from Iteration i where i.auditor.id = :aid and i.status = true")
-//    List<Iteration> listfinishIterationByAid(@Param("aid") int aid);
-//
-//
-
-
-
 
 
 }
