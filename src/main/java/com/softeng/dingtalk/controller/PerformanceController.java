@@ -3,6 +3,7 @@ package com.softeng.dingtalk.controller;
 import com.softeng.dingtalk.service.PerformanceService;
 import com.softeng.dingtalk.vo.DateVO;
 import com.softeng.dingtalk.vo.DcSummaryVO;
+import com.softeng.dingtalk.vo.TopupVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -73,6 +74,16 @@ public class PerformanceController {
     @GetMapping("/performance")
     public Map getUserPerformance(@RequestAttribute int uid) {
         return performanceService.getUserPerformance(uid);
+    }
+
+
+    /**
+     * 更新指定用户指定月份的topup
+     * @param vo
+     */
+    @PostMapping("/performance/topup")
+    public void updatetopup(@RequestBody TopupVO vo) {
+        performanceService.updateTopup(vo.getUid(), vo.getYearmonth(), vo.getTopup());
     }
 
 }
