@@ -19,6 +19,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"user_id", "yearmonth"})})
 public class DcSummary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
