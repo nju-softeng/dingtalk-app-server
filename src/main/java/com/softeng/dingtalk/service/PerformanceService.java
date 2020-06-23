@@ -66,8 +66,9 @@ public class PerformanceService {
         if (dcSummary == null) {
             dcSummary = new DcSummary(uid, yearmonth);
         }
-        dcSummary.setTotal(topup);
+        dcSummary.setTopup(topup);
         dcSummaryRepository.save(dcSummary);
+        computeSalary(uid, yearmonth);
     }
 
 
