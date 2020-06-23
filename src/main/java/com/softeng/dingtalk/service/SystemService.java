@@ -76,7 +76,6 @@ public class SystemService {
     /**
      * 从钉钉服务器拉取所有用户同步到系统
      */
-    @CacheEvict(value = "allUser", allEntries = true)
     public void fetchUsers() {
         List<String> depids = dingTalkUtils.listDepid();
         Set<String> remoteUserids = new HashSet<>();
@@ -141,12 +140,12 @@ public class SystemService {
      * @param position
      * @return
      */
-    @Cacheable(value = "allUser", condition = "#name == ''")
     public Page<User> multiQueryUser(int page, int size, String name, String position) {
         Specification<User> spec = new Specification<User>() {
             @Override
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
+                predicates.add(criteriaBuilder.equal(root.get("deleted"), false));
                 predicates.add(criteriaBuilder.notEqual(root.get("authority"), User.ADMIN_AUTHORITY));
                 if ("" != name) {
                     // 根据姓名模糊查询
@@ -224,11 +223,35 @@ public class SystemService {
      * 更新用户信息
      * @param u
      */
-    @CacheEvict(value = "allUser", allEntries = true)
     public void updateUserInfo(User u) {
         log.debug(u.toString());
         userRepository.updateUserInfo(u.getId(), u.getStuNum(), u.getPosition(), u.getAuthority());
     }
+
+    /**
+     * 停用用户，学生毕业之后它的信息不应该出现在报表中
+     * @param uid
+     */
+    public void disableUser(int uid) {
+        userRepository.deleteById(uid);
+    }
+
+    /**
+     * 恢复用户
+     * @param uid
+     */
+    public void enableUser(int uid) {
+        userRepository.enableUser(uid);
+    }
+
+    /**
+     * 查询停用的用户
+     * @return
+     */
+    public List<User> queryDisableUser() {
+        return userRepository.listDisableUser();
+    }
+
 
 
 

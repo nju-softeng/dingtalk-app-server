@@ -12,7 +12,9 @@ import com.softeng.dingtalk.vo.QueryUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -90,10 +92,43 @@ public class SystemController {
         systemService.updatePaperLevel(paperLevels);
     }
 
+    /**
+     * 更新用户信息
+     * @param user
+     */
     @PostMapping("/system/userinfo")
     public void updateUserInfo(@RequestBody User user) {
         systemService.updateUserInfo(user);
     }
+
+    /**
+     * 禁用用户
+     * @param uid
+     */
+    @GetMapping("/system/disable/user/{uid}")
+    public void disableUser(@PathVariable int uid) {
+
+        systemService.disableUser(uid);
+    }
+
+    /**
+     * 取消禁用用户
+     * @param uid
+     */
+    @GetMapping("/system/enable/user/{uid}")
+    public void enableUser(@PathVariable int uid) {
+        systemService.enableUser(uid);
+    }
+
+    /**
+     * 查询禁用的用户
+     * @return
+     */
+    @GetMapping("/system/query/disableuser")
+    public List<User> queryDisableUser() {
+        return systemService.queryDisableUser();
+    }
+
 
 
 

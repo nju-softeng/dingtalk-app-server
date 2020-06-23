@@ -85,7 +85,6 @@ public class LoginController {
         } else {
             role = ADMIN_ROLE;
         }
-        log.debug(token);
         response.setHeader("role", role);
         response.setHeader("uid", user.getId() + "");
     }
