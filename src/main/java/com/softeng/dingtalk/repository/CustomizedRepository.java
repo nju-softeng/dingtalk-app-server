@@ -12,9 +12,9 @@ import java.util.List;
  */
 @NoRepositoryBean    // 禁止spring按组件创建对象
 public interface CustomizedRepository<T, ID> extends JpaRepository<T, ID> {
+
     T refresh(T t);  // 声明refresh()方法
 
     void saveBatch(List<T> entities);
-
 }
 

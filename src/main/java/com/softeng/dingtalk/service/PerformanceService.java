@@ -27,8 +27,6 @@ public class PerformanceService {
     @Autowired
     AcRecordRepository acRecordRepository;
     @Autowired
-    TopupRepository topupRepository;
-    @Autowired
     UserRepository userRepository;
     @Autowired
     BugRepository bugRepository;
@@ -37,7 +35,7 @@ public class PerformanceService {
 
 
     /**
-     * 计算助研金 Gain = Base * DC * (1+ (AC/50)) + Topup
+     * 计算助研金 Gain = Base * DC * (1+ (AC/50)) + topup
      * @param uid
      * @param yearmonth
      */
@@ -45,7 +43,7 @@ public class PerformanceService {
         double dc = dcSummaryRepository.getDcTotal(uid, yearmonth);
         // 获取到目前为止用户的AC总和
         double ac = acRecordRepository.getUserAcByDate(uid, yearmonth);
-        // 获取用户的 Topup
+        // 获取用户的 topup
         double topup = dcSummaryRepository.findTopup(uid, yearmonth);
         Position position = userRepository.getUserPosition(uid);
         double base = systemService.getSubsidy(position);

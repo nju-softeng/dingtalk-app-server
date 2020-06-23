@@ -48,7 +48,7 @@ public class DcSummary {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    // Gain = Base * DC * (1+ (AC/50)) + Topup
+    // Gain = Base * DC * (1+ (AC/50)) + topup
     public void computeTotal() {
         List<BigDecimal> weeks = new ArrayList<>();
         weeks.add(BigDecimal.valueOf(week1));

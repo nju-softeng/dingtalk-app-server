@@ -24,7 +24,11 @@ public interface BugRepository extends CustomizedRepository<Bug, Integer> {
     @Query("select b from Bug b where b.project.auditor.id = :aid order by b.id desc")
     List<Bug> listBugByAuditor(@Param("aid") int aid);
 
-    // 查询审核人待审的bug数
+    /**
+     * 查询审核人待审的bug数
+     * @param aid
+     * @return
+     */
     @Query("select count (b.id) from Bug b where b.project.auditor.id = :aid and b.status is null ")
     Integer getAuditorPendingBugCnt(@Param("aid") int aid);
 
