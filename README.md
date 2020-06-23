@@ -3,6 +3,9 @@
 ![Prod](https://github.com/zhanyeye/dingtalk-springboot/workflows/Prod/badge.svg?branch=master)
 ![Test](https://github.com/zhanyeye/dingtalk-springboot/workflows/Test/badge.svg?branch=test)
 
+###### 2020.06.23
+修复老师也出现在绩效列表中的情况
+
 ###### 2020.06.14
 测试环境的CD搭建
 
