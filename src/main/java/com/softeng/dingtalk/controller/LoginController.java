@@ -65,7 +65,7 @@ public class LoginController {
     @PostMapping("/login")
     public void login(@RequestBody Map authcode, HttpServletResponse response) {
         //根据免登授权码获取userid
-        String userid = dingTalkUtils.getUserId((String) authcode.get("authcode"));
+        String userid = dingTalkUtils.getUserId((String) authcode.get("authCode"));
         //去数据库查找用户
         User user = userService.getUser(userid);
         if (user == null) {
