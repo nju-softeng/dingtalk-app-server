@@ -65,8 +65,11 @@ public class LoginController {
     @PostMapping("/login")
     public void login(@RequestBody Map authcode, HttpServletResponse response) {
         //根据免登授权码获取userid
+        log.debug(authcode.toString());
         String userid = dingTalkUtils.getUserId((String) authcode.get("authCode"));
         //去数据库查找用户
+
+        log.debug("userid:" + userid);
         User user = userService.getUser(userid);
         if (user == null) {
             //如果用户不存在，调用钉钉API获取用户信息，将用户导入数据库
