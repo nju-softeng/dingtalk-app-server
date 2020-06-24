@@ -1,4 +1,4 @@
-name: Prod
+name: Test
 on:
   push:
     branches: [ test ]
