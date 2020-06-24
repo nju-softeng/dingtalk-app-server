@@ -3,6 +3,11 @@
 ![Prod](https://github.com/zhanyeye/dingtalk-springboot/workflows/Prod/badge.svg?branch=master)
 ![Test](https://github.com/zhanyeye/dingtalk-springboot/workflows/Test/badge.svg?branch=test)
 
+#### 注意
++ 由于目前钉钉小程序只支持 GET/POST, 考虑到兼容性这里的接口全部为GET/POST方式
+
+
+
 ###### 2020.06.23
 修复老师也出现在绩效列表中的情况
 
