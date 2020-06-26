@@ -2,6 +2,7 @@ package com.softeng.dingtalk;
 
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.softeng.dingtalk.repository.impl.CustomizedRepositoryImpl;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -12,6 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableCaching
 @EnableScheduling
 @SpringBootApplication
+@MapperScan("com.softeng.dingtalk.mapper")
 @EnableJpaRepositories(repositoryBaseClass = CustomizedRepositoryImpl.class)
 public class DingtalkApplication {
 
