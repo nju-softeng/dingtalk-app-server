@@ -63,7 +63,7 @@ public class LoginController {
      * @date 9:17 AM 12/11/2019
      **/
     @PostMapping("/login")
-    public void login(@RequestBody Map authcode, HttpServletResponse response) {
+    public Map login(@RequestBody Map authcode, HttpServletResponse response) {
         //根据免登授权码获取userid
         String userid = dingTalkUtils.getUserId((String) authcode.get("authCode"));
         //去数据库查找用户
@@ -87,5 +87,6 @@ public class LoginController {
         }
         response.setHeader("role", role);
         response.setHeader("uid", user.getId() + "");
+        return Map.of("role", role, "uid", user.getId(), "token", token);
     }
 }
