@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.vo;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,9 +10,7 @@ import lombok.Setter;
  * @description
  * @create 26/06/2020 7:54 PM
  */
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class AuthorVO {
     private String name;
     private int num;

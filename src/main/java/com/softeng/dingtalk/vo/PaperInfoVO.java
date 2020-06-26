@@ -1,8 +1,6 @@
 package com.softeng.dingtalk.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,9 +10,7 @@ import java.util.List;
  * @description
  * @create 26/06/2020 4:48 PM
  */
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class PaperInfoVO {
     private int id;
     private String title;
