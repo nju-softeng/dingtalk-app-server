@@ -16,5 +16,7 @@ public class PaperInfoVO {
     private String title;
     private String journal;
     private LocalDate issueDate;
-    private List<AuthorVO> authors;
+        private List<AuthorVO> authors;
+    private Boolean v_status;
+    private Boolean v_result;
 }

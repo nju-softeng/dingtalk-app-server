@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.mapper;
 
 import com.softeng.dingtalk.vo.PaperInfoVO;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,5 +13,14 @@ import java.util.List;
  */
 @Repository
 public interface PaperMapper {
-    List<PaperInfoVO> listPaperInfo();
+    /**
+     * 分页查询论文数据
+     * @param offset
+     * @param size
+     * @return
+     */
+    List<PaperInfoVO> listPaperInfo(int offset, int size);
+
+    @Select("select count(id) from paper")
+    Integer countPaper();
 }
