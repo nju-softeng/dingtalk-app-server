@@ -1,5 +1,7 @@
 package com.softeng.dingtalk;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.softeng.dingtalk.mapper.PaperMapper;
 import com.softeng.dingtalk.vo.PaperInfoVO;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +30,12 @@ public class DateTest {
 
     @Test
     public void test_1() {
-        List<PaperInfoVO> kk = paperMapper.listPaperInfo();
+        PageHelper.startPage(1, 2);
+        List<PaperInfoVO> kk = paperMapper.listPaperInfo(0, 6);
+        PageInfo<PaperInfoVO> pages = new PageInfo<>(kk);
+        log.debug(pages.toString());
+
+
     }
 
 

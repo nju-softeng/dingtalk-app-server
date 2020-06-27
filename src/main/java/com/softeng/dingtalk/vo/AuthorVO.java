@@ -12,6 +12,7 @@ import lombok.Setter;
  */
 @Data
 public class AuthorVO {
+    private int uid;
     private String name;
     private int num;
 }

@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Review;
 import com.softeng.dingtalk.entity.Vote;
@@ -80,9 +81,9 @@ public class PaperController {
      * @param page
      * @return
      */
-    @GetMapping("/paper/page/{page}")
-    public Map listPaper(@PathVariable int page) {
-        return paperService.listPaper(page);
+    @GetMapping("/paper/page/{page}/{size}")
+    public Map listPaper(@PathVariable int page, @PathVariable int size) {
+        return paperService.listPaper(page, size);
     }
 
 

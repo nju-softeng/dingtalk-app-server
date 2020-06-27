@@ -1,9 +1,13 @@
 package com.softeng.dingtalk.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.softeng.dingtalk.entity.*;
+import com.softeng.dingtalk.mapper.PaperMapper;
 import com.softeng.dingtalk.projection.PaperProjection;
 import com.softeng.dingtalk.repository.*;
 
+import com.softeng.dingtalk.vo.PaperInfoVO;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +53,8 @@ public class PaperService {
     PerformanceService performanceService;
     @Autowired
     ReviewRepository reviewRepository;
+    @Autowired
+    PaperMapper paperMapper;
 
 
     /**
@@ -166,17 +172,11 @@ public class PaperService {
      * @param page
      * @return
      */
-    public Map listPaper(int page) {
-        Pageable pageable = PageRequest.of(page, 6, Sort.by("id").descending());
-        //查询出的分页数据对象id
-        Page<Integer> pages = paperRepository.listAllId(pageable);
-        List<Integer> ids = pages.getContent();
-        if (ids.size() != 0) {
-            return Map.of("content", paperRepository.findAllById(ids), "total", pages.getTotalElements());
-        } else {
-            return Map.of("total",0);
-        }
-
+    public Map listPaper(int page, int size) {
+        int offset = (page - 1) * size;
+        List<PaperInfoVO> paperlist = paperMapper.listPaperInfo(offset, size);
+        int total = paperMapper.countPaper();
+        return Map.of("list", paperlist, "total", total);
     }
 
 
