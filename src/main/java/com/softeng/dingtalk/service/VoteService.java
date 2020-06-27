@@ -102,7 +102,13 @@ public class VoteService {
         v.setStatus(true);
         v.setAccept(accept);
         v.setTotal(total);
-        v.setResult(accept > total - accept);
+        boolean result = accept > total - accept;
+        v.setResult(result);
+        if (result == false) {
+            paperRepository.updatePaperResult(v.getPid(), Paper.NOTPASS);
+        } else {
+            paperRepository.updatePaperResult(v.getPid(), Paper.REVIEWING);
+        }
         voteRepository.save(v);
         return v;
     }
