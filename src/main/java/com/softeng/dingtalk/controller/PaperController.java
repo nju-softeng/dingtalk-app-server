@@ -1,17 +1,14 @@
 package com.softeng.dingtalk.controller;
 
-import com.github.pagehelper.PageInfo;
+
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Review;
 import com.softeng.dingtalk.entity.Vote;
-import com.softeng.dingtalk.projection.PaperProjection;
-import com.softeng.dingtalk.repository.ReviewRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;

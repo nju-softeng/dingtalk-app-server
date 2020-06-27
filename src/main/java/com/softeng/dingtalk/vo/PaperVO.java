@@ -2,10 +2,7 @@ package com.softeng.dingtalk.vo;
 
 import com.softeng.dingtalk.entity.PaperDetail;
 import com.softeng.dingtalk.enums.PaperType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,15 +12,12 @@ import java.util.List;
  * @description
  * @create 2/6/2020 11:16 AM
  */
-@AllArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 public class PaperVO {
     private Integer id;
     private String title;
     private String journal;
     private PaperType paperType;
     private LocalDate issueDate;
-    private List<PaperDetail> paperDetails;
+    private List<AuthorVO> authors;
 }

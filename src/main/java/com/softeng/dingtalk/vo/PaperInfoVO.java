@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.vo;
 
+import com.softeng.dingtalk.enums.PaperType;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,7 +17,9 @@ public class PaperInfoVO {
     private String title;
     private String journal;
     private LocalDate issueDate;
-        private List<AuthorVO> authors;
+    private int result;
+    private PaperType paperType;
     private Boolean v_status;
     private Boolean v_result;
+    private List<AuthorVO> authors;
 }

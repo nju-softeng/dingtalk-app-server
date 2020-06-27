@@ -25,10 +25,14 @@ package com.softeng.dingtalk.entity;
 @NoArgsConstructor
 @NamedEntityGraph(name="paper.graph",attributeNodes={@NamedAttributeNode("paperDetails"),@NamedAttributeNode("vote")})
 public class Paper {
-//    //定义静态常量表示用户权限
-//    public static final int WAIT = 0;
-//    public static final int ACCEPT = 1;
-//    public static final int REJECT= 2;
+    /**
+     * 论文的投稿结果
+     */
+    public static final int WAIT = 0;
+    public static final int NOTPASS = 1;
+    public static final int REVIEWING = 2;
+    public static final int REJECT= 3;
+    public static final int ACCEPT = 4;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +54,7 @@ public class Paper {
     /**
      * 投稿结果
      */
-    private Boolean result;
+    private int result;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;
@@ -68,14 +72,12 @@ public class Paper {
         this.id = id;
     }
 
-    public Paper(PaperVO paperVO) {
-        this.title = paperVO.getTitle();
-        this.journal = paperVO.getJournal();
-        this.paperType = paperVO.getPaperType();
-        this.issueDate = paperVO.getIssueDate();
+    public Paper(String title, String journal, PaperType paperType, LocalDate issueDate) {
+        this.title = title;
+        this.journal = journal;
+        this.paperType = paperType;
+        this.issueDate = issueDate;
     }
-
-
 
     public void update(String title, String journal, PaperType paperType, LocalDate issueDate) {
         this.title = title;
