@@ -142,6 +142,7 @@ public class IterationService {
         return Map.of("iterations", iterations, "authorid", p.getAuditor().getId()  , "title", p.getTitle(),"icnt", p.getCnt(), "success", p.getSuccessCnt());
     }
 
+
     /**
      * 查询项目迭代
      * @param pid
@@ -173,17 +174,23 @@ public class IterationService {
     }
 
 
-    // 斐波那契数列
+
+    /**
+     * 斐波那契数列
+     * @param n
+     * @return
+     */
     private static int fib(int n) {
         if (n == 0) {
             return 0;
         }
+
         if(n==1 || n==2){
             return 1;
         }
-        int sec=1;//第二项
-        int fir=1;//第一项
-        int temp=0;//临时项
+
+        int sec = 1, fir = 1, temp = 0;
+
         for (int i = 3; i <= n; i++) {
             temp=sec;
             sec=fir+sec;
@@ -294,14 +301,21 @@ public class IterationService {
      * @param finishdate
      */
     public void setIterationAc(int itid, LocalDate finishdate) {
-        Iteration iteration = iterationRepository.findById(itid).get();  // 当前迭代
+        // 当前迭代
+        Iteration iteration = iterationRepository.findById(itid).get();
         Project project = iteration.getProject();
-        int predictDay = (int) iteration.getBeginTime().until(iteration.getEndTime(), ChronoUnit.DAYS) + 1; // 预期时间
-        int actualDay = (int) iteration.getBeginTime().until(finishdate, ChronoUnit.DAYS) + 1; // 实际时间
 
-        int successCnt = 0;  //连续按时完成次数
-        if (iteration.getPrevIteration() != 0) { //是否有前驱
-            successCnt = iterationRepository.getConSucessCntById(iteration.getPrevIteration()); // 上一个迭代的连续按时发布数
+        // 预期时间
+        int predictDay = (int) iteration.getBeginTime().until(iteration.getEndTime(), ChronoUnit.DAYS) + 1;
+        // 实际时间
+        int actualDay = (int) iteration.getBeginTime().until(finishdate, ChronoUnit.DAYS) + 1;
+
+        //连续按时完成次数
+        int successCnt = 0;
+        //是否有前驱
+        if (iteration.getPrevIteration() != 0) {
+            // 上一个迭代的连续按时发布数
+            successCnt = iterationRepository.getConSucessCntById(iteration.getPrevIteration());
         }
 
         //迭代人数

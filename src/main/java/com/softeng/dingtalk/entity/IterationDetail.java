@@ -22,12 +22,18 @@ public class IterationDetail {
     private int id;
 
     @JsonIgnoreProperties("iterationDetails")
-    @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
+    @ManyToOne(fetch = FetchType.LAZY)
     private Iteration iteration;
+    /**
+     * 开发者
+     */
     @ManyToOne
-    private User user; //开发者
+    private User user;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private AcRecord acRecord; //获得的ac值
+    /**
+     * 获得的ac值
+     */
+    private AcRecord acRecord;
     @Column(columnDefinition="DECIMAL(10,3)")
     private double ac;
 

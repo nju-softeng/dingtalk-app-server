@@ -23,12 +23,27 @@ public class Bug {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String title; // 标题
-    private String description; // 描述
-    private Boolean status; // 状态
-    private int reporterid; // 报告人id
+    /**
+     * 标题
+     */
+    private String title;
+    /**
+     * 描述
+     */
+    private String description;
+    /**
+     * 状态
+     */
+    private Boolean status;
+    /**
+     * 报告人id
+     */
+    private int reporterid;
+    /**
+     * bug 所属项目
+     */
     @ManyToOne
-    private Project project; // bug 所属项目
+    private Project project;
 
     @JsonIgnoreProperties("bug")
     @OneToMany(mappedBy = "bug", cascade = CascadeType.REMOVE)

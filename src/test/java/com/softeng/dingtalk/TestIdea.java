@@ -3,9 +3,12 @@ package com.softeng.dingtalk;
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Timer;
 import com.softeng.dingtalk.component.Utils;
+import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.enums.Position;
+import com.softeng.dingtalk.mapper.DcRecordMapper;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.service.*;
+import com.softeng.dingtalk.vo.DcRecordVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,25 +35,17 @@ import java.util.stream.Collectors;
 public class TestIdea {
 
     @Autowired
-    TestRepository testRepository;
-    @Autowired
     SubsidyLevelRepository subsidyLevelRepository;
     @Autowired
     SystemService systemService;
+    @Autowired
+    DcRecordMapper dcRecordMapper;
 
     @Test
-    public void test_create_enums() {
-        testRepository.save(new com.softeng.dingtalk.entity.Test());
+    public void test() {
+        List<DcRecordVO> res = dcRecordMapper.listDcRecordVO(0, 5);
     }
 
-    @Test
-    public void test1() {
-        systemService.enableUser(2);
-        systemService.enableUser(3);
-        systemService.enableUser(4);
-        systemService.enableUser(5);
-
-    }
 
 
 }
