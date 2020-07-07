@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author zhanyeye
- * @description
+ * @description Paper mybatis 映射器
  * @date 26/06/2020
  */
 @Repository

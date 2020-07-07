@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softeng.dingtalk.mapper.DcRecordMapper">
+
+
+    <!--  论文列表项数据  -->
+    <resultMap id="DcRecordVO" type="com.softeng.dingtalk.vo.DcRecordVO">
+        <id column="id" property="id"/>
+        <result column="insert_time" property="insertTime"/>
+        <result column="weekdate" property="weekdate"/>
+        <result column="yearmonth" property="yearmonth"/>
+        <result column="week" property="week"/>
+        <result column="dvalue" property="dvalue"/>
+        <result column="cvalue" property="cvalue"/>
+        <result column="dc" property="dc"/>
+        <result column="ac" property="ac"/>
+        <result column="auditor_name" property="auditorName"/>
+        <result column="auditor_id" property="auditorid"/>
+        <result column="status" property="status"/>
+        <collection property="acItems" ofType="com.softeng.dingtalk.vo.AcItemVO" >
+            <result column="apply_ac" property="ac"/>
+            <result column="reason" property="reason"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="listDcRecordVO" resultMap="DcRecordVO">
+        SELECT
+            d.id,
+            d.insert_time,
+            d.weekdate,
+            d.yearmonth,
+            d.`week`,
+            d.dvalue,
+            d.cvalue,
+            d.dc,
+            d.ac,
+            d.status,
+            u.id as auditor_id,
+            u.name AS auditor_name,
+            a.ac as apply_ac,
+            a.reason
+        FROM
+            ( SELECT * FROM dc_record WHERE applicant_id = #{uid} ORDER BY id DESC LIMIT #{offset}, #{size} ) d
+            LEFT JOIN `user` u ON d.auditor_id = u.id
+            LEFT JOIN ac_item a ON d.id = a.dc_record_id
+        ORDER BY
+            id DESC
+    </select>
+
+
+</mapper>

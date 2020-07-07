@@ -2,6 +2,7 @@ package com.softeng.dingtalk.vo;
 
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,7 +17,9 @@ public class DcRecordVO {
     private int yearmonth;
     private int week;
     private LocalDateTime insertTime;
+    private LocalDate weekdate;
     private String auditorName;
+    private int auditorid;
     private double dvalue;
     private double cvalue;
     private double ac;
