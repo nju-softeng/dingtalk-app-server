@@ -4,17 +4,13 @@ import com.softeng.dingtalk.component.Utils;
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.projection.DcRecordProjection;
+import com.softeng.dingtalk.mapper.DcRecordMapper;
 import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.repository.DcRecordRepository;
-import com.softeng.dingtalk.vo.AppliedVO;
-import com.softeng.dingtalk.vo.ApplingVO;
 import com.softeng.dingtalk.vo.ApplyVO;
+import com.softeng.dingtalk.vo.DcRecordVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +35,8 @@ public class ApplicationService {
     AcItemRepository acItemRepository;
     @Autowired
     Utils utils;
+    @Autowired
+    DcRecordMapper dcRecordMapper;
 
     /**
      * 添加 / 更新 申请
@@ -69,6 +67,10 @@ public class ApplicationService {
             acItemRepository.saveAll(vo.getAcItems());
         } else {
             // 更新申请
+            if (isExist(uid, vo.getAuditorid(), result[0], result[1])) {
+                // 一周只能向审核人提交一次
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
+            }
             DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
             dc.reApply(vo.getAuditorid(), vo.getDvalue(), vo.getDate(), result[0], result[1], dateCode);
             res = dcRecordRepository.save(dc);
@@ -93,15 +95,11 @@ public class ApplicationService {
      * @param page
      * @return
      */
-    public Map listDcRecord(int uid, int page) {
-        // 分页获取id,因为jpa分页是在内存中进行的，避免性能问题
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
-        List<Integer> ids = dcRecordRepository.listIdByUid(uid, pageable);
-        if (ids.size() != 0) {
-            return Map.of("list", dcRecordRepository.findAllById(ids), "total", dcRecordRepository.getCountByUid(uid));
-        } else {
-            return Map.of("total", 0);
-        }
+    public Map listDcRecord(int uid, int page, int size) {
+        int offset = (page - 1) * size;
+        List<DcRecordVO> dcRecordlist = dcRecordMapper.listDcRecordVO(uid, offset, size);
+        int total = dcRecordMapper.countDcRecordByuid(uid);
+        return Map.of("list", dcRecordlist, "total", total);
     }
 
 

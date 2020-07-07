@@ -43,7 +43,7 @@ public class TestIdea {
 
     @Test
     public void test() {
-        List<DcRecordVO> res = dcRecordMapper.listDcRecordVO(0, 5);
+        List<DcRecordVO> res = dcRecordMapper.listDcRecordVO(1, 1, 1);
     }
 
 

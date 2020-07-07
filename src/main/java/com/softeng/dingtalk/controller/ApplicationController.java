@@ -68,9 +68,9 @@ public class ApplicationController {
      * @param page
      * @return
      */
-    @GetMapping("/application/page/{page}")
-    public Map getUserApplication(@RequestAttribute int uid, @PathVariable int page) {
-        return applicationService.listDcRecord(uid, page);
+    @GetMapping("/application/page/{page}/{size}")
+    public Map getUserApplication(@RequestAttribute int uid, @PathVariable int page, @PathVariable int size) {
+        return applicationService.listDcRecord(uid, page, size);
     }
 
 
