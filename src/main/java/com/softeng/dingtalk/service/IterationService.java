@@ -192,9 +192,9 @@ public class IterationService {
         int sec = 1, fir = 1, temp = 0;
 
         for (int i = 3; i <= n; i++) {
-            temp=sec;
-            sec=fir+sec;
-            fir=temp;
+            temp = sec;
+            sec = fir + sec;
+            fir = temp;
         }
         return sec;
     }
@@ -207,14 +207,20 @@ public class IterationService {
      * @return
      */
     public Map computeIterationAc(int itid, LocalDate finishdate) {
-        Iteration iteration = iterationRepository.findById(itid).get(); // 当前迭代
+        // 当前迭代
+        Iteration iteration = iterationRepository.findById(itid).get();
 
-        int predictDay = (int) iteration.getBeginTime().until(iteration.getEndTime(), ChronoUnit.DAYS) + 1; // 预期时间
-        int actualDay = (int) iteration.getBeginTime().until(finishdate, ChronoUnit.DAYS) + 1; // 实际时间
+        // 预期时间
+        int predictDay = (int) iteration.getBeginTime().until(iteration.getEndTime(), ChronoUnit.DAYS) + 1;
+        // 实际时间
+        int actualDay = (int) iteration.getBeginTime().until(finishdate, ChronoUnit.DAYS) + 1;
 
-        int successCnt = 0;  //连续按时完成次数
-        if (iteration.getPrevIteration() != 0) { //是否有前驱
-            successCnt = iterationRepository.getConSucessCntById(iteration.getPrevIteration()); // 上一个迭代的连续按时发布数
+        //连续按时完成次数
+        int successCnt = 0;
+        //是否有前驱
+        if (iteration.getPrevIteration() != 0) {
+            // 上一个迭代的连续按时发布数
+            successCnt = iterationRepository.getConSucessCntById(iteration.getPrevIteration());
         }
 
 
@@ -412,13 +418,16 @@ public class IterationService {
      */
     public List<AcRecord> manualSetIterationAc(int itid, List<IterationDetail> iterationDetails, LocalDate finishdate) {
         Iteration iteration = iterationRepository.findById(itid).get();
-        iteration.setFinishTime(finishdate); //设置完成时间
+        //设置完成时间
+        iteration.setFinishTime(finishdate);
         Project project = iteration.getProject();
         iteration.setStatus(true);
 
-        int successCnt = 0;  //连续按时完成次数
+        //连续按时完成次数
+        int successCnt = 0;
         if (iteration.getPrevIteration() != 0) { //是否有前驱
-            successCnt = iterationRepository.getConSucessCntById(iteration.getPrevIteration()); // 上一个迭代的连续按时发布数
+            // 上一个迭代的连续按时发布数
+            successCnt = iterationRepository.getConSucessCntById(iteration.getPrevIteration());
         }
         if (iteration.getEndTime().isBefore(finishdate)) {
             successCnt = 0;

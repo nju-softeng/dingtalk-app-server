@@ -32,7 +32,6 @@ public class VoteController {
     private ObjectMapper objectMapper;
 
 
-
     /**
      * 创建一个投票
      * @param voteVO

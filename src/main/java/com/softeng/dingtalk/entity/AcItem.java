@@ -27,7 +27,6 @@ public class AcItem {
     private double ac;
     private String reason;
     private boolean status;
-
     /**
      * ac申请属于的周绩效申请
      * 设置many端对one端延时加载，仅需要其ID

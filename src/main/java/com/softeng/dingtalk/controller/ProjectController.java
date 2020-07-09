@@ -109,6 +109,7 @@ public class ProjectController {
         return iterationService.listProjectDetail(pid);
     }
 
+
     /**
      * 查询项目的所有迭代
      * @param pid
@@ -126,33 +127,46 @@ public class ProjectController {
     }
 
 
-    // 确认项目完成，并自动计算Ac
+    /**
+     * 确认项目完成，并自动计算Ac
+     * @param itid
+     * @param map
+     * @param update
+     */
     @PostMapping("/project/autosetac/{itid}")
     public void autoSetProjectAc(@PathVariable int itid, @RequestBody Map<String, LocalDate> map, boolean update) {
         iterationService.setIterationAc(itid, map.get("finishdate"));
     }
 
 
-    // 确认项目完成，手动输入AC
+    /**
+     * 确认项目完成，手动输入AC
+     * @param itid
+     * @param vo
+     */
     @PostMapping("/project/manualsetac/{itid}")
     public void manualSetProjectAc(@PathVariable int itid, @Valid @RequestBody IterateAcVO vo) {
         iterationService.manualSetIterationAc(itid, vo.getIterationDetails(), vo.getFinishdate());
     }
 
 
-    // 计算项目Ac，返回给前端
+    /**
+     * 计算项目Ac，返回给前端
+     * @param itid
+     * @param map
+     * @param update
+     * @return
+     */
     @PostMapping("/project/iteration/{itid}/computeac")
     public Map computeIterationAc(@PathVariable int itid, @RequestBody Map<String, LocalDate> map, boolean update) {
         return iterationService.computeIterationAc(itid, map.get("finishdate"));
     }
 
+
     @GetMapping("/project/iteration/user")
     public List<Iteration> listUserIteration(@RequestAttribute int uid) {
         return iterationService.listUserIteration(uid);
     }
-
-
-
 
 
 }

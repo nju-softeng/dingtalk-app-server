@@ -63,7 +63,6 @@ public class Timer {
     }
 
 
-
     @Scheduled(cron = "0 0 3 1 * ?")
     public void initMonthlyDcSummary() {
         initService.initDcSummary();
