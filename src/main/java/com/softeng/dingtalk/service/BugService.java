@@ -41,19 +41,29 @@ public class BugService {
     PerformanceService performanceService;
 
 
-    // 用户提交bug
+    /**
+     * 用户提交bug
+     * @param bug
+     */
     public void submitBug(Bug bug) {
         bugRepository.save(bug);
     }
 
 
-    // 查询指定项目的bug
+    /**
+     * 查询指定项目的bug
+     * @param pid
+     * @return
+     */
     public List<Bug> listProjectBug(int pid) {
         return bugRepository.findAllByProjectId(pid);
     }
 
 
-    // 用户删除bug
+    /**
+     * 用户删除bug
+     * @param id
+     */
     public void rmbug(int id) {
         Bug bug = bugRepository.findById(id).get();
         if (bug.getStatus() != null) {
@@ -68,20 +78,27 @@ public class BugService {
     }
 
 
-
-    // 审核人确认bug
+    /**
+     * 审核人确认bug
+     * @param vo
+     */
     public void checkbug(BugCheckVO vo) {
         bugDetailRepository.deleteBugDetailByBugId(vo.getId());
-        if (vo.isStatus() == false) { // bug 不存在
+        if (vo.isStatus() == false) {
+            // bug 不存在
             bugRepository.updateBugStatus(vo.getId(), false);
-        } else { // 存在bug
-            Bug bug = bugRepository.findById(vo.getId()).get(); // 当前bug
+        } else {
+            // 存在bug
+            Bug bug = bugRepository.findById(vo.getId()).get();
             bug.setStatus(true);
-            User auditor = bug.getProject().getAuditor(); // 审核人
-            List<User> users = iterationDetailRepository.listUserByIterationId(vo.getIterationId()); // bug 所属迭代的所有用户
+            // 审核人
+            User auditor = bug.getProject().getAuditor();
+            // bug 所属迭代的所有用户
+            List<User> users = iterationDetailRepository.listUserByIterationId(vo.getIterationId());
             List<BugDetail> bugDetails = new ArrayList<>();
             List<AcRecord> acRecords = new ArrayList<>();
-            int cnt = users.size(); //迭代参与人数
+            //迭代参与人数
+            int cnt = users.size();
 
             double ac;
             AcRecord acRecord;
@@ -115,8 +132,11 @@ public class BugService {
     }
 
 
-
-    // 查询指定用户的 bug
+    /**
+     * 查询指定用户的 bug
+     * @param uid
+     * @return
+     */
     public List<Bug> listUserBug(int uid) {
         List<Integer> ids = bugDetailRepository.listBugidByuid(uid);
         if (ids.size() != 0) {
@@ -126,10 +146,14 @@ public class BugService {
         }
     }
 
-    // 审核人待审核bug数
+
+    /**
+     * 审核人待审核bug数
+     * @param uid
+     * @return
+     */
     public int getAuditorBugCnt(int uid) {
         return bugRepository.getAuditorPendingBugCnt(uid);
     }
-
 
 }

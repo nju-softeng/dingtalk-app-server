@@ -168,8 +168,6 @@ public class PaperService {
     }
 
 
-
-
     /**
      * 分页查看论文
      * @param page
@@ -227,6 +225,7 @@ public class PaperService {
         return reviewRepository.findAllByPaperid(paperid, Sort.by("id").descending());
     }
 
+
     /**
      * 更新评审意见
      * @param review
@@ -235,6 +234,7 @@ public class PaperService {
        reviewRepository.save(review);
        log.debug(review.getUpdateTime().toString());
     }
+
 
     /**
      * 删除评审意见

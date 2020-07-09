@@ -126,6 +126,7 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     @Query("update User set deleted = false where id = :uid")
     void enableUser(int uid);
 
+
     @Query("select u from User u where u.deleted = true ")
     List<User> listDisableUser();
 

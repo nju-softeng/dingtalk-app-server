@@ -104,6 +104,7 @@ public class PaperController {
         paperService.submitReview(review, uid);
     }
 
+
     /**
      * 查询指定论文的评审意见
      * @param id
@@ -113,6 +114,7 @@ public class PaperController {
     public List<Review> listReview(@PathVariable int id) {
         return paperService.listReview(id);
     }
+
 
     /**
      * 更新评审建议
@@ -126,6 +128,7 @@ public class PaperController {
         }
         paperService.updateReview(review);
     }
+
 
     /**
      * 删除评审意见

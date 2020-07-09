@@ -22,5 +22,8 @@ public class ApplyVO {
     @Max(value = 1, message = " D值不能大于 1！")
     private double dvalue;
     private double ac;
-    private List<AcItem> acItems;     //ac值申请列表
+    /**
+     * ac值申请列表
+     */
+    private List<AcItem> acItems;
 }

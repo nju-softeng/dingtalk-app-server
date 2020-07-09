@@ -52,7 +52,6 @@ public class VoteService {
     UserRepository userRepository;
 
 
-
     /**
      * 创建投票
      * 钉钉发送消息
