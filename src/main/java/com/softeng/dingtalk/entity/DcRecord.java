@@ -26,21 +26,37 @@ public class DcRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
+    /**
+     * Dedication Value
+     */
     @Column(columnDefinition="DECIMAL(10,3)")
-    private double dvalue;  // Dedication Value
+    private double dvalue;
+    /**
+     * Contribution Value
+     */
     @Column(columnDefinition="DECIMAL(10,3)")
-    private double cvalue;  // Contribution Value
+    private double cvalue;
     @Column(columnDefinition="DECIMAL(10,3)")
     private double dc;
     @Column(columnDefinition="DECIMAL(10,3)")
     private double ac;
 
-
-    private boolean status;   // 是否被审核
-    private int yearmonth;     // 表示申请所属 年、月
-    private int week;          // 申请所属周
-    private LocalDate weekdate; //所属周的一天
+    /**
+     * 是否被审核
+     */
+    private boolean status;
+    /**
+     * 表示申请所属 年、月
+     */
+    private int yearmonth;
+    /**
+     * 申请所属周
+     */
+    private int week;
+    /**
+     * 所属周的一天
+     */
+    private LocalDate weekdate;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;
     @JsonIgnore
@@ -49,7 +65,10 @@ public class DcRecord {
     @JsonIgnore
     private int dateCode;
 
-    @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
+    /**
+     * 设置many端对one端延时加载，仅需要其ID
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
     private User applicant;
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;

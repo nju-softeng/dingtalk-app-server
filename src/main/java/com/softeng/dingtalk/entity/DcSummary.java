@@ -25,7 +25,9 @@ public class DcSummary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int yearmonth;
-    //表示用户当月第几周的 DC值
+    /**
+     * 表示用户当月第几周的 DC值
+     */
     @Column(columnDefinition="DECIMAL(10,3)")
     private double week1;
     @Column(columnDefinition="DECIMAL(10,3)")
@@ -48,7 +50,10 @@ public class DcSummary {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    // Gain = Base * DC * (1+ (AC/50)) + topup
+
+    /**
+     * Gain = Base * DC * (1+ (AC/50)) + topup
+     */
     public void computeTotal() {
         List<BigDecimal> weeks = new ArrayList<>();
         weeks.add(BigDecimal.valueOf(week1));

@@ -18,12 +18,13 @@ import java.util.Map;
 public class Utils {
 
     public int[] getTimeFlag(LocalDate localDate) {
-        LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue()); // 获取本月周日
-        //年
+        // 获取本月周日
+        LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue());
+        // 年
         int year = sunday.getYear();
-        //月
+        // 月
         int month = sunday.getMonthValue();
-        //天
+        // 天
         int day = sunday.getDayOfMonth();
         int week = day / 7 + (day % 7 == 0 ? 0 : 1);
 
@@ -33,19 +34,23 @@ public class Utils {
         return result;
     }
 
+
     public int getTimeCode(LocalDate localDate) {
-        LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue()); // 获取本月周日
-        //年
+        // 获取本月周日
+        LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue());
+        // 年
         int year = sunday.getYear();
-        //月
+        // 月
         int month = sunday.getMonthValue();
         int day = sunday.getDayOfMonth();
         int week = day / 7 + (day % 7 == 0 ? 0 : 1);
         return year * 1000 + month * 10 + week;
     }
 
+
     public String getTimeStr(LocalDate localDate) {
-        LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue()); // 获取本月周日
+        // 获取本月周日
+        LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue());
         int month = sunday.getMonthValue();
         int day = sunday.getDayOfMonth();
         int week = day / 7 + (day % 7 == 0 ? 0 : 1);

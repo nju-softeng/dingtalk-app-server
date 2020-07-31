@@ -2,22 +2,17 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.DcRecord;
 
-import com.softeng.dingtalk.projection.DcRecordProjection;
 import com.softeng.dingtalk.vo.AppliedVO;
 import com.softeng.dingtalk.vo.CheckedVO;
 import com.softeng.dingtalk.vo.DcVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -27,27 +22,6 @@ import java.util.Map;
  */
 @Repository
 public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integer> {
-
-
-    /**
-     * 更具分页查出的id去查询
-     * @param ids
-     * @return java.util.List<com.softeng.dingtalk.projection.DcRecordProjection>
-     * @Date 1:30 PM 2/10/2020
-     **/
-    @EntityGraph(value="dcRecord.graph",type= EntityGraph.EntityGraphType.FETCH)
-    @Query("select d from DcRecord d where d.id in :ids order by d.id desc")
-    List<DcRecordProjection> findAllById(List<Integer> ids);
-
-
-    /**
-     * 分页查询出申请者的申请id
-     * @param uid, pageable
-     * @return java.util.List<java.lang.Integer>
-     * @Date 3:08 PM 2/10/2020
-     **/
-    @Query("select d.id from DcRecord d where d.applicant.id = :uid")
-    List<Integer> listIdByUid(@Param("uid") int uid, Pageable pageable);
 
 
     /**

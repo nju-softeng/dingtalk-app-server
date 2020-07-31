@@ -209,6 +209,7 @@ public class SystemService {
         return paperLevelRepository.findAll();
     }
 
+
     /**
      * 更新论文AC标准
      * @param paperLevels
@@ -219,6 +220,7 @@ public class SystemService {
         }
     }
 
+
     /**
      * 更新用户信息
      * @param u
@@ -228,6 +230,7 @@ public class SystemService {
         userRepository.updateUserInfo(u.getId(), u.getStuNum(), u.getPosition(), u.getAuthority());
     }
 
+
     /**
      * 停用用户，学生毕业之后它的信息不应该出现在报表中
      * @param uid
@@ -235,6 +238,7 @@ public class SystemService {
     public void disableUser(int uid) {
         userRepository.deleteById(uid);
     }
+
 
     /**
      * 恢复用户
@@ -244,6 +248,7 @@ public class SystemService {
         userRepository.enableUser(uid);
     }
 
+
     /**
      * 查询停用的用户
      * @return
@@ -251,8 +256,5 @@ public class SystemService {
     public List<User> queryDisableUser() {
         return userRepository.listDisableUser();
     }
-
-
-
 
 }

@@ -44,7 +44,7 @@ public class Iteration {
     private int conSuccess;
 
 
-    @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
+    @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
     @ManyToOne
     private Project project;

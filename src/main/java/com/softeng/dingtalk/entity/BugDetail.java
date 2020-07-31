@@ -22,11 +22,14 @@ public class BugDetail {
     private int id;
 
     @JsonIgnoreProperties("bugDetails")
-    @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
+    @ManyToOne(fetch = FetchType.LAZY)
     private Bug bug;
     @ManyToOne
     private User user;
-    private boolean principal; // 是否为主要责任人
+    /**
+     * 是否为主要责任人
+     */
+    private boolean principal;
     private double ac;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private AcRecord acRecord;

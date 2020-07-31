@@ -24,6 +24,7 @@ public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
     @Query("select v from Vote v where v.status = false ")
     List<Vote> listByStatus();
 
+
     @Modifying
     @Query("update Vote v set v.status = true, v.accept = :accept, v.total = :total, v.result = :result where v.id = :id")
     void updateStatus(@Param("id") int id, @Param("accept") int accept, @Param("total") int total, @Param("result") boolean result);

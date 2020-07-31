@@ -23,7 +23,10 @@ public class Message {
     private String title;
     private String content;
     private boolean status;
-    private int uid; //接收人id;
+    /**
+     * 接收人id
+     */
+    private int uid;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime createTime;
 

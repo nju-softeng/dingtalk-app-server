@@ -21,9 +21,18 @@ public class ToCheckVO {
     private int id;
     private int uid;
     private String name;
-    private double dvalue;  // Dedication Value
-    private int yearmonth;  // 表示申请所属 年、月
-    private int week;       // 申请所属周
+    /**
+     * Dedication Value
+     */
+    private double dvalue;
+    /**
+     * 表示申请所属 年、月
+     */
+    private int yearmonth;
+    /**
+     * 申请所属周
+     */
+    private int week;
     private LocalDateTime insertTime;
     List<AcItem> acItems;
     private LocalDate weekdate;

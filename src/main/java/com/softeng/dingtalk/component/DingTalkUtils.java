@@ -192,8 +192,10 @@ public class DingTalkUtils {
         OapiReportListRequest request = new OapiReportListRequest();
         request.setUserid(userid);
         Long startTime = LocalDateTime.of(date, LocalTime.of(8,0)).toInstant(ZoneOffset.of("+8")).toEpochMilli();
-        request.setStartTime(startTime); //开始时间
-        request.setEndTime(startTime + TimeUnit.DAYS.toMillis(5));  //结束时间
+        //开始时间
+        request.setStartTime(startTime);
+        //结束时间
+        request.setEndTime(startTime + TimeUnit.DAYS.toMillis(5));
         request.setCursor(0L);
         request.setSize(1L);
         OapiReportListResponse response;
@@ -202,7 +204,8 @@ public class DingTalkUtils {
         } catch (ApiException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "获取周报失败");
         }
-        if (response.getResult().getDataList().size() == 0) { // 无数据
+        if (response.getResult().getDataList().size() == 0) {
+            // 无数据
             return Map.of();
         } else {
             List<OapiReportListResponse.JsonObject> contents = response.getResult().getDataList().get(0).getContents().stream()
@@ -369,7 +372,11 @@ public class DingTalkUtils {
     }
 
 
-    // 字节数组转化成十六进制字符串
+    /**
+     * 字节数组转化成十六进制字符串
+     * @param hash
+     * @return
+     */
     private String bytesToHex(final byte[] hash) {
         Formatter formatter = new Formatter();
         for (byte b : hash) {
@@ -380,7 +387,15 @@ public class DingTalkUtils {
         return result;
     }
 
-    // 计算鉴权 signature
+
+    /**
+     * 计算鉴权 signature
+     * @param ticket
+     * @param nonceStr
+     * @param timeStamp
+     * @param url
+     * @return
+     */
     private String sign(String ticket, String nonceStr, long timeStamp, String url)  {
         String plain = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + String.valueOf(timeStamp)
                 + "&url=" + url;
@@ -397,7 +412,12 @@ public class DingTalkUtils {
         return null;
     }
 
-    // 返回鉴权结果
+
+    /**
+     * 返回鉴权结果
+     * @param url
+     * @return
+     */
     public Map authentication(String url) {
         long timeStamp = System.currentTimeMillis();
         String nonceStr = "todowhatliesclearathand";

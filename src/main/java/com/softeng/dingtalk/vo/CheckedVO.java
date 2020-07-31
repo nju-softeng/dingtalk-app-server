@@ -19,16 +19,37 @@ import java.util.List;
 @Setter
 @ToString
 public class CheckedVO {
-    private int id;         // dcRecord id
-    private String name;    // 申请人姓名
-    private int uid;        // 申请人id
-    private double dvalue;  // Dedication Value
-    private double cvalue;  // Contribution Value
+    /**
+     * dcRecord id
+     */
+    private int id;
+    /**
+     * 申请人姓名
+     */
+    private String name;
+    /**
+     * 申请人id
+     */
+    private int uid;
+    /**
+     * Dedication Value
+     */
+    private double dvalue;
+    /**
+     * Contribution Value
+     */
+    private double cvalue;
     private double dc;
     private double ac;
-    private int yearmonth;  // 表示申请所属 年、月
+    /**
+     * 表示申请所属 年、月
+     */
+    private int yearmonth;
     private int week;
-    private int aid;        // 审核人id，用于通知消息中，显示审核人
+    /**
+     * 审核人id，用于通知消息中，显示审核人
+     */
+    private int aid;
     private LocalDateTime insertTime;
     private LocalDate weekdate;
     private List<AcItem> acItems;

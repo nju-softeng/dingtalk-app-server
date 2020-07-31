@@ -30,6 +30,7 @@ public class BugController {
         bugService.submitBug(bug);
     }
 
+
     @GetMapping("/bug/project/{pid}")
     public List<Bug> listProjectBug(@PathVariable int pid) {
         return bugService.listProjectBug(pid);
@@ -52,6 +53,7 @@ public class BugController {
     public void checkBug(@RequestBody BugCheckVO vo) {
         bugService.checkbug(vo);
     }
+
 
     @GetMapping("/bug/user")
     public void listUserBug(@RequestAttribute int uid) {
