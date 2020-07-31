@@ -21,6 +21,7 @@ public interface SubsidyLevelRepository extends CustomizedRepository<SubsidyLeve
     @Query("select s.subsidy from SubsidyLevel s where s.position = :position")
     double getSubsidy(@Param("position") Position position);
 
+
     /**
      * 更新绩效标准
      * @param position

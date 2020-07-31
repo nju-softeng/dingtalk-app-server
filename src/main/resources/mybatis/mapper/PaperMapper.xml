@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softeng.dingtalk.mapper.PaperMapper">
+
+
+    <!--  论文列表项数据  -->
+    <resultMap id="PaperInfo" type="com.softeng.dingtalk.vo.PaperInfoVO">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="journal" property="journal"/>
+        <result column="result" property="result"/>
+        <result column="paper_type" property="paperType"/>
+        <result column="issue_date" property="issueDate"/>
+        <result column="v_status" property="v_status"/>
+        <result column="v_result" property="v_result"/>
+        <collection property="authors" ofType="com.softeng.dingtalk.vo.AuthorVO" >
+            <result column="uid" property="uid"/>
+            <result column="name" property="name"/>
+            <result column="num" property="num"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="listPaperInfo" resultMap="PaperInfo">
+        SELECT
+	        p.id,
+	        p.title,
+	        p.journal,
+	        p.issue_date,
+	        p.result,
+	        p.paper_type,
+	        u.id as uid,
+	        u.name,
+	        pd.num,
+	        v.status as v_status,
+	        v.result as v_result
+        FROM
+	        (SELECT id, title, journal, issue_date, result, paper_type FROM paper ORDER BY id DESC LIMIT #{offset}, #{size}) p
+	        LEFT JOIN paper_detail pd on p.id = pd.paper_id
+	        LEFT JOIN user u on pd.user_id = u.id
+	        LEFT JOIN vote v on v.pid = p.id
+	    ORDER BY
+	        id DESC, num ASC
+    </select>
+
+
+</mapper>

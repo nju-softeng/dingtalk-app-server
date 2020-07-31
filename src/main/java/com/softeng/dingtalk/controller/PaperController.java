@@ -1,16 +1,14 @@
 package com.softeng.dingtalk.controller;
 
+
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Review;
 import com.softeng.dingtalk.entity.Vote;
-import com.softeng.dingtalk.projection.PaperProjection;
-import com.softeng.dingtalk.repository.ReviewRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -80,9 +78,9 @@ public class PaperController {
      * @param page
      * @return
      */
-    @GetMapping("/paper/page/{page}")
-    public Map listPaper(@PathVariable int page) {
-        return paperService.listPaper(page);
+    @GetMapping("/paper/page/{page}/{size}")
+    public Map listPaper(@PathVariable int page, @PathVariable int size) {
+        return paperService.listPaper(page, size);
     }
 
 
@@ -106,6 +104,7 @@ public class PaperController {
         paperService.submitReview(review, uid);
     }
 
+
     /**
      * 查询指定论文的评审意见
      * @param id
@@ -115,6 +114,7 @@ public class PaperController {
     public List<Review> listReview(@PathVariable int id) {
         return paperService.listReview(id);
     }
+
 
     /**
      * 更新评审建议
@@ -128,6 +128,7 @@ public class PaperController {
         }
         paperService.updateReview(review);
     }
+
 
     /**
      * 删除评审意见

@@ -25,6 +25,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
     @Query("select vd.user.id from VoteDetail vd where vd.vote.id = :vid")
     Set<Integer> findVoteUserid(@Param("vid") int vid);
 
+
     @Query(value = "select count(id) from vote_detail where vote_id = :vid and result = true", nativeQuery = true)
     Integer getAcceptCnt(@Param("vid") int vid);
 

@@ -86,7 +86,7 @@ public class NotifyService {
         for (PaperDetail pd : paper.getPaperDetails()) {
            //double acsum = acRecordRepository.getUserAcSum(pd.getUser().getId());
             String title = "论文: " + papertitel.substring(0, len) + (result ? "... 投稿成功":"... 投稿失败");
-            String content = "AC: " + pd.getAc(); // + "  当前总AC: " + acsum;
+            String content = "AC: " + pd.getAc();
             Message msg = new Message(title, content, pd.getUser().getId());
             messageRepository.save(msg);
         }
@@ -108,10 +108,10 @@ public class NotifyService {
             //double acsum = acRecordRepository.getUserAcSum(vd.getUser().getId());
             if (vd.getResult() == result) {
                 title = "投票预测正确,  " + papertitel.substring(0, len) + "... 投稿成功";
-                content = "AC: + 1    "; // + "当前总AC: " + acsum;
+                content = "AC: + 1    ";
             } else {
                 title = "投票预测错误,  " + papertitel.substring(0, len) + "... 投稿失败";
-                content = "AC: - 1    "; // + "当前总AC: " + acsum;
+                content = "AC: - 1    ";
             }
             Message msg = new Message(title, content, vd.getUser().getId());
             messageRepository.save(msg);
@@ -130,7 +130,11 @@ public class NotifyService {
         }
     }
 
-    // 手动计算项目AC消息
+
+    /**
+     * 手动计算项目AC消息
+     * @param acRecords
+     */
     public void manualSetProjectAcMessage(List<AcRecord> acRecords) {
         for (AcRecord ac : acRecords) {
             Message msg = new Message(ac.getReason(), "AC: + " + ac.getAc(), ac.getUser().getId());
@@ -138,7 +142,11 @@ public class NotifyService {
         }
     }
 
-    // 项目bug消息
+
+    /**
+     * 项目bug消息
+     * @param acRecords
+     */
     public void bugMessage(List<AcRecord> acRecords) {
         for (AcRecord ac : acRecords) {
             Message msg = new Message(ac.getReason(), "AC: " + ac.getAc(), ac.getUser().getId());

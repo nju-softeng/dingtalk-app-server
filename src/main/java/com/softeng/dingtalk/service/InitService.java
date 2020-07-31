@@ -56,12 +56,14 @@ public class InitService {
         }
     }
 
+
     /**
      * 初始化系统用户
      */
     public void initUser() {
         systemService.fetchUsers();
     }
+
 
     /**
      * 初始化绩效基准
@@ -76,6 +78,7 @@ public class InitService {
             subsidyLevelRepository.saveBatch(subsidyLevels);
         }
     }
+
 
     /**
      * 每月初始化DcSummary

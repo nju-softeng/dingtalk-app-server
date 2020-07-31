@@ -1,12 +1,19 @@
 package com.softeng.dingtalk;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.softeng.dingtalk.mapper.PaperMapper;
+import com.softeng.dingtalk.vo.PaperInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * @author zhanyeye
@@ -18,23 +25,18 @@ import java.time.LocalDate;
 @Slf4j
 public class DateTest {
 
+    @Autowired
+    PaperMapper paperMapper;
 
     @Test
     public void test_1() {
-        int[] arr = getTimeFlag(LocalDate.of(2020, 1, 20));
-        log.debug(arr[0]+ " " + arr[1]);
+        PageHelper.startPage(1, 2);
+        List<PaperInfoVO> kk = paperMapper.listPaperInfo(0, 6);
+        PageInfo<PaperInfoVO> pages = new PageInfo<>(kk);
+        log.debug(pages.toString());
+
+
     }
 
-    public int[] getTimeFlag(LocalDate localDate) {
-        LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue()); // 获取本月周日
-        int year = sunday.getYear();        //年
-        int month = sunday.getMonthValue(); //月
-        int week = sunday.getDayOfMonth() / 7 + 1;
-
-        int[] result = new int[2];
-        result[0] = year * 100 + month;
-        result[1] = week;
-        return result;
-    }
 
 }

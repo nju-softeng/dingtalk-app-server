@@ -34,6 +34,7 @@ public class WebSocketController {
      */
     private Session session;
 
+
     /**
      * 连接建立成功调用的方法
      * @param session
@@ -50,6 +51,7 @@ public class WebSocketController {
         log.info("新连接接入。当前在线人数为："+getOnlineCount());
     }
 
+
     @OnClose
     public void onClose() {
         //从set中删除
@@ -58,6 +60,7 @@ public class WebSocketController {
         subOnlineCount();
         log.info("有连接关闭。当前在线人数为："+getOnlineCount());
     }
+
 
     /**
      * 收到客户端消息后调用
@@ -70,6 +73,7 @@ public class WebSocketController {
         sendAll(message);
     }
 
+
     /**
      * 暴露给外部的群发
      * @param message
@@ -78,6 +82,7 @@ public class WebSocketController {
     public static void sendInfo(String message) throws IOException {
         sendAll(message);
     }
+
 
     /**
      * 群发
@@ -95,6 +100,7 @@ public class WebSocketController {
         });
     }
 
+
     /**
      * 发生错误时调用
      * @param session
@@ -106,12 +112,14 @@ public class WebSocketController {
         error.printStackTrace();
     }
 
+
     /**
      * 减少在线人数
      */
     private synchronized void subOnlineCount() {
         WebSocketController.onlineCount--;
     }
+
 
     /**
      * 添加在线人数
@@ -120,6 +128,7 @@ public class WebSocketController {
         WebSocketController.onlineCount++;
     }
 
+
     /**
      * 当前在线人数
      * @return
@@ -127,6 +136,7 @@ public class WebSocketController {
     public static synchronized int getOnlineCount() {
         return onlineCount;
     }
+
 
     /**
      * 发送信息

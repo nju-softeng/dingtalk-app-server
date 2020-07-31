@@ -26,8 +26,12 @@ public class AppliedVO {
     private int yearmonth;
     private int week;
     private LocalDate date;
+
     private LocalDateTime insertTime;
-    private List<AcItem> acItems;     //ac值申请列表
+    /**
+     * ac值申请列表
+     */
+    private List<AcItem> acItems;
 
     public AppliedVO(int id, int auditorid, String auditorName, Boolean status, double dvalue, double dc, double ac, int yearmonth, int week, LocalDate date, LocalDateTime insertTime) {
         this.id = id;

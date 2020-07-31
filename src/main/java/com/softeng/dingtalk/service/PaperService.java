@@ -1,17 +1,18 @@
 package com.softeng.dingtalk.service;
 
+
 import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.projection.PaperProjection;
+import com.softeng.dingtalk.mapper.PaperMapper;
+
 import com.softeng.dingtalk.repository.*;
 
+import com.softeng.dingtalk.vo.AuthorVO;
+import com.softeng.dingtalk.vo.PaperInfoVO;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,19 +51,23 @@ public class PaperService {
     PerformanceService performanceService;
     @Autowired
     ReviewRepository reviewRepository;
+    @Autowired
+    PaperMapper paperMapper;
 
 
     /**
      * 添加论文记录
-     * @param papervo
+     * @param vo
      */
-    public void addPaper(PaperVO papervo) {
-        Paper paper = new Paper(papervo);
+    public void addPaper(PaperVO vo) {
+        Paper paper = new Paper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate());
         paperRepository.save(paper);
-        for (PaperDetail pd : papervo.getPaperDetails()) {
-            pd.setPaper(paper);
+        List<PaperDetail> paperDetails = new ArrayList<>();
+        for (AuthorVO author : vo.getAuthors()) {
+            PaperDetail pd = new PaperDetail(paper, new User(author.getUid()), author.getNum());
+            paperDetails.add(pd);
         }
-        paperDetailRepository.saveAll(papervo.getPaperDetails());
+        paperDetailRepository.saveBatch(paperDetails);
     }
 
 
@@ -73,19 +79,17 @@ public class PaperService {
     public void updatePaper(PaperVO paperVO) {
         Paper paper = paperRepository.findById(paperVO.getId()).get();
         paper.update(paperVO.getTitle(), paperVO.getJournal(), paperVO.getPaperType(), paperVO.getIssueDate());
-        //更新
+        // 更新
         paperRepository.save(paper);
-        // 删除paperDetail
+        // 删除旧的paperDetail
         paperDetailRepository.deleteByPaper(paper);
         // 重新添加paperDetail
-        for (PaperDetail pd : paperVO.getPaperDetails()) {
-            pd.setPaper(paper);
+        List<PaperDetail> paperDetails = new ArrayList<>();
+        for (AuthorVO author : paperVO.getAuthors()) {
+            PaperDetail pd = new PaperDetail(paper, new User(author.getUid()), author.getNum());
+            paperDetails.add(pd);
         }
-        paperDetailRepository.saveAll(paperVO.getPaperDetails());
-
-        if (paper.getResult() != null) {
-            updateResult(paper.getId(), paper.getResult());
-        }
+        paperDetailRepository.saveBatch(paperDetails);
     }
 
 
@@ -113,7 +117,12 @@ public class PaperService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
         }
         //更新指定 论文的结果
-        paper.setResult(result);
+        if (result == true) {
+            paper.setResult(Paper.ACCEPT);
+        } else {
+            paper.setResult(Paper.REJECT);
+        }
+
         paperRepository.save(paper);
 
         // 计算AC
@@ -159,24 +168,16 @@ public class PaperService {
     }
 
 
-
-
     /**
      * 分页查看论文
      * @param page
      * @return
      */
-    public Map listPaper(int page) {
-        Pageable pageable = PageRequest.of(page, 6, Sort.by("id").descending());
-        //查询出的分页数据对象id
-        Page<Integer> pages = paperRepository.listAllId(pageable);
-        List<Integer> ids = pages.getContent();
-        if (ids.size() != 0) {
-            return Map.of("content", paperRepository.findAllById(ids), "total", pages.getTotalElements());
-        } else {
-            return Map.of("total",0);
-        }
-
+    public Map listPaper(int page, int size) {
+        int offset = (page - 1) * size;
+        List<PaperInfoVO> paperlist = paperMapper.listPaperInfo(offset, size);
+        int total = paperMapper.countPaper();
+        return Map.of("list", paperlist, "total", total);
     }
 
 
@@ -224,6 +225,7 @@ public class PaperService {
         return reviewRepository.findAllByPaperid(paperid, Sort.by("id").descending());
     }
 
+
     /**
      * 更新评审意见
      * @param review
@@ -232,6 +234,7 @@ public class PaperService {
        reviewRepository.save(review);
        log.debug(review.getUpdateTime().toString());
     }
+
 
     /**
      * 删除评审意见

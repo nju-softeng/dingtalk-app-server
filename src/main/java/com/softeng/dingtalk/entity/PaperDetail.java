@@ -27,12 +27,18 @@ public class PaperDetail {
     @Column(columnDefinition="DECIMAL(10,3)")
     private double ac;
     @JsonIgnoreProperties("paperDetails")
-    @ManyToOne(fetch = FetchType.LAZY) //设置many端对one端延时加载，仅需要其ID
+    @ManyToOne(fetch = FetchType.LAZY)
     private Paper paper;
     @ManyToOne
     private User user;
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private AcRecord acRecord;
+
+    public PaperDetail(Paper paper, User user, int num) {
+        this.paper = paper;
+        this.user = user;
+        this.num = num;
+    }
 
 }

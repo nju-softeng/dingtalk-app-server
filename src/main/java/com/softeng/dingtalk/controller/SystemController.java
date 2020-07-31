@@ -31,6 +31,7 @@ public class SystemController {
     @Autowired
     SystemService systemService;
 
+
     /**
      * 根据条件分页筛选用户
      * @param vo
@@ -92,6 +93,7 @@ public class SystemController {
         systemService.updatePaperLevel(paperLevels);
     }
 
+
     /**
      * 更新用户信息
      * @param user
@@ -100,6 +102,7 @@ public class SystemController {
     public void updateUserInfo(@RequestBody User user) {
         systemService.updateUserInfo(user);
     }
+
 
     /**
      * 禁用用户
@@ -111,6 +114,7 @@ public class SystemController {
         systemService.disableUser(uid);
     }
 
+
     /**
      * 取消禁用用户
      * @param uid
@@ -120,6 +124,7 @@ public class SystemController {
         systemService.enableUser(uid);
     }
 
+
     /**
      * 查询禁用的用户
      * @return
@@ -128,8 +133,5 @@ public class SystemController {
     public List<User> queryDisableUser() {
         return systemService.queryDisableUser();
     }
-
-
-
 
 }

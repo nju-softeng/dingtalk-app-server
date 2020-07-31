@@ -43,7 +43,8 @@ public class AuditController {
      **/
     @PostMapping("/audit")
     public void submitAuditResult(@Valid @RequestBody CheckVO checkVO) {
-        DcRecord dc = auditService.submitAudit(checkVO); //持久化审核结果
+        //持久化审核结果
+        DcRecord dc = auditService.submitAudit(checkVO);
         auditService.updateDcSummary(dc);
     }
 
@@ -68,6 +69,7 @@ public class AuditController {
     public List<ToCheckVO> getAuditApplication(@RequestAttribute int uid) {
         return auditService.getPendingApplication(uid);
     }
+
 
     /**
      * 审核人获取已经审核的申请
