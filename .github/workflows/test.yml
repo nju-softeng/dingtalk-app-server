@@ -23,12 +23,12 @@ jobs:
           key: ${{ secrets.TEST_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ~/dingtalk-springboot/
+            cd ~/dingtalk/dingtalk-springboot/
             git pull origin test
             mvn package
-            docker build -t dingtalk_springboot .
-            docker container stop dingtalk_springboot
-            docker container rm dingtalk_springboot
-            docker run -d --net dingtalk-net -p 8080:8080 --name dingtalk_springboot -v /etc/timezone:/etc/timezone -v /etc/localtime:/etc/localtime -e PROFILES="test" dingtalk_springboot
-            docker image prune -f
+#            docker build -t dingtalk_springboot .
+#            docker container stop dingtalk_springboot
+#            docker container rm dingtalk_springboot
+#            docker run -d --net dingtalk-net -p 8080:8080 --name dingtalk_springboot -v /etc/timezone:/etc/timezone -v /etc/localtime:/etc/localtime -e PROFILES="test" dingtalk_springboot
+#            docker image prune -f
 
