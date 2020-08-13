@@ -26,8 +26,9 @@ jobs:
             cd ~/dingtalk/dingtalk-springboot/
             git pull origin test
             mvn package
-	    cd ~/dingtalk/
-	    docker-compose build
+            cd ~/dingtalk/
+            docker-compose build
             docker-compose up
             docker image prune
+	    
 
