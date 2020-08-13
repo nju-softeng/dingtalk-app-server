@@ -28,7 +28,5 @@ jobs:
             mvn package
             cd ~/dingtalk/
             docker-compose build
-            docker-compose up
+            docker-compose up -d
             docker image prune
-	    
-
