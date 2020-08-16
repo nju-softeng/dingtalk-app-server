@@ -18,7 +18,7 @@ import java.util.List;
  * @create 12/12/2019 8:21 PM
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
 public class ApplicationServiceTest {
     @Autowired
@@ -28,7 +28,7 @@ public class ApplicationServiceTest {
 
     @Test
     public void test() {
-
+        log.debug(dcRecordRepository.isExist(1, 1, 202007, 2).toString());
     }
 
 }

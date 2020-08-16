@@ -96,7 +96,7 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integ
      * @Date 7:47 PM 12/30/2019
      **/
     @Query(value =
-            "SELECT IfNULL((SELECT id FROM dc_record WHERE applicant_id = :uid and auditor_id = :aid and yearmonth = :yearmonth and week = :week LIMIT 1), 0)",
+            "SELECT id FROM dc_record WHERE applicant_id = :uid and auditor_id = :aid and yearmonth = :yearmonth and week = :week LIMIT 1",
             nativeQuery = true)
     Integer isExist(@Param("uid") int uid,@Param("aid") int aid, @Param("yearmonth") int yearmonth, @Param("week") int week);
 
