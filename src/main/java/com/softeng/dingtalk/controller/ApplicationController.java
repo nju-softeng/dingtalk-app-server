@@ -10,10 +10,14 @@ import com.softeng.dingtalk.service.UserService;
 import com.softeng.dingtalk.vo.ApplyVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +44,7 @@ public class ApplicationController {
     DcSummaryRepository dcSummaryRepository;
 
     /**
-     * 返回请求中的时间时本月第几周
+     * 返回请求中的时间是本月第几周
      * @param date
      * @return int[] 数组大小为2，第一个时yearmonth, 第二个时week
      */
