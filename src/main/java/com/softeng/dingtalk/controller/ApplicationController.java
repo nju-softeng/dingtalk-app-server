@@ -39,7 +39,6 @@ public class ApplicationController {
     @Autowired
     DcSummaryRepository dcSummaryRepository;
 
-
     /**
      * 返回请求中的时间时本月第几周
      * @param date
@@ -57,8 +56,12 @@ public class ApplicationController {
      * @param vo
      */
     @PostMapping("/application")
-    public DcRecord submitApplication(@RequestAttribute int uid, @Valid @RequestBody ApplyVO vo) {
-        return applicationService.submitApplication(vo, uid);
+    public void submitApplication(@RequestAttribute int uid, @Valid @RequestBody ApplyVO vo) {
+        if (userService.isAuditor(uid) && uid == vo.getAuditorid()) {
+            applicationService.auditorSubmit(vo, uid);
+        } else {
+            applicationService.submitApplication(vo, uid);
+        }
     }
 
 
