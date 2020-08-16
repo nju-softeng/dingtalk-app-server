@@ -47,7 +47,7 @@ public class AuditService {
 
     /**
      * 审核人提交或更新绩效申请
-     * @param checkVO
+     * @param checkVO 审核人提交的审核结果
      * @return
      */
     public DcRecord submitAudit(CheckVO checkVO) {

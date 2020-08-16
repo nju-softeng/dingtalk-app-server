@@ -50,12 +50,15 @@ public class ApplicationService {
         int dateCode = utils.getTimeCode(vo.getDate());
         // 返回提交或更新的结果
         DcRecord res = null;
+        // 是否本周已经提交记录，如果有则获得它的id，否则为null
+        Integer hasExist = isExist(uid, vo.getAuditorid(), result[0], result[1]);
+        // 如果本周已经提交记录 && 不是对已提交的记录进行修改
+        if (hasExist != null && hasExist != vo.getId()) {
+            // 一周只能向审核人提交一次
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
+        }
         if (vo.getId() == 0) {
             // 提交新的申请
-            if (isExist(uid, vo.getAuditorid(), result[0], result[1])) {
-                // 一周只能向审核人提交一次
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
-            }
             DcRecord dc = DcRecord.builder().applicant(new User(uid)).auditor(new User(vo.getAuditorid()))
                     .dvalue(vo.getDvalue()).ac(vo.getAc()).weekdate(vo.getDate()).yearmonth(result[0])
                     .week(result[1]).dateCode(dateCode).build();
@@ -66,11 +69,6 @@ public class ApplicationService {
             }
             acItemRepository.saveAll(vo.getAcItems());
         } else {
-            // 更新申请
-            if (isExist(uid, vo.getAuditorid(), result[0], result[1])) {
-                // 一周只能向审核人提交一次
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
-            }
             DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
             dc.reApply(vo.getAuditorid(), vo.getDvalue(), vo.getDate(), result[0], result[1], dateCode);
             res = dcRecordRepository.save(dc);
@@ -111,8 +109,8 @@ public class ApplicationService {
      * @param week
      * @return
      */
-    public boolean isExist(int uid, int aid, int yearmonth, int week) {
-        return dcRecordRepository.isExist(uid, aid, yearmonth, week) != 0 ? true : false;
+    public Integer isExist(int uid, int aid, int yearmonth, int week) {
+        return dcRecordRepository.isExist(uid, aid, yearmonth, week);
     }
 
 }

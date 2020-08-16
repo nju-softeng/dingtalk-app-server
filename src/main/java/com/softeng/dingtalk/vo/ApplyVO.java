@@ -21,6 +21,8 @@ public class ApplyVO {
     private LocalDate date;
     @Max(value = 1, message = " D值不能大于 1！")
     private double dvalue;
+    @Max(value = 1, message = " C值不能大于 1！")
+    private double cvalue;
     private double ac;
     /**
      * ac值申请列表
