@@ -28,6 +28,15 @@ public class UserService {
     @Autowired
     private DingTalkUtils dingTalkUtils;
 
+    /**
+     * 判断用户权限是否为审核人
+     * @param uid 用户id
+     * @return
+     */
+    public boolean isAuditor(int uid) {
+        return userRepository.getUserAuthority(uid) == User.AUDITOR_AUTHORITY ? true : false;
+    }
+
 
     /**
      * 查询系统可用用户
