@@ -2,10 +2,12 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.Utils;
 import com.softeng.dingtalk.entity.AcItem;
+import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.mapper.DcRecordMapper;
 import com.softeng.dingtalk.repository.AcItemRepository;
+import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.DcRecordRepository;
 import com.softeng.dingtalk.vo.ApplyVO;
 import com.softeng.dingtalk.vo.DcRecordVO;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +40,8 @@ public class ApplicationService {
     Utils utils;
     @Autowired
     DcRecordMapper dcRecordMapper;
+    @Autowired
+    AcRecordRepository acRecordRepository;
 
     /**
      * 添加 / 更新 申请
@@ -44,36 +49,30 @@ public class ApplicationService {
      * @param uid
      * @return
      */
-    public DcRecord submitApplication(ApplyVO vo, int uid) {
+    public void submitApplication(ApplyVO vo, int uid) {
         // 获取申请时间的时间标志, 数组大小为2, result[0]: yearmonth, result[1] week
         int[] result = utils.getTimeFlag(vo.getDate());
         int dateCode = utils.getTimeCode(vo.getDate());
-        // 返回提交或更新的结果
-        DcRecord res = null;
+
+        // 断言 确保一周只能向审核人提交一次
+        assertException(uid, vo.getAuditorid(), vo.getId(), result[0], result[1]);
+
         if (vo.getId() == 0) {
-            // 提交新的申请
-            if (isExist(uid, vo.getAuditorid(), result[0], result[1])) {
-                // 一周只能向审核人提交一次
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
-            }
+            // 提交的是新的申请
+
             DcRecord dc = DcRecord.builder().applicant(new User(uid)).auditor(new User(vo.getAuditorid()))
                     .dvalue(vo.getDvalue()).ac(vo.getAc()).weekdate(vo.getDate()).yearmonth(result[0])
                     .week(result[1]).dateCode(dateCode).build();
-            res = dcRecordRepository.save(dc);
+            dcRecordRepository.save(dc);
             for (AcItem acItem : vo.getAcItems()) {
                 // 持久化ac申请，并将绩效申请作为外键
                 acItem.setDcRecord(dc);
             }
             acItemRepository.saveAll(vo.getAcItems());
         } else {
-            // 更新申请
-            if (isExist(uid, vo.getAuditorid(), result[0], result[1])) {
-                // 一周只能向审核人提交一次
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
-            }
             DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
             dc.reApply(vo.getAuditorid(), vo.getDvalue(), vo.getDate(), result[0], result[1], dateCode);
-            res = dcRecordRepository.save(dc);
+            dcRecordRepository.save(dc);
             // 强制存入数据库
             dcRecordRepository.flush();
             //删除之前的记录
@@ -83,10 +82,82 @@ public class ApplicationService {
             }
             acItemRepository.saveAll(vo.getAcItems());
         }
-        res =  dcRecordRepository.refresh(res);
-        res.setAcItems(vo.getAcItems());
-        return res;
     }
+
+
+    /**
+     * 审核人填写个人绩效不用审核
+     * @param vo
+     * @param uid
+     */
+    public void auditorSubmit(ApplyVO vo, int uid) {
+        // 获取申请时间的时间标志, 数组大小为2, result[0]: yearmonth, result[1] week
+        int[] result = utils.getTimeFlag(vo.getDate());
+        int dateCode = utils.getTimeCode(vo.getDate());
+
+        // 断言 确保一周只能向审核人提交一次
+        assertException(uid, vo.getAuditorid(), vo.getId(), result[0], result[1]);
+
+        DcRecord dc;
+        if (vo.getId() == 0) {
+            // 提交新的申请
+            dc = DcRecord.builder()
+                    .applicant(new User(uid))
+                    .auditor(new User(vo.getAuditorid()))
+                    .weekdate(vo.getDate())
+                    .yearmonth(result[0])
+                    .week(result[1])
+                    .dateCode(dateCode)
+                    .dvalue(vo.getDvalue())
+                    .cvalue(vo.getCvalue())
+                    .dc(vo.getCvalue() * vo.getDvalue())
+                    .status(true)
+                    .build();
+            dcRecordRepository.save(dc);
+        } else {
+            dc = dcRecordRepository.findById(vo.getId()).get();
+            dc.reApply(vo.getAuditorid(), vo.getDvalue(), vo.getDate(), result[0], result[1], dateCode);
+            dc.setCvalue(vo.getCvalue());
+            dc.setDc(vo.getDvalue() * vo.getCvalue());
+            dc.setStatus(true);
+            dcRecordRepository.save(dc);
+            // 删除旧的AcItems，
+            // 同时级联删除相关AcRecord !!!!!! 见AcItem实体类
+            acItemRepository.deleteByDcRecord(dc);
+        }
+
+        // 持久化ac申请，并将绩效申请作为外键
+        double acSum = 0;
+        for (AcItem acItem : vo.getAcItems()) {
+            acItem.setDcRecord(dc);
+            AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem));
+            acItem.setAcRecord(acRecord);
+            acSum += acItem.getAc();
+        }
+        acItemRepository.saveAll(vo.getAcItems());
+
+        // 计算总ac值
+        dc.setAc(acSum);
+    }
+
+    /**
+     * 判断提交的申请是否符合"一周只能向审核人提交一次"的要求
+     * @param uid 申请者id
+     * @param aid 审核人id
+     * @param vid 提交的申请记录id
+     * @param yearmonth 申请所在年月
+     * @param week 申请所在周
+     */
+    private void assertException(int uid, int aid, int vid, int yearmonth, int week) {
+        // 是否本周已经提交记录，如果有则获得它的id，否则为null
+        Integer hasExist = isExist(uid, aid, yearmonth, week);
+        // 如果本周已经提交记录 && 不是对已提交的记录进行修改
+        if (hasExist != null && hasExist != vid) {
+            // 一周只能向审核人提交一次
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "每周只能向同一个审核人提交一次申请");
+        }
+    }
+
 
 
     /**
@@ -111,8 +182,8 @@ public class ApplicationService {
      * @param week
      * @return
      */
-    public boolean isExist(int uid, int aid, int yearmonth, int week) {
-        return dcRecordRepository.isExist(uid, aid, yearmonth, week) != 0 ? true : false;
+    public Integer isExist(int uid, int aid, int yearmonth, int week) {
+        return dcRecordRepository.isExist(uid, aid, yearmonth, week);
     }
 
 }

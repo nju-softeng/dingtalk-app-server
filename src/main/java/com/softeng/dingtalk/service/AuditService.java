@@ -47,13 +47,14 @@ public class AuditService {
 
     /**
      * 审核人提交或更新绩效申请
-     * @param checkVO
+     * @param checkVO 审核人提交的审核结果
      * @return
      */
     public DcRecord submitAudit(CheckVO checkVO) {
         DcRecord dc = dcRecordRepository.findById(checkVO.getId()).get();
         if (dc.isStatus()) {
-            // status为真，表示之前审核过，此次提交为更新 -> 删除旧的AcItems， 同时级联删除相关AcRecord
+            // status为真，表示之前审核过，此次提交为更新
+            // 删除旧的AcItems， 同时级联删除相关AcRecord !!!!!!  见AcItem实体类
             acItemRepository.deleteByDcRecord(dc);
         }
         // 更新 cvalue, dc, ac

@@ -17,6 +17,12 @@ import java.util.Map;
 @Component
 public class Utils {
 
+    /**
+     * 将日期转化为2个值: 年月，周 (YYYYMM, week),用数组返回 <p>
+     * 如 2020年1月第1周 -> [202001, 1]
+     * @param localDate
+     * @return
+     */
     public int[] getTimeFlag(LocalDate localDate) {
         // 获取本月周日
         LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue());
@@ -35,6 +41,12 @@ public class Utils {
     }
 
 
+    /**
+     * 将日期转化为 YYYYMMW 的形式 <p>
+     * 如 2020年1月第1周 -> 2020011
+     * @param localDate
+     * @return
+     */
     public int getTimeCode(LocalDate localDate) {
         // 获取本月周日
         LocalDate sunday = localDate.plusDays(7 - localDate.getDayOfWeek().getValue());

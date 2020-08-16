@@ -22,6 +22,14 @@ import java.util.Set;
 public interface UserRepository extends CustomizedRepository<User, Integer>, JpaSpecificationExecutor<User> {
 
     /**
+     * 获取用户权限
+     * @param uid 用户id
+     * @return 用户权限
+     */
+    @Query("select u.authority from User u where u.id = :uid")
+    Integer getUserAuthority(int uid);
+
+    /**
      * 查询职位不是待定的所有用户id
      * 目前可以理解为查询所有学生的id
      * @return
