@@ -1,7 +1,7 @@
 # dingtalk-springboot
 
-![Prod](https://github.com/zhanyeye/dingtalk-springboot/workflows/Prod/badge.svg?branch=master)
-![Test](https://github.com/zhanyeye/dingtalk-springboot/workflows/Test/badge.svg?branch=test)
+[![Prod](https://github.com/zhanyeye/dingtalk-springboot/workflows/Prod/badge.svg?branch=master)](https://github.com/zhanyeye/dingtalk-springboot/actions?query=workflow%3AProd)
+[![Test](https://github.com/zhanyeye/dingtalk-springboot/workflows/Test/badge.svg?branch=test)](https://github.com/zhanyeye/dingtalk-springboot/actions?query=workflow%3ATest)
 
 #### 注意
 + 使用了lombok 插件简化代码，idea 需要安装lombok 插件，否则编译过不去
