@@ -43,6 +43,7 @@ public class AuditController {
      **/
     @PostMapping("/audit")
     public void submitAuditResult(@Valid @RequestBody CheckVO checkVO) {
+
         //持久化审核结果
         DcRecord dc = auditService.submitAudit(checkVO);
         auditService.updateDcSummary(dc);

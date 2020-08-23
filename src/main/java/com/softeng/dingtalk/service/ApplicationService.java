@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,8 @@ public class ApplicationService {
 
         if (vo.getId() == 0) {
             // 提交的是新的申请
+
+            assertTimeException(vo.getDate());
 
             DcRecord dc = DcRecord.builder().applicant(new User(uid)).auditor(new User(vo.getAuditorid()))
                     .dvalue(vo.getDvalue()).ac(vo.getAc()).weekdate(vo.getDate()).yearmonth(result[0])
@@ -101,6 +104,9 @@ public class ApplicationService {
         DcRecord dc;
         if (vo.getId() == 0) {
             // 提交新的申请
+
+            assertTimeException(vo.getDate());
+
             dc = DcRecord.builder()
                     .applicant(new User(uid))
                     .auditor(new User(vo.getAuditorid()))
@@ -158,6 +164,18 @@ public class ApplicationService {
         }
     }
 
+    /**
+     * 判断提交申请的时间是否符合要求
+     * @param date
+     */
+    private void assertTimeException(LocalDate date) {
+        long gap = date.until(LocalDate.now(), ChronoUnit.DAYS);
+        if (gap > 10) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "过期一周不支持补登记！");
+        } else if (gap < 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "选中的时间还没到，不可以穿越的 ~");
+        }
+    }
 
 
     /**
