@@ -150,7 +150,7 @@ public class VoteService {
         int reject = rejectlist.size();
         // 总投票数
         int total = accept + reject;
-        return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "result", voteDetail.getResult(),"acceptnames",acceptlist,"rejectnames", rejectlist);
+        return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "result", voteDetail.getResult(),"acceptnames",acceptlist,"rejectnames", rejectlist);
     }
 
 
@@ -160,7 +160,7 @@ public class VoteService {
      * @param uid
      * @return
      */
-    public Map  getVotingDetail(int vid, int uid){
+    public Map getVotingDetail(int vid, int uid){
         Boolean myresult = voteDetailRepository.getVoteDetail(vid, uid);
         if (myresult != null) {
             //用户已经投票，可以查看结果
@@ -173,10 +173,10 @@ public class VoteService {
             // 总投票数
             int total = accept + reject;
 
-            return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist);
+            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist);
         } else {
             //用户没有投票，不可以查看结果
-            return Map.of("status", false);
+            return Map.of("vid", vid, "status", false);
         }
     }
 
@@ -213,9 +213,9 @@ public class VoteService {
 
 
         if (myresult == null) {
-            return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", names);
+            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", names);
         } else {
-            return Map.of("status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", names);
+            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", names);
         }
 
     }
