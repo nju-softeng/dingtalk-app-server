@@ -1,11 +1,17 @@
 # dingtalk-springboot
 
-![Prod](https://github.com/zhanyeye/dingtalk-springboot/workflows/Prod/badge.svg?branch=master)
-![Test](https://github.com/zhanyeye/dingtalk-springboot/workflows/Test/badge.svg?branch=test)
+[![Prod](https://github.com/zhanyeye/dingtalk-springboot/workflows/Prod/badge.svg?branch=master)](https://github.com/zhanyeye/dingtalk-springboot/actions?query=workflow%3AProd)
+[![Test](https://github.com/zhanyeye/dingtalk-springboot/workflows/Test/badge.svg?branch=test)](https://github.com/zhanyeye/dingtalk-springboot/actions?query=workflow%3ATest)
 
 #### 注意
 + 使用了lombok 插件简化代码，idea 需要安装lombok 插件，否则编译过不去
 + 由于目前钉钉小程序只支持 GET/POST, 考虑到兼容性这里的接口全部为GET/POST方式
+
+
+
+
+###### 2020.08.13
+使用`docker-compose`代替`docker run`
 
 ###### 2020.06.23
 修复老师也出现在绩效列表中的情况
