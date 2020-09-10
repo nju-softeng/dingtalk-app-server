@@ -41,9 +41,14 @@ public class TestIdea {
     @Autowired
     DcRecordMapper dcRecordMapper;
 
+    @Autowired
+    VoteRepository voteRepository;
+
+
     @Test
     public void test() {
-        List<DcRecordVO> res = dcRecordMapper.listDcRecordVO(1, 1, 1);
+        log.debug(voteRepository.isExisted(101)+ "");
+
     }
 
 

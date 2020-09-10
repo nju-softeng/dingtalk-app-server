@@ -60,6 +60,12 @@ public class VoteService {
      */
     @CacheEvict(value = "voting", allEntries = true)
     public Vote createVote(VoteVO voteVO) {
+
+        // 判断投票是否已经创建过
+        if (voteRepository.isExisted(voteVO.getPaperid()) != 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "慢了一步，投票已经被别人发起了");
+        }
+
         Vote vote = new Vote(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
         log.debug(LocalDate.now().toString());
         log.debug(voteVO.getEndTime().toString());
