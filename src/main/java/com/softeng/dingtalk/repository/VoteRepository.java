@@ -29,5 +29,14 @@ public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
     @Query("update Vote v set v.status = true, v.accept = :accept, v.total = :total, v.result = :result where v.id = :id")
     void updateStatus(@Param("id") int id, @Param("accept") int accept, @Param("total") int total, @Param("result") boolean result);
 
+    /**
+     * 查询指定论文的投票是否已经存在
+      * @param pid
+     * @return
+     */
+    @Query(value = "select ifnull((select id from vote where pid =:pid limit 1 ), 0)", nativeQuery = true)
+    Integer isExisted(@Param("pid") int pid);
+
+
 
 }
