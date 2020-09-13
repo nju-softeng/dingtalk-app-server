@@ -54,7 +54,7 @@ public class NotifyService {
     public void updateDcMessage(DcRecord dc) {
         String month =  String.valueOf(dc.getYearmonth() % 100);
         String title = new StringBuilder().append(month).append("月第").append(dc.getWeek()).append("周绩效 被更新").toString();
-        String content = new StringBuilder().append("C值: ").append(dc.getAc()).append(",  DC值: ").append(dc.getDc()).append(",  AC值: ").append(dc.getAc()).toString();
+        String content = new StringBuilder().append("C值: ").append(dc.getCvalue()).append(",  DC值: ").append(dc.getDc()).append(",  AC值: ").append(dc.getAc()).toString();
         Message message = new Message(title, content, dc.getApplicant().getId());
 
         messageRepository.save(message);
