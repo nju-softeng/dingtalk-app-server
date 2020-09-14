@@ -59,10 +59,18 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
 
     /**
      * 查询系统中所有可用用户
-     * @return
+     * @return List<UserVo>
      */
     @Query("select new com.softeng.dingtalk.vo.UserVO(u.id, u.name) from User u where is_deleted = 0")
     List<UserVO> listUserVOS();
+
+
+    /**
+     * 查询所有可用用户id
+     * @return
+     */
+    @Query("select u.id from User u where u.deleted = 0")
+    List<Integer> listUid();
 
 
     /**
@@ -134,7 +142,10 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     @Query("update User set deleted = false where id = :uid")
     void enableUser(int uid);
 
-
+    /**
+     * 查询所有被禁用的用户
+     * @return
+     */
     @Query("select u from User u where u.deleted = true ")
     List<User> listDisableUser();
 

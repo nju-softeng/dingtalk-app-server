@@ -55,6 +55,8 @@ public class SystemService {
     PaperLevelRepository paperLevelRepository;
     @Autowired
     DcSummaryRepository dcSummaryRepository;
+    @Autowired
+    PerformanceService performanceService;
 
 
     /**
@@ -255,6 +257,20 @@ public class SystemService {
      */
     public List<User> queryDisableUser() {
         return userRepository.listDisableUser();
+    }
+
+    /**
+     * 手动重新计算所有可用用户的绩效
+     * 当从数据库录入dc数据时，并不会触发更新 dcsummary
+     * 所以需要调用该函数刷新 dcsummary
+     */
+    public void manulUpdatePerformance(int yearmonth) {
+        // todo 拿到所有用户可用 uid
+        List<Integer> uidlist = userRepository.listUid();
+        // todo 根据用户id,和指定年月更新dcsummary
+        for (Integer id : uidlist) {
+            performanceService.computeSalary(id, yearmonth);
+        }
     }
 
 }
