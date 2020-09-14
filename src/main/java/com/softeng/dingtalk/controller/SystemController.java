@@ -134,4 +134,12 @@ public class SystemController {
         return systemService.queryDisableUser();
     }
 
+    /**
+     * 手动更新指定月份的 DcSummary
+     * @param yearmonth 要更新绩效的月份
+     */
+    @GetMapping("/system/updateperf/{yearmonth}")
+    public void manulUpdatePerformance(@PathVariable int yearmonth) {
+        systemService.manulUpdatePerformance(yearmonth);
+    }
 }
