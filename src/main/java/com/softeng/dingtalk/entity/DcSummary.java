@@ -87,10 +87,6 @@ public class DcSummary {
         computeTotal();
     }
 
-    public DcSummary(User user, int yearmonth) {
-        this.yearmonth = yearmonth;
-        this.user = user;
-    }
 
     public DcSummary(int uid, int yearmonth) {
         this.yearmonth = yearmonth;

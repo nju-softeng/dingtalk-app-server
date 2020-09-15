@@ -4,6 +4,7 @@ import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.component.Utils;
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.service.AuditService;
+import com.softeng.dingtalk.service.NotifyService;
 import com.softeng.dingtalk.service.UserService;
 import com.softeng.dingtalk.vo.CheckedVO;
 import com.softeng.dingtalk.vo.CheckVO;
@@ -34,6 +35,8 @@ public class AuditController {
     UserService userService;
     @Autowired
     Utils utils;
+    @Autowired
+    NotifyService notifyService;
 
     /**
      * 审核员提交审核结果
@@ -44,9 +47,12 @@ public class AuditController {
     @PostMapping("/audit")
     public void submitAuditResult(@Valid @RequestBody CheckVO checkVO) {
 
-        //持久化审核结果
+        // 持久化审核结果
         DcRecord dc = auditService.submitAudit(checkVO);
-        auditService.updateDcSummary(dc);
+        // 更新dcsummary
+        auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
+        // 发送消息
+        notifyService.updateDcMessage(dc);
     }
 
 
