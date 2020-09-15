@@ -74,24 +74,27 @@ public class AuditService {
         return dc;
     }
 
-
     /**
-     * 更新DcSummary数据
-     * @param dc
+     * 当用户某条周绩效申请被审核时，需要更新DcSummary数据
+     * @param uid 用户id
+     * @param yearmonth 所在年月
+     * @param week 所在周
      */
-    public void updateDcSummary(DcRecord dc) {
-        log.debug("update DcSummary" + dc.getId());
-        Double dcSum = dcRecordRepository.getUserWeekTotalDc(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
-        DcSummary dcSummary = dcSummaryRepository.getDcSummary(dc.getApplicant().getId(), dc.getYearmonth());
-        if (dcSummary == null) {
-            dcSummary = new DcSummary(dc.getApplicant(), dc.getYearmonth());
+    public void updateDcSummary(int uid, int yearmonth, int week) {
+        // 某一周指定用户的dc之和
+        Double dcSum = dcRecordRepository.getUserWeekTotalDc(uid, yearmonth, week);
+        if (dcSum == null){
+            dcSum = 0.0;
         }
-        dcSummary.updateWeek(dc.getWeek(), dcSum);
+        DcSummary dcSummary = dcSummaryRepository.getDcSummary(uid, yearmonth);
+        if (dcSummary == null) {
+            dcSummary = new DcSummary(uid, yearmonth);
+        }
+        dcSummary.updateWeek(week, dcSum);
         dcSummaryRepository.save(dcSummary);
-        // 发送消息
-        notifyService.updateDcMessage(dc);
+
         //重新计算助研金
-        performanceService.computeSalary(dc.getApplicant().getId(), dc.getYearmonth());
+        performanceService.computeSalary(uid, yearmonth);
     }
 
 

@@ -57,6 +57,8 @@ public class SystemService {
     DcSummaryRepository dcSummaryRepository;
     @Autowired
     PerformanceService performanceService;
+    @Autowired
+    AuditService auditService;
 
 
     /**
@@ -269,7 +271,11 @@ public class SystemService {
         List<Integer> uidlist = userRepository.listUid();
         // todo 根据用户id,和指定年月更新dcsummary
         for (Integer id : uidlist) {
-            performanceService.computeSalary(id, yearmonth);
+            auditService.updateDcSummary(id, yearmonth, 1);
+            auditService.updateDcSummary(id, yearmonth, 2);
+            auditService.updateDcSummary(id, yearmonth, 3);
+            auditService.updateDcSummary(id, yearmonth, 4);
+            auditService.updateDcSummary(id, yearmonth, 5);
         }
     }
 
