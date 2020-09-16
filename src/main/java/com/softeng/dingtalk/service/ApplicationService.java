@@ -170,11 +170,11 @@ public class ApplicationService {
      */
     private void assertTimeException(LocalDate date) {
         long gap = date.until(LocalDate.now(), ChronoUnit.DAYS);
-        if (gap > 10) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "过期一周不支持补登记！");
-        } else if (gap < 0) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "选中的时间还没到，不可以穿越的 ~");
-        }
+//        if (gap > 10) {
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, "过期一周不支持补登记！");
+//        } else if (gap < 0) {
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, "选中的时间还没到，不可以穿越的 ~");
+//        }
     }
 
 
