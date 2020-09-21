@@ -43,6 +43,10 @@ public class ApplicationService {
     DcRecordMapper dcRecordMapper;
     @Autowired
     AcRecordRepository acRecordRepository;
+    @Autowired
+    AuditService auditService;
+    @Autowired
+    NotifyService notifyService;
 
     /**
      * 添加 / 更新 申请
@@ -142,8 +146,13 @@ public class ApplicationService {
         }
         acItemRepository.saveAll(vo.getAcItems());
 
-        // 计算总ac值
+        // 设置总ac值
         dc.setAc(acSum);
+
+        // 更新dcsummary
+        auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
+        // 发送消息
+        notifyService.updateDcMessage(dc);
     }
 
     /**
