@@ -49,7 +49,7 @@ public class PerformanceService {
         double base = systemService.getSubsidy(position);
         log.debug("base subsidy : " + base);
         double salary = Math.round(base * dc * (1 + (ac/50)) + topup);
-        dcSummaryRepository.updateSalary(uid, ac, topup, salary);
+        dcSummaryRepository.updateSalary(uid, yearmonth, ac, topup, salary);
         log.debug(salary + "");
     }
 
