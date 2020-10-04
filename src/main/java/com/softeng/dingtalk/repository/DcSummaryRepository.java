@@ -64,8 +64,8 @@ public interface DcSummaryRepository extends CustomizedRepository<DcSummary, Int
      * @param salary
      */
     @Modifying
-    @Query(value = "update DcSummary d set d.ac = :ac, d.topup = :topup, d.salary = :salary where d.user.id = :uid")
-    void updateSalary(@Param("uid") int uid,@Param("ac") double ac, @Param("topup") double topup, @Param("salary") double salary);
+    @Query(value = "update DcSummary d set d.ac = :ac, d.topup = :topup, d.salary = :salary where d.user.id = :uid and d.yearmonth = :yearmonth")
+    void updateSalary(int uid, int yearmonth, double ac, double topup, double salary);
 
     /**
      * 查询用户制定月的各周dc
