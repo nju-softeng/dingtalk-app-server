@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 /**
  * @author zhanyeye
- * @description
+ * @description: 内部评审论文投票的相关业务逻辑
  * @create 2/6/2020 5:30 PM
  */
 @Service
