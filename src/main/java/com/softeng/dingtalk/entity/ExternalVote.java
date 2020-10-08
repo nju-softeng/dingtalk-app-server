@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,11 +17,16 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @NoArgsConstructor
+@Data
 public class ExternalVote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String title;
+    /**
+     * 投票是否截止
+     */
+    private boolean status;
     /**
      * 投票最终结果
      */
@@ -33,10 +39,7 @@ public class ExternalVote {
      * 总投票人数
      */
     private int total;
-    /**
-     * 投票是否截止
-     */
-    private boolean status;
+
 
     @Column(nullable = false)
     private LocalDateTime startTime;
