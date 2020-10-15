@@ -11,5 +11,6 @@ public enum PaperType {
     JOURNAL_B,
     CONFERENCE_B,
     JOURNAL_C,
-    CONFERENCE_C
+    CONFERENCE_C,
+    Non_CCF
 }
