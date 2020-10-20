@@ -11,6 +11,7 @@ import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.DcRecordRepository;
 import com.softeng.dingtalk.vo.ApplyVO;
 import com.softeng.dingtalk.vo.DcRecordVO;
+import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -212,5 +213,15 @@ public class ApplicationService {
     public Integer isExist(int uid, int aid, int yearmonth, int week) {
         return dcRecordRepository.isExist(uid, aid, yearmonth, week);
     }
+
+    /**
+     * 查询申请人最近一次绩效申请的审核人是谁
+     * @param aid 申请人id
+     * @return
+     */
+    public UserVO findLatestAuditor(int aid) {
+        return dcRecordMapper.findLatestAuditorByApplicantId(aid);
+    }
+
 
 }
