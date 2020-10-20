@@ -8,6 +8,7 @@ import com.softeng.dingtalk.service.ApplicationService;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.UserService;
 import com.softeng.dingtalk.vo.ApplyVO;
+import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -80,5 +81,14 @@ public class ApplicationController {
         return applicationService.listDcRecord(uid, page, size);
     }
 
+    /**
+     * 查询申请人最近一次绩效申请的审核人是谁
+     * @param aid
+     * @return
+     */
+    @GetMapping("/application/latestAuditor/{aid}")
+    public UserVO findLatestAuditor(@PathVariable int aid) {
+        return applicationService.findLatestAuditor(aid);
+    }
 
 }
