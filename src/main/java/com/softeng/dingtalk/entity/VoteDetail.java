@@ -17,7 +17,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @NamedEntityGraph(name="voteDetail.graph",attributeNodes={@NamedAttributeNode("acRecord")})
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"vote_id", "user_id"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"internal_vote_id", "user_id"})})
 public class VoteDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class VoteDetail {
 
     @JsonIgnoreProperties("voteDetails")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Vote vote;
+    private InternalVote internalVote;
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 

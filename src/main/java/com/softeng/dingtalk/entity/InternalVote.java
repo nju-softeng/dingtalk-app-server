@@ -2,20 +2,17 @@ package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.softeng.dingtalk.vo.VoteVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 /**
  * @author zhanyeye
- * @description
+ * @description 内部论文评审投票
  * @create 2/5/2020 5:14 PM
  */
 
@@ -23,7 +20,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
-public class Vote {
+public class InternalVote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -44,7 +41,7 @@ public class Vote {
      */
     private boolean status;
     /**
-     * 投票截止时间
+     * 投票开始时间
      */
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime createTime;
@@ -60,12 +57,12 @@ public class Vote {
      */
     private int pid;
 
-    @JsonIgnoreProperties("vote")
-    @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)
+    @JsonIgnoreProperties("internalVote")
+    @OneToMany(mappedBy = "internalVote", cascade = CascadeType.REMOVE)
     private List<VoteDetail> voteDetails;
 
 
-    public Vote(LocalDateTime deadline, int pid) {
+    public InternalVote(LocalDateTime deadline, int pid) {
         this.deadline = deadline;
         this.pid = pid;
     }
