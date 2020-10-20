@@ -206,16 +206,18 @@ public class VoteService {
         Boolean myresult = voteDetailRepository.getVoteDetail(vid, uid);
 
         // 未投票人员名单
-        // 1. 查询所有不是待定用户的id 和 已经投票的用户的id
+        // 1. 查询所有不是待定用户的id，已经投票的用户的id，作者id,已经毕业学生id
         Set<Integer> totalIds = userRepository.listStudentId();
         Set<Integer> votedIds = voteDetailRepository.findVoteUserid(vid);
         Set<Integer> authorids = paperService.listAuthorid(pid);
+        Set<Integer> alumniids = userRepository.listDisableUserid();
         // 2. 减去所有投票用户和论文作者的id
         totalIds.removeAll(votedIds);
         totalIds.removeAll(authorids);
-        Set<String> names = userRepository.listNameByids(totalIds);
-        // 3. 通过为投票用户id集合去查询用户姓名
+        totalIds.removeAll(alumniids);
 
+        // 3. 通过为投票用户id集合去查询用户姓名
+        Set<String> names = userRepository.listNameByids(totalIds);
 
 
         if (myresult == null) {
