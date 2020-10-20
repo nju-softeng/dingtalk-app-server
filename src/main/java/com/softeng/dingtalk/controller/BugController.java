@@ -43,7 +43,7 @@ public class BugController {
     }
 
 
-    @GetMapping("/bug/{id}/rm")
+    @GetMapping("/bug/rm/{id}")
     public void deleteBug(@PathVariable int id) {
         bugService.rmbug(id);
     }
