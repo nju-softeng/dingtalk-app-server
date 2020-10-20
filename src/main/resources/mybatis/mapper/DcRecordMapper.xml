@@ -51,4 +51,13 @@
     </select>
 
 
+    <select id="findLatestAuditorByApplicantId" resultType="com.softeng.dingtalk.vo.UserVO">
+        SELECT
+    	d.auditor_id AS id,
+    	u.`name` AS NAME
+    FROM
+	    ( SELECT auditor_id FROM dc_record WHERE applicant_id = #{uid} ORDER BY id DESC LIMIT 1 ) d
+	    LEFT JOIN `user` u ON d.auditor_id = u.id
+    </select>
+
 </mapper>
