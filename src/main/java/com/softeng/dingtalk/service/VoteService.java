@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class VoteService {
     @Autowired
-    VoteRepository voteRepository;
+    InternalVoteRepository internalVoteRepository;
     @Autowired
     VoteDetailRepository voteDetailRepository;
     @Autowired
@@ -59,24 +59,24 @@ public class VoteService {
      * @param voteVO
      */
     @CacheEvict(value = "voting", allEntries = true)
-    public Vote createVote(VoteVO voteVO) {
+    public InternalVote createVote(VoteVO voteVO) {
 
         // 判断投票是否已经创建过
-        if (voteRepository.isExisted(voteVO.getPaperid()) != 0) {
+        if (internalVoteRepository.isExisted(voteVO.getPaperid()) != 0) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "慢了一步，投票已经被别人发起了");
         }
 
-        Vote vote = new Vote(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
+        InternalVote vote = new InternalVote(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
         log.debug(LocalDate.now().toString());
         log.debug(voteVO.getEndTime().toString());
         log.debug(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()).toString());
-        voteRepository.save(vote);
+        internalVoteRepository.save(vote);
         paperRepository.updatePaperVote(voteVO.getPaperid(), vote.getId());
         // 发送投票信息
         String title = paperRepository.getPaperTitleById(voteVO.getPaperid());
         List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
         dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), title, voteVO.getEndTime().toString(), namelist);
-        return voteRepository.refresh(vote);
+        return internalVoteRepository.refresh(vote);
     }
 
 
@@ -86,10 +86,10 @@ public class VoteService {
      * @return
      */
     @Cacheable(value = "voting")
-    public List<Vote> listUnderwayVote() {
+    public List<InternalVote> listUnderwayVote() {
         log.debug("从数据库查询未结束投票");
         //拿到没有结束的投票
-        return voteRepository.listByStatus();
+        return internalVoteRepository.listByStatusIsFalse();
     }
 
 
@@ -99,7 +99,7 @@ public class VoteService {
      * @return
      */
     @CacheEvict(value = "voting", allEntries = true)
-    public Vote updateVote(Vote v) {
+    public InternalVote updateVote(InternalVote v) {
         log.debug("投票结果更新，清空缓存");
         int accept = voteDetailRepository.getAcceptCnt(v.getId());
         int total = voteDetailRepository.getCnt(v.getId());
@@ -114,7 +114,7 @@ public class VoteService {
         } else {
             paperRepository.updatePaperResult(v.getPid(), Paper.REVIEWING);
         }
-        voteRepository.save(v);
+        internalVoteRepository.save(v);
         return v;
     }
 
@@ -129,7 +129,7 @@ public class VoteService {
     public Map poll(int vid, int uid, VoteDetail voteDetail) {
         // 收到投票的时间
         LocalDateTime now = LocalDateTime.now();
-        Vote vote = voteRepository.findById(vid).get();
+        InternalVote vote = internalVoteRepository.findById(vid).get();
 
         // 判断投票人是否为论文作者
         Set<Integer> authorids = paperService.listAuthorid(vote.getPid());
@@ -233,7 +233,7 @@ public class VoteService {
      * @param result
      */
     public void computeVoteAc(int pid, boolean result) {
-        Vote vote = paperRepository.findVoteById(pid);
+        InternalVote vote = paperRepository.findVoteById(pid);
         if (vote != null) {
             List<VoteDetail> voteDetails = voteDetailRepository.listByVid(vote.getId());
             List<AcRecord> acRecords = new ArrayList<>();

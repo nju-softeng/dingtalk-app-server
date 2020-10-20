@@ -3,7 +3,7 @@ package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Review;
-import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.entity.InternalVote;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.PaperVO;
@@ -147,7 +147,7 @@ public class PaperController {
      * @return
      */
     @GetMapping("/paper/{id}/vote")
-    public Vote getPaperVote(@PathVariable int id) {
+    public InternalVote getPaperVote(@PathVariable int id) {
         return paperService.getVoteByPid(id);
     }
 

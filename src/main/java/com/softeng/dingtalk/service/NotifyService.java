@@ -2,7 +2,6 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.repository.*;
-import com.softeng.dingtalk.vo.CheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -30,7 +29,7 @@ public class NotifyService {
     @Autowired
     AcRecordRepository acRecordRepository;
     @Autowired
-    VoteRepository voteRepository;
+    InternalVoteRepository internalVoteRepository;
 
 
     /**
@@ -99,7 +98,7 @@ public class NotifyService {
      * @param result
      */
     public void voteAcMessage(int pid, boolean result) {
-        Vote v = paperRepository.findVoteById(pid);
+        InternalVote v = paperRepository.findVoteById(pid);
         String papertitel = paperRepository.getPaperTitleById(pid);
         String title;
         String content;

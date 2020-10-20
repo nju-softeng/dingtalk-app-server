@@ -1,13 +1,10 @@
 package com.softeng.dingtalk.entity;
 
-        import com.fasterxml.jackson.annotation.JsonIgnore;
         import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
         import com.softeng.dingtalk.enums.PaperType;
-        import com.softeng.dingtalk.vo.PaperVO;
         import lombok.Getter;
         import lombok.NoArgsConstructor;
         import lombok.Setter;
-        import lombok.ToString;
 
         import javax.persistence.*;
         import java.time.LocalDate;
@@ -62,7 +59,7 @@ public class Paper {
     @JsonIgnoreProperties("paper")
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(unique = true)
-    private Vote vote;
+    private InternalVote vote;
 
     @JsonIgnoreProperties("paper")
     @OneToMany(mappedBy = "paper")

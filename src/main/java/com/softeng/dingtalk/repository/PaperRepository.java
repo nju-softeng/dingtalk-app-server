@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Paper;
-import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.entity.InternalVote;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -68,7 +68,7 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
 
 
     @Query("select p.vote from  Paper p where p.id = :id")
-    Vote findVoteById(@Param("id") int id);
+    InternalVote findVoteById(@Param("id") int id);
 
 
     @Modifying

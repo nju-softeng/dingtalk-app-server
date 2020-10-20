@@ -2,7 +2,7 @@ package com.softeng.dingtalk.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.entity.InternalVote;
 import com.softeng.dingtalk.entity.VoteDetail;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
@@ -38,7 +38,7 @@ public class VoteController {
      * @return
      */
     @PostMapping("/vote")
-    public Vote addvote(@RequestBody VoteVO voteVO) {
+    public InternalVote addvote(@RequestBody VoteVO voteVO) {
         log.debug(voteVO.toString());
         return voteService.createVote(voteVO);
     }
@@ -70,7 +70,7 @@ public class VoteController {
      */
     @GetMapping("/vote/{pid}/detail")
     public Map getVoteDetail(@PathVariable int pid, @RequestAttribute int uid) {
-        Vote vote = paperService.getVoteByPid(pid);
+        InternalVote vote = paperService.getVoteByPid(pid);
         if (vote.getDeadline().isBefore(LocalDateTime.now())) {
             //如果投票已经结束
             return voteService.getVotedDetail(vote.getId(), pid, uid);

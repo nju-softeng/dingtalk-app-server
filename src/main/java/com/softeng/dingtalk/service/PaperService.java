@@ -44,7 +44,7 @@ public class PaperService {
     @Autowired
     AcRecordRepository acRecordRepository;
     @Autowired
-    VoteRepository voteRepository;
+    InternalVoteRepository internalVoteRepository;
     @Autowired
     NotifyService notifyService;
     @Autowired
@@ -198,7 +198,7 @@ public class PaperService {
      * @param pid
      * @return
      */
-    public Vote getVoteByPid (int pid) {
+    public InternalVote getVoteByPid (int pid) {
         return paperRepository.findVoteById(pid);
     }
 
