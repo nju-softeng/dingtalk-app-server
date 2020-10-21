@@ -66,17 +66,17 @@ public class VoteService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "慢了一步，投票已经被别人发起了");
         }
 
-        InternalVote vote = new InternalVote(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
+        InternalVote internalVote = new InternalVote(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
         log.debug(LocalDate.now().toString());
         log.debug(voteVO.getEndTime().toString());
         log.debug(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()).toString());
-        internalVoteRepository.save(vote);
-        paperRepository.updatePaperVote(voteVO.getPaperid(), vote.getId());
+        internalVoteRepository.save(internalVote);
+        paperRepository.updatePaperVote(voteVO.getPaperid(), internalVote.getId());
         // 发送投票信息
         String title = paperRepository.getPaperTitleById(voteVO.getPaperid());
         List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
         dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), title, voteVO.getEndTime().toString(), namelist);
-        return internalVoteRepository.refresh(vote);
+        return internalVoteRepository.refresh(internalVote);
     }
 
 

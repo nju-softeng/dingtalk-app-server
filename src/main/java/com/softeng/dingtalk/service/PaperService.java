@@ -113,7 +113,7 @@ public class PaperService {
 
         Paper paper = paperRepository.findById(id).get();
 
-        if (paper.getVote().getResult() == null || paper.getVote().getResult() == false) {
+        if (paper.getInternalVote().getResult() == null || paper.getInternalVote().getResult() == false) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
         }
         //更新指定 论文的结果
