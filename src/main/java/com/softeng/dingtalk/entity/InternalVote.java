@@ -20,26 +20,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
-public class InternalVote {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    /**
-     * 投票最终结果
-     */
-    private Boolean result;
-    /**
-     * 支持人数
-     */
-    private int accept;
-    /**
-     * 总投票人数
-     */
-    private int total;
-    /**
-     * 投票是否截止
-     */
-    private boolean status;
+public class InternalVote extends Vote {
     /**
      * 投票开始时间
      */
@@ -66,5 +47,10 @@ public class InternalVote {
         this.deadline = deadline;
         this.pid = pid;
     }
+
+    public InternalVote(int id) {
+        this.id = id;
+    }
+
 
 }

@@ -6,6 +6,7 @@ import com.softeng.dingtalk.entity.InternalVote;
 import com.softeng.dingtalk.entity.VoteDetail;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
+import com.softeng.dingtalk.vo.PollVO;
 import com.softeng.dingtalk.vo.VoteVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,14 +49,13 @@ public class VoteController {
      * 用户投票
      * @param vid
      * @param uid
-     * @param voteDetail
+     * @param vo
      * @return
      * @throws IOException
      */
     @PostMapping("/vote/{vid}")
-    public Map addpoll(@PathVariable int vid, @RequestAttribute int uid, @RequestBody VoteDetail voteDetail) throws IOException {
-        // 标明这一票是谁投的
-        voteDetail.setUser(new User(uid));
+    public Map addpoll(@PathVariable int vid, @RequestAttribute int uid, @RequestBody PollVO vo) throws IOException {
+        VoteDetail voteDetail = new VoteDetail(new InternalVote(vo.getVid()), vo.getResult(), new User(uid));
         Map map = voteService.poll(vid, uid, voteDetail);
         WebSocketController.sendInfo(objectMapper.writeValueAsString(map));
         return map;

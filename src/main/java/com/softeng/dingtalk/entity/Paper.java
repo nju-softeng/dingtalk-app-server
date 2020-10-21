@@ -20,7 +20,7 @@ package com.softeng.dingtalk.entity;
 @Setter
 @Entity
 @NoArgsConstructor
-@NamedEntityGraph(name="paper.graph",attributeNodes={@NamedAttributeNode("paperDetails"),@NamedAttributeNode("vote")})
+@NamedEntityGraph(name="paper.graph",attributeNodes={@NamedAttributeNode("paperDetails"),@NamedAttributeNode("internalVote")})
 public class Paper {
     /**
      * 论文的投稿结果
@@ -59,7 +59,7 @@ public class Paper {
     @JsonIgnoreProperties("paper")
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(unique = true)
-    private InternalVote vote;
+    private InternalVote internalVote;
 
     @JsonIgnoreProperties("paper")
     @OneToMany(mappedBy = "paper")
