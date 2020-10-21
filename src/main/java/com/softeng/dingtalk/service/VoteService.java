@@ -170,7 +170,7 @@ public class VoteService {
      * @param uid
      * @return
      */
-    public Map getInternalVotingDetail(int vid, int uid){
+    public Map getVotingDetail(int vid, int uid){
         Boolean myresult = voteDetailRepository.getVoteDetail(vid, uid);
         if (myresult != null) {
             //用户已经投票，可以查看结果
