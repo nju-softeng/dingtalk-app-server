@@ -1,15 +1,15 @@
 package com.softeng.dingtalk.entity;
 
-        import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-        import com.softeng.dingtalk.enums.PaperType;
-        import lombok.Getter;
-        import lombok.NoArgsConstructor;
-        import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.softeng.dingtalk.enums.PaperType;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-        import javax.persistence.*;
-        import java.time.LocalDate;
-        import java.time.LocalDateTime;
-        import java.util.List;
+import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author zhanyeye
@@ -20,7 +20,6 @@ package com.softeng.dingtalk.entity;
 @Setter
 @Entity
 @NoArgsConstructor
-@NamedEntityGraph(name="paper.graph",attributeNodes={@NamedAttributeNode("paperDetails"),@NamedAttributeNode("internalVote")})
 public class Paper {
     /**
      * 论文的投稿结果
