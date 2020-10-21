@@ -55,7 +55,6 @@ public class Paper {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;
 
-    @JsonIgnoreProperties("paper")
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(unique = true)
     private Vote vote;

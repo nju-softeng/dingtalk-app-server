@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * @create: 2020-10-08 18:21
  **/
 @Data
-public class ExternalVoteVO {
+public class ExternalPaperVO {
     private Integer id;
     private String title;
 

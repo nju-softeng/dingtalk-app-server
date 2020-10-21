@@ -1,11 +1,15 @@
 package com.softeng.dingtalk.controller;
 
 
+import com.softeng.dingtalk.entity.ExternalPaper;
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Review;
 import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.repository.ExternalPaperRepository;
+import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
+import com.softeng.dingtalk.vo.ExternalPaperVO;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +33,14 @@ public class PaperController {
     PaperService paperService;
     @Autowired
     VoteService voteService;
+    @Autowired
+    ExternalPaperRepository externalPaperRepository;
+    @Autowired
+    VoteRepository voteRepository;
 
-
+    /////////////////
+    // 内部论文评审操作
+    /////////////////
 
     /**
      * 添加或更新论文记录
@@ -150,6 +160,46 @@ public class PaperController {
     public Vote getPaperVote(@PathVariable int id) {
         return paperService.getVoteByPid(id);
     }
+
+
+    /////////////////
+    // 外部论文评审操作
+    /////////////////
+
+    @PostMapping("/ex-paper")
+    public void addExternalPaper(@RequestBody ExternalPaperVO vo) {
+        log.debug(vo.toString());
+        // 首先创建一个外部论文
+        ExternalPaper externalPaper = new ExternalPaper(vo.getTitle());
+        externalPaperRepository.save(externalPaper);
+        log.debug(externalPaper.getId() + "");
+        // 再发起一个投票
+        Vote vote = new Vote(vo.getStartTime(), vo.getEndTime(), true, externalPaper.getId());
+        voteRepository.save(vote);
+        externalPaper.setVote(vote);
+        externalPaperRepository.save(externalPaper);
+    }
+
+    @PostMapping("/ex-paper/update")
+    public void updateExternalVote(@RequestBody ExternalPaperVO vo) {
+
+    }
+
+    /**
+     * 查询所有的评审投票
+     * @return
+     */
+    @GetMapping("/ex-paper/list")
+    public List<ExternalPaper> listExternalVote() {
+        List<ExternalPaper> kk = paperService.listExternalPaper();
+        return paperService.listExternalPaper();
+    }
+
+    public void deleteExternalVote() {
+
+    }
+
+
 
 
 }
