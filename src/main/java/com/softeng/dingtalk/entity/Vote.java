@@ -50,14 +50,13 @@ public class Vote {
      * 投票开始时间
      */
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
-    private LocalDateTime createTime;
+    private LocalDateTime startTime;
 
     /**
      * 投票截止时间
      */
-    @JsonFormat
     @Column(nullable = false)
-    private LocalDateTime deadline;
+    private LocalDateTime endTime;
 
     /**
      * 投票对应的论文id
@@ -71,8 +70,15 @@ public class Vote {
     private List<VoteDetail> voteDetails;
 
 
-    public Vote(LocalDateTime deadline, int pid) {
-        this.deadline = deadline;
+    public Vote(LocalDateTime endTime, int pid) {
+        this.endTime = endTime;
+        this.pid = pid;
+    }
+
+    public Vote(LocalDateTime startTime, LocalDateTime endTime, boolean isExternal, int pid) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.isExternal = isExternal;
         this.pid = pid;
     }
 

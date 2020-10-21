@@ -1,12 +1,10 @@
 package com.softeng.dingtalk.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * @description:
@@ -16,10 +14,19 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class ExternalPaper {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String title;
+
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(unique = true)
     private Vote vote;
+
+    public ExternalPaper(String title) {
+        this.title = title;
+    }
 }

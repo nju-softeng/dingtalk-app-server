@@ -47,7 +47,7 @@ public class Timer {
             LocalDateTime now = LocalDateTime.now();
             log.debug("定时器执行：" + now.toString());
             for (Vote v : votes) {
-                if (v.getDeadline().isBefore(now)) {
+                if (v.getEndTime().isBefore(now)) {
                     //更新
                     v = voteService.updateVote(v);
                     log.debug("钉钉发送消息");

@@ -53,6 +53,8 @@ public class PaperService {
     ReviewRepository reviewRepository;
     @Autowired
     PaperMapper paperMapper;
+    @Autowired
+    ExternalPaperRepository externalPaperRepository;
 
 
     /**
@@ -259,6 +261,15 @@ public class PaperService {
     @Cacheable(value = "authors_id", key = "#pid")
     public Set<Integer> listAuthorid(int pid) {
         return paperDetailRepository.listAuthorIdByPid(pid);
+    }
+
+
+
+    //-----------------------------------------
+
+
+    public List<ExternalPaper> listExternalPaper() {
+        return externalPaperRepository.findAll();
     }
 
 

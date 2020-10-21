@@ -142,7 +142,7 @@ public class VoteService {
         }
 
 
-        if (now.isBefore(vote.getDeadline())) {
+        if (now.isBefore(vote.getEndTime())) {
             // 投票未截止
             voteDetailRepository.save(voteDetail);
         } else {
