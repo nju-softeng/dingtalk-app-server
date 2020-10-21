@@ -40,6 +40,7 @@ public class Vote {
      * 总投票人数
      */
     int total;
+
     /**
      * 投票是否截止
      */
@@ -50,6 +51,7 @@ public class Vote {
      */
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime createTime;
+
     /**
      * 投票截止时间
      */
@@ -61,6 +63,8 @@ public class Vote {
      * 投票对应的论文id
      */
     private int pid;
+
+    private boolean isExternal;
 
     @JsonIgnoreProperties("vote")
     @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)
