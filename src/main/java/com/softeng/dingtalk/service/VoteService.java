@@ -217,13 +217,16 @@ public class VoteService {
         totalIds.removeAll(alumniids);
 
         // 3. 通过为投票用户id集合去查询用户姓名
-        Set<String> names = userRepository.listNameByids(totalIds);
+        Set<String> unVoteNames = new HashSet<>();
+        if (totalIds.size() > 0) {
+            unVoteNames = userRepository.listNameByids(totalIds);
+        }
 
 
         if (myresult == null) {
-            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", names);
+            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", unVoteNames);
         } else {
-            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", names);
+            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", unVoteNames);
         }
 
     }
