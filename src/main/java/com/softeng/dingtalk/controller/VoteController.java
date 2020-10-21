@@ -76,7 +76,7 @@ public class VoteController {
             return voteService.getVotedDetail(vote.getId(), pid, uid);
         } else {
             //如果投票未结束
-            return voteService.getInternalVotingDetail(vote.getId(),uid);
+            return voteService.getVotingDetail(vote.getId(),uid);
         }
     }
 
