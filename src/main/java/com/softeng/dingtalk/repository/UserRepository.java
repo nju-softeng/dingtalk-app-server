@@ -61,7 +61,7 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
      * 查询系统中所有可用用户
      * @return List<UserVo>
      */
-    @Query("select new com.softeng.dingtalk.vo.UserVO(u.id, u.name) from User u where is_deleted = 0")
+    @Query("select new com.softeng.dingtalk.vo.UserVO(u.id, u.name) from User u where u.deleted = false")
     List<UserVO> listUserVOS();
 
 
