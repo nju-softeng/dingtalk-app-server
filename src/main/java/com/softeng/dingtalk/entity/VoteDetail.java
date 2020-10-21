@@ -35,4 +35,11 @@ public class VoteDetail {
      */
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private AcRecord acRecord;
+
+    public VoteDetail(InternalVote internalVote, Boolean result, User user) {
+        this.internalVote = internalVote;
+        this.result = result;
+        this.user = user;
+    }
+
 }

@@ -2,9 +2,6 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.InternalVote;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,25 +19,6 @@ import java.util.Map;
 public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
 
     /**
-     * paper select in 会默认升序排序
-     * @param ids
-     * @return
-     */
-    @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
-    @Query("select p from Paper p where p.id in :ids order by p.id desc")
-    List<Paper> findAllById(@Param("ids") List <Integer> ids);
-
-
-    /**
-     * 分页获取id
-     * @param pageable
-     * @return
-     */
-    @Query("select p.id from Paper p")
-    Page<Integer> listAllId(Pageable pageable);
-
-
-    /**
      * 根据id 获取论文title
      * @param id
      * @return
@@ -48,29 +26,45 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
     @Query("select p.title from Paper p where p.id = :id")
     String getPaperTitleById(@Param("id") int id);
 
-
-    @Query(value = "select p.id, p.title from paper p where p.vote_id = :vid", nativeQuery = true)
+    /**
+     * 获取指定投票对应的论文id和标题
+     * @param vid
+     * @return
+     */
+    @Query(value = "select p.id, p.title from paper p where p.internal_vote_id = :vid", nativeQuery = true)
     Map<String, Object> getPaperInfo(@Param("vid") int vid);
 
-
-    @EntityGraph(value="paper.graph",type= EntityGraph.EntityGraphType.FETCH)
-    @Query(value = "select * from paper", nativeQuery = true)
-    List<Map<String, Object>> test();
-
-
+    /**
+     * 发起论文投票时，更新论文记录
+     * @param id
+     * @param vid
+     */
     @Modifying
-    @Query(value = "update paper set vote_id = :vid where id = :id", nativeQuery = true)
+    @Query(value = "update paper set internal_vote_id = :vid where id = :id", nativeQuery = true)
     void updatePaperVote(@Param("id") int id, @Param("vid") int vid);
 
-
-    @Query("select p.vote.id from Paper p where p.id = :id")
+    /**
+     * 查询指定论文的投票id
+     * @param id
+     * @return
+     */
+    @Query("select p.internalVote.id from Paper p where p.id = :id")
     Integer findVidById(@Param("id") int id);
 
-
-    @Query("select p.vote from  Paper p where p.id = :id")
+    /**
+     * 查询指定论文的投票
+     * @param id
+     * @return
+     */
+    @Query("select p.internalVote from  Paper p where p.id = :id")
     InternalVote findVoteById(@Param("id") int id);
 
 
+    /**
+     * 更新论文的投稿状态
+     * @param id
+     * @param result
+     */
     @Modifying
     @Query("update Paper set result = :result where id = :id")
     void updatePaperResult(int id, int result);
