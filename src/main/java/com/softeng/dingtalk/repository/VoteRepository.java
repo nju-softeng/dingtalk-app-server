@@ -1,9 +1,8 @@
 package com.softeng.dingtalk.repository;
 
-import com.softeng.dingtalk.entity.InternalVote;
+import com.softeng.dingtalk.entity.Vote;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,14 +13,14 @@ import java.util.List;
  * @date 2/5/2020
  */
 @Repository
-public interface InternalVoteRepository extends CustomizedRepository<InternalVote, Integer> {
+public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
 
     /**
      * 查询所有状态没有结束的投票
      * @return 放回所有未结束的投票
      */
-    @Query("select iv from InternalVote iv where iv.status = false ")
-    List<InternalVote> listByStatusIsFalse();
+    @Query("select iv from Vote iv where iv.status = false ")
+    List<Vote> listByStatusIsFalse();
 
 
     /**
@@ -32,7 +31,7 @@ public interface InternalVoteRepository extends CustomizedRepository<InternalVot
      * @param result 最终结果
      */
     @Modifying
-    @Query("update InternalVote iv set iv.status = true, iv.accept = :accept, iv.total = :total, iv.result = :result where iv.id = :id")
+    @Query("update Vote iv set iv.status = true, iv.accept = :accept, iv.total = :total, iv.result = :result where iv.id = :id")
     void updateStatus(int id, int accept, int total, boolean result);
 
     /**
@@ -40,7 +39,7 @@ public interface InternalVoteRepository extends CustomizedRepository<InternalVot
       * @param pid
      * @return
      */
-    @Query(value = "select ifnull((select id from internal_vote where pid =:pid limit 1 ), 0)", nativeQuery = true)
+    @Query(value = "select ifnull((select id from vote where pid =:pid limit 1 ), 0)", nativeQuery = true)
     Integer isExisted(int pid);
 
 

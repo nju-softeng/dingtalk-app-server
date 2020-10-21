@@ -1,13 +1,12 @@
 package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.Paper;
-import com.softeng.dingtalk.entity.InternalVote;
+import com.softeng.dingtalk.entity.Vote;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +30,7 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
      * @param vid
      * @return
      */
-    @Query(value = "select p.id, p.title from paper p where p.internal_vote_id = :vid", nativeQuery = true)
+    @Query(value = "select p.id, p.title from paper p where p.vote_id = :vid", nativeQuery = true)
     Map<String, Object> getPaperInfo(@Param("vid") int vid);
 
     /**
@@ -40,7 +39,7 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
      * @param vid
      */
     @Modifying
-    @Query(value = "update paper set internal_vote_id = :vid where id = :id", nativeQuery = true)
+    @Query(value = "update paper set vote_id = :vid where id = :id", nativeQuery = true)
     void updatePaperVote(@Param("id") int id, @Param("vid") int vid);
 
     /**
@@ -48,7 +47,7 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
      * @param id
      * @return
      */
-    @Query("select p.internalVote.id from Paper p where p.id = :id")
+    @Query("select p.vote.id from Paper p where p.id = :id")
     Integer findVidById(@Param("id") int id);
 
     /**
@@ -56,8 +55,8 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
      * @param id
      * @return
      */
-    @Query("select p.internalVote from  Paper p where p.id = :id")
-    InternalVote findInternalVoteById(@Param("id") int id);
+    @Query("select p.vote from  Paper p where p.id = :id")
+    Vote findVoteById(@Param("id") int id);
 
 
     /**

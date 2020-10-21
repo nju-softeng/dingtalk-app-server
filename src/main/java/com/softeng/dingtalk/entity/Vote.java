@@ -1,24 +1,27 @@
 package com.softeng.dingtalk.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * @description:
- * @author: zhanyeye
- * @create: 2020-10-20 21:36
- **/
+ * @author zhanyeye
+ * @description 内部论文评审投票
+ * @create 2/5/2020 5:14 PM
+ */
 
 @Getter
 @Setter
-@MappedSuperclass
-public abstract class Vote {
+@Entity
+@NoArgsConstructor
+public class Vote {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
@@ -42,7 +45,36 @@ public abstract class Vote {
      */
     boolean status;
 
-    LocalDateTime startTime;
-    LocalDateTime endTime;
+    /**
+     * 投票开始时间
+     */
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    private LocalDateTime createTime;
+    /**
+     * 投票截止时间
+     */
+    @JsonFormat
+    @Column(nullable = false)
+    private LocalDateTime deadline;
+
+    /**
+     * 投票对应的论文id
+     */
+    private int pid;
+
+    @JsonIgnoreProperties("vote")
+    @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)
+    private List<VoteDetail> voteDetails;
+
+
+    public Vote(LocalDateTime deadline, int pid) {
+        this.deadline = deadline;
+        this.pid = pid;
+    }
+
+    public Vote(int id) {
+        this.id = id;
+    }
+
 
 }

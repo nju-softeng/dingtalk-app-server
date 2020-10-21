@@ -1,6 +1,5 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.entity.Vote;
 import lombok.Data;
 
 /**

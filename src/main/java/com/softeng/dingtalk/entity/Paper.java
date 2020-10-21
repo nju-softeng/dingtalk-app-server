@@ -58,7 +58,7 @@ public class Paper {
     @JsonIgnoreProperties("paper")
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(unique = true)
-    private InternalVote internalVote;
+    private Vote vote;
 
     @JsonIgnoreProperties("paper")
     @OneToMany(mappedBy = "paper")
