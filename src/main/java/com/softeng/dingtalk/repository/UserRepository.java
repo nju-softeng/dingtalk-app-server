@@ -149,4 +149,11 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     @Query("select u from User u where u.deleted = true ")
     List<User> listDisableUser();
 
+    /**
+     * 查询所有被禁用用户id
+     * @return
+     */
+    @Query("select u.id from User u where u.deleted = true ")
+    Set<Integer> listDisableUserid();
+
 }
