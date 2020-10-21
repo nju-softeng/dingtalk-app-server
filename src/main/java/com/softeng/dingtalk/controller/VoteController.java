@@ -2,7 +2,7 @@ package com.softeng.dingtalk.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.entity.InternalVote;
+import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.entity.VoteDetail;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
@@ -39,9 +39,9 @@ public class VoteController {
      * @return
      */
     @PostMapping("/vote")
-    public InternalVote addvote(@RequestBody VoteVO voteVO) {
+    public Vote addvote(@RequestBody VoteVO voteVO) {
         log.debug(voteVO.toString());
-        return voteService.createInternalVote(voteVO);
+        return voteService.createVote(voteVO);
     }
 
 
@@ -55,7 +55,7 @@ public class VoteController {
      */
     @PostMapping("/vote/{vid}")
     public Map addpoll(@PathVariable int vid, @RequestAttribute int uid, @RequestBody PollVO vo) throws IOException {
-        VoteDetail voteDetail = new VoteDetail(new InternalVote(vo.getVid()), vo.getResult(), new User(uid));
+        VoteDetail voteDetail = new VoteDetail(new Vote(vo.getVid()), vo.getResult(), new User(uid));
         Map map = voteService.poll(vid, uid, voteDetail);
         WebSocketController.sendInfo(objectMapper.writeValueAsString(map));
         return map;
@@ -70,10 +70,10 @@ public class VoteController {
      */
     @GetMapping("/vote/{pid}/detail")
     public Map getVoteDetail(@PathVariable int pid, @RequestAttribute int uid) {
-        InternalVote vote = paperService.getVoteByPid(pid);
+        Vote vote = paperService.getVoteByPid(pid);
         if (vote.getDeadline().isBefore(LocalDateTime.now())) {
             //如果投票已经结束
-            return voteService.getInternalVotedDetail(vote.getId(), pid, uid);
+            return voteService.getVotedDetail(vote.getId(), pid, uid);
         } else {
             //如果投票未结束
             return voteService.getInternalVotingDetail(vote.getId(),uid);

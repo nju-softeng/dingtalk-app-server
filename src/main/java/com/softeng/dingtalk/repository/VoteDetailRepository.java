@@ -22,7 +22,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @param vid 所指定的投票
      * @return
      */
-    @Query("select vd.user.id from VoteDetail vd where vd.internalVote.id = :vid")
+    @Query("select vd.user.id from VoteDetail vd where vd.vote.id = :vid")
     Set<Integer> findVoteUserid(int vid);
 
     /**
@@ -30,7 +30,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @param vid
      * @return
      */
-    @Query(value = "select count(id) from vote_detail where internal_vote_id = :vid and result = true", nativeQuery = true)
+    @Query(value = "select count(id) from vote_detail where vote_id = :vid and result = true", nativeQuery = true)
     Integer getAcceptCnt(int vid);
 
     /**
@@ -38,7 +38,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @param vid
      * @return
      */
-    @Query(value = "select count(id) from vote_detail where internal_vote_id = :vid", nativeQuery = true)
+    @Query(value = "select count(id) from vote_detail where vote_id = :vid", nativeQuery = true)
     Integer getCnt(int vid);
 
 
@@ -48,7 +48,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @param uid
      * @return
      */
-    @Query(value = "SELECT IfNULL((SELECT 1 FROM vote_detail WHERE internal_vote_id = :vid and user_id = :uid  LIMIT 1), 0)", nativeQuery = true)
+    @Query(value = "SELECT IfNULL((SELECT 1 FROM vote_detail WHERE vote_id = :vid and user_id = :uid  LIMIT 1), 0)", nativeQuery = true)
     Integer isExist(int vid, int uid);
 
 
@@ -58,7 +58,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @param uid
      * @return
      */
-    @Query("select vd.result from VoteDetail vd where vd.internalVote.id = :vid and vd.user.id = :uid")
+    @Query("select vd.result from VoteDetail vd where vd.vote.id = :vid and vd.user.id = :uid")
     Boolean getVoteDetail(int vid, int uid);
 
 
@@ -68,7 +68,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @return
      */
     @EntityGraph(value="voteDetail.graph",type= EntityGraph.EntityGraphType.FETCH)
-    @Query("select vd from VoteDetail vd where vd.internalVote.id = :vid")
+    @Query("select vd from VoteDetail vd where vd.vote.id = :vid")
     List<VoteDetail> listByVid(int vid);
 
 
@@ -77,7 +77,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @param vid
      * @return
      */
-    @Query("select vd.user.name from VoteDetail vd where vd.internalVote.id = :vid and vd.result = true")
+    @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = true")
     List<String> listAcceptNamelist(int vid);
 
 
@@ -86,7 +86,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @param vid
      * @return
      */
-    @Query("select vd.user.name from VoteDetail vd where vd.internalVote.id = :vid and vd.result = false")
+    @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = false")
     List<String> listRejectNamelist(int vid);
 
 

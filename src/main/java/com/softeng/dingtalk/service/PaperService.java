@@ -44,7 +44,7 @@ public class PaperService {
     @Autowired
     AcRecordRepository acRecordRepository;
     @Autowired
-    InternalVoteRepository internalVoteRepository;
+    VoteRepository voteRepository;
     @Autowired
     NotifyService notifyService;
     @Autowired
@@ -113,7 +113,7 @@ public class PaperService {
 
         Paper paper = paperRepository.findById(id).get();
 
-        if (paper.getInternalVote().getResult() == null || paper.getInternalVote().getResult() == false) {
+        if (paper.getVote().getResult() == null || paper.getVote().getResult() == false) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
         }
         //更新指定 论文的结果
@@ -198,8 +198,8 @@ public class PaperService {
      * @param pid
      * @return
      */
-    public InternalVote getVoteByPid (int pid) {
-        return paperRepository.findInternalVoteById(pid);
+    public Vote getVoteByPid (int pid) {
+        return paperRepository.findVoteById(pid);
     }
 
 

@@ -30,7 +30,7 @@ public class TestIdea {
     DcRecordMapper dcRecordMapper;
 
     @Autowired
-    InternalVoteRepository internalVoteRepository;
+    VoteRepository voteRepository;
 
 
     @Test

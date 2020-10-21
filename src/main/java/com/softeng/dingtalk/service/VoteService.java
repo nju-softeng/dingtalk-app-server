@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class VoteService {
     @Autowired
-    InternalVoteRepository internalVoteRepository;
+    VoteRepository voteRepository;
     @Autowired
     VoteDetailRepository voteDetailRepository;
     @Autowired
@@ -63,24 +63,24 @@ public class VoteService {
      * @param voteVO
      */
     @CacheEvict(value = "voting", allEntries = true)
-    public InternalVote createInternalVote(VoteVO voteVO) {
+    public Vote createVote(VoteVO voteVO) {
 
         // 判断投票是否已经创建过
-        if (internalVoteRepository.isExisted(voteVO.getPaperid()) != 0) {
+        if (voteRepository.isExisted(voteVO.getPaperid()) != 0) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "慢了一步，投票已经被别人发起了");
         }
 
-        InternalVote internalVote = new InternalVote(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
+        Vote vote = new Vote(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
         log.debug(LocalDate.now().toString());
         log.debug(voteVO.getEndTime().toString());
         log.debug(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()).toString());
-        internalVoteRepository.save(internalVote);
-        paperRepository.updatePaperVote(voteVO.getPaperid(), internalVote.getId());
+        voteRepository.save(vote);
+        paperRepository.updatePaperVote(voteVO.getPaperid(), vote.getId());
         // 发送投票信息
         String title = paperRepository.getPaperTitleById(voteVO.getPaperid());
         List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
         dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), title, voteVO.getEndTime().toString(), namelist);
-        return internalVoteRepository.refresh(internalVote);
+        return voteRepository.refresh(vote);
     }
 
 
@@ -90,10 +90,10 @@ public class VoteService {
      * @return
      */
     @Cacheable(value = "voting")
-    public List<InternalVote> listUnderwayInternalVote() {
+    public List<Vote> listUnderwayVote() {
         log.debug("从数据库查询未结束投票");
         //拿到没有结束的投票
-        return internalVoteRepository.listByStatusIsFalse();
+        return voteRepository.listByStatusIsFalse();
     }
 
 
@@ -103,7 +103,7 @@ public class VoteService {
      * @return
      */
     @CacheEvict(value = "voting", allEntries = true)
-    public InternalVote updateInternalVote(InternalVote v) {
+    public Vote updateVote(Vote v) {
         log.debug("投票结果更新，清空缓存");
         int accept = voteDetailRepository.getAcceptCnt(v.getId());
         int total = voteDetailRepository.getCnt(v.getId());
@@ -118,7 +118,7 @@ public class VoteService {
         } else {
             paperRepository.updatePaperResult(v.getPid(), Paper.REVIEWING);
         }
-        internalVoteRepository.save(v);
+        voteRepository.save(v);
         return v;
     }
 
@@ -133,7 +133,7 @@ public class VoteService {
     public Map poll(int vid, int uid, VoteDetail voteDetail) {
         // 收到投票的时间
         LocalDateTime now = LocalDateTime.now();
-        InternalVote vote = internalVoteRepository.findById(vid).get();
+        Vote vote = voteRepository.findById(vid).get();
 
         // 判断投票人是否为论文作者
         Set<Integer> authorids = paperService.listAuthorid(vote.getPid());
@@ -197,7 +197,7 @@ public class VoteService {
      * @param uid
      * @return
      */
-    public Map getInternalVotedDetail(int vid, int pid, int uid) {
+    public Map getVotedDetail(int vid, int pid, int uid) {
         List<String> acceptlist = voteDetailRepository.listAcceptNamelist(vid);
         List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
         // accept 票数
@@ -241,7 +241,7 @@ public class VoteService {
      * @param result
      */
     public void computeVoteAc(int pid, boolean result) {
-        InternalVote vote = paperRepository.findInternalVoteById(pid);
+        Vote vote = paperRepository.findVoteById(pid);
         if (vote != null) {
             List<VoteDetail> voteDetails = voteDetailRepository.listByVid(vote.getId());
             List<AcRecord> acRecords = new ArrayList<>();
