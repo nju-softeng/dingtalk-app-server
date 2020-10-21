@@ -52,6 +52,10 @@ public class VoteService {
     UserRepository userRepository;
 
 
+    //--------------------------------------------
+    //  内部论文评审相关操作
+    //--------------------------------------------
+
     /**
      * 创建投票
      * 钉钉发送消息
@@ -59,7 +63,7 @@ public class VoteService {
      * @param voteVO
      */
     @CacheEvict(value = "voting", allEntries = true)
-    public InternalVote createVote(VoteVO voteVO) {
+    public InternalVote createInternalVote(VoteVO voteVO) {
 
         // 判断投票是否已经创建过
         if (internalVoteRepository.isExisted(voteVO.getPaperid()) != 0) {
@@ -86,7 +90,7 @@ public class VoteService {
      * @return
      */
     @Cacheable(value = "voting")
-    public List<InternalVote> listUnderwayVote() {
+    public List<InternalVote> listUnderwayInternalVote() {
         log.debug("从数据库查询未结束投票");
         //拿到没有结束的投票
         return internalVoteRepository.listByStatusIsFalse();
@@ -94,12 +98,12 @@ public class VoteService {
 
 
     /**
-     * 更新投票的最终结果，投票截止后调用
+     * 更新投票的最终结果，投票截止后调用, 被定时器调用
      * @param v
      * @return
      */
     @CacheEvict(value = "voting", allEntries = true)
-    public InternalVote updateVote(InternalVote v) {
+    public InternalVote updateInternalVote(InternalVote v) {
         log.debug("投票结果更新，清空缓存");
         int accept = voteDetailRepository.getAcceptCnt(v.getId());
         int total = voteDetailRepository.getCnt(v.getId());
@@ -166,7 +170,7 @@ public class VoteService {
      * @param uid
      * @return
      */
-    public Map getVotingDetail(int vid, int uid){
+    public Map getInternalVotingDetail(int vid, int uid){
         Boolean myresult = voteDetailRepository.getVoteDetail(vid, uid);
         if (myresult != null) {
             //用户已经投票，可以查看结果
@@ -193,7 +197,7 @@ public class VoteService {
      * @param uid
      * @return
      */
-    public Map getVotedDetail(int vid, int pid, int uid) {
+    public Map getInternalVotedDetail(int vid, int pid, int uid) {
         List<String> acceptlist = voteDetailRepository.listAcceptNamelist(vid);
         List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
         // accept 票数
@@ -222,7 +226,6 @@ public class VoteService {
             unVoteNames = userRepository.listNameByids(totalIds);
         }
 
-
         if (myresult == null) {
             return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", unVoteNames);
         } else {
@@ -238,7 +241,7 @@ public class VoteService {
      * @param result
      */
     public void computeVoteAc(int pid, boolean result) {
-        InternalVote vote = paperRepository.findVoteById(pid);
+        InternalVote vote = paperRepository.findInternalVoteById(pid);
         if (vote != null) {
             List<VoteDetail> voteDetails = voteDetailRepository.listByVid(vote.getId());
             List<AcRecord> acRecords = new ArrayList<>();
@@ -275,6 +278,12 @@ public class VoteService {
         }
 
     }
+
+
+    //--------------------------------------------
+    //  外部论文评审相关操作
+    //--------------------------------------------
+
 
 
 }
