@@ -57,7 +57,7 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
      * @return
      */
     @Query("select p.internalVote from  Paper p where p.id = :id")
-    InternalVote findVoteById(@Param("id") int id);
+    InternalVote findInternalVoteById(@Param("id") int id);
 
 
     /**

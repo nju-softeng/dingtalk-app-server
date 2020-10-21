@@ -98,7 +98,7 @@ public class NotifyService {
      * @param result
      */
     public void voteAcMessage(int pid, boolean result) {
-        InternalVote v = paperRepository.findVoteById(pid);
+        InternalVote v = paperRepository.findInternalVoteById(pid);
         String papertitel = paperRepository.getPaperTitleById(pid);
         String title;
         String content;

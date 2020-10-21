@@ -199,7 +199,7 @@ public class PaperService {
      * @return
      */
     public InternalVote getVoteByPid (int pid) {
-        return paperRepository.findVoteById(pid);
+        return paperRepository.findInternalVoteById(pid);
     }
 
 

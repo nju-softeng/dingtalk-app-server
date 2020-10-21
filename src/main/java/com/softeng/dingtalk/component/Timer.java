@@ -41,14 +41,15 @@ public class Timer {
     @Scheduled(cron = "0 * * * * ?")
     public void checkVote() {
         //拿到没有结束的投票
-        List<InternalVote> votes = voteService.listUnderwayVote();
-        if (votes.size() != 0) {
+        List<InternalVote> internalVotes = voteService.listUnderwayInternalVote();
+
+        if (internalVotes.size() != 0) {
             LocalDateTime now = LocalDateTime.now();
             log.debug("定时器执行：" + now.toString());
-            for (InternalVote v : votes) {
+            for (InternalVote v : internalVotes) {
                 if (v.getDeadline().isBefore(now)) {
                     //更新
-                    v = voteService.updateVote(v);
+                    v = voteService.updateInternalVote(v);
                     log.debug("钉钉发送消息");
                     Map map = paperRepository.getPaperInfo(v.getId());
                     if (map.size() != 0) {

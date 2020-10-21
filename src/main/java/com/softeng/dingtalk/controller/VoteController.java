@@ -41,7 +41,7 @@ public class VoteController {
     @PostMapping("/vote")
     public InternalVote addvote(@RequestBody VoteVO voteVO) {
         log.debug(voteVO.toString());
-        return voteService.createVote(voteVO);
+        return voteService.createInternalVote(voteVO);
     }
 
 
@@ -73,10 +73,10 @@ public class VoteController {
         InternalVote vote = paperService.getVoteByPid(pid);
         if (vote.getDeadline().isBefore(LocalDateTime.now())) {
             //如果投票已经结束
-            return voteService.getVotedDetail(vote.getId(), pid, uid);
+            return voteService.getInternalVotedDetail(vote.getId(), pid, uid);
         } else {
             //如果投票未结束
-            return voteService.getVotingDetail(vote.getId(),uid);
+            return voteService.getInternalVotingDetail(vote.getId(),uid);
         }
     }
 
