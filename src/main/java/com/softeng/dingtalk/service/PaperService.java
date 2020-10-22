@@ -272,6 +272,10 @@ public class PaperService {
         return externalPaperRepository.findAll();
     }
 
+    public void deleteExternalPaper(int id) {
+        externalPaperRepository.deleteById(id);
+    }
+
 
 
 }

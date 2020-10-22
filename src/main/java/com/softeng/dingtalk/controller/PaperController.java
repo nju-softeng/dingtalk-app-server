@@ -168,36 +168,39 @@ public class PaperController {
 
     @PostMapping("/ex-paper")
     public void addExternalPaper(@RequestBody ExternalPaperVO vo) {
-        log.debug(vo.toString());
-        // 首先创建一个外部论文
-        ExternalPaper externalPaper = new ExternalPaper(vo.getTitle());
-        externalPaperRepository.save(externalPaper);
-        log.debug(externalPaper.getId() + "");
-        // 再发起一个投票
-        Vote vote = new Vote(vo.getStartTime(), vo.getEndTime(), true, externalPaper.getId());
-        voteRepository.save(vote);
-        externalPaper.setVote(vote);
-        externalPaperRepository.save(externalPaper);
+        if (vo.getId() == null) {
+            // 首先创建一个外部论文
+            ExternalPaper externalPaper = new ExternalPaper(vo.getTitle());
+            externalPaperRepository.save(externalPaper);
+            // 再创建一个投票
+            Vote vote = new Vote(vo.getStartTime(), vo.getEndTime(), true, externalPaper.getId());
+            voteRepository.save(vote);
+            externalPaper.setVote(vote);
+            externalPaperRepository.save(externalPaper);
+        } else {
+
+        }
+
+
     }
 
-    @PostMapping("/ex-paper/update")
-    public void updateExternalVote(@RequestBody ExternalPaperVO vo) {
-
+    @GetMapping("/ex-paper/rm/{id}")
+    public void deleteExternalPaper(@PathVariable int id) {
+        paperService.deleteExternalPaper(id);
     }
+
 
     /**
      * 查询所有的评审投票
      * @return
      */
     @GetMapping("/ex-paper/list")
-    public List<ExternalPaper> listExternalVote() {
+    public List<ExternalPaper> listExternalPaper() {
         List<ExternalPaper> kk = paperService.listExternalPaper();
         return paperService.listExternalPaper();
     }
 
-    public void deleteExternalVote() {
 
-    }
 
 
 
