@@ -178,12 +178,15 @@ public class PaperController {
             externalPaper.setVote(vote);
             externalPaperRepository.save(externalPaper);
         } else {
+            // 更新论文记录操作
 
         }
-
-
     }
 
+    /**
+     * 删除指定的外部论文
+     * @param id
+     */
     @GetMapping("/ex-paper/rm/{id}")
     public void deleteExternalPaper(@PathVariable int id) {
         paperService.deleteExternalPaper(id);
@@ -196,9 +199,19 @@ public class PaperController {
      */
     @GetMapping("/ex-paper/list")
     public List<ExternalPaper> listExternalPaper() {
-        List<ExternalPaper> kk = paperService.listExternalPaper();
         return paperService.listExternalPaper();
     }
+
+    /**
+     * 查询指定id的ExternalPaper
+     * @param id
+     * @return
+     */
+    @GetMapping("/ex-papper/{id}")
+    public ExternalPaper getExPaper(@PathVariable int id) {
+        return paperService.getExPaper(id);
+    }
+
 
 
 
