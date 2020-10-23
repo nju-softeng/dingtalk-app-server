@@ -263,18 +263,38 @@ public class PaperService {
         return paperDetailRepository.listAuthorIdByPid(pid);
     }
 
-
-
     //-----------------------------------------
 
-
+    /**
+     * todo 添加分页功能
+     * 查询所有外部论文
+     * @return
+     */
     public List<ExternalPaper> listExternalPaper() {
         return externalPaperRepository.findAll();
     }
 
+    /**
+     * 删除指定外部论文
+     * @param id
+     */
     public void deleteExternalPaper(int id) {
         externalPaperRepository.deleteById(id);
     }
+
+    // todo 查询指定id外部论文
+
+    /**
+     * 根据指定id 查询外部论文
+     * @param id
+     * @return
+     */
+    public ExternalPaper getExPaper(int id) {
+        return externalPaperRepository.findById(id).get();
+    }
+
+
+
 
 
 
