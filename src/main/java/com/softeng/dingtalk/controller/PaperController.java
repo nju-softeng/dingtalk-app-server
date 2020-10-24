@@ -166,6 +166,10 @@ public class PaperController {
     // 外部论文评审操作
     /////////////////
 
+    /**
+     * 创建、更新一个外部论文记录及投票
+     * @param vo
+     */
     @PostMapping("/ex-paper")
     public void addExternalPaper(@RequestBody ExternalPaperVO vo) {
         if (vo.getId() == null) {
@@ -178,7 +182,7 @@ public class PaperController {
             externalPaper.setVote(vote);
             externalPaperRepository.save(externalPaper);
         } else {
-            // 更新论文记录操作
+            // todo :更新论文记录操作
 
         }
     }
@@ -192,7 +196,6 @@ public class PaperController {
         paperService.deleteExternalPaper(id);
     }
 
-
     /**
      * 查询所有的评审投票
      * @return
@@ -202,20 +205,15 @@ public class PaperController {
         return paperService.listExternalPaper();
     }
 
+
     /**
      * 查询指定id的ExternalPaper
-     * @param id
+     * @param pid
      * @return
      */
-    @GetMapping("/ex-papper/{id}")
-    public ExternalPaper getExPaper(@PathVariable int id) {
-        return paperService.getExPaper(id);
+    @GetMapping("/ex-paper/{pid}/vote")
+    public Vote getExPaper(@PathVariable int pid) {
+        return paperService.getExPaperVote(pid);
     }
-
-
-
-
-
-
 
 }

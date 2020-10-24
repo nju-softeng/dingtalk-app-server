@@ -1,5 +1,6 @@
 package com.softeng.dingtalk;
 
+import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.mapper.DcRecordMapper;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.service.*;
@@ -10,6 +11,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 /**
@@ -35,9 +39,7 @@ public class TestIdea {
 
     @Test
     public void test() {
-        UserVO vo = dcRecordMapper.findLatestAuditorByApplicantId(19);
-        log.debug(vo.getName());
-        log.debug(vo.getId() + "");
+        List<Vote> kk = voteRepository.listUpcomingVote(LocalDateTime.now());
 
     }
 

@@ -62,8 +62,14 @@ public class Vote {
      * 投票对应的论文id
      */
     private int pid;
-
+    /**
+     * 是否是外部评审投票
+     */
     private boolean isExternal;
+    /**
+     * 外部评审投票是否已经开始
+     */
+    private boolean isStarted;
 
     @JsonIgnoreProperties("vote")
     @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)

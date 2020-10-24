@@ -34,6 +34,14 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
     Map<String, Object> getPaperInfo(@Param("vid") int vid);
 
     /**
+     * 查询对应指定投票id的论文
+     * @param vid
+     * @return
+     */
+    @Query("select p from Paper p where p.vote.id = :vid")
+    Paper findByVid(int vid);
+
+    /**
      * 发起论文投票时，更新论文记录
      * @param id
      * @param vid
