@@ -293,6 +293,7 @@ public class DingTalkUtils {
                     .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
                     .append(DOMAIN).append("/paper/detail/").append(pid).append("/vote?type=internal");
         }
+        log.debug(curl.toString());
         return curl.toString();
     }
 
