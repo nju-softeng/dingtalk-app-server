@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.entity.VoteDetail;
+import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.PollVO;
@@ -31,6 +32,9 @@ public class VoteController {
     PaperService paperService;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private VoteRepository voteRepository;
+
 
 
     /**
@@ -63,20 +67,39 @@ public class VoteController {
 
 
     /**
-     * 获取投票详情
+     * 根据paperid获取投票详情
      * @param pid
      * @param uid
      * @return
      */
-    @GetMapping("/vote/{pid}/detail")
-    public Map getVoteDetail(@PathVariable int pid, @RequestAttribute int uid) {
+    @GetMapping("/vote/paper/{pid}/detail")
+    public Map getVoteDetailByPid(@PathVariable int pid, @RequestAttribute int uid) {
         Vote vote = paperService.getVoteByPid(pid);
         if (vote.getEndTime().isBefore(LocalDateTime.now())) {
             //如果投票已经结束
-            return voteService.getVotedDetail(vote.getId(), pid, uid);
+            return voteService.getVotedDetail(vote.getId(), uid, vote.isExternal());
         } else {
             //如果投票未结束
-            return voteService.getVotingDetail(vote.getId(),uid);
+            return voteService.getVotingDetail(vote.getId(), uid);
+        }
+    }
+
+
+    /**
+     * 根据voteid获取投票详情
+     * @param pid
+     * @param uid
+     * @return
+     */
+    @GetMapping("/vote/{vid}/detail")
+    public Map getVoteDetailByVid(@PathVariable int vid, @RequestAttribute int uid) {
+        Vote vote = voteRepository.findById(vid).get();
+        if (vote.getEndTime().isBefore(LocalDateTime.now())) {
+            //如果投票已经结束
+            return voteService.getVotedDetail(vid, uid, vote.isExternal());
+        } else {
+            //如果投票未结束
+            return voteService.getVotingDetail(vid, uid);
         }
     }
 

@@ -210,7 +210,7 @@ public class VoteService {
      * @param uid
      * @return
      */
-    public Map getVotedDetail(int vid, int pid, int uid) {
+    public Map getVotedDetail(int vid, int uid, boolean isExternal) {
         List<String> acceptlist = voteDetailRepository.listAcceptNamelist(vid);
         List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
         // accept 票数
@@ -226,12 +226,23 @@ public class VoteService {
         // 1. 查询所有不是待定用户的id，已经投票的用户的id，作者id,已经毕业学生id
         Set<Integer> totalIds = userRepository.listStudentId();
         Set<Integer> votedIds = voteDetailRepository.findVoteUserid(vid);
-        Set<Integer> authorids = paperService.listAuthorid(pid);
-        Set<Integer> alumniids = userRepository.listDisableUserid();
+
+
+        //Set<Integer> alumniids = userRepository.listDisableUserid();
         // 2. 减去所有投票用户和论文作者的id
         totalIds.removeAll(votedIds);
-        totalIds.removeAll(authorids);
-        totalIds.removeAll(alumniids);
+
+        if (isExternal == false) {
+            Paper paper = paperRepository.findByVid(vid);
+            Set<Integer> authorids = paperService.listAuthorid(paper.getId());
+            totalIds.removeAll(authorids);
+        }
+
+
+
+
+
+        //totalIds.removeAll(alumniids);
 
         // 3. 通过为投票用户id集合去查询用户姓名
         Set<String> unVoteNames = new HashSet<>();
