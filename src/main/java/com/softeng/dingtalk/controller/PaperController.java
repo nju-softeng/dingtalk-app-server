@@ -212,8 +212,17 @@ public class PaperController {
      * @return
      */
     @GetMapping("/ex-paper/{pid}/vote")
-    public Vote getExPaper(@PathVariable int pid) {
+    public Vote getExPaperVote(@PathVariable int pid) {
         return paperService.getExPaperVote(pid);
     }
 
+    /**
+     * 查询指定id的ExternalPaper
+     * @param id
+     * @return
+     */
+    @GetMapping("/ex-papper/{id}")
+    public ExternalPaper getExPaper(@PathVariable int id) {
+        return paperService.getExPaper(id);
+    }
 }
