@@ -79,7 +79,7 @@ public class VoteService {
         // 发送投票信息
         String title = paperRepository.getPaperTitleById(voteVO.getPaperid());
         List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
-        dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), true, title, voteVO.getEndTime().toString(), namelist);
+        dingTalkUtils.sendVoteMsg(voteVO.getPaperid(),false, title, voteVO.getEndTime().toString(), namelist);
         return voteRepository.refresh(vote);
     }
 
