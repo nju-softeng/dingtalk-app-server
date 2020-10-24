@@ -79,10 +79,20 @@ public class VoteService {
         // 发送投票信息
         String title = paperRepository.getPaperTitleById(voteVO.getPaperid());
         List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
-        dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), title, voteVO.getEndTime().toString(), namelist);
+        dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), true, title, voteVO.getEndTime().toString(), namelist);
         return voteRepository.refresh(vote);
     }
 
+    // 查询所有需要开始的投票
+
+    /**
+     *
+     * @param now
+     * @return
+     */
+    public List<Vote> listUpcomingVote(LocalDateTime now) {
+        return voteRepository.listUpcomingVote(now);
+    }
 
     /**
      * 查询没有结束的投票
@@ -113,6 +123,9 @@ public class VoteService {
         v.setTotal(total);
         boolean result = accept > total - accept;
         v.setResult(result);
+
+        //todo 需要修改，内部论文和外部论文有不同的操作
+
         if (result == false) {
             paperRepository.updatePaperResult(v.getPid(), Paper.NOTPASS);
         } else {

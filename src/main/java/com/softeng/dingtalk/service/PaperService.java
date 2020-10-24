@@ -282,17 +282,25 @@ public class PaperService {
         externalPaperRepository.deleteById(id);
     }
 
-    // todo 查询指定id外部论文
 
     /**
-     * 根据指定id 查询外部论文
+     * 根据指定id 查询外部论文的投票
+     * @param id
+     * @return
+     */
+    public Vote getExPaperVote(int id) {
+        return externalPaperRepository.findById(id).get().getVote();
+    }
+
+
+    /**
+     * 根据指定id 查询外部评审论文
      * @param id
      * @return
      */
     public ExternalPaper getExPaper(int id) {
         return externalPaperRepository.findById(id).get();
     }
-
 
 
 

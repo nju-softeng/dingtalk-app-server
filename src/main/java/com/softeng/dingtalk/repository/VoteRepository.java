@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -15,11 +16,14 @@ import java.util.List;
 @Repository
 public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
 
+    @Query("select v from Vote v where v.isExternal = true and v.isStarted = false and v.startTime <= :nowtime")
+    List<Vote> listUpcomingVote(LocalDateTime nowtime);
+
     /**
      * 查询所有状态没有结束的投票
-     * @return 放回所有未结束的投票
+     * @return 所有未结束的投票
      */
-    @Query("select iv from Vote iv where iv.status = false ")
+    @Query("select v from Vote v where v.status = false ")
     List<Vote> listByStatusIsFalse();
 
 
@@ -31,7 +35,7 @@ public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
      * @param result 最终结果
      */
     @Modifying
-    @Query("update Vote iv set iv.status = true, iv.accept = :accept, iv.total = :total, iv.result = :result where iv.id = :id")
+    @Query("update Vote v set v.status = true, v.accept = :accept, v.total = :total, v.result = :result where v.id = :id")
     void updateStatus(int id, int accept, int total, boolean result);
 
     /**
