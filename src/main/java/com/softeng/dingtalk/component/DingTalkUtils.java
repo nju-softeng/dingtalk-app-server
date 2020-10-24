@@ -286,12 +286,12 @@ public class DingTalkUtils {
             // 外部论文评审的链接
             curl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
                     .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
-                    .append(DOMAIN).append("/paper/ex-detail/").append(pid).append("/vote?type=external");
+                    .append(DOMAIN).append("/paper/ex-detail/").append(pid).append("/vote");
         } else {
             // 内部论文评审的链接
             curl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
                     .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
-                    .append(DOMAIN).append("/paper/detail/").append(pid).append("/vote?type=internal");
+                    .append(DOMAIN).append("/paper/in-detail/").append(pid).append("/vote");
         }
         log.debug(curl.toString());
         return curl.toString();
