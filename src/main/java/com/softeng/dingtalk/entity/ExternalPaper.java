@@ -19,8 +19,14 @@ public class ExternalPaper {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
+    /**
+     * 论文标题
+     */
     private String title;
+    /**
+     * 该外部论文的最终录用结果
+     */
+    private Boolean result;
 
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(unique = true)

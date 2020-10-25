@@ -351,7 +351,7 @@ public class DingTalkUtils {
      * @param accept
      * @param total
      */
-    public void sendVoteResult(int pid, String title, boolean result, int accept, int total) {
+    public void sendVoteResult(int pid, String title, boolean result, int accept, int total, boolean isExternal) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
         OapiChatSendRequest request = new OapiChatSendRequest();
         request.setChatid(CHAT_ID);
@@ -363,17 +363,11 @@ public class DingTalkUtils {
                 .append("Reject: ").append(total-accept).append(" 票  \n ")
                 .append("已参与人数： ").append(total).append("人  \n ");
 
-        //todo 内部评审和外部评审的投票地址不同
-
-        StringBuffer pcurl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
-                .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
-                .append(DOMAIN).append("/paper/detail/").append(pid).append("/vote");
-
 
         actionCard.setTitle("投票结果");
         actionCard.setMarkdown(content.toString());
         actionCard.setSingleTitle("查看详情");
-        actionCard.setSingleUrl(pcurl.toString());
+        actionCard.setSingleUrl(createDingTalkLink(isExternal, pid));
 
 
         request.setActionCard(actionCard);

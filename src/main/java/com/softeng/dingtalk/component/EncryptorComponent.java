@@ -26,7 +26,11 @@ public class EncryptorComponent {
     @Autowired
     private ObjectMapper objectMapper;
 
-    //加密
+    /**
+     * 加密: 将一个map序列化为字符串，并加密
+     * @param payload
+     * @return
+     */
     public String encrypt(Map payload) {
         try {
             String json = objectMapper.writeValueAsString(payload);
@@ -37,8 +41,11 @@ public class EncryptorComponent {
         return null;
     }
 
-
-    //解密
+    /**
+     * 解密: 将字符串反序列化为map, 并解密
+     * @param encryptString
+     * @return
+     */
     public Map<String, Object> decrypt(String encryptString) {
         try {
             String json = Encryptors.text(secretKey, salt).decrypt(encryptString);
