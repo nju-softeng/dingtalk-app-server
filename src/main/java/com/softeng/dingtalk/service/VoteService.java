@@ -264,8 +264,7 @@ public class VoteService {
      * @param pid
      * @param result
      */
-    public void computeVoteAc(int pid, boolean result) {
-        Vote vote = paperRepository.findVoteById(pid);
+    public void computeVoteAc(Vote vote, boolean result) {
         if (vote != null) {
             List<VoteDetail> voteDetails = voteDetailRepository.listByVid(vote.getId());
             List<AcRecord> acRecords = new ArrayList<>();
@@ -289,7 +288,7 @@ public class VoteService {
             voteDetailRepository.saveAll(voteDetails);
 
             // 发送消息
-            notifyService.voteAcMessage(pid, result);
+            notifyService.voteAcMessage(vote.getId(), result);
             // 计算助研金
             LocalDate date = LocalDate.now();
             int yearmonth = date.getYear() * 100 + date.getMonthValue();

@@ -107,11 +107,11 @@ public class PaperService {
 
 
     /**
-     * 更新论文结果, 并计算ac
+     * 更新内部论文投稿结果, 并计算ac
      * @param id
      * @param result
      */
-    public void updateResult(int id, boolean result) {
+    public void updatePaperResult(int id, boolean result) {
 
         Paper paper = paperRepository.findById(id).get();
 
@@ -303,7 +303,22 @@ public class PaperService {
     }
 
 
+    /**
+     * 更新外部论文投稿结果
+     * @param id
+     * @param result
+     */
+    public void updateExPaperResult(int id, boolean result) {
+        ExternalPaper externalPaper = externalPaperRepository.findById(id).get();
 
+        if (externalPaper.getVote().getResult() == null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "投票尚未结束");
+        }
+
+        //更新论文的结果
+        externalPaper.setResult(result);
+        externalPaperRepository.save(externalPaper);
+    }
 
 
 }

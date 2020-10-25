@@ -77,13 +77,13 @@ public class Timer {
                         // 如果是外部投票
                         ExternalPaper externalPaper = externalPaperRepository.findByVid(v.getId());
                         if (externalPaper != null) {
-                            dingTalkUtils.sendVoteResult(externalPaper.getId(), externalPaper.getTitle(), v.getResult(), v.getAccept(), v.getTotal());
+                            dingTalkUtils.sendVoteResult(externalPaper.getId(), externalPaper.getTitle(), v.getResult(), v.getAccept(), v.getTotal(), v.isExternal());
                         }
                     } else {
                         // 如果是内部投票
-                        Paper paper = paperRepository.findByVid(v.getId());
-                        if (paper != null) {
-                            dingTalkUtils.sendVoteResult(paper.getId(), paper.getTitle(), v.getResult(), v.getAccept(), v.getTotal());
+                        Paper internalpaper = paperRepository.findByVid(v.getId());
+                        if (internalpaper != null) {
+                            dingTalkUtils.sendVoteResult(internalpaper.getId(), internalpaper.getTitle(), v.getResult(), v.getAccept(), v.getTotal(), v.isExternal());
                         }
                     }
                 }
@@ -92,6 +92,9 @@ public class Timer {
     }
 
 
+    /**
+     * 每月1日3点执行 initDcDummary 方法
+     */
     @Scheduled(cron = "0 0 3 1 * ?")
     public void initMonthlyDcSummary() {
         initService.initDcSummary();

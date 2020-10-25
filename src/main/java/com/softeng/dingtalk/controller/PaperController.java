@@ -6,6 +6,7 @@ import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Review;
 import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.repository.ExternalPaperRepository;
+import com.softeng.dingtalk.repository.PaperRepository;
 import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
@@ -37,10 +38,13 @@ public class PaperController {
     ExternalPaperRepository externalPaperRepository;
     @Autowired
     VoteRepository voteRepository;
+    @Autowired
+    PaperRepository paperRepository;
 
-    /////////////////
+
+    // ----------------------------------
     // 内部论文评审操作
-    /////////////////
+    // ----------------------------------
 
     /**
      * 添加或更新论文记录
@@ -56,7 +60,6 @@ public class PaperController {
             paperService.updatePaper(papervo);
             log.debug("update paper");
         }
-
     }
 
 
@@ -77,8 +80,9 @@ public class PaperController {
      */
     @PostMapping("/paper_result/{pid}")
     public void updateResult(@PathVariable int pid, @RequestBody Map<String, Boolean> map) {
-        paperService.updateResult(pid, map.get("data"));
-        voteService.computeVoteAc(pid, map.get("data"));
+        paperService.updatePaperResult(pid, map.get("data"));
+        Vote vote = paperRepository.findVoteById(pid);
+        voteService.computeVoteAc(vote, map.get("data"));
         // todo 发送论文消息
     }
 
@@ -162,9 +166,9 @@ public class PaperController {
     }
 
 
-    /////////////////
+    // -------------------------
     // 外部论文评审操作
-    /////////////////
+    // -------------------------
 
     /**
      * 创建、更新一个外部论文记录及投票
@@ -224,5 +228,20 @@ public class PaperController {
     @GetMapping("/ex-papper/{id}")
     public ExternalPaper getExPaper(@PathVariable int id) {
         return paperService.getExPaper(id);
+    }
+
+    /**
+     * 更新外部论文的评审状态
+     * @param pid
+     * @param map
+     */
+    @PostMapping("/ex-paper_result/{pid}")
+    public void updateExPaperResult(@PathVariable int pid, @RequestBody Map<String, Boolean> map) {
+        // 更新论文记录
+        paperService.updateExPaperResult(pid, map.get("data"));
+        Vote vote = externalPaperRepository.findVoteById(pid);
+        // 更具投票结果计算，投票人的ac值
+        voteService.computeVoteAc(vote, map.get("data"));
+        // todo 发送论文消息
     }
 }
