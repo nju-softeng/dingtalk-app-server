@@ -70,7 +70,7 @@ public class VoteService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "慢了一步，投票已经被别人发起了");
         }
 
-        Vote vote = new Vote(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
+        Vote vote = new Vote(LocalDateTime.now() ,LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
         log.debug(LocalDate.now().toString());
         log.debug(voteVO.getEndTime().toString());
         log.debug(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()).toString());
@@ -261,7 +261,7 @@ public class VoteService {
 
     /**
      * 根据论文最终结果计算投票者的ac
-     * @param pid
+     * @param vote
      * @param result
      */
     public void computeVoteAc(Vote vote, boolean result) {
