@@ -49,7 +49,7 @@ public class Vote {
     /**
      * 投票开始时间
      */
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    @Column(nullable = false)
     private LocalDateTime startTime;
 
     /**
@@ -76,7 +76,8 @@ public class Vote {
     private List<VoteDetail> voteDetails;
 
 
-    public Vote(LocalDateTime endTime, int pid) {
+    public Vote(LocalDateTime startTime ,LocalDateTime endTime, int pid) {
+        this.startTime = startTime;
         this.endTime = endTime;
         this.pid = pid;
     }

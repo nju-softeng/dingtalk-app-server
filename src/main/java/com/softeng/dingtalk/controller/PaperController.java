@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -187,7 +188,17 @@ public class PaperController {
             externalPaperRepository.save(externalPaper);
         } else {
             // todo :更新论文记录操作
-
+            Vote vote = externalPaperRepository.findVoteById(vo.getId());
+            LocalDateTime now = LocalDateTime.now();
+            if (vote.getStartTime().isBefore(now)) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "投票已经发起,不可以再修改了");
+            }
+            ExternalPaper externalPaper = externalPaperRepository.findById(vo.getId()).get();
+            externalPaper.setTitle(vo.getTitle());
+            vote.setStartTime(vo.getStartTime());
+            vote.setEndTime(vo.getEndTime());
+            externalPaperRepository.save(externalPaper);
+            voteRepository.save(vote);
         }
     }
 
