@@ -123,15 +123,16 @@ public class VoteService {
         v.setTotal(total);
         boolean result = accept > total - accept;
         v.setResult(result);
-
-        //todo 需要修改，内部论文和外部论文有不同的操作
-
-        if (result == false) {
-            paperRepository.updatePaperResult(v.getPid(), Paper.NOTPASS);
-        } else {
-            paperRepository.updatePaperResult(v.getPid(), Paper.REVIEWING);
-        }
         voteRepository.save(v);
+        
+        if (!v.isExternal()) {
+            // 如果是内部评审投票
+            if (result == false) {
+                paperRepository.updatePaperResult(v.getPid(), Paper.NOTPASS);
+            } else {
+                paperRepository.updatePaperResult(v.getPid(), Paper.REVIEWING);
+            }
+        }
         return v;
     }
 
