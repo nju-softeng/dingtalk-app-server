@@ -68,7 +68,7 @@ public class Vote {
     /**
      * 外部评审投票是否已经开始
      */
-    private boolean isStarted;
+    private boolean started;
 
     @JsonIgnoreProperties("vote")
     @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)

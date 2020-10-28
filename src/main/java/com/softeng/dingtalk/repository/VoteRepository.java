@@ -21,7 +21,7 @@ public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
      * @param nowtime
      * @return
      */
-    @Query("select v from Vote v where v.external = true and v.isStarted = false and v.startTime <= :nowtime")
+    @Query("select v from Vote v where v.external = true and v.started = false and v.startTime <= :nowtime")
     List<Vote> listUpcomingVote(LocalDateTime nowtime);
 
     /**
