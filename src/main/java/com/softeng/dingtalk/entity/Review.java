@@ -31,7 +31,7 @@ public class Review {
     /**
      * 是否对应外部论文
      */
-    private boolean isExternal;
+    private boolean external;
 
     /**
      * 评审意见markdown

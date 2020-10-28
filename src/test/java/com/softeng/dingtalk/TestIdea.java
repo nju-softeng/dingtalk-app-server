@@ -43,7 +43,7 @@ public class TestIdea {
     @Test
     public void test() {
 //        List<Vote> kk = voteRepository.listUpcomingVote(LocalDateTime.now());
-        List<Review> aa = paperService.listReview(14, false);
+        List<Review> aa = paperService.listReview(1, true);
 
     }
 
