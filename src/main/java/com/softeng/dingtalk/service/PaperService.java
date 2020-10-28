@@ -53,6 +53,8 @@ public class PaperService {
     ReviewRepository reviewRepository;
     @Autowired
     PaperMapper paperMapper;
+    @Autowired
+    ExternalPaperRepository externalPaperRepository;
 
 
     /**
@@ -105,11 +107,11 @@ public class PaperService {
 
 
     /**
-     * 更新论文结果, 并计算ac
+     * 更新内部论文投稿结果, 并计算ac
      * @param id
      * @param result
      */
-    public void updateResult(int id, boolean result) {
+    public void updatePaperResult(int id, boolean result) {
 
         Paper paper = paperRepository.findById(id).get();
 
@@ -215,20 +217,20 @@ public class PaperService {
         reviewRepository.save(review);
     }
 
-
     /**
-     * 查询指定论文的评审意见
+     *
      * @param paperid
+     * @param isExternal
      * @return
      */
-    public List<Review> listReview(int paperid) {
-        return reviewRepository.findAllByPaperid(paperid, Sort.by("id").descending());
+    public List<Review> listReview(int paperid, boolean isExternal) {
+        return reviewRepository.findAllByPaperidAndExternal(paperid, isExternal);
     }
 
 
     /**
      * 更新评审意见
-     * @param review
+     * @param review 被更新的评审细节
      */
     public void updateReview(Review review) {
        reviewRepository.save(review);
@@ -238,8 +240,8 @@ public class PaperService {
 
     /**
      * 删除评审意见
-     * @param id
-     * @param uid
+     * @param id 评审的id
+     * @param uid 要删除的用户的id
      */
     public void deleteReview(int id, int uid) {
         Review review = reviewRepository.findById(id).get();
@@ -261,6 +263,62 @@ public class PaperService {
         return paperDetailRepository.listAuthorIdByPid(pid);
     }
 
+    //-----------------------------------------
+
+    /**
+     * todo 添加分页功能
+     * 查询所有外部论文
+     * @return
+     */
+    public List<ExternalPaper> listExternalPaper() {
+        return externalPaperRepository.findAll();
+    }
+
+    /**
+     * 删除指定外部论文
+     * @param id
+     */
+    public void deleteExternalPaper(int id) {
+        externalPaperRepository.deleteById(id);
+    }
+
+
+    /**
+     * 根据指定id 查询外部论文的投票
+     * @param id
+     * @return
+     */
+    public Vote getExPaperVote(int id) {
+        return externalPaperRepository.findById(id).get().getVote();
+    }
+
+
+    /**
+     * 根据指定id 查询外部评审论文
+     * @param id
+     * @return
+     */
+    public ExternalPaper getExPaper(int id) {
+        return externalPaperRepository.findById(id).get();
+    }
+
+
+    /**
+     * 更新外部论文投稿结果
+     * @param id
+     * @param result
+     */
+    public void updateExPaperResult(int id, boolean result) {
+        ExternalPaper externalPaper = externalPaperRepository.findById(id).get();
+
+        if (externalPaper.getVote().getResult() == null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "投票尚未结束");
+        }
+
+        //更新论文的结果
+        externalPaper.setResult(result);
+        externalPaperRepository.save(externalPaper);
+    }
 
 
 }

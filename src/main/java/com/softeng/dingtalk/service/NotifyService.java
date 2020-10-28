@@ -2,7 +2,6 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.repository.*;
-import com.softeng.dingtalk.vo.CheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -31,6 +30,8 @@ public class NotifyService {
     AcRecordRepository acRecordRepository;
     @Autowired
     VoteRepository voteRepository;
+    @Autowired
+    ExternalPaperRepository externalPaperRepository;
 
 
     /**
@@ -95,15 +96,24 @@ public class NotifyService {
 
     /**
      * 投票AC消息
-     * @param pid
+     * @param vid
      * @param result
      */
-    public void voteAcMessage(int pid, boolean result) {
-        Vote v = paperRepository.findVoteById(pid);
-        String papertitel = paperRepository.getPaperTitleById(pid);
+    public void voteAcMessage(int vid, boolean result) {
+        Vote v = voteRepository.findById(vid).get();
+        String papertitel;
+        if (v.isExternal()) {
+            // 如果是外部评审
+            ExternalPaper externalPaper = externalPaperRepository.findByVid(vid);
+            papertitel = "外部评审：" + externalPaper.getTitle();
+        } else {
+            // 如果是内部评审
+            Paper paper = paperRepository.findByVid(vid);
+            papertitel = "内部评审：" + paper.getTitle();
+        }
         String title;
         String content;
-        int len = 20 < papertitel.length() ? 20 : papertitel.length();
+        int len = 24 < papertitel.length() ? 24 : papertitel.length();
         for (VoteDetail vd : v.getVoteDetails()) {
             //double acsum = acRecordRepository.getUserAcSum(vd.getUser().getId());
             if (vd.getResult() == result) {

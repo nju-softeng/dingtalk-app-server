@@ -272,6 +272,30 @@ public class DingTalkUtils {
         return response.getUserIds();
     }
 
+    // 生成钉钉内部跳转链接
+
+    /**
+     * 生成跳转到投票页面的钉钉链接
+     * @param isInternal 是否是内部论文评审投票
+     * @param pid 对应的论文id
+     * @return
+     */
+    private String createDingTalkLink(boolean isExternal, int pid) {
+        StringBuffer curl = null;
+        if (isExternal) {
+            // 外部论文评审的链接
+            curl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
+                    .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
+                    .append(DOMAIN).append("/paper/ex-detail/").append(pid).append("/vote");
+        } else {
+            // 内部论文评审的链接
+            curl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
+                    .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
+                    .append(DOMAIN).append("/paper/in-detail/").append(pid).append("/vote");
+        }
+        log.debug(curl.toString());
+        return curl.toString();
+    }
 
     /**
      * 发起投票时向群中发送消息
@@ -280,41 +304,32 @@ public class DingTalkUtils {
      * @param endtime
      * @param namelist
      */
-    public void sendVoteMsg(int pid, String title, String endtime, List<String> namelist) {
+    public void sendVoteMsg(int pid, boolean isExternal, String title, String endtime, List<String> namelist) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
         OapiChatSendRequest request = new OapiChatSendRequest();
         request.setChatid(CHAT_ID);
         OapiChatSendRequest.ActionCard actionCard = new OapiChatSendRequest.ActionCard();
 
-        StringBuffer content = new StringBuffer().append(" #### 投票 \n ##### 论文： ").append(title).append(" \n ##### 作者： ");
-        for (String name : namelist) {
-            content.append(name).append(", ");
+        if (!isExternal) {
+            // 如果是内部评审投票
+            StringBuffer content = new StringBuffer().append(" #### 投票 \n ##### 论文： ").append(title).append(" \n ##### 作者： ");
+            for (String name : namelist) {
+                content.append(name).append(", ");
+            }
+            content.append(" \n 截止时间: ").append(endtime);
+            actionCard.setTitle("内部评审投票");
+            actionCard.setMarkdown(content.toString());
+        } else {
+            // 如果是外部评审投票
+            StringBuffer content = new StringBuffer().append(" #### 投票 \n ##### 论文： ").append(title);
+            content.append(" \n 截止时间: ").append(endtime);
+            actionCard.setTitle("外部评审投票");
+            actionCard.setMarkdown(content.toString());
+
         }
-        content.append(" \n 截止时间: ").append(endtime);
-
-        StringBuffer pcurl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
-                .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
-                .append(DOMAIN).append("/paper/detail/").append(pid).append("/vote");
-
-        log.debug(pcurl.toString());
-
-        actionCard.setTitle("内部评审投票");
-        actionCard.setMarkdown(content.toString());
-
-//        actionCard.setBtnOrientation("1");
-//        OapiChatSendRequest.BtnJson btn1 = new OapiChatSendRequest.BtnJson();
-//        btn1.setTitle("移动端尚不支持");
-//        btn1.setActionUrl("https://www.dogedoge.com/");
-//        OapiChatSendRequest.BtnJson btn2 = new OapiChatSendRequest.BtnJson();
-//        btn2.setTitle("PC端");
-//        btn2.setActionUrl(pcurl.toString());
-//        List<OapiChatSendRequest.BtnJson> btnJsonList = new ArrayList<>();
-//        btnJsonList.add(btn1);
-//        btnJsonList.add(btn2);
-//        actionCard.setBtnJsonList(btnJsonList);
 
         actionCard.setSingleTitle("前往投票");
-        actionCard.setSingleUrl(pcurl.toString());
+        actionCard.setSingleUrl(createDingTalkLink(isExternal, pid));
 
         request.setActionCard(actionCard);
         request.setMsgtype("action_card");
@@ -336,7 +351,7 @@ public class DingTalkUtils {
      * @param accept
      * @param total
      */
-    public void sendVoteResult(int pid, String title, boolean result, int accept, int total) {
+    public void sendVoteResult(int pid, String title, boolean result, int accept, int total, boolean isExternal) {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
         OapiChatSendRequest request = new OapiChatSendRequest();
         request.setChatid(CHAT_ID);
@@ -348,15 +363,11 @@ public class DingTalkUtils {
                 .append("Reject: ").append(total-accept).append(" 票  \n ")
                 .append("已参与人数： ").append(total).append("人  \n ");
 
-        StringBuffer pcurl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
-                .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
-                .append(DOMAIN).append("/paper/detail/").append(pid).append("/vote");
-
 
         actionCard.setTitle("投票结果");
         actionCard.setMarkdown(content.toString());
         actionCard.setSingleTitle("查看详情");
-        actionCard.setSingleUrl(pcurl.toString());
+        actionCard.setSingleUrl(createDingTalkLink(isExternal, pid));
 
 
         request.setActionCard(actionCard);

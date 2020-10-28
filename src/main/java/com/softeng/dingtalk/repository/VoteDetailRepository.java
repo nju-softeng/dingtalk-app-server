@@ -18,20 +18,28 @@ import java.util.Set;
 public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, Integer> {
 
     /**
-     * 查询参与制定投票的用户id
-     * @param vid
+     * 查询参与指定投票的用户id
+     * @param vid 所指定的投票
      * @return
      */
     @Query("select vd.user.id from VoteDetail vd where vd.vote.id = :vid")
-    Set<Integer> findVoteUserid(@Param("vid") int vid);
+    Set<Integer> findVoteUserid(int vid);
 
-
+    /**
+     * 获得指定投票的支持人数
+     * @param vid
+     * @return
+     */
     @Query(value = "select count(id) from vote_detail where vote_id = :vid and result = true", nativeQuery = true)
-    Integer getAcceptCnt(@Param("vid") int vid);
+    Integer getAcceptCnt(int vid);
 
-
+    /**
+     * 获得指定投票的总票数
+     * @param vid
+     * @return
+     */
     @Query(value = "select count(id) from vote_detail where vote_id = :vid", nativeQuery = true)
-    Integer getCnt(@Param("vid")int vid);
+    Integer getCnt(int vid);
 
 
     /**
@@ -41,7 +49,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @return
      */
     @Query(value = "SELECT IfNULL((SELECT 1 FROM vote_detail WHERE vote_id = :vid and user_id = :uid  LIMIT 1), 0)", nativeQuery = true)
-    Integer isExist(@Param("vid") int vid, @Param("uid") int uid);
+    Integer isExist(int vid, int uid);
 
 
     /**
@@ -51,7 +59,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @return
      */
     @Query("select vd.result from VoteDetail vd where vd.vote.id = :vid and vd.user.id = :uid")
-    Boolean getVoteDetail(@Param("vid") int vid, @Param("uid") int uid);
+    Boolean getVoteDetail(int vid, int uid);
 
 
     /**
@@ -61,7 +69,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      */
     @EntityGraph(value="voteDetail.graph",type= EntityGraph.EntityGraphType.FETCH)
     @Query("select vd from VoteDetail vd where vd.vote.id = :vid")
-    List<VoteDetail> listByVid(@Param("vid") int vid);
+    List<VoteDetail> listByVid(int vid);
 
 
     /**
@@ -70,7 +78,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @return
      */
     @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = true")
-    List<String> listAcceptNamelist(@Param("vid") int vid);
+    List<String> listAcceptNamelist(int vid);
 
 
     /**
@@ -79,7 +87,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @return
      */
     @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = false")
-    List<String> listRejectNamelist(@Param("vid") int vid);
+    List<String> listRejectNamelist(int vid);
 
 
 }

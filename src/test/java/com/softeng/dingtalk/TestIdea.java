@@ -1,14 +1,10 @@
 package com.softeng.dingtalk;
 
-import com.softeng.dingtalk.component.DingTalkUtils;
-import com.softeng.dingtalk.component.Timer;
-import com.softeng.dingtalk.component.Utils;
-import com.softeng.dingtalk.entity.DcRecord;
-import com.softeng.dingtalk.enums.Position;
+import com.softeng.dingtalk.entity.Review;
+import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.mapper.DcRecordMapper;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.service.*;
-import com.softeng.dingtalk.vo.DcRecordVO;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -17,12 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 /**
@@ -44,13 +36,14 @@ public class TestIdea {
 
     @Autowired
     VoteRepository voteRepository;
+    @Autowired
+    PaperService paperService;
 
 
     @Test
     public void test() {
-        UserVO vo = dcRecordMapper.findLatestAuditorByApplicantId(19);
-        log.debug(vo.getName());
-        log.debug(vo.getId() + "");
+//        List<Vote> kk = voteRepository.listUpcomingVote(LocalDateTime.now());
+        List<Review> aa = paperService.listReview(1, true);
 
     }
 
