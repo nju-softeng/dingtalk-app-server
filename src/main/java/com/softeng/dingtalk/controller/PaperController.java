@@ -121,13 +121,24 @@ public class PaperController {
 
 
     /**
-     * 查询指定论文的评审意见
+     * 查询指内部论文的评审意见
      * @param id
      * @return
      */
     @GetMapping("/paper/{id}/review")
     public List<Review> listReview(@PathVariable int id) {
-        return paperService.listReview(id);
+        return paperService.listReview(id, false);
+    }
+
+
+    /**
+     * 查询指内部论文的评审意见
+     * @param id
+     * @return
+     */
+    @GetMapping("/ex-paper/{id}/review")
+    public List<Review> listExReview(@PathVariable int id) {
+        return paperService.listReview(id, true);
     }
 
 
@@ -255,4 +266,7 @@ public class PaperController {
         voteService.computeVoteAc(vote, map.get("data"));
         // todo 发送论文消息
     }
+
+
+
 }

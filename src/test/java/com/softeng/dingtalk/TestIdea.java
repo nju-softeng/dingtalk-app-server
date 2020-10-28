@@ -1,5 +1,6 @@
 package com.softeng.dingtalk;
 
+import com.softeng.dingtalk.entity.Review;
 import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.mapper.DcRecordMapper;
 import com.softeng.dingtalk.repository.*;
@@ -35,11 +36,14 @@ public class TestIdea {
 
     @Autowired
     VoteRepository voteRepository;
+    @Autowired
+    PaperService paperService;
 
 
     @Test
     public void test() {
-        List<Vote> kk = voteRepository.listUpcomingVote(LocalDateTime.now());
+//        List<Vote> kk = voteRepository.listUpcomingVote(LocalDateTime.now());
+        List<Review> aa = paperService.listReview(14, false);
 
     }
 
