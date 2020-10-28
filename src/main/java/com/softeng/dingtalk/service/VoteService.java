@@ -52,8 +52,12 @@ public class VoteService {
     UserRepository userRepository;
 
 
+    //--------------------------------------------
+    //  内部论文评审相关操作
+    //--------------------------------------------
+
     /**
-     * 创建投票
+     * 创建投票 (内部投票)
      * 钉钉发送消息
      * 同时清空清空未结束投票缓存
      * @param voteVO
@@ -62,11 +66,11 @@ public class VoteService {
     public Vote createVote(VoteVO voteVO) {
 
         // 判断投票是否已经创建过
-        if (voteRepository.isExisted(voteVO.getPaperid()) != 0) {
+        if (voteRepository.isExisted(voteVO.getPaperid(), false) != 0) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "慢了一步，投票已经被别人发起了");
         }
 
-        Vote vote = new Vote(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
+        Vote vote = new Vote(LocalDateTime.now() ,LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
         log.debug(LocalDate.now().toString());
         log.debug(voteVO.getEndTime().toString());
         log.debug(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()).toString());
@@ -75,10 +79,20 @@ public class VoteService {
         // 发送投票信息
         String title = paperRepository.getPaperTitleById(voteVO.getPaperid());
         List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
-        dingTalkUtils.sendVoteMsg(voteVO.getPaperid(), title, voteVO.getEndTime().toString(), namelist);
+        dingTalkUtils.sendVoteMsg(voteVO.getPaperid(),false, title, voteVO.getEndTime().toString(), namelist);
         return voteRepository.refresh(vote);
     }
 
+    // 查询所有需要开始的投票
+
+    /**
+     *
+     * @param now
+     * @return
+     */
+    public List<Vote> listUpcomingVote(LocalDateTime now) {
+        return voteRepository.listUpcomingVote(now);
+    }
 
     /**
      * 查询没有结束的投票
@@ -89,12 +103,12 @@ public class VoteService {
     public List<Vote> listUnderwayVote() {
         log.debug("从数据库查询未结束投票");
         //拿到没有结束的投票
-        return voteRepository.listByStatus();
+        return voteRepository.listByStatusIsFalse();
     }
 
 
     /**
-     * 更新投票的最终结果，投票截止后调用
+     * 更新投票的最终结果，投票截止后调用, 被定时器调用
      * @param v
      * @return
      */
@@ -109,12 +123,16 @@ public class VoteService {
         v.setTotal(total);
         boolean result = accept > total - accept;
         v.setResult(result);
-        if (result == false) {
-            paperRepository.updatePaperResult(v.getPid(), Paper.NOTPASS);
-        } else {
-            paperRepository.updatePaperResult(v.getPid(), Paper.REVIEWING);
-        }
         voteRepository.save(v);
+        
+        if (!v.isExternal()) {
+            // 如果是内部评审投票
+            if (result == false) {
+                paperRepository.updatePaperResult(v.getPid(), Paper.NOTPASS);
+            } else {
+                paperRepository.updatePaperResult(v.getPid(), Paper.REVIEWING);
+            }
+        }
         return v;
     }
 
@@ -138,7 +156,7 @@ public class VoteService {
         }
 
 
-        if (now.isBefore(vote.getDeadline())) {
+        if (now.isBefore(vote.getEndTime())) {
             // 投票未截止
             voteDetailRepository.save(voteDetail);
         } else {
@@ -193,7 +211,7 @@ public class VoteService {
      * @param uid
      * @return
      */
-    public Map getVotedDetail(int vid, int pid, int uid) {
+    public Map getVotedDetail(int vid, int uid, boolean isExternal) {
         List<String> acceptlist = voteDetailRepository.listAcceptNamelist(vid);
         List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
         // accept 票数
@@ -209,21 +227,34 @@ public class VoteService {
         // 1. 查询所有不是待定用户的id，已经投票的用户的id，作者id,已经毕业学生id
         Set<Integer> totalIds = userRepository.listStudentId();
         Set<Integer> votedIds = voteDetailRepository.findVoteUserid(vid);
-        Set<Integer> authorids = paperService.listAuthorid(pid);
-        Set<Integer> alumniids = userRepository.listDisableUserid();
+
+
+        //Set<Integer> alumniids = userRepository.listDisableUserid();
         // 2. 减去所有投票用户和论文作者的id
         totalIds.removeAll(votedIds);
-        totalIds.removeAll(authorids);
-        totalIds.removeAll(alumniids);
+
+        if (isExternal == false) {
+            Paper paper = paperRepository.findByVid(vid);
+            Set<Integer> authorids = paperService.listAuthorid(paper.getId());
+            totalIds.removeAll(authorids);
+        }
+
+
+
+
+
+        //totalIds.removeAll(alumniids);
 
         // 3. 通过为投票用户id集合去查询用户姓名
-        Set<String> names = userRepository.listNameByids(totalIds);
-
+        Set<String> unVoteNames = new HashSet<>();
+        if (totalIds.size() > 0) {
+            unVoteNames = userRepository.listNameByids(totalIds);
+        }
 
         if (myresult == null) {
-            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", names);
+            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", unVoteNames);
         } else {
-            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", names);
+            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", unVoteNames);
         }
 
     }
@@ -231,11 +262,10 @@ public class VoteService {
 
     /**
      * 根据论文最终结果计算投票者的ac
-     * @param pid
+     * @param vote
      * @param result
      */
-    public void computeVoteAc(int pid, boolean result) {
-        Vote vote = paperRepository.findVoteById(pid);
+    public void computeVoteAc(Vote vote, boolean result) {
         if (vote != null) {
             List<VoteDetail> voteDetails = voteDetailRepository.listByVid(vote.getId());
             List<AcRecord> acRecords = new ArrayList<>();
@@ -259,7 +289,7 @@ public class VoteService {
             voteDetailRepository.saveAll(voteDetails);
 
             // 发送消息
-            notifyService.voteAcMessage(pid, result);
+            notifyService.voteAcMessage(vote.getId(), result);
             // 计算助研金
             LocalDate date = LocalDate.now();
             int yearmonth = date.getYear() * 100 + date.getMonthValue();
@@ -272,6 +302,12 @@ public class VoteService {
         }
 
     }
+
+
+    //--------------------------------------------
+    //  外部论文评审相关操作
+    //--------------------------------------------
+
 
 
 }

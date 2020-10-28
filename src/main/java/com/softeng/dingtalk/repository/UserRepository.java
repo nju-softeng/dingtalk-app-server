@@ -34,7 +34,7 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
      * 目前可以理解为查询所有学生的id
      * @return
      */
-    @Query(value = "SELECT id FROM `user` WHERE position != '待定'", nativeQuery = true)
+    @Query(value = "SELECT id FROM `user` WHERE position != '待定' and is_deleted = 0", nativeQuery = true)
     Set<Integer> listStudentId();
 
 
@@ -61,7 +61,7 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
      * 查询系统中所有可用用户
      * @return List<UserVo>
      */
-    @Query("select new com.softeng.dingtalk.vo.UserVO(u.id, u.name) from User u where is_deleted = 0")
+    @Query("select new com.softeng.dingtalk.vo.UserVO(u.id, u.name) from User u where u.deleted = false")
     List<UserVO> listUserVOS();
 
 

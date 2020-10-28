@@ -18,7 +18,7 @@ import java.util.Map;
 public class Utils {
 
     /**
-     * 将日期转化为2个值: 年月，周 (YYYYMM, week),用数组返回 <p>
+     * 将日期转化为2个值: 年月，周 (YYYYMM, week),用数组返回      <p>
      * 如 2020年1月第1周 -> [202001, 1]
      * @param localDate
      * @return
