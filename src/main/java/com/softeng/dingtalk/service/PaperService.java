@@ -217,20 +217,20 @@ public class PaperService {
         reviewRepository.save(review);
     }
 
-
     /**
-     * 查询指定论文的评审意见
+     *
      * @param paperid
+     * @param isExternal
      * @return
      */
-    public List<Review> listReview(int paperid) {
-        return reviewRepository.findAllByPaperid(paperid, Sort.by("id").descending());
+    public List<Review> listReview(int paperid, boolean isExternal) {
+        return reviewRepository.findAllByPaperidAndExternal(paperid, false);
     }
 
 
     /**
      * 更新评审意见
-     * @param review
+     * @param review 被更新的评审细节
      */
     public void updateReview(Review review) {
        reviewRepository.save(review);
@@ -240,8 +240,8 @@ public class PaperService {
 
     /**
      * 删除评审意见
-     * @param id
-     * @param uid
+     * @param id 评审的id
+     * @param uid 要删除的用户的id
      */
     public void deleteReview(int id, int uid) {
         Review review = reviewRepository.findById(id).get();

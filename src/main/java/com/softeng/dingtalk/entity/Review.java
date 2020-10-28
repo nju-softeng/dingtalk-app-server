@@ -22,10 +22,17 @@ public class Review {
     private int id;
     @ManyToOne
     private User user;
+
     /**
      * 评审意见所对应的论文id
      */
     private int paperid;
+
+    /**
+     * 是否对应外部论文
+     */
+    private boolean isExternal;
+
     /**
      * 评审意见markdown
      */
