@@ -1,6 +1,5 @@
 package com.softeng.dingtalk.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -65,7 +64,7 @@ public class Vote {
     /**
      * 是否是外部评审投票
      */
-    private boolean isExternal;
+    private boolean external;
     /**
      * 外部评审投票是否已经开始
      */
@@ -82,10 +81,10 @@ public class Vote {
         this.pid = pid;
     }
 
-    public Vote(LocalDateTime startTime, LocalDateTime endTime, boolean isExternal, int pid) {
+    public Vote(LocalDateTime startTime, LocalDateTime endTime, boolean external, int pid) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.isExternal = isExternal;
+        this.external = external;
         this.pid = pid;
     }
 

@@ -57,7 +57,7 @@ public class VoteService {
     //--------------------------------------------
 
     /**
-     * 创建投票
+     * 创建投票 (内部投票)
      * 钉钉发送消息
      * 同时清空清空未结束投票缓存
      * @param voteVO
@@ -66,7 +66,7 @@ public class VoteService {
     public Vote createVote(VoteVO voteVO) {
 
         // 判断投票是否已经创建过
-        if (voteRepository.isExisted(voteVO.getPaperid()) != 0) {
+        if (voteRepository.isExisted(voteVO.getPaperid(), false) != 0) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "慢了一步，投票已经被别人发起了");
         }
 

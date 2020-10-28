@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
 
-    @Query("select v from Vote v where v.isExternal = true and v.isStarted = false and v.startTime <= :nowtime")
+    @Query("select v from Vote v where v.external = true and v.isStarted = false and v.startTime <= :nowtime")
     List<Vote> listUpcomingVote(LocalDateTime nowtime);
 
     /**
@@ -38,13 +38,15 @@ public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
     @Query("update Vote v set v.status = true, v.accept = :accept, v.total = :total, v.result = :result where v.id = :id")
     void updateStatus(int id, int accept, int total, boolean result);
 
+
     /**
      * 查询指定论文的投票是否已经存在
-      * @param pid
+     * @param pid 论文id
+     * @param external 是内部评审还是外部评审
      * @return
      */
-    @Query(value = "select ifnull((select id from vote where pid =:pid limit 1 ), 0)", nativeQuery = true)
-    Integer isExisted(int pid);
+    @Query(value = "select ifnull((select id from vote where pid =:pid and external = :external limit 1 ), 0)", nativeQuery = true)
+    Integer isExisted(int pid, boolean external);
 
 
 
