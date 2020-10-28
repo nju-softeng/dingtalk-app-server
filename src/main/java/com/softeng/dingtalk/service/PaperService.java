@@ -224,7 +224,7 @@ public class PaperService {
      * @return
      */
     public List<Review> listReview(int paperid, boolean isExternal) {
-        return reviewRepository.findAllByPaperidAndExternal(paperid, false);
+        return reviewRepository.findAllByPaperidAndExternal(paperid, isExternal);
     }
 
 

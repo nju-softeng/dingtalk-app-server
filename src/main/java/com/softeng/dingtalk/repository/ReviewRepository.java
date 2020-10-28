@@ -21,7 +21,7 @@ public interface ReviewRepository  extends CustomizedRepository<Review, Integer>
      * @param isExternal
      * @return
      */
-    @Query("select r from Review r where r.paperid = :pid and r.isExternal = :isExternal order by r.id DESC")
+    @Query("select r from Review r where r.paperid = :pid and r.external = :isExternal order by r.id DESC")
     List<Review> findAllByPaperidAndExternal(int pid, boolean isExternal);
 
     void deleteByPaperid(int pid);
