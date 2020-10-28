@@ -47,6 +47,7 @@ public class Timer {
     @Scheduled(cron = "0 * * * * ?")
     public void checkVote() {
         LocalDateTime now = LocalDateTime.now();
+        log.debug("checkout1: " + now.toString());
 
         // (针对外部评审投票) 检查是否有投票需要开始
         List<Vote> upcomingVotes = voteService.listUpcomingVote(now);
@@ -64,7 +65,15 @@ public class Timer {
             }
         }
 
+
+    }
+
+    @Scheduled(cron = "15/45 * * * * ?")
+    public void checkVote2() {
         // 检查是否有需要被结束的投票
+        LocalDateTime now = LocalDateTime.now();
+
+        log.debug("checkout2: " + now.toString());
         List<Vote> votes = voteService.listUnderwayVote();
         if (votes.size() != 0) {
             for (Vote v : votes) {

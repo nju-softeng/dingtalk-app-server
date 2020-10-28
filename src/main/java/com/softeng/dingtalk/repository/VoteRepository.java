@@ -16,6 +16,11 @@ import java.util.List;
 @Repository
 public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
 
+    /**
+     * 查询是外部评审投票且，当前时间已经到达投票开始时间
+     * @param nowtime
+     * @return
+     */
     @Query("select v from Vote v where v.external = true and v.isStarted = false and v.startTime <= :nowtime")
     List<Vote> listUpcomingVote(LocalDateTime nowtime);
 
