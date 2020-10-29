@@ -62,7 +62,7 @@ public class Timer {
                 ExternalPaper externalPaper = externalPaperRepository.findByVid(v.getId());
                 if (externalPaper != null) {
                     // 发送投票开始的消息
-                    dingTalkUtils.sendVoteMsg(externalPaper.getId(),true, externalPaper.getTitle(), v.getEndTime().toString(), null);
+                    dingTalkUtils.sendVoteMsg(externalPaper.getId(),true, externalPaper.getTitle(), v.getEndTime().toLocalTime().toString(), null);
                 }
             }
         }
