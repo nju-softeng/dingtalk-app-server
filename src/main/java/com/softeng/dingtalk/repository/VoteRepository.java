@@ -17,19 +17,21 @@ import java.util.List;
 public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
 
     /**
-     * 查询是外部评审投票且，当前时间已经到达投票开始时间
+     * 查询还没有开始的外部评审投票中已到达开始时间的投票
      * @param nowtime
      * @return
      */
     @Query("select v from Vote v where v.external = true and v.started = false and v.startTime <= :nowtime")
     List<Vote> listUpcomingVote(LocalDateTime nowtime);
 
+
     /**
-     * 查询所有状态没有结束的投票
-     * @return 所有未结束的投票
+     * 查询所有状态没有结束的投票,且应当结束的投票
+     * @param nowtime
+     * @return
      */
-    @Query("select v from Vote v where v.status = false ")
-    List<Vote> listByStatusIsFalse();
+    @Query("select v from Vote v where v.status = false and v.endTime <= :nowtime")
+    List<Vote> listClosingVote(LocalDateTime nowtime);
 
 
     /**
