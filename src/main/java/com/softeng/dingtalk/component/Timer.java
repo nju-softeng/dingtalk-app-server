@@ -44,10 +44,12 @@ public class Timer {
     /**
      * 每分钟扫描一次，看是否有待启动的投票，或者待结束的投票
      */
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0/20 * * * * ?")
     public void checkVote() {
         LocalDateTime now = LocalDateTime.now();
+        log.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         log.debug("checkout1: " + now.toString());
+        log.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 
         // (针对外部评审投票) 检查是否有投票需要开始
         List<Vote> upcomingVotes = voteService.listUpcomingVote(now);
@@ -60,41 +62,42 @@ public class Timer {
                 ExternalPaper externalPaper = externalPaperRepository.findByVid(v.getId());
                 if (externalPaper != null) {
                     // 发送投票开始的消息
-                    dingTalkUtils.sendVoteMsg(v.getPid(), true, externalPaper.getTitle(), v.getEndTime().toString(), null);
+                    dingTalkUtils.sendVoteMsg(externalPaper.getId(),true, externalPaper.getTitle(), v.getEndTime().toString(), null);
                 }
             }
         }
-
-
     }
 
-    @Scheduled(cron = "15/45 * * * * ?")
+
+    @Scheduled(cron = "0/20 * * * * ?")
     public void checkVote2() {
         // 检查是否有需要被结束的投票
         LocalDateTime now = LocalDateTime.now();
 
+        log.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         log.debug("checkout2: " + now.toString());
-        List<Vote> votes = voteService.listUnderwayVote();
+        log.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+
+        List<Vote> votes = voteService.listUnderwayVote(now);
         if (votes.size() != 0) {
             for (Vote v : votes) {
-                if (v.getEndTime().isBefore(now)) {
-                    // 更新汇总投票结果
-                    v = voteService.updateVote(v);
-                    // 发送投票消息
-                    if (v.isExternal()) {
-                        // 如果是外部投票
-                        ExternalPaper externalPaper = externalPaperRepository.findByVid(v.getId());
-                        if (externalPaper != null) {
-                            dingTalkUtils.sendVoteResult(externalPaper.getId(), externalPaper.getTitle(), v.getResult(), v.getAccept(), v.getTotal(), v.isExternal());
-                        }
-                    } else {
-                        // 如果是内部投票
-                        Paper internalpaper = paperRepository.findByVid(v.getId());
-                        if (internalpaper != null) {
-                            dingTalkUtils.sendVoteResult(internalpaper.getId(), internalpaper.getTitle(), v.getResult(), v.getAccept(), v.getTotal(), v.isExternal());
-                        }
+                // 更新汇总投票结果
+                v = voteService.updateVote(v);
+                // 发送投票消息
+                if (v.isExternal()) {
+                    // 如果是外部投票
+                    ExternalPaper externalPaper = externalPaperRepository.findByVid(v.getId());
+                    if (externalPaper != null) {
+                        dingTalkUtils.sendVoteResult(externalPaper.getId(), externalPaper.getTitle(), v.getResult(), v.getAccept(), v.getTotal(), v.isExternal());
+                    }
+                } else {
+                    // 如果是内部投票
+                    Paper internalpaper = paperRepository.findByVid(v.getId());
+                    if (internalpaper != null) {
+                        dingTalkUtils.sendVoteResult(internalpaper.getId(), internalpaper.getTitle(), v.getResult(), v.getAccept(), v.getTotal(), v.isExternal());
                     }
                 }
+
             }
         }
     }

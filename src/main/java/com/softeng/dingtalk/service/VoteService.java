@@ -94,16 +94,16 @@ public class VoteService {
         return voteRepository.listUpcomingVote(now);
     }
 
+
     /**
-     * 查询没有结束的投票
+     * 查询没有结束的投票,但即将结束的投票
      * 缓存未结束的投票，用于减少查询数据的次数，当创建新投票后要清空缓存
+     * @param now
      * @return
      */
     @Cacheable(value = "voting")
-    public List<Vote> listUnderwayVote() {
-        log.debug("从数据库查询未结束投票");
-        //拿到没有结束的投票
-        return voteRepository.listByStatusIsFalse();
+    public List<Vote> listUnderwayVote(LocalDateTime now) {
+        return voteRepository.listClosingVote(now);
     }
 
 
