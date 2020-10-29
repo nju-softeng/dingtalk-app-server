@@ -40,7 +40,7 @@
 	        (SELECT id, title, journal, issue_date, result, paper_type FROM paper ORDER BY id DESC LIMIT #{offset}, #{size}) p
 	        LEFT JOIN paper_detail pd on p.id = pd.paper_id
 	        LEFT JOIN user u on pd.user_id = u.id
-	        LEFT JOIN vote v on v.pid = p.id
+	        LEFT JOIN vote v on v.pid = p.id and v.external = false
 	    ORDER BY
 	        id DESC, num ASC
     </select>
