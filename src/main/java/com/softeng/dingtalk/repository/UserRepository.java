@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,13 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     @Query(value = "SELECT id FROM `user` WHERE position != '待定' and is_deleted = 0", nativeQuery = true)
     Set<Integer> listStudentId();
 
+    /**
+     * 查询职位不是待定的所有用户,且在投票结束前加入系统的用户的用户id
+     * @param time
+     * @return
+     */
+    @Query(value = "select u.id from User u where u.position <> '待定' and u.deleted = false and u.insertTime <= :time")
+    Set<Integer> listStudentIdBeforeVoteTime(LocalDateTime time);
 
     /**
      * 通过 userid（钉钉用户码） 查找用户

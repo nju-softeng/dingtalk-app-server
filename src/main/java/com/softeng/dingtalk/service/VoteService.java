@@ -223,13 +223,16 @@ public class VoteService {
         // 用户本人的投票情况：accept, reject, 未参与(null)
         Boolean myresult = voteDetailRepository.getVoteDetail(vid, uid);
 
+
+        // 获取投票的截止时间
+        LocalDateTime endTime = voteRepository.getEndTimeByVid(vid);
+
         // 未投票人员名单
-        // 1. 查询所有不是待定用户的id，已经投票的用户的id，作者id,已经毕业学生id
-        Set<Integer> totalIds = userRepository.listStudentId();
+        // 1. 查询所有不是待定且在投票之前加入的用户用户的id，已经投票的用户的id，
+        Set<Integer> totalIds = userRepository.listStudentIdBeforeVoteTime(endTime);
         Set<Integer> votedIds = voteDetailRepository.findVoteUserid(vid);
 
 
-        //Set<Integer> alumniids = userRepository.listDisableUserid();
         // 2. 减去所有投票用户和论文作者的id
         totalIds.removeAll(votedIds);
 
