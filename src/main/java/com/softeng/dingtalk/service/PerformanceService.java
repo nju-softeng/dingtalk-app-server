@@ -82,12 +82,17 @@ public class PerformanceService {
 
     /**
      * 实验室所有人的 DC 汇总（指定月份）
+     * 查询指定月份的绩效汇总
      * @param date
      * @return
      */
-    public List<Map<String, Object>> listDcSummaryVO(LocalDate date) {
+    public List<Map<String, Object>> listDcSummaryVO(LocalDate date, boolean isDesc) {
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        return dcSummaryRepository.listDcSummary(yearmonth);
+        if (isDesc) {
+            return dcSummaryRepository.listDcSummaryDesc(yearmonth);
+        } else {
+            return dcSummaryRepository.listDcSummaryAsc(yearmonth);
+        }
     }
 
 
