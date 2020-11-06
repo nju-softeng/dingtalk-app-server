@@ -17,5 +17,14 @@ import java.time.LocalDate;
 @Getter
 @ToString
 public class DateVO {
+    /**
+     * 查询的日期
+     */
     private LocalDate date;
+    /**
+     * 数据的排序方式
+     * true:  降序
+     * false: 升序
+     */
+    private boolean desc;
 }

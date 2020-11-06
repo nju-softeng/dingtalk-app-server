@@ -25,13 +25,14 @@ public class PerformanceController {
 
     /**
      * 查询 dc 汇总
-     * @param dateVO
+     * @param vo
      * @return
      */
     @PostMapping("/dcsummary")
-    public List<Map<String, Object>> getDcSummary(@RequestBody DateVO dateVO) {
-        log.debug(dateVO.toString());
-        return performanceService.listDcSummaryVO(dateVO.getDate());
+    public List<Map<String, Object>> getDcSummary(@RequestBody DateVO vo) {
+        log.debug(vo.toString());
+        return performanceService.listDcSummaryVO(vo.getDate(), vo.isDesc());
+
     }
 
 
