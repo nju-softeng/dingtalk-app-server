@@ -56,5 +56,14 @@ public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
     Integer isExisted(int pid, boolean external);
 
 
+    /**
+     * 获取指定投票的结束时间
+     * @param vid
+     * @return
+     */
+    @Query("select v.endTime from Vote v where v.id = :vid")
+    LocalDateTime getEndTimeByVid(int vid);
+
+
 
 }
