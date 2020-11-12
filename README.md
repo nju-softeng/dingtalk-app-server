@@ -1,4 +1,4 @@
-<p align="center"><img width="100" src="https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/%E7%BB%A9%E6%95%88.png" alt="Vue logo"></p>
+<p align="center"><img width="100" src="https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/%E7%BB%A9%E6%95%88.png" alt="logo"></p>
 
 <p align="center">
     <a href="https://github.com/zhanyeye/dingtalk-springboot/actions?query=workflow%3AProd"><img src="https://github.com/zhanyeye/dingtalk-springboot/workflows/Prod/badge.svg?branch=master" alt="Prod Status"></a>
