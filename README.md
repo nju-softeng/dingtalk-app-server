@@ -25,7 +25,7 @@
         <a href="https://spring.io/projects/spring-boot" target="_blank">
           <img width="50px" src="https://spring.io/images/spring-initializr-4291cc0115eb104348717b82161a81de.svg">
         </a>
-        <p>Spring Boot</p>
+        <p>SpringBoot</p>
       </td>
       <td align="center" valign="middle">
         <a href="https://spring.io/projects/spring-data-jpa#overview" target="_blank">
