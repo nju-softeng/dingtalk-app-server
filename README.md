@@ -49,7 +49,6 @@
         <a href="https://ding-doc.dingtalk.com/doc#/faquestions/vzbp02" target="_blank">
           <img width="50px" src="https://i.loli.net/2020/11/13/DVpc9nF2JToQyHg.png">
         </a>
-        <br/>
         <p>Dingtalk SDK</p>
       </td>
       <td align="center" valign="middle">
@@ -73,6 +72,7 @@
     </tr>
   </tbody>
 </table>
+
 
 
 
