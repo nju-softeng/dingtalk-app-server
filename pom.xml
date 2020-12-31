@@ -19,6 +19,14 @@
         <docker.image.prefix>zhanyeye</docker.image.prefix>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub zhanyeye Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/zhanyeye/dingtalk-springboot</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <!-- cache 依赖 -->
         <dependency>
