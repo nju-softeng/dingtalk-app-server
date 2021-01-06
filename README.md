@@ -35,7 +35,7 @@
       </td>
       <td align="center" valign="middle">
         <a href="https://mybatis.org/mybatis-3/" target="_blank">
-          <img width="50px" src="https://avatars2.githubusercontent.com/u/1483254?s=200&v=4">
+          <img width="50px" src="![mybatis.png](https://i.loli.net/2021/01/06/lSeIVLagyb4TFWN.png)">
         </a>
         <p>Mybatis</p>
       </td>
@@ -65,7 +65,7 @@
       </td>
       <td align="center" valign="middle">
         <a href="https://github.com/features/actions" target="_blank">
-          <img width="50px" src="https://avatars0.githubusercontent.com/u/44036562?s=200&v=4">
+          <img width="50px" src="https://i.loli.net/2021/01/06/EcsNSzQZl2TPyB6.png">
         </a>
         <p>Github Actions</p>
       </td>
