@@ -35,7 +35,7 @@
       </td>
       <td align="center" valign="middle">
         <a href="https://mybatis.org/mybatis-3/" target="_blank">
-          <img width="50px" src="![mybatis.png](https://i.loli.net/2021/01/06/lSeIVLagyb4TFWN.png)">
+          <img width="50px" src="https://i.loli.net/2021/01/06/lSeIVLagyb4TFWN.png">
         </a>
         <p>Mybatis</p>
       </td>
