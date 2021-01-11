@@ -25,49 +25,65 @@
         <a href="https://spring.io/projects/spring-boot" target="_blank">
           <img width="50px" src="https://spring.io/images/spring-initializr-4291cc0115eb104348717b82161a81de.svg">
         </a>
-        <p>SpringBoot</p>
+        <p>
+          <sub>SpringBoot</sub>
+        </p>
       </td>
       <td align="center" valign="middle">
         <a href="https://spring.io/projects/spring-data-jpa#overview" target="_blank">
           <img width="50px" src="https://i.loli.net/2020/11/13/pR8OtwsSacyuDU7.png">
         </a>
-        <p>JPA</p>
+        <p>
+          <sub>JPA</sub>
+        </p>
       </td>
       <td align="center" valign="middle">
         <a href="https://mybatis.org/mybatis-3/" target="_blank">
           <img width="50px" src="https://i.loli.net/2021/01/06/lSeIVLagyb4TFWN.png">
         </a>
-        <p>Mybatis</p>
+        <p>
+          <sub>Mybatis</sub>
+        </p>
       </td>
       <td align="center" valign="middle">
         <a href="https://dev.mysql.com/downloads/mysql/">
           <img width="50px" src="https://i.loli.net/2020/11/13/GQE3xMAbWd72hVc.png">
         </a>
-        <p>MySQL 8</p>
+        <p>
+          <sub>MySQL 8</sub>
+        </p>
       </td>
       <td align="center" valign="middle">
         <a href="https://ding-doc.dingtalk.com/doc#/faquestions/vzbp02" target="_blank">
           <img width="50px" src="https://i.loli.net/2020/11/13/DVpc9nF2JToQyHg.png">
         </a>
-        <p>Dingtalk SDK</p>
+        <p>
+          <sub>Dingtalk SDK</sub>
+        </p>
       </td>
       <td align="center" valign="middle">
         <a href="https://docs.docker.com/" target="_blank">
           <img width="50px" src="https://i.loli.net/2020/11/13/27eyNzt698aoilM.png">
         </a>
-        <p>Docker</p>
+        <p>
+          <sub>Docker</sub>
+        </p>
       </td>
       <td align="center" valign="middle">
         <a href="https://docs.docker.com/compose/" target="_blank">
           <img width="50px" src="https://i.loli.net/2020/11/13/TcewOXGMWHLiNtE.jpg">
         </a>
-        <p>Docker Compose</p>
+        <p>
+          <sub>Docker Compose</sub>
+        </p>
       </td>
       <td align="center" valign="middle">
         <a href="https://github.com/features/actions" target="_blank">
           <img width="50px" src="https://i.loli.net/2021/01/06/EcsNSzQZl2TPyB6.png">
         </a>
-        <p>Github Actions</p>
+        <p>
+          <sub>Github Actions</sub>
+        </p>
       </td>
     </tr>
   </tbody>
