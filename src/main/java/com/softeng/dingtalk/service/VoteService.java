@@ -1,6 +1,9 @@
 package com.softeng.dingtalk.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softeng.dingtalk.component.DingTalkUtils;
+import com.softeng.dingtalk.controller.WebSocketController;
 import com.softeng.dingtalk.entity.*;
 
 import com.softeng.dingtalk.repository.*;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -50,6 +54,8 @@ public class VoteService {
     PaperService paperService;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     //--------------------------------------------
@@ -133,6 +139,15 @@ public class VoteService {
                 paperRepository.updatePaperResult(v.getPid(), Paper.REVIEWING);
             }
         }
+
+        Map map = Map.of("vid", v.getId(), "isEnd", true);
+
+        try {
+            WebSocketController.sendInfo(objectMapper.writeValueAsString(map));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return v;
     }
 
@@ -174,7 +189,7 @@ public class VoteService {
         int reject = rejectlist.size();
         // 总投票数
         int total = accept + reject;
-        return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "result", voteDetail.getResult(),"acceptnames",acceptlist,"rejectnames", rejectlist);
+        return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "myresult", voteDetail.getResult(),"acceptnames",acceptlist,"rejectnames", rejectlist);
     }
 
 
@@ -197,7 +212,7 @@ public class VoteService {
             // 总投票数
             int total = accept + reject;
 
-            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist);
+            return Map.of("vid", vid, "status", false,"accept", accept, "total", total, "reject", reject, "myresult", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist);
         } else {
             //用户没有投票，不可以查看结果
             return Map.of("vid", vid, "status", false);
@@ -257,7 +272,7 @@ public class VoteService {
         if (myresult == null) {
             return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", unVoteNames);
         } else {
-            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "result", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", unVoteNames);
+            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "myresult", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", unVoteNames);
         }
 
     }
