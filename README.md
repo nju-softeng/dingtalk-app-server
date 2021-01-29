@@ -11,12 +11,12 @@
 
 <h1 align="center">Dingtalk Springboot</h1>
 
-## 目标与期望
+### 目标与期望
 
 基于钉钉微应用开发的实验室绩效管理系统，实现实验室的绩效、学分、论文评审管理与钉钉对接。  
 主要功能有：绩效、学分申请与审核，论文评审投票及学分管理，实验室助研金计算等。
 
-## 涉及的技术
+### 涉及的技术
 
 <table>
   <tbody>
@@ -100,5 +100,18 @@
 + 由于目前钉钉小程序只支持 GET/POST, 考虑到兼容性这里的接口全部为GET/POST方式
 
 
+### 系统部署
+本项目使用 GitHub Actions 实现持续部署，受外网网速限制，没有采用在 GitHub 机器上构件镜像，再拉取到服务器的方式。而是每次CI触发后，GitHub 机器 ssh 登陆服务器执行相应命令，包括：
+
+1. 从GitHub仓库中拉去最新代码到服务器本地仓库
+2. 使用mvn构建项目
+3. `docker-compose build` 构建镜像
+4. `docker-compose up -d` 在后台启动容器
+5. `docker image prune -f` 清理无用的镜像 
+   
+
+docker-compose 编排配置如下： 
+
++ [docker-compose.yml 配置文件](https://github.com/zhanyeye/dingtalk-springboot/wiki/docker_compose.yml)
 
 
