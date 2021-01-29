@@ -98,6 +98,7 @@
 
 + 使用了lombok 插件简化代码，idea 需要安装lombok 插件，否则编译过不去
 + 由于目前钉钉小程序只支持 GET/POST, 考虑到兼容性这里的接口全部为GET/POST方式
++ 系统启动时，[初始化操作](https://github.com/zhanyeye/dingtalk-springboot/blob/9e302075e2e8d55eb3736162066bf4bf203232c9/src/main/java/com/softeng/dingtalk/service/InitSys.java#L20)会调用钉钉SDK，拉取钉钉组织的所有用户, **若事先未在开发平台设置出口IP, SDK会报错导致启动失败**
 
 
 ### 系统部署
@@ -109,9 +110,11 @@
 4. `docker-compose up -d` 在后台启动容器
 5. `docker image prune -f` 清理无用的镜像 
    
+GitHub Actions 的 CI 脚本如下
++ 生成环境：[.github/workflows/prod.yml](https://github.com/zhanyeye/dingtalk-springboot/blob/master/.github/workflows/prod.yml)
++ 测试环境：[.github/workflows/test.yml](https://github.com/zhanyeye/dingtalk-springboot/blob/master/.github/workflows/test.yml)
 
 docker-compose 编排配置如下： 
-
 + [docker-compose.yml 配置文件](https://github.com/zhanyeye/dingtalk-springboot/wiki/docker_compose.yml)
 
 
