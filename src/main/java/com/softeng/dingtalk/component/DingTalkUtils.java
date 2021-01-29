@@ -276,7 +276,7 @@ public class DingTalkUtils {
 
     /**
      * 生成跳转到投票页面的钉钉链接
-     * @param isInternal 是否是内部论文评审投票
+     * @param isExternal 是否是外部论文评审投票
      * @param pid 对应的论文id
      * @return
      */
@@ -342,7 +342,6 @@ public class DingTalkUtils {
 
     }
 
-
     /**
      * 发送投票结果
      * @param pid
@@ -382,7 +381,6 @@ public class DingTalkUtils {
         }
     }
 
-
     /**
      * 字节数组转化成十六进制字符串
      * @param hash
@@ -397,7 +395,6 @@ public class DingTalkUtils {
         formatter.close();
         return result;
     }
-
 
     /**
      * 计算鉴权 signature
@@ -423,7 +420,6 @@ public class DingTalkUtils {
         return null;
     }
 
-
     /**
      * 返回鉴权结果
      * @param url
@@ -435,44 +431,4 @@ public class DingTalkUtils {
         String signature = sign(getJsapiTicket(),nonceStr, timeStamp, url);
         return Map.of("agentId", AGENTID,"url", url, "nonceStr", nonceStr, "timeStamp", timeStamp, "corpId", CORPID, "signature", signature);
     }
-
-
-
-//    public void sentGroupMessage() {
-//        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
-//        OapiChatSendRequest request = new OapiChatSendRequest();
-//        request.setChatid(CHAT_ID);
-//        OapiChatSendRequest.ActionCard actionCard = new OapiChatSendRequest.ActionCard();
-//
-//        actionCard.setTitle("下午好，打扰了，这是一个测试标题");
-//        actionCard.setMarkdown("markdown 内容，今天雨夹雪，雨夹雪，雨夹雪，\n  ###### 6号标题\n + 1 + 2 + 3，");
-//        actionCard.setBtnOrientation("1");
-//
-//        OapiChatSendRequest.BtnJson btn1 = new OapiChatSendRequest.BtnJson();
-//        btn1.setTitle("test");
-//        btn1.setActionUrl("http://www.baidu.com");
-//
-//        OapiChatSendRequest.BtnJson btn2 = new OapiChatSendRequest.BtnJson();
-//        btn2.setTitle("PC端");
-//        btn2.setActionUrl("dingtalk://dingtalkclient/action/openapp?corpid=dingeff939842ad9207f35c2f4657eb6378f&container_type=work_platform&app_id=0_313704868&redirect_type=jump&redirect_url=http://www.dingdev.xyz:8080/paper/vote/2");
-//
-//        List<OapiChatSendRequest.BtnJson> btnJsonList = new ArrayList<>();
-//
-//        btnJsonList.add(btn1);
-//        btnJsonList.add(btn2);
-//
-//        actionCard.setBtnJsonList(btnJsonList);
-//
-//        request.setActionCard(actionCard);
-//        request.setMsgtype("action_card");
-//
-//        try {
-//            OapiChatSendResponse response = client.execute(request, getAccessToken());
-//        } catch (ApiException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-
-
 }
