@@ -11,12 +11,12 @@
 
 <h1 align="center">Dingtalk Springboot</h1>
 
-### 目标与期望
+#### 目标与期望
 
 基于钉钉微应用开发的实验室绩效管理系统，实现实验室的绩效、学分、论文评审管理与钉钉对接。  
 主要功能有：绩效、学分申请与审核，论文评审投票及学分管理，实验室助研金计算等。
 
-### 涉及的技术
+#### 涉及的技术
 
 <table>
   <tbody>
@@ -94,14 +94,14 @@
 
 
 
-### 注意事项
+#### 注意事项
 
 + 使用了lombok 插件简化代码，idea 需要安装lombok 插件，否则编译过不去
 + 由于目前钉钉小程序只支持 GET/POST, 考虑到兼容性这里的接口全部为GET/POST方式
 + 系统启动时，[初始化操作](https://github.com/zhanyeye/dingtalk-springboot/blob/9e302075e2e8d55eb3736162066bf4bf203232c9/src/main/java/com/softeng/dingtalk/service/InitSys.java#L20)会调用钉钉SDK，拉取钉钉组织的所有用户, **若事先未在开发平台设置出口IP, SDK会报错导致启动失败**
 
 
-### 系统部署
+#### 系统部署
 本项目使用 GitHub Actions 实现 CI，受外网网速限制，没有采用在 GitHub 机器上构件镜像，再拉取到服务器上运行的方式。而是在每次 CI 触发后，GitHub 机器 ssh 登陆服务器执行脚本，来拉取最新代码，构建镜像，并运行容器，具体如下：
 
 1. 从GitHub仓库中拉去最新代码到服务器本地仓库
@@ -125,4 +125,7 @@ GitHub Actions 的 CI 脚本如下
 docker-compose 编排配置如下： 
 + [docker-compose.yml 配置文件](https://github.com/zhanyeye/dingtalk-springboot/wiki/docker_compose.yml)
 
+#### 系统运维
++ [定时备份docker中的数据库](https://www.yuque.com/zhanyeye/devops/gii4pk)
++ [bin log日志恢复误删数据](https://www.cnblogs.com/dslx/p/11578972.html)
 
