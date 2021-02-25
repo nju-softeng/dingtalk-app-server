@@ -129,3 +129,48 @@ docker-compose 编排配置如下：
 + [定时备份docker中的数据库](https://www.yuque.com/zhanyeye/devops/gii4pk)
 + [bin log日志恢复误删数据](https://www.cnblogs.com/dslx/p/11578972.html)
 
+
+#### 前端预览
+
+![dashboard.png](https://i.loli.net/2021/01/11/LaSl2o4r8nNfIce.png)
+
+![application.png](https://i.loli.net/2021/01/11/cR5Is784ijBrGD6.png)
+
+![audit-uncheck.png](https://i.loli.net/2021/01/12/xVZGNgcljkf2EyA.png)
+
+![audit-report.png](https://i.loli.net/2021/01/12/tSKMruUXjiV5Zwo.png)
+
+![audit-next.png](https://i.loli.net/2021/01/12/Xc9RUsIuH7rmYa2.png)
+
+![audit-checked.png](https://i.loli.net/2021/01/12/qtLzCHo8vijuxIf.png)
+
+![dc-performance.png](https://i.loli.net/2021/01/11/FtAC8vXzpsLOd5P.png)
+
+![ac-performance.png](https://i.loli.net/2021/01/11/5feZ8Fq9orXByjW.png)
+
+![dev.png](https://i.loli.net/2021/01/11/dCVWusnbYPhSy6t.png)
+
+![project-detail-1.png](https://i.loli.net/2021/01/11/w8Tr7lUkK1pOaL9.png)
+
+![project-detail-2.png](https://i.loli.net/2021/01/11/UihclBsEJA5wZab.png)
+
+![bug.png](https://i.loli.net/2021/01/11/vDEKX5PjBLq7Vu6.png)
+
+![internal-paper.png](https://i.loli.net/2021/01/11/9DGUjCxaEtwLiXB.png)
+
+![external-paper.png](https://i.loli.net/2021/01/11/q9o5SJebyzXTnxc.png)
+
+![paper-vote.png](https://i.loli.net/2021/01/11/tw93lMKudijVUoC.png)
+
+![paper-review.png](https://i.loli.net/2021/01/11/BOLgIvl83eGtkEp.png)
+
+![sys-user.png](https://i.loli.net/2021/01/12/1m2iSzI7ucEfNOL.png)
+
+![sys-settings.png](https://i.loli.net/2021/01/11/6vDWPdhtonur4Tf.png)
+
+![user.png](https://i.loli.net/2021/01/12/mElirHPOKWTMFfB.png)
+
+<img align="left" width="250" height="auto" src="https://i.loli.net/2020/12/12/j4s6RKzX7JTqyiM.png"/> 
+<img align="left" width="250" height="auto" src="https://i.loli.net/2020/12/12/FTiDv3c1HGk5eKM.png"/> 
+<img align="center" width="250" height="auto" src="https://i.loli.net/2020/12/12/GqWDFnU4dLmwXa7.png"/> 
+
