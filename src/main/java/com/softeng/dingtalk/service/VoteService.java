@@ -165,10 +165,10 @@ public class VoteService {
         Vote vote = voteRepository.findById(vid).get();
 
         // 判断投票人是否为论文作者
-        Set<Integer> authorids = paperService.listAuthorid(vote.getPid());
-        if (authorids.contains(Integer.valueOf(uid))) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "论文作者不能参与投票！");
-        }
+//        Set<Integer> authorids = paperService.listAuthorid(vote.getPid());
+//        if (authorids.contains(Integer.valueOf(uid))) {
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, "论文作者不能参与投票！");
+//        }
 
 
         if (now.isBefore(vote.getEndTime())) {
