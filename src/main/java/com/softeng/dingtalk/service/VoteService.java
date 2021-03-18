@@ -1,6 +1,5 @@
 package com.softeng.dingtalk.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softeng.dingtalk.component.DingTalkUtils;
 import com.softeng.dingtalk.controller.WebSocketController;
@@ -164,11 +163,13 @@ public class VoteService {
         LocalDateTime now = LocalDateTime.now();
         Vote vote = voteRepository.findById(vid).get();
 
-        // 判断投票人是否为论文作者
-//        Set<Integer> authorids = paperService.listAuthorid(vote.getPid());
-//        if (authorids.contains(Integer.valueOf(uid))) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "论文作者不能参与投票！");
-//        }
+        // 如果是内部评审论文，判断投票人是否为论文作者
+        if (!vote.isExternal()) {
+            Set<Integer> authorids = paperService.listAuthorid(vote.getPid());
+            if (authorids.contains(Integer.valueOf(uid))) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "论文作者不能参与投票！");
+            }
+        }
 
 
         if (now.isBefore(vote.getEndTime())) {
