@@ -293,13 +293,14 @@ public class VoteService {
                     .filter(x -> x.getAcRecord() != null).map(x -> x.getAcRecord()).collect(Collectors.toList());
             // 删除旧的 acRecord
             acRecordRepository.deleteAll(oldAcRecord);
+            String title = paperRepository.findByVid(vote.getId()).getTitle();
 
             for (VoteDetail vd : voteDetails) {
                 AcRecord acRecord;
                 if (vd.getResult() == result) {
-                    acRecord = new AcRecord(vd.getUser(), 1, "投票预测成功", AcRecord.VOTE);
+                    acRecord = new AcRecord(vd.getUser(), 1, "投票预测正确：" + title, AcRecord.VOTE);
                 } else {
-                    acRecord = new AcRecord(vd.getUser(), -1, "投票预测失败", AcRecord.VOTE);
+                    acRecord = new AcRecord(vd.getUser(), -1, "投票预测错误：" + title, AcRecord.VOTE);
                 }
                 vd.setAcRecord(acRecord);
                 acRecords.add(acRecord);
