@@ -13,12 +13,16 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @create 12/12/2019 3:34 PM
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
 public class DingTalkUtilsTest {
     @Autowired
     DingTalkUtils dingTalkUtils;
 
+    @Test
+    public void test() throws Exception {
+
+    }
 
 
 }
