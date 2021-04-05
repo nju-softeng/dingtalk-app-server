@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+
 /**
  * @author zhanyeye
  * @description
@@ -20,9 +23,12 @@ public class DingTalkUtilsTest {
     DingTalkUtils dingTalkUtils;
 
     @Test
-    public void test() throws Exception {
-
+    public void testGetReport() {
+        LocalDateTime startTime = LocalDateTime.of(2021, 4, 1, 8, 0);
+        Map map = dingTalkUtils.getReport("306147243334957616", startTime, startTime.plusDays(5));
+        log.debug(map.get("contents").toString());
     }
+
 
 
 }
