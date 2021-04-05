@@ -76,19 +76,26 @@ public class VoteService {
         }
 
         Vote vote = new Vote(LocalDateTime.now() ,LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
-        log.debug(LocalDate.now().toString());
-        log.debug(voteVO.getEndTime().toString());
-        log.debug(LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()).toString());
+
         voteRepository.save(vote);
         paperRepository.updatePaperVote(voteVO.getPaperid(), vote.getId());
         // 发送投票信息
         String title = paperRepository.getPaperTitleById(voteVO.getPaperid());
         List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
-        dingTalkUtils.sendVoteMsg(voteVO.getPaperid(),false, title, voteVO.getEndTime().toString(), namelist);
+
+
+        StringBuilder markdown = new StringBuilder().append(" #### 投票 \n ##### 论文： ").append(title).append(" \n ##### 作者： ");
+        for (String name : namelist) {
+            markdown.append(name).append(", ");
+        }
+        markdown.append(" \n 截止时间: ").append(voteVO.getEndTime().toString());
+        String url = new StringBuilder().append("/paper/in-detail/").append(voteVO.getPaperid()).append("/vote").toString();
+
+        dingTalkUtils.sendActionCard("内部评审投票", markdown.toString(), "前往投票", url);
+
         return voteRepository.refresh(vote);
     }
 
-    // 查询所有需要开始的投票
 
     /**
      *

@@ -256,97 +256,50 @@ public class DingTalkUtils {
         return response.getUserIds();
     }
 
-    // 生成钉钉内部跳转链接
 
     /**
-     * 生成跳转到投票页面的钉钉链接
-     * @param isExternal 是否是外部论文评审投票
-     * @param pid 对应的论文id
+     * 跳转到钉钉微应用的url
+     * @param url
      * @return
      */
-    private String createDingTalkLink(boolean isExternal, int pid) {
-        StringBuffer curl = null;
-        if (isExternal) {
-            // 外部论文评审的链接
-            curl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
-                    .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
-                    .append(DOMAIN).append("/paper/ex-detail/").append(pid).append("/vote");
-        } else {
-            // 内部论文评审的链接
-            curl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
-                    .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
-                    .append(DOMAIN).append("/paper/in-detail/").append(pid).append("/vote");
-        }
+    private String createLinkRedirectToApp(String url) {
+        StringBuffer curl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
+                .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
+                .append(DOMAIN).append(url);
         log.debug(curl.toString());
         return curl.toString();
     }
 
+
     /**
-     * 发起投票时向群中发送消息
-     * @param pid
+     * 创建一个消息卡片，用于设置到请求体中
      * @param title
-     * @param endtime
-     * @param namelist
+     * @param singleTitle
+     * @param markdown
+     * @param url
+     * @return
      */
-    public void sendVoteMsg(int pid, boolean isExternal, String title, String endtime, List<String> namelist) {
-        OapiChatSendRequest request = new OapiChatSendRequest();
-        request.setChatid(CHAT_ID);
+    private OapiChatSendRequest.ActionCard createActionCard(String title, String markdown, String singleTitle, String singleUrl) {
         OapiChatSendRequest.ActionCard actionCard = new OapiChatSendRequest.ActionCard();
-
-        if (!isExternal) {
-            // 如果是内部评审投票
-            StringBuffer content = new StringBuffer().append(" #### 投票 \n ##### 论文： ").append(title).append(" \n ##### 作者： ");
-            for (String name : namelist) {
-                content.append(name).append(", ");
-            }
-            content.append(" \n 截止时间: ").append(endtime);
-            actionCard.setTitle("内部评审投票");
-            actionCard.setMarkdown(content.toString());
-        } else {
-            // 如果是外部评审投票
-            StringBuffer content = new StringBuffer().append(" #### 投票 \n ##### 论文： ").append(title);
-            content.append(" \n 截止时间: ").append(endtime);
-            actionCard.setTitle("外部评审投票");
-            actionCard.setMarkdown(content.toString());
-
-        }
-
-        actionCard.setSingleTitle("前往投票");
-        actionCard.setSingleUrl(createDingTalkLink(isExternal, pid));
-
-        request.setActionCard(actionCard);
-        request.setMsgtype("action_card");
-
-        executeRequest(request, "https://oapi.dingtalk.com/chat/send");
+        actionCard.setTitle(title);
+        actionCard.setMarkdown(markdown);
+        actionCard.setSingleTitle(singleTitle);
+        actionCard.setSingleUrl(singleUrl);
+        return actionCard;
     }
 
+
     /**
-     * 发送投票结果
-     * @param pid
+     * 向钉钉群中发送消息卡片
      * @param title
-     * @param result
-     * @param accept
-     * @param total
+     * @param singleTitle
+     * @param markdown
+     * @param url
      */
-    public void sendVoteResult(int pid, String title, boolean result, int accept, int total, boolean isExternal) {
+    public void sendActionCard(String title, String markdown, String singleTitle, String url) {
         OapiChatSendRequest request = new OapiChatSendRequest();
         request.setChatid(CHAT_ID);
-        OapiChatSendRequest.ActionCard actionCard = new OapiChatSendRequest.ActionCard();
-
-        StringBuffer content = new StringBuffer().append(" #### 投票结果 \n ##### 论文： ").append(title)
-                .append(" \n 最终结果： ").append(result ? "Accept" : "reject")
-                .append("  \n  Accept: ").append(accept).append(" 票  \n ")
-                .append("Reject: ").append(total-accept).append(" 票  \n ")
-                .append("已参与人数： ").append(total).append("人  \n ");
-
-
-        actionCard.setTitle("投票结果");
-        actionCard.setMarkdown(content.toString());
-        actionCard.setSingleTitle("查看详情");
-        actionCard.setSingleUrl(createDingTalkLink(isExternal, pid));
-
-
-        request.setActionCard(actionCard);
+        request.setActionCard(createActionCard(title, singleTitle, markdown, createLinkRedirectToApp(url)));
         request.setMsgtype("action_card");
 
         executeRequest(request, "https://oapi.dingtalk.com/chat/send");
