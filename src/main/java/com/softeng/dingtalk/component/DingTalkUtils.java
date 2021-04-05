@@ -299,7 +299,7 @@ public class DingTalkUtils {
     public void sendActionCard(String title, String markdown, String singleTitle, String url) {
         OapiChatSendRequest request = new OapiChatSendRequest();
         request.setChatid(CHAT_ID);
-        request.setActionCard(createActionCard(title, singleTitle, markdown, createLinkRedirectToApp(url)));
+        request.setActionCard(createActionCard(title, markdown, singleTitle, createLinkRedirectToApp(url)));
         request.setMsgtype("action_card");
 
         executeRequest(request, "https://oapi.dingtalk.com/chat/send");
