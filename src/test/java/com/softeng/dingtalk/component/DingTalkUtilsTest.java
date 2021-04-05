@@ -30,5 +30,10 @@ public class DingTalkUtilsTest {
     }
 
 
+    @Test
+    public void testSendActionCard() {
+        dingTalkUtils.sendActionCard("123", "123", "xxx", "www.baidu.com");
+    }
+
 
 }
