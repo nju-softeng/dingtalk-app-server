@@ -14,12 +14,9 @@ import org.springframework.stereotype.Component;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -104,6 +101,7 @@ public class DingTalkUtils {
             throw new RuntimeException("请求钉钉服务器出现异常，请管理员登录钉钉开发者后端检查配置~");
         }
     }
+    
 
     /**
      * 执行封装好的请求, 不需要accessToken
@@ -199,28 +197,25 @@ public class DingTalkUtils {
 
     /**
      * 获取周报信息
-     * @param userid
-     * @param date
+     * @param userid 钉钉userid
+     * @param startTime 查询周报的开始时间
+     * @param endTime 查询周报的结束时间
      * @return
      */
-    public Map getReport(String userid, LocalDate date) {
-        Long startTime = LocalDateTime.of(date, LocalTime.of(8,0)).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+    public Map getReport(String userid, LocalDateTime startTime, LocalDateTime endTime) {
         OapiReportListRequest request = new OapiReportListRequest();
         request.setUserid(userid);
-        request.setStartTime(startTime);
-        request.setEndTime(startTime + TimeUnit.DAYS.toMillis(5));
+        request.setStartTime(startTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+        request.setEndTime(endTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
         request.setCursor(0L);
         request.setSize(1L);
 
         OapiReportListResponse response = executeRequest(request, "https://oapi.dingtalk.com/topapi/report/list");
-        if (response.getResult().getDataList().size() == 0) {
-            return Map.of();
-        } else {
-            List<OapiReportListResponse.JsonObject> contents = response.getResult().getDataList().get(0).getContents().stream()
-                    .filter((item) -> !item.getValue().isEmpty())
-                    .collect(Collectors.toList());
-            return Map.of("contents", contents);
-        }
+        List<OapiReportListResponse.ReportOapiVo> dataList = response.getResult().getDataList();
+
+        return dataList.size() == 0 ? Map.of() : dataList.get(0).getContents().stream()
+                .filter(x -> !x.getValue().isEmpty())
+                .collect(Collectors.toMap(x -> "contents", x -> x));
     }
 
 

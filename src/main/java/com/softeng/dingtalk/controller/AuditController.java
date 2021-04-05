@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -114,7 +116,8 @@ public class AuditController {
     @PostMapping("/audit/report/{uid}")
     public Map getReport(@PathVariable int uid, @RequestBody Map<String, LocalDate> map) {
         String userid = userService.getUserid(uid);
-        return dingTalkUtils.getReport(userid, map.get("date"));
+        LocalDateTime startTime = LocalDateTime.of(map.get("date"), LocalTime.of(8,0));
+        return dingTalkUtils.getReport(userid, startTime, startTime.plusDays(5));
     }
 
 }
