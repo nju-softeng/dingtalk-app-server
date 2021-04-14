@@ -213,9 +213,9 @@ public class DingTalkUtils {
         OapiReportListResponse response = executeRequest(request, "https://oapi.dingtalk.com/topapi/report/list");
         List<OapiReportListResponse.ReportOapiVo> dataList = response.getResult().getDataList();
 
-        return dataList.size() == 0 ? Map.of() : dataList.get(0).getContents().stream()
+        return dataList.size() == 0 ? Map.of() : Map.of("contents", dataList.get(0).getContents().stream()
                 .filter(x -> !x.getValue().isEmpty())
-                .collect(Collectors.toMap(x -> "contents", x -> x));
+                .collect(Collectors.toList()));
     }
 
 
