@@ -2,11 +2,11 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.softeng.dingtalk.mapper.DcRecordMapper">
+<mapper namespace="com.softeng.pms.mapper.DcRecordMapper">
 
 
     <!--  论文列表项数据  -->
-    <resultMap id="DcRecordVO" type="com.softeng.dingtalk.vo.DcRecordVO">
+    <resultMap id="DcRecordVO" type="com.softeng.pms.vo.DcRecordVO">
         <id column="id" property="id"/>
         <result column="insert_time" property="insertTime"/>
         <result column="weekdate" property="weekdate"/>
@@ -19,7 +19,7 @@
         <result column="auditor_name" property="auditorName"/>
         <result column="auditor_id" property="auditorid"/>
         <result column="status" property="status"/>
-        <collection property="acItems" ofType="com.softeng.dingtalk.vo.AcItemVO" >
+        <collection property="acItems" ofType="com.softeng.pms.vo.AcItemVO" >
             <result column="apply_ac" property="ac"/>
             <result column="reason" property="reason"/>
         </collection>
@@ -51,7 +51,7 @@
     </select>
 
 
-    <select id="findLatestAuditorByApplicantId" resultType="com.softeng.dingtalk.vo.UserVO">
+    <select id="findLatestAuditorByApplicantId" resultType="com.softeng.pms.vo.UserVO">
         SELECT
     	d.auditor_id AS id,
     	u.`name` AS NAME
