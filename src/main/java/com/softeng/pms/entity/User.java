@@ -41,6 +41,11 @@ public class User {
     private String userid;
 
     /**
+     * 钉钉文档解释：员工在当前开发者企业账号范围内的唯一标识，系统生成，固定值，不会改变
+     */
+    private String unionid;
+
+    /**
      * 用户姓名
      */
     private String name;
@@ -79,8 +84,9 @@ public class User {
     private boolean deleted;
 
 
-    public User(String userid, String name, String avatar, int authority, Position position) {
+    public User(String userid, String unionid, String name, String avatar, int authority, Position position) {
         this.userid = userid;
+        this.unionid = unionid;
         this.name = name;
         this.avatar = avatar;
         this.authority = authority;

@@ -1,5 +1,7 @@
 package com.softeng.pms.component;
 
+import com.softeng.pms.dingtalk.BacklogApi;
+import com.softeng.pms.dingtalk.MessageApi;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +23,10 @@ import java.util.Map;
 public class DingTalkUtilsTest {
     @Autowired
     DingTalkUtils dingTalkUtils;
+    @Autowired
+    BacklogApi backlogAPI;
+    @Autowired
+    MessageApi messageApi;
 
     @Test
     public void testGetReport() {
@@ -36,4 +42,8 @@ public class DingTalkUtilsTest {
     }
 
 
+    @Test
+    public void testBackLog() throws Exception {
+        messageApi.sendWorkMessage();
+    }
 }
