@@ -85,9 +85,8 @@ public class SystemService {
             remoteUserids.addAll(dingTalkUtils.listUserId(depid));
         }
 
-        List<String> localUserids = userRepository.listAllUserid();
-        remoteUserids.removeAll(localUserids);
-        List<User> users = new ArrayList<>();
+//        List<String> localUserids = userRepository.listAllUserid();
+//        remoteUserids.removeAll(localUserids);
         for (String userid : remoteUserids) {
             addNewUser(userid);
         }
@@ -127,8 +126,20 @@ public class SystemService {
             }
         }
 
-        User u = userRepository.save(new User(response.getUserid(), response.getName(), response.getAvatar(), authority, position));
-        return userRepository.refresh(u);
+        // 如果用户已存在
+        User user = userRepository.findByUserid(userid);
+        if (user == null) {
+            user = userRepository.save(new User(response.getUserid(), response.getUnionid(), response.getName(), response.getAvatar(), authority, position));
+            userRepository.refresh(user);
+        } else {
+            user.setAvatar(response.getAvatar());
+            user.setName(response.getName());
+            user.setUnionid(response.getUnionid());
+        }
+
+
+
+        return user;
     }
 
 
