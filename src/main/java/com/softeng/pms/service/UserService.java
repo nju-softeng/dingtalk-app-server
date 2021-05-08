@@ -1,6 +1,6 @@
 package com.softeng.pms.service;
 
-import com.softeng.pms.component.DingTalkUtils;
+import com.softeng.pms.dingtalk.BaseApi;
 import com.softeng.pms.entity.User;
 import com.softeng.pms.repository.AcRecordRepository;
 import com.softeng.pms.repository.UserRepository;
@@ -25,8 +25,9 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private AcRecordRepository acRecordRepository;
+
     @Autowired
-    private DingTalkUtils dingTalkUtils;
+    BaseApi baseApi;
 
     /**
      * 判断用户权限是否为审核人
@@ -84,7 +85,7 @@ public class UserService {
     public Map getUserInfo(int uid) {
         User u = userRepository.findById(uid).get();
         double ac = acRecordRepository.getUserAcSum(uid);
-        dingTalkUtils.getJsapiTicket(); // 提前拿到jsapi ticket，避免需要时再去那减少时延
+        baseApi.getJsapiTicket(); // 提前拿到jsapi ticket，避免需要时再去那减少时延
         if (u.getAvatar() != null) {
             return Map.of("name", u.getName(), "avatar", u.getAvatar(), "ac", ac, "userid", u.getUserid());
         } else {

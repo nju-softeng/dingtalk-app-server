@@ -1,6 +1,5 @@
 package com.softeng.pms.service;
 
-import com.softeng.pms.component.DingTalkUtils;
 import com.softeng.pms.entity.*;
 import com.softeng.pms.repository.*;
 import com.softeng.pms.vo.CheckedVO;
@@ -35,8 +34,6 @@ public class AuditService {
     AcRecordRepository acRecordRepository;
     @Autowired
     DcSummaryRepository dcSummaryRepository;
-    @Autowired
-    DingTalkUtils dingTalkUtils;
     @Autowired
     UserService userService;
     @Autowired

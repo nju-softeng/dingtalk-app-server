@@ -1,7 +1,7 @@
 package com.softeng.pms.controller;
 
-import com.softeng.pms.component.DingTalkUtils;
 import com.softeng.pms.component.Utils;
+import com.softeng.pms.dingtalk.ReportApi;
 import com.softeng.pms.entity.DcRecord;
 import com.softeng.pms.service.AuditService;
 import com.softeng.pms.service.NotifyService;
@@ -32,13 +32,14 @@ public class AuditController {
     @Autowired
     AuditService auditService;
     @Autowired
-    DingTalkUtils dingTalkUtils;
-    @Autowired
     UserService userService;
     @Autowired
     Utils utils;
     @Autowired
     NotifyService notifyService;
+
+    @Autowired
+    ReportApi reportApi;
 
     /**
      * 审核员提交审核结果
@@ -117,7 +118,7 @@ public class AuditController {
     public Map getReport(@PathVariable int uid, @RequestBody Map<String, LocalDate> map) {
         String userid = userService.getUserid(uid);
         LocalDateTime startTime = LocalDateTime.of(map.get("date"), LocalTime.of(8,0));
-        return dingTalkUtils.getReport(userid, startTime, startTime.plusDays(5));
+        return reportApi.getReport(userid, startTime, startTime.plusDays(5));
     }
 
 }

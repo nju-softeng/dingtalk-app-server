@@ -1,7 +1,7 @@
 package com.softeng.pms.controller;
 
-import com.softeng.pms.component.DingTalkUtils;
 import com.softeng.pms.component.EncryptorComponent;
+import com.softeng.pms.dingtalk.ContactsApi;
 import com.softeng.pms.entity.User;
 import com.softeng.pms.service.SystemService;
 import com.softeng.pms.service.UserService;
@@ -27,7 +27,7 @@ public class LoginController {
     private static final String ADMIN_ROLE = "6983f953b49c88210cb9";
 
     @Autowired
-    DingTalkUtils dingTalkUtils;
+    ContactsApi contactsApi;
     @Autowired
     UserService userService;
     @Autowired
@@ -63,7 +63,7 @@ public class LoginController {
     public Map login(@RequestBody Map authcode, HttpServletResponse response) {
         //根据免登授权码获取userid
         log.debug(authcode.toString());
-        String userid = dingTalkUtils.getUserId((String) authcode.get("authCode"));
+        String userid = contactsApi.getUserId((String) authcode.get("authCode"));
         //去数据库查找用户
 
         log.debug("userid:" + userid);

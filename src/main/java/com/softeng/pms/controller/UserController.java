@@ -1,6 +1,6 @@
 package com.softeng.pms.controller;
 
-import com.softeng.pms.component.DingTalkUtils;
+import com.softeng.pms.dingtalk.BaseApi;
 import com.softeng.pms.entity.Message;
 import com.softeng.pms.service.NotifyService;
 import com.softeng.pms.service.UserService;
@@ -27,9 +27,10 @@ public class UserController {
     @Autowired
     UserService userService;
     @Autowired
-    DingTalkUtils dingTalkUtils;
-    @Autowired
     NotifyService notifyService;
+
+    @Autowired
+    BaseApi baseApi;
 
 
     /**
@@ -71,7 +72,7 @@ public class UserController {
      */
     @PostMapping("/jsapi_signature")
     public Map jspai(@RequestBody Map<String, String> map) {
-        return dingTalkUtils.authentication(map.get("url"));
+        return baseApi.authentication(map.get("url"));
     }
 
 

@@ -1,6 +1,5 @@
 package com.softeng.pms.controller;
 
-import com.softeng.pms.component.DingTalkUtils;
 import com.softeng.pms.component.Utils;
 import com.softeng.pms.repository.DcSummaryRepository;
 import com.softeng.pms.service.ApplicationService;
@@ -31,8 +30,6 @@ public class ApplicationController {
     AuditService auditService;
     @Autowired
     UserService userService;
-    @Autowired
-    DingTalkUtils dingTalkUtils;
     @Autowired
     Utils utils;
     @Autowired

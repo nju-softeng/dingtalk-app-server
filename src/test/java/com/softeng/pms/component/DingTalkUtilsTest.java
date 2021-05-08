@@ -1,7 +1,7 @@
 package com.softeng.pms.component;
 
-import com.softeng.pms.dingtalk.BacklogApi;
 import com.softeng.pms.dingtalk.MessageApi;
+import com.softeng.pms.dingtalk.ReportApi;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,29 +21,23 @@ import java.util.Map;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
 public class DingTalkUtilsTest {
-    @Autowired
-    DingTalkUtils dingTalkUtils;
-    @Autowired
-    BacklogApi backlogAPI;
+
     @Autowired
     MessageApi messageApi;
+    @Autowired
+    ReportApi reportApi;
 
     @Test
     public void testGetReport() {
         LocalDateTime startTime = LocalDateTime.of(2021, 4, 1, 8, 0);
-        Map map = dingTalkUtils.getReport("306147243334957616", startTime, startTime.plusDays(5));
+        Map map = reportApi.getReport("306147243334957616", startTime, startTime.plusDays(5));
         log.debug(map.get("contents").toString());
     }
 
 
-    @Test
-    public void testSendActionCard() {
-        dingTalkUtils.sendActionCard("123", "123", "xxx", "www.baidu.com");
-    }
 
-
-    @Test
-    public void testBackLog() throws Exception {
-        messageApi.sendWorkMessage();
-    }
+//    @Test
+//    public void testBackLog() throws Exception {
+//        messageApi.sendWorkMessage();
+//    }
 }
