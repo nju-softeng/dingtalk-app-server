@@ -55,6 +55,8 @@ public class VoteService {
     UserRepository userRepository;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private ExternalPaperRepository externalPaperRepository;
 
 
     //--------------------------------------------
@@ -300,7 +302,16 @@ public class VoteService {
                     .filter(x -> x.getAcRecord() != null).map(x -> x.getAcRecord()).collect(Collectors.toList());
             // 删除旧的 acRecord
             acRecordRepository.deleteAll(oldAcRecord);
-            String title = paperRepository.findByVid(vote.getId()).getTitle();
+
+            // todo 修复 bug
+            String title;
+
+            if (vote.isExternal()) {
+                title = externalPaperRepository.findByVid(vote.getId()).getTitle();
+            } else {
+                title = paperRepository.findByVid(vote.getId()).getTitle();
+            }
+
 
             for (VoteDetail vd : voteDetails) {
                 AcRecord acRecord;
