@@ -1,8 +1,8 @@
 package com.softeng.pms.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.softeng.pms.component.DingTalkUtils;
 import com.softeng.pms.controller.WebSocketController;
+import com.softeng.pms.dingtalk.MessageApi;
 import com.softeng.pms.entity.*;
 
 import com.softeng.pms.repository.*;
@@ -42,8 +42,6 @@ public class VoteService {
     @Autowired
     PaperDetailRepository paperDetailRepository;
     @Autowired
-    DingTalkUtils dingTalkUtils;
-    @Autowired
     AcRecordRepository acRecordRepository;
     @Autowired
     NotifyService notifyService;
@@ -57,6 +55,9 @@ public class VoteService {
     private ObjectMapper objectMapper;
     @Autowired
     private ExternalPaperRepository externalPaperRepository;
+
+    @Autowired
+    MessageApi messageApi;
 
 
     //--------------------------------------------
@@ -93,7 +94,7 @@ public class VoteService {
         markdown.append(" \n 截止时间: ").append(voteVO.getEndTime().toString());
         String url = new StringBuilder().append("/paper/in-detail/").append(voteVO.getPaperid()).append("/vote").toString();
 
-        dingTalkUtils.sendActionCard("内部评审投票", markdown.toString(), "前往投票", url);
+        messageApi.sendActionCard("内部评审投票", markdown.toString(), "前往投票", url);
 
         return voteRepository.refresh(vote);
     }

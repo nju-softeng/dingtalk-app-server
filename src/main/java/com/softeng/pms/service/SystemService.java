@@ -1,7 +1,7 @@
 package com.softeng.pms.service;
 
 import com.dingtalk.api.response.OapiUserGetResponse;
-import com.softeng.pms.component.DingTalkUtils;
+import com.softeng.pms.dingtalk.ContactsApi;
 import com.softeng.pms.entity.PaperLevel;
 import com.softeng.pms.entity.SubsidyLevel;
 import com.softeng.pms.entity.User;
@@ -45,8 +45,6 @@ public class SystemService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private DingTalkUtils dingTalkUtils;
-    @Autowired
     SubsidyLevelRepository subsidyLevelRepository;
     @Autowired
     PaperLevelRepository paperLevelRepository;
@@ -56,6 +54,9 @@ public class SystemService {
     PerformanceService performanceService;
     @Autowired
     AuditService auditService;
+
+    @Autowired
+    ContactsApi contactsApi;
 
 
     /**
@@ -78,11 +79,11 @@ public class SystemService {
      * 从钉钉服务器拉取所有用户同步到系统
      */
     public void fetchUsers() {
-        List<String> depids = dingTalkUtils.listDepid();
+        List<String> depids = contactsApi.listDepid();
         Set<String> remoteUserids = new HashSet<>();
 
         for (String depid : depids) {
-            remoteUserids.addAll(dingTalkUtils.listUserId(depid));
+            remoteUserids.addAll(contactsApi.listUserId(depid));
         }
 
 //        List<String> localUserids = userRepository.listAllUserid();
@@ -99,7 +100,7 @@ public class SystemService {
      * @return
      */
     public User addNewUser(String userid) {
-        OapiUserGetResponse response =  dingTalkUtils.fetchUserDetail(userid);
+        OapiUserGetResponse response =  contactsApi.fetchUserDetail(userid);
 
         // 权限
         int authority;

@@ -1,5 +1,6 @@
 package com.softeng.pms.component;
 
+import com.softeng.pms.dingtalk.MessageApi;
 import com.softeng.pms.entity.ExternalPaper;
 import com.softeng.pms.entity.Paper;
 import com.softeng.pms.entity.Vote;
@@ -35,11 +36,12 @@ public class Timer {
     @Autowired
     PaperRepository paperRepository;
     @Autowired
-    DingTalkUtils dingTalkUtils;
-    @Autowired
     InitService initService;
     @Autowired
     ExternalPaperRepository externalPaperRepository;
+
+    @Autowired
+    MessageApi messageApi;
 
     /**
      * 每分钟扫描一次，看是否有待启动的投票，或者待结束的投票
@@ -65,7 +67,7 @@ public class Timer {
                     String markdown = new StringBuilder(" #### 投票 \n ##### 论文： ").append(externalPaper.getTitle())
                             .append(" \n 截止时间: ").append(v.getEndTime().toLocalTime().toString()).toString();
                     String url = new StringBuilder().append("/paper/ex-detail/").append(externalPaper.getId()).append("/vote").toString();
-                    dingTalkUtils.sendActionCard("外部评审投票", markdown, "前往投票", url);
+                    messageApi.sendActionCard("外部评审投票", markdown, "前往投票", url);
                 }
             }
         }
@@ -104,7 +106,7 @@ public class Timer {
                         .append("Reject: ").append(v.getTotal() - v.getAccept()).append(" 票  \n ")
                         .append("已参与人数： ").append(v.getTotal()).append("人  \n ").toString();
 
-                dingTalkUtils.sendActionCard("投票结果", markdown, "查看详情", url);
+                messageApi.sendActionCard("投票结果", markdown, "查看详情", url);
 
             }
         }

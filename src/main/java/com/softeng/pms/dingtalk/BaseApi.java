@@ -12,19 +12,29 @@ import com.taobao.api.TaobaoResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Formatter;
+import java.util.Map;
 
 
 /**
+ * 调用钉钉 sdk 的抽象类, 对调用api的过程进行封装
  * @date: 2021/4/23 16:59
  */
 @Slf4j
-public abstract class BaseApi {
-    protected static String CORPID;
-    protected static String APP_KEY;
-    protected static String APP_SECRET;
-    protected static String CHAT_ID;
-    protected static Long AGENTID;
-    protected static String DOMAIN;
+@Component
+public class BaseApi {
+
+    protected static String CORPID;        // 钉钉组织的唯一id
+    protected static String APP_KEY;       // 钉钉微应用的 key
+    protected static String APP_SECRET;    // 钉钉微应用的密钥
+    protected static Long AGENTID;         // 钉钉微应用的 AgentId
+    protected static String CHAT_ID;       // 发送群消息的群id
+    protected static String DOMAIN;        // 该服务器的域名，用于调用api时鉴权
 
     @Value("${my.corpid}")
     public void setCORPID(String corpid) {
@@ -56,16 +66,19 @@ public abstract class BaseApi {
         DOMAIN = domain;
     }
 
+    /**
+     * 缓存的token信息, spring bean 默认是单例模式
+     * 包含了：accessToken, tokenTime, jsapiTicket, ticketTime
+     */
     @Autowired
     TokenCache tokenCache;
 
     /**
      * 执行封装好的请求, 需要accessToken
-     * @param request
-     * @param url
-     * @param <T>
+     * @param request 封装好的请求对象
+     * @param url 请求api的地址
+     * @param <T> 接受到的响应对象
      * @return
-     * @throws ApiException
      */
     public <T extends TaobaoResponse> T executeRequest(TaobaoRequest<T> request, String url) {
         DingTalkClient client = new DefaultDingTalkClient(url);
@@ -77,12 +90,11 @@ public abstract class BaseApi {
         }
     }
 
-
     /**
      * 执行封装好的请求, 不需要accessToken
-     * @param request
-     * @param url
-     * @param <T>
+     * @param request 封装好的请求对象
+     * @param url 请求api的地址
+     * @param <T> 接受到的响应对象
      * @return
      */
     public <T extends TaobaoResponse> T executeRequestWithoutToken(TaobaoRequest<T> request, String url) {
@@ -95,11 +107,9 @@ public abstract class BaseApi {
         }
     }
 
-
     /**
-     * 获取 AccessToken
+     * 获取调用钉钉api所需的 AccessToken，获取后会缓存起来，过期之后再重新获取
      * @return java.lang.String
-     * @Date 9:10 PM 11/13/2019
      **/
     public String getAccessToken() {
         long curTime = System.currentTimeMillis();
@@ -114,16 +124,14 @@ public abstract class BaseApi {
             tokenCache.accessToken = response.getAccessToken();
             tokenCache.tokenTime = System.currentTimeMillis();
 
-            log.debug("AccessToken 快要过期，重新获取");
+            log.info("重新获取 AccessToken");
         }
         return tokenCache.accessToken;
     }
 
-
     /**
-     * 获取 Jsapi Ticket
+     * 获取钉钉前端鉴权所需的 Jsapi Ticket，获取后会缓存起来，过期之后再重新获取
      * @return java.lang.String
-     * @Date 8:20 AM 2/23/2020
      **/
     public String getJsapiTicket() {
         long curTime = System.currentTimeMillis();
@@ -135,8 +143,59 @@ public abstract class BaseApi {
             tokenCache.jsapiTicket = response.getTicket();
             tokenCache.ticketTime = System.currentTimeMillis();
 
-            log.debug("JsapiTicket 快要过期，重新获取");
+            log.info("JsapiTicket 快要过期，重新获取");
         }
         return tokenCache.jsapiTicket;
+    }
+
+    /**
+     * 字节数组转化成十六进制字符串
+     * @param hash
+     * @return
+     */
+    private String bytesToHex(final byte[] hash) {
+        Formatter formatter = new Formatter();
+        for (byte b : hash) {
+            formatter.format("%02x", b);
+        }
+        String result = formatter.toString();
+        formatter.close();
+        return result;
+    }
+
+    /**
+     * 计算鉴权 signature
+     * @param ticket
+     * @param nonceStr
+     * @param timeStamp
+     * @param url
+     * @return
+     */
+    private String sign(String ticket, String nonceStr, long timeStamp, String url)  {
+        String plain = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + String.valueOf(timeStamp)
+                + "&url=" + url;
+        try {
+            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+            sha1.reset();
+            sha1.update(plain.getBytes("UTF-8"));
+            return bytesToHex(sha1.digest());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 返回鉴权结果
+     * @param url
+     * @return
+     */
+    public Map authentication(String url) {
+        long timeStamp = System.currentTimeMillis();
+        String nonceStr = "todowhatliesclearathand";
+        String signature = sign(getJsapiTicket(),nonceStr, timeStamp, url);
+        return Map.of("agentId", AGENTID,"url", url, "nonceStr", nonceStr, "timeStamp", timeStamp, "corpId", CORPID, "signature", signature);
     }
 }

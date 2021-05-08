@@ -19,6 +19,19 @@ import java.util.List;
 public class MessageApi extends BaseApi {
 
     /**
+     * 跳转到钉钉微应用的url
+     * @param url
+     * @return
+     */
+    private String createLinkRedirectToApp(String url) {
+        StringBuffer curl = new StringBuffer().append("dingtalk://dingtalkclient/action/openapp?corpid=").append(CORPID)
+                .append("&container_type=work_platform&app_id=0_").append(AGENTID).append("&redirect_type=jump&redirect_url=")
+                .append(DOMAIN).append(url);
+        log.debug(curl.toString());
+        return curl.toString();
+    }
+
+    /**
      * 创建一个消息卡片，用于设置到请求体中
      * @param title
      * @param singleTitle
@@ -35,6 +48,13 @@ public class MessageApi extends BaseApi {
         return actionCard;
     }
 
+    /**
+     * 向钉钉群中发送消息卡片
+     * @param title
+     * @param singleTitle
+     * @param markdown
+     * @param url
+     */
     public void sendActionCard(String title, String markdown, String singleTitle, String url) {
         OapiChatSendRequest request = new OapiChatSendRequest();
         request.setChatid(CHAT_ID);
@@ -42,34 +62,5 @@ public class MessageApi extends BaseApi {
         request.setMsgtype("action_card");
 
         executeRequest(request, "https://oapi.dingtalk.com/chat/send");
-    }
-
-    public void sendWorkMessage(List<String> userids, String title, String markdown, String singleTitle, String url) {
-        OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
-        request.setAgentId(AGENTID);
-        request.setUseridList("306147243334957616");
-        request.setToAllUser(true);
-
-        OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
-
-        msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
-        msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
-        msg.getOa().getHead().setText("head");
-        msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
-        msg.getOa().getBody().setContent("xxx");
-        msg.setMsgtype("oa");
-        request.setMsg(msg);
-
-        msg.setActionCard(new OapiMessageCorpconversationAsyncsendV2Request.ActionCard());
-        msg.getActionCard().setTitle("xxx123411111");
-        msg.getActionCard().setMarkdown("### 测试123111");
-        msg.getActionCard().setSingleTitle("测试测试");
-        msg.getActionCard().setSingleUrl("https://www.dingtalk.com");
-        msg.setMsgtype("action_card");
-        request.setMsg(msg);
-
-        OapiMessageCorpconversationAsyncsendV2Response rsp = executeRequest(request, "https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2");
-        log.debug(rsp.getBody());
-
     }
 }
