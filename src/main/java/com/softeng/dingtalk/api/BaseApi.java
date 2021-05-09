@@ -172,8 +172,7 @@ public class BaseApi {
      * @return
      */
     private String sign(String ticket, String nonceStr, long timeStamp, String url)  {
-        String plain = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + String.valueOf(timeStamp)
-                + "&url=" + url;
+        String plain = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + String.valueOf(timeStamp) + "&url=" + url;
         try {
             MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
             sha1.reset();
