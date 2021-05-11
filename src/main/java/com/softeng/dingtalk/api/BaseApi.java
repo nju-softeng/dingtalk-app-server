@@ -6,6 +6,7 @@ import com.dingtalk.api.request.OapiGetJsapiTicketRequest;
 import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiGetJsapiTicketResponse;
 import com.dingtalk.api.response.OapiGettokenResponse;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.taobao.api.ApiException;
 import com.taobao.api.TaobaoRequest;
 import com.taobao.api.TaobaoResponse;
@@ -68,6 +69,12 @@ public class BaseApi {
         DOMAIN = domain;
     }
 
+    /**
+     * 注入 Caffeine 缓存
+     */
+    @Autowired
+    Cache<String, String> cache;
+
 
     /**
      * 执行封装好的请求, 需要accessToken
@@ -107,30 +114,36 @@ public class BaseApi {
      * 获取调用钉钉api所需的 AccessToken，获取后会缓存起来，过期之后再重新获取
      * @return java.lang.String
      **/
-    @Cacheable(value = "dingtalk", key = "#root.methodName")
     public String getAccessToken() {
-        OapiGettokenRequest request = new OapiGettokenRequest();
-        request.setAppkey(APP_KEY);
-        request.setAppsecret(APP_SECRET);
-        request.setHttpMethod("GET");
-        OapiGettokenResponse response = executeRequestWithoutToken(request, "https://oapi.dingtalk.com/gettoken");
+        String res = cache.asMap().get("AccessToken");
+        if (res == null) {
+            OapiGettokenRequest request = new OapiGettokenRequest();
+            request.setAppkey(APP_KEY);
+            request.setAppsecret(APP_SECRET);
+            request.setHttpMethod("GET");
+            res = executeRequestWithoutToken(request, "https://oapi.dingtalk.com/gettoken").getAccessToken();
 
-        log.info("重新获取 AccessToken 时间: {}", LocalDateTime.now());
-        return response.getAccessToken();
+            log.info("重新获取 AccessToken 时间: {}", LocalDateTime.now());
+            cache.put("AccessToken", res);
+        }
+        return res;
     }
 
     /**
      * 获取钉钉前端鉴权所需的 Jsapi Ticket，获取后会缓存起来，过期之后再重新获取
      * @return java.lang.String
      **/
-    @Cacheable(value = "dingtalk", key = "#root.methodName")
     public String getJsapiTicket() {
-        OapiGetJsapiTicketRequest request = new OapiGetJsapiTicketRequest();
-        request.setTopHttpMethod("GET");
-        OapiGetJsapiTicketResponse response = executeRequest(request, "https://oapi.dingtalk.com/get_jsapi_ticket");
+        String res = cache.asMap().get("JsapiTicket");
+        if (res == null) {
+            OapiGetJsapiTicketRequest request = new OapiGetJsapiTicketRequest();
+            request.setTopHttpMethod("GET");
+            res = executeRequest(request, "https://oapi.dingtalk.com/get_jsapi_ticket").getTicket();
 
-        log.info("重新获取 JsapiTicket 时间: {}", LocalDateTime.now());
-        return response.getTicket();
+            cache.put("JsapiTicket", res);
+            log.info("重新获取 JsapiTicket 时间: {}", LocalDateTime.now());
+        }
+        return res;
     }
 
     /**
