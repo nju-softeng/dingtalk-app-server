@@ -146,10 +146,12 @@ public class PaperService {
         double[] rate = new double[]{0.5, 0.25, 0.15, 0.1};
         int i = 0;
         for (PaperDetail pd : paperDetails) {
-            if (i == 4) {
-                break;
+            double ac = 0;
+            if (i >= 4) {
+                ac = sum * 0.1;
+            } else {
+                ac = sum * rate[pd.getNum() - 1];
             }
-            double ac = sum * rate[pd.getNum() - 1];
             AcRecord acRecord = new AcRecord(pd.getUser(), null, ac, reason, AcRecord.PAPER);
             pd.setAc(ac);
             pd.setAcRecord(acRecord);
