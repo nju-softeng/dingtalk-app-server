@@ -6,17 +6,20 @@ import com.dingtalk.api.request.OapiGetJsapiTicketRequest;
 import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiGetJsapiTicketResponse;
 import com.dingtalk.api.response.OapiGettokenResponse;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.taobao.api.ApiException;
 import com.taobao.api.TaobaoRequest;
 import com.taobao.api.TaobaoResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.Formatter;
 import java.util.Map;
 
@@ -67,11 +70,11 @@ public class BaseApi {
     }
 
     /**
-     * 缓存的token信息, spring bean 默认是单例模式
-     * 包含了：accessToken, tokenTime, jsapiTicket, ticketTime
+     * 注入 Caffeine 缓存
      */
     @Autowired
-    TokenCache tokenCache;
+    Cache<String, String> cache;
+
 
     /**
      * 执行封装好的请求, 需要accessToken
@@ -112,21 +115,18 @@ public class BaseApi {
      * @return java.lang.String
      **/
     public String getAccessToken() {
-        long curTime = System.currentTimeMillis();
-        if (tokenCache.accessToken == null || curTime - tokenCache.tokenTime >= tokenCache.cacheTime ) {
+        String res = cache.asMap().get("AccessToken");
+        if (res == null) {
             OapiGettokenRequest request = new OapiGettokenRequest();
             request.setAppkey(APP_KEY);
             request.setAppsecret(APP_SECRET);
             request.setHttpMethod("GET");
+            res = executeRequestWithoutToken(request, "https://oapi.dingtalk.com/gettoken").getAccessToken();
 
-            OapiGettokenResponse response = executeRequestWithoutToken(request, "https://oapi.dingtalk.com/gettoken");
-
-            tokenCache.accessToken = response.getAccessToken();
-            tokenCache.tokenTime = System.currentTimeMillis();
-
-            log.info("重新获取 AccessToken");
+            log.info("重新获取 AccessToken 时间: {}", LocalDateTime.now());
+            cache.put("AccessToken", res);
         }
-        return tokenCache.accessToken;
+        return res;
     }
 
     /**
@@ -134,18 +134,16 @@ public class BaseApi {
      * @return java.lang.String
      **/
     public String getJsapiTicket() {
-        long curTime = System.currentTimeMillis();
-        if (tokenCache.jsapiTicket == null || curTime - tokenCache.ticketTime >= tokenCache.cacheTime) {
+        String res = cache.asMap().get("JsapiTicket");
+        if (res == null) {
             OapiGetJsapiTicketRequest request = new OapiGetJsapiTicketRequest();
             request.setTopHttpMethod("GET");
+            res = executeRequest(request, "https://oapi.dingtalk.com/get_jsapi_ticket").getTicket();
 
-            OapiGetJsapiTicketResponse response = executeRequest(request, "https://oapi.dingtalk.com/get_jsapi_ticket");
-            tokenCache.jsapiTicket = response.getTicket();
-            tokenCache.ticketTime = System.currentTimeMillis();
-
-            log.info("JsapiTicket 快要过期，重新获取");
+            cache.put("JsapiTicket", res);
+            log.info("重新获取 JsapiTicket 时间: {}", LocalDateTime.now());
         }
-        return tokenCache.jsapiTicket;
+        return res;
     }
 
     /**
