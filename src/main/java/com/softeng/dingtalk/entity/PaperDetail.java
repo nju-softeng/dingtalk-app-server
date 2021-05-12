@@ -28,15 +28,15 @@ public class PaperDetail {
     private double ac;
     @JsonIgnoreProperties("paperDetails")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Paper paper;
+    private InternalPaper internalPaper;
     @ManyToOne
     private User user;
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private AcRecord acRecord;
 
-    public PaperDetail(Paper paper, User user, int num) {
-        this.paper = paper;
+    public PaperDetail(InternalPaper internalPaper, User user, int num) {
+        this.internalPaper = internalPaper;
         this.user = user;
         this.num = num;
     }

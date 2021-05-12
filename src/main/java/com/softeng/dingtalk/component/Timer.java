@@ -2,10 +2,10 @@ package com.softeng.dingtalk.component;
 
 import com.softeng.dingtalk.api.MessageApi;
 import com.softeng.dingtalk.entity.ExternalPaper;
-import com.softeng.dingtalk.entity.Paper;
+import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.repository.ExternalPaperRepository;
-import com.softeng.dingtalk.repository.PaperRepository;
+import com.softeng.dingtalk.repository.InternalPaperRepository;
 import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.service.InitService;
 import com.softeng.dingtalk.service.VoteService;
@@ -34,7 +34,7 @@ public class Timer {
     @Autowired
     VoteService voteService;
     @Autowired
-    PaperRepository paperRepository;
+    InternalPaperRepository internalPaperRepository;
     @Autowired
     InitService initService;
     @Autowired
@@ -95,9 +95,9 @@ public class Timer {
                     title = externalPaper.getTitle();
                     url = new StringBuilder().append("/paper/ex-detail/").append(externalPaper.getId()).append("/vote").toString();
                 } else {
-                    Paper paper = paperRepository.findByVid(v.getId());
-                    title = paper.getTitle();
-                    url =new StringBuilder().append("/paper/in-detail/").append(paper.getId()).append("/vote").toString();
+                    InternalPaper internalPaper = internalPaperRepository.findByVid(v.getId());
+                    title = internalPaper.getTitle();
+                    url =new StringBuilder().append("/paper/in-detail/").append(internalPaper.getId()).append("/vote").toString();
                 }
 
                 String markdown = new StringBuilder().append(" #### 投票结果 \n ##### 论文： ").append(title)

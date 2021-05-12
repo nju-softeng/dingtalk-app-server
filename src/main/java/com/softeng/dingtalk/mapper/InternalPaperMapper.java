@@ -8,19 +8,19 @@ import java.util.List;
 
 /**
  * @author zhanyeye
- * @description Paper mybatis 映射器
+ * @description InternalPaper mybatis 映射器
  * @date 26/06/2020
  */
 @Repository
-public interface PaperMapper {
+public interface InternalPaperMapper {
     /**
      * 分页查询论文数据
      * @param offset
      * @param size
      * @return
      */
-    List<PaperInfoVO> listPaperInfo(int offset, int size);
+    List<PaperInfoVO> listInternalPaperInfo(int offset, int size);
 
-    @Select("select count(id) from paper")
+    @Select("select count(id) from internal_paper")
     Integer countPaper();
 }
