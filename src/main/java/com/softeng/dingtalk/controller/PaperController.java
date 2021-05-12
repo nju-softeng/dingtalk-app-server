@@ -2,11 +2,11 @@ package com.softeng.dingtalk.controller;
 
 
 import com.softeng.dingtalk.entity.ExternalPaper;
-import com.softeng.dingtalk.entity.Paper;
+import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.entity.Review;
 import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.repository.ExternalPaperRepository;
-import com.softeng.dingtalk.repository.PaperRepository;
+import com.softeng.dingtalk.repository.InternalPaperRepository;
 import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
@@ -40,7 +40,7 @@ public class PaperController {
     @Autowired
     VoteRepository voteRepository;
     @Autowired
-    PaperRepository paperRepository;
+    InternalPaperRepository internalPaperRepository;
 
 
     // ----------------------------------
@@ -82,7 +82,7 @@ public class PaperController {
     @PostMapping("/paper_result/{pid}")
     public void updateResult(@PathVariable int pid, @RequestBody Map<String, Boolean> map) {
         paperService.updatePaperResult(pid, map.get("data"));
-        Vote vote = paperRepository.findVoteById(pid);
+        Vote vote = internalPaperRepository.findVoteById(pid);
         voteService.computeVoteAc(vote, map.get("data"));
         // todo 发送论文消息
     }
@@ -105,7 +105,7 @@ public class PaperController {
      * @return
      */
     @GetMapping("/paper/{id}")
-    public Paper getPaper(@PathVariable int id) {
+    public InternalPaper getPaper(@PathVariable int id) {
         return paperService.getPaper(id);
     }
 
