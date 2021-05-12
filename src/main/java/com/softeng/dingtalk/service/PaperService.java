@@ -2,7 +2,7 @@ package com.softeng.dingtalk.service;
 
 
 import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.mapper.PaperMapper;
+import com.softeng.dingtalk.mapper.InternalPaperMapper;
 
 import com.softeng.dingtalk.repository.*;
 
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PaperService {
     @Autowired
-    PaperRepository paperRepository;
+    InternalPaperRepository internalPaperRepository;
     @Autowired
     PaperDetailRepository paperDetailRepository;
     @Autowired
@@ -51,7 +51,7 @@ public class PaperService {
     @Autowired
     ReviewRepository reviewRepository;
     @Autowired
-    PaperMapper paperMapper;
+    InternalPaperMapper internalPaperMapper;
     @Autowired
     ExternalPaperRepository externalPaperRepository;
 
@@ -61,11 +61,11 @@ public class PaperService {
      * @param vo
      */
     public void addPaper(PaperVO vo) {
-        Paper paper = new Paper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate());
-        paperRepository.save(paper);
+        InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate());
+        internalPaperRepository.save(internalPaper);
         List<PaperDetail> paperDetails = new ArrayList<>();
         for (AuthorVO author : vo.getAuthors()) {
-            PaperDetail pd = new PaperDetail(paper, new User(author.getUid()), author.getNum());
+            PaperDetail pd = new PaperDetail(internalPaper, new User(author.getUid()), author.getNum());
             paperDetails.add(pd);
         }
         paperDetailRepository.saveBatch(paperDetails);
@@ -78,16 +78,16 @@ public class PaperService {
      */
     @CacheEvict(value =  "authors_id" , key = "#paperVO.id")
     public void updatePaper(PaperVO paperVO) {
-        Paper paper = paperRepository.findById(paperVO.getId()).get();
-        paper.update(paperVO.getTitle(), paperVO.getJournal(), paperVO.getPaperType(), paperVO.getIssueDate());
+        InternalPaper internalPaper = internalPaperRepository.findById(paperVO.getId()).get();
+        internalPaper.update(paperVO.getTitle(), paperVO.getJournal(), paperVO.getPaperType(), paperVO.getIssueDate());
         // 更新
-        paperRepository.save(paper);
+        internalPaperRepository.save(internalPaper);
         // 删除旧的paperDetail
-        paperDetailRepository.deleteByPaper(paper);
+        paperDetailRepository.deleteByInternalPaper(internalPaper);
         // 重新添加paperDetail
         List<PaperDetail> paperDetails = new ArrayList<>();
         for (AuthorVO author : paperVO.getAuthors()) {
-            PaperDetail pd = new PaperDetail(paper, new User(author.getUid()), author.getNum());
+            PaperDetail pd = new PaperDetail(internalPaper, new User(author.getUid()), author.getNum());
             paperDetails.add(pd);
         }
         paperDetailRepository.saveBatch(paperDetails);
@@ -99,8 +99,8 @@ public class PaperService {
      * @param id
      */
     public void deletePaper(int id) {
-        paperDetailRepository.deleteByPaper(new Paper(id));
-        paperRepository.deleteById(id);
+        paperDetailRepository.deleteByInternalPaper(new InternalPaper(id));
+        internalPaperRepository.deleteById(id);
         reviewRepository.deleteByPaperid(id);
     }
 
@@ -112,24 +112,24 @@ public class PaperService {
      */
     public void updatePaperResult(int id, boolean result) {
 
-        Paper paper = paperRepository.findById(id).get();
+        InternalPaper internalPaper = internalPaperRepository.findById(id).get();
 
-        if (paper.getVote().getResult() == null || paper.getVote().getResult() == false) {
+        if (internalPaper.getVote().getResult() == null || internalPaper.getVote().getResult() == false) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
         }
         //更新指定 论文的结果
         if (result == true) {
-            paper.setResult(Paper.ACCEPT);
+            internalPaper.setResult(InternalPaper.ACCEPT);
         } else {
-            paper.setResult(Paper.REJECT);
+            internalPaper.setResult(InternalPaper.REJECT);
         }
 
-        paperRepository.save(paper);
+        internalPaperRepository.save(internalPaper);
 
         // 计算AC
         //获取论文奖励总AC
-        double sum = paperLevelRepository.getvalue(paper.getPaperType());
-        String reason = paper.getTitle();
+        double sum = paperLevelRepository.getvalue(internalPaper.getPaperType());
+        String reason = internalPaper.getTitle();
         if (result == false) {
             //如果被拒绝则扣分
             sum *= -0.5;
@@ -138,7 +138,7 @@ public class PaperService {
             reason += " Accept";
         }
         //获取论文参与者
-        List<PaperDetail> paperDetails = paperDetailRepository.findByPaper(new Paper(id));
+        List<PaperDetail> paperDetails = paperDetailRepository.findByInternalPaper(new InternalPaper(id));
 
         List<AcRecord> oldacRecords = paperDetails.stream().filter(x-> x.getAcRecord() != null).map(x-> x.getAcRecord()).collect(Collectors.toList());
         acRecordRepository.deleteAll(oldacRecords);
@@ -178,8 +178,8 @@ public class PaperService {
      */
     public Map listPaper(int page, int size) {
         int offset = (page - 1) * size;
-        List<PaperInfoVO> paperlist = paperMapper.listPaperInfo(offset, size);
-        int total = paperMapper.countPaper();
+        List<PaperInfoVO> paperlist = internalPaperMapper.listInternalPaperInfo(offset, size);
+        int total = internalPaperMapper.countPaper();
         return Map.of("list", paperlist, "total", total);
     }
 
@@ -189,10 +189,10 @@ public class PaperService {
      * @param id
      * @return
      */
-    public Paper getPaper(int id) {
-        Paper paper = paperRepository.findById(id).get();
-        paper.setPaperDetails(paperDetailRepository.findByPaper(paper));
-        return paper;
+    public InternalPaper getPaper(int id) {
+        InternalPaper internalPaper = internalPaperRepository.findById(id).get();
+        internalPaper.setPaperDetails(paperDetailRepository.findByInternalPaper(internalPaper));
+        return internalPaper;
     }
 
 
@@ -202,7 +202,7 @@ public class PaperService {
      * @return
      */
     public Vote getVoteByPid (int pid) {
-        return paperRepository.findVoteById(pid);
+        return internalPaperRepository.findVoteById(pid);
     }
 
 

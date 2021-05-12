@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
-public class Paper {
+public class InternalPaper {
     /**
      * 论文的投稿结果
      */
@@ -59,15 +59,15 @@ public class Paper {
     @JoinColumn(unique = true)
     private Vote vote;
 
-    @JsonIgnoreProperties("paper")
-    @OneToMany(mappedBy = "paper")
+    @JsonIgnoreProperties("internalPaper")
+    @OneToMany(mappedBy = "internalPaper")
     private List<PaperDetail> paperDetails;
 
-    public Paper(int id) {
+    public InternalPaper(int id) {
         this.id = id;
     }
 
-    public Paper(String title, String journal, PaperType paperType, LocalDate issueDate) {
+    public InternalPaper(String title, String journal, PaperType paperType, LocalDate issueDate) {
         this.title = title;
         this.journal = journal;
         this.paperType = paperType;
