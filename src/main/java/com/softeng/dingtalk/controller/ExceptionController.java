@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -77,4 +78,16 @@ public class ExceptionController {
         violations.forEach(v -> strBuilder.append(v.getMessage() + "; "));
         return Map.of("message", strBuilder.toString());
     }
+
+    /**
+     * 方法级参数校验失败异常
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(ResponseStatusException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map handleResponseStatusException(ResponseStatusException exception) {
+        return Map.of("message", exception.getMessage());
+    }
+
 }

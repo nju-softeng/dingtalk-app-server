@@ -104,26 +104,23 @@ public class PaperService {
         reviewRepository.deleteByPaperid(id);
     }
 
-
     /**
      * 更新内部论文投稿结果, 并计算ac
      * @param id
      * @param result
+     * @param updateDate
      */
-    public void updatePaperResult(int id, boolean result) {
+    public void updatePaperResult(int id, boolean result, LocalDate updateDate) {
 
         InternalPaper internalPaper = internalPaperRepository.findById(id).get();
 
         if (internalPaper.getVote().getResult() == null || internalPaper.getVote().getResult() == false) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
         }
-        //更新指定 论文的结果
-        if (result == true) {
-            internalPaper.setResult(InternalPaper.ACCEPT);
-        } else {
-            internalPaper.setResult(InternalPaper.REJECT);
-        }
 
+        //更新指定 论文的结果
+        internalPaper.setResult(result ? InternalPaper.ACCEPT : InternalPaper.REJECT);
+        internalPaper.setUpdateDate(updateDate);
         internalPaperRepository.save(internalPaper);
 
         // 计算AC

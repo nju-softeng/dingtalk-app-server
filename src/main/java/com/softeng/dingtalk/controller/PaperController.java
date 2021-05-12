@@ -11,6 +11,7 @@ import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.ExternalPaperVO;
+import com.softeng.dingtalk.vo.PaperResultVO;
 import com.softeng.dingtalk.vo.PaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,14 +78,13 @@ public class PaperController {
     /**
      * 论文参与者或审核人更新论文投稿结果
      * @param pid
-     * @param map
+     * @param vo
      */
     @PostMapping("/paper_result/{pid}")
-    public void updateResult(@PathVariable int pid, @RequestBody Map<String, Boolean> map) {
-        paperService.updatePaperResult(pid, map.get("data"));
+    public void updateResult(@PathVariable int pid, @RequestBody PaperResultVO vo) {
+        paperService.updatePaperResult(pid, vo.isResult(), vo.getUpdateDate());
         Vote vote = internalPaperRepository.findVoteById(pid);
-        voteService.computeVoteAc(vote, map.get("data"));
-        // todo 发送论文消息
+        voteService.computeVoteAc(vote, vo.isResult());
     }
 
 
