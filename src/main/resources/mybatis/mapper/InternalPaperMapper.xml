@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.softeng.dingtalk.mapper.PaperMapper">
+<mapper namespace="com.softeng.dingtalk.mapper.InternalPaperMapper">
 
 
     <!--  论文列表项数据  -->
@@ -23,7 +23,7 @@
     </resultMap>
 
 
-    <select id="listPaperInfo" resultMap="PaperInfo">
+    <select id="listInternalPaperInfo" resultMap="PaperInfo">
         SELECT
 	        p.id,
 	        p.title,
@@ -37,8 +37,8 @@
 	        v.status as v_status,
 	        v.result as v_result
         FROM
-	        (SELECT id, title, journal, issue_date, result, paper_type FROM paper ORDER BY id DESC LIMIT #{offset}, #{size}) p
-	        LEFT JOIN paper_detail pd on p.id = pd.paper_id
+	        (SELECT id, title, journal, issue_date, result, paper_type FROM internal_paper ORDER BY id DESC LIMIT #{offset}, #{size}) p
+	        LEFT JOIN paper_detail pd on p.id = pd.internal_paper_id
 	        LEFT JOIN user u on pd.user_id = u.id
 	        LEFT JOIN vote v on v.pid = p.id and v.external = false
 	    ORDER BY

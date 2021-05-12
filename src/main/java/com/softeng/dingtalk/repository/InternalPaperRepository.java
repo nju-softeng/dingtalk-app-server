@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.repository;
 
-import com.softeng.dingtalk.entity.Paper;
+import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.entity.Vote;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,14 +15,14 @@ import java.util.Map;
  * @date 2/5/2020
  */
 @Repository
-public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
+public interface InternalPaperRepository extends CustomizedRepository<InternalPaper, Integer> {
 
     /**
      * 根据id 获取论文title
      * @param id
      * @return
      */
-    @Query("select p.title from Paper p where p.id = :id")
+    @Query("select p.title from InternalPaper p where p.id = :id")
     String getPaperTitleById(@Param("id") int id);
 
     /**
@@ -30,7 +30,7 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
      * @param vid
      * @return
      */
-    @Query(value = "select p.id, p.title from paper p where p.vote_id = :vid", nativeQuery = true)
+    @Query(value = "select p.id, p.title from internal_paper p where p.vote_id = :vid", nativeQuery = true)
     Map<String, Object> getPaperInfo(@Param("vid") int vid);
 
     /**
@@ -38,8 +38,8 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
      * @param vid
      * @return
      */
-    @Query("select p from Paper p where p.vote.id = :vid")
-    Paper findByVid(int vid);
+    @Query("select p from InternalPaper p where p.vote.id = :vid")
+    InternalPaper findByVid(int vid);
 
     /**
      * 发起论文投票时，更新论文记录
@@ -47,7 +47,7 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
      * @param vid
      */
     @Modifying
-    @Query(value = "update paper set vote_id = :vid where id = :id", nativeQuery = true)
+    @Query(value = "update internal_paper set vote_id = :vid where id = :id", nativeQuery = true)
     void updatePaperVote(@Param("id") int id, @Param("vid") int vid);
 
     /**
@@ -55,7 +55,7 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
      * @param id
      * @return
      */
-    @Query("select p.vote.id from Paper p where p.id = :id")
+    @Query("select p.vote.id from InternalPaper p where p.id = :id")
     Integer findVidById(@Param("id") int id);
 
     /**
@@ -63,7 +63,7 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
      * @param id
      * @return
      */
-    @Query("select p.vote from  Paper p where p.id = :id")
+    @Query("select p.vote from InternalPaper p where p.id = :id")
     Vote findVoteById(@Param("id") int id);
 
 
@@ -73,7 +73,7 @@ public interface PaperRepository extends CustomizedRepository<Paper, Integer> {
      * @param result
      */
     @Modifying
-    @Query("update Paper set result = :result where id = :id")
+    @Query("update InternalPaper set result = :result where id = :id")
     void updatePaperResult(int id, int result);
 
 

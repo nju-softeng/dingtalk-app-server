@@ -25,7 +25,7 @@ public class NotifyService {
     @Autowired
     MessageRepository messageRepository;
     @Autowired
-    PaperRepository paperRepository;
+    InternalPaperRepository internalPaperRepository;
     @Autowired
     AcRecordRepository acRecordRepository;
     @Autowired
@@ -81,10 +81,10 @@ public class NotifyService {
      * @param result
      */
     public void paperAcMessage(int pid, boolean result) {
-        Paper paper = paperRepository.findById(pid).get();
-        String papertitel = paper.getTitle();
+        InternalPaper internalPaper = internalPaperRepository.findById(pid).get();
+        String papertitel = internalPaper.getTitle();
         int len = 20 < papertitel.length() ? 20 : papertitel.length();
-        for (PaperDetail pd : paper.getPaperDetails()) {
+        for (PaperDetail pd : internalPaper.getPaperDetails()) {
            //double acsum = acRecordRepository.getUserAcSum(pd.getUser().getId());
             String title = "论文: " + papertitel.substring(0, len) + (result ? "... 投稿成功":"... 投稿失败");
             String content = "AC: " + pd.getAc();
@@ -108,8 +108,8 @@ public class NotifyService {
             papertitel = "外部评审：" + externalPaper.getTitle();
         } else {
             // 如果是内部评审
-            Paper paper = paperRepository.findByVid(vid);
-            papertitel = "内部评审：" + paper.getTitle();
+            InternalPaper internalPaper = internalPaperRepository.findByVid(vid);
+            papertitel = "内部评审：" + internalPaper.getTitle();
         }
         String title;
         String content;

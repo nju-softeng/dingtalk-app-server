@@ -38,7 +38,7 @@ public class VoteService {
     @Autowired
     VoteDetailRepository voteDetailRepository;
     @Autowired
-    PaperRepository paperRepository;
+    InternalPaperRepository internalPaperRepository;
     @Autowired
     PaperDetailRepository paperDetailRepository;
     @Autowired
@@ -81,9 +81,9 @@ public class VoteService {
         Vote vote = new Vote(LocalDateTime.now() ,LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
 
         voteRepository.save(vote);
-        paperRepository.updatePaperVote(voteVO.getPaperid(), vote.getId());
+        internalPaperRepository.updatePaperVote(voteVO.getPaperid(), vote.getId());
         // 发送投票信息
-        String title = paperRepository.getPaperTitleById(voteVO.getPaperid());
+        String title = internalPaperRepository.getPaperTitleById(voteVO.getPaperid());
         List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
 
 
@@ -143,9 +143,9 @@ public class VoteService {
         if (!v.isExternal()) {
             // 如果是内部评审投票
             if (result == false) {
-                paperRepository.updatePaperResult(v.getPid(), Paper.NOTPASS);
+                internalPaperRepository.updatePaperResult(v.getPid(), InternalPaper.NOTPASS);
             } else {
-                paperRepository.updatePaperResult(v.getPid(), Paper.REVIEWING);
+                internalPaperRepository.updatePaperResult(v.getPid(), InternalPaper.REVIEWING);
             }
         }
 
@@ -263,8 +263,8 @@ public class VoteService {
         totalIds.removeAll(votedIds);
 
         if (isExternal == false) {
-            Paper paper = paperRepository.findByVid(vid);
-            Set<Integer> authorids = paperService.listAuthorid(paper.getId());
+            InternalPaper internalPaper = internalPaperRepository.findByVid(vid);
+            Set<Integer> authorids = paperService.listAuthorid(internalPaper.getId());
             totalIds.removeAll(authorids);
         }
 
@@ -310,7 +310,7 @@ public class VoteService {
             if (vote.isExternal()) {
                 title = externalPaperRepository.findByVid(vote.getId()).getTitle();
             } else {
-                title = paperRepository.findByVid(vote.getId()).getTitle();
+                title = internalPaperRepository.findByVid(vote.getId()).getTitle();
             }
 
 
