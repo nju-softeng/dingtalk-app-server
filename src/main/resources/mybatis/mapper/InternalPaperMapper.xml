@@ -12,7 +12,7 @@
         <result column="journal" property="journal"/>
         <result column="result" property="result"/>
         <result column="paper_type" property="paperType"/>
-        <result column="issue_date" property="issueDate"/>
+        <result column="update_date" property="issueDate"/>
         <result column="v_status" property="v_status"/>
         <result column="v_result" property="v_result"/>
         <collection property="authors" ofType="com.softeng.dingtalk.vo.AuthorVO" >
@@ -28,7 +28,7 @@
 	        p.id,
 	        p.title,
 	        p.journal,
-	        p.issue_date,
+	        p.update_date,
 	        p.result,
 	        p.paper_type,
 	        u.id as uid,
@@ -37,7 +37,7 @@
 	        v.status as v_status,
 	        v.result as v_result
         FROM
-	        (SELECT id, title, journal, issue_date, result, paper_type FROM internal_paper ORDER BY id DESC LIMIT #{offset}, #{size}) p
+	        (SELECT id, title, journal, update_date, result, paper_type FROM internal_paper ORDER BY id DESC LIMIT #{offset}, #{size}) p
 	        LEFT JOIN paper_detail pd on p.id = pd.internal_paper_id
 	        LEFT JOIN user u on pd.user_id = u.id
 	        LEFT JOIN vote v on v.pid = p.id and v.external = false
