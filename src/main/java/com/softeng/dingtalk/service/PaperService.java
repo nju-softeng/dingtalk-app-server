@@ -305,8 +305,9 @@ public class PaperService {
      * 更新外部论文投稿结果
      * @param id
      * @param result
+     * @param updateDate
      */
-    public void updateExPaperResult(int id, boolean result) {
+    public void updateExPaperResult(int id, boolean result, LocalDate updateDate) {
         ExternalPaper externalPaper = externalPaperRepository.findById(id).get();
 
         if (externalPaper.getVote().getResult() == null) {
@@ -315,6 +316,7 @@ public class PaperService {
 
         //更新论文的结果
         externalPaper.setResult(result);
+        externalPaper.setUpdateDate(updateDate);
         externalPaperRepository.save(externalPaper);
     }
 
