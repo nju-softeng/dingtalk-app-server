@@ -37,7 +37,7 @@ public class InternalPaper {
     private String journal;
 
     /**
-     * 出刊时间
+     * 更新时间
      */
     private LocalDate updateDate;
 

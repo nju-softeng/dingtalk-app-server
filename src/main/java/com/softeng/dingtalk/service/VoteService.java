@@ -294,7 +294,7 @@ public class VoteService {
      * @param vote
      * @param result
      */
-    public void computeVoteAc(Vote vote, boolean result) {
+    public void computeVoteAc(Vote vote, boolean result, LocalDateTime dateTime) {
         if (vote != null) {
             List<VoteDetail> voteDetails = voteDetailRepository.listByVid(vote.getId());
             List<AcRecord> acRecords = new ArrayList<>();
@@ -306,7 +306,6 @@ public class VoteService {
 
             // todo 修复 bug
             String title;
-
             if (vote.isExternal()) {
                 title = externalPaperRepository.findByVid(vote.getId()).getTitle();
             } else {
@@ -321,6 +320,7 @@ public class VoteService {
                 } else {
                     acRecord = new AcRecord(vd.getUser(), -1, "投票预测错误：" + title, AcRecord.VOTE);
                 }
+                acRecord.setCreateTime(dateTime);
                 vd.setAcRecord(acRecord);
                 acRecords.add(acRecord);
             }
@@ -330,8 +330,7 @@ public class VoteService {
             // 发送消息
             notifyService.voteAcMessage(vote.getId(), result);
             // 计算助研金
-            LocalDate date = LocalDate.now();
-            int yearmonth = date.getYear() * 100 + date.getMonthValue();
+            int yearmonth = dateTime.getYear() * 100 + dateTime.getMonthValue();
             for (VoteDetail vd : voteDetails) {
                 performanceService.computeSalary(vd.getUser().getId() , yearmonth);
             }

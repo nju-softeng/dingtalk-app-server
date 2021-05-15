@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +85,7 @@ public class PaperController {
     public void updateResult(@PathVariable int pid, @RequestBody PaperResultVO vo) {
         paperService.updatePaperResult(pid, vo.isResult(), vo.getUpdateDate());
         Vote vote = internalPaperRepository.findVoteById(pid);
-        voteService.computeVoteAc(vote, vo.isResult());
+        voteService.computeVoteAc(vote, vo.isResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8, 0)));
     }
 
 
@@ -258,12 +259,12 @@ public class PaperController {
      * @param map
      */
     @PostMapping("/ex-paper_result/{pid}")
-    public void updateExPaperResult(@PathVariable int pid, @RequestBody Map<String, Boolean> map) {
+    public void updateExPaperResult(@PathVariable int pid, @RequestBody PaperResultVO vo) {
         // 更新论文记录
-        paperService.updateExPaperResult(pid, map.get("data"));
+        paperService.updateExPaperResult(pid, vo.isResult(), vo.getUpdateDate());
         Vote vote = externalPaperRepository.findVoteById(pid);
         // 更具投票结果计算，投票人的ac值
-        voteService.computeVoteAc(vote, map.get("data"));
+        voteService.computeVoteAc(vote, vo.isResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8,0)));
         // todo 发送论文消息
     }
 
