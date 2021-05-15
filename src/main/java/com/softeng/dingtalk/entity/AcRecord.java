@@ -31,7 +31,7 @@ public class AcRecord {
     private double ac;
     private String reason;
     private int classify;
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = true)
     private LocalDateTime createTime;
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;

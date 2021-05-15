@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 /**
  * @description:
@@ -31,6 +32,11 @@ public class ExternalPaper {
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(unique = true)
     private Vote vote;
+
+    /**
+     * 更新时间
+     */
+    private LocalDate updateDate;
 
     public ExternalPaper(String title) {
         this.title = title;
