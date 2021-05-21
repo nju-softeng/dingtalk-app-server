@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
-public class InternalPaper {
+public class InternalPaper implements Paper {
     /**
      * 论文的投稿结果
      */
@@ -81,5 +81,8 @@ public class InternalPaper {
         this.updateDate = issueDate;
     }
 
-
+    @Override
+    public boolean isExternal() {
+        return false;
+    }
 }
