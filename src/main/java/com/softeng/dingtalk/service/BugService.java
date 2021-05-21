@@ -118,14 +118,11 @@ public class BugService {
             acRecordRepository.saveAll(acRecords);
             bugDetailRepository.saveAll(bugDetails);
 
-            // todo 发送消息
+            // 发送消息
             notifyService.bugMessage(acRecords);
-            LocalDate date = LocalDate.now();
-            int yearmonth = date.getYear() * 100 + date.getMonthValue();
-            for (AcRecord a : acRecords) {
-                performanceService.computeSalary(a.getUser().getId(), yearmonth);
-            }
 
+            // 更新绩效
+            acRecords.forEach(a -> performanceService.computeSalary(a.getUser().getId(), LocalDate.now()));
 
         }
     }

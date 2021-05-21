@@ -268,10 +268,6 @@ public class VoteService {
             totalIds.removeAll(authorids);
         }
 
-
-
-
-
         //totalIds.removeAll(alumniids);
 
         // 3. 通过为投票用户id集合去查询用户姓名
@@ -288,6 +284,23 @@ public class VoteService {
 
     }
 
+    /**
+     * 生成投票的ac记录
+     * @param title
+     * @param user
+     * @param isRight
+     * @param dateTime
+     * @return
+     */
+    private AcRecord generateAcRecord(String title, User user, boolean isRight, LocalDateTime dateTime) {
+        return AcRecord.builder()
+                .user(user)
+                .ac(isRight ? 1 : -1)
+                .classify(AcRecord.VOTE)
+                .reason((isRight ? "投票预测正确：" : "投票预测错误：") + title)
+                .createTime(dateTime)
+                .build();
+    }
 
     /**
      * 根据论文最终结果计算投票者的ac
@@ -295,57 +308,38 @@ public class VoteService {
      * @param result
      */
     public void computeVoteAc(Vote vote, boolean result, LocalDateTime dateTime) {
-        if (vote != null) {
-            List<VoteDetail> voteDetails = voteDetailRepository.listByVid(vote.getId());
-            List<AcRecord> acRecords = new ArrayList<>();
+        if (vote == null) throw new RuntimeException("未发起投票");
 
-            List<AcRecord> oldAcRecord = Optional.ofNullable(voteDetails).map(List::stream).orElseGet(Stream::empty)
-                    .filter(x -> x.getAcRecord() != null).map(x -> x.getAcRecord()).collect(Collectors.toList());
-            // 删除旧的 acRecord
-            acRecordRepository.deleteAll(oldAcRecord);
+        List<VoteDetail> voteDetails = voteDetailRepository.listByVid(vote.getId());
 
-            // todo 修复 bug
-            String title;
-            if (vote.isExternal()) {
-                title = externalPaperRepository.findByVid(vote.getId()).getTitle();
-            } else {
-                title = internalPaperRepository.findByVid(vote.getId()).getTitle();
-            }
+        // 删除旧的 acRecord
+        List<AcRecord> oldAcRecords = Optional.ofNullable(voteDetails).orElse(new ArrayList<>()).stream()
+                .filter(x -> x.getAcRecord() != null)
+                .map(x -> x.getAcRecord())
+                .collect(Collectors.toList());
+        acRecordRepository.deleteAll(oldAcRecords);
 
 
-            for (VoteDetail vd : voteDetails) {
-                AcRecord acRecord;
-                if (vd.getResult() == result) {
-                    acRecord = new AcRecord(vd.getUser(), 1, "投票预测正确：" + title, AcRecord.VOTE);
-                } else {
-                    acRecord = new AcRecord(vd.getUser(), -1, "投票预测错误：" + title, AcRecord.VOTE);
-                }
-                acRecord.setCreateTime(dateTime);
-                vd.setAcRecord(acRecord);
-                acRecords.add(acRecord);
-            }
-            acRecordRepository.saveAll(acRecords);
-            voteDetailRepository.saveAll(voteDetails);
+        Paper paper = vote.isExternal() ? externalPaperRepository.findByVid(vote.getId()) : internalPaperRepository.findByVid(vote.getId());
+        if (paper == null) throw new RuntimeException("投票对应的论文不存在，请联系开发者");
 
-            // 发送消息
-            notifyService.voteAcMessage(vote.getId(), result);
-            // 计算助研金
-            int yearmonth = dateTime.getYear() * 100 + dateTime.getMonthValue();
-            for (VoteDetail vd : voteDetails) {
-                performanceService.computeSalary(vd.getUser().getId() , yearmonth);
-            }
+        // 重新计算投票者的 acRecord
+        List<AcRecord> acRecords = new ArrayList<>();
+        voteDetails.forEach(vd -> {
+            AcRecord acRecord = generateAcRecord(paper.getTitle(), vd.getUser(), vd.getResult() == result, dateTime);
+            vd.setAcRecord(acRecord);
+            acRecords.add(acRecord);
+        });
 
-        } else {
-            throw new RuntimeException("未发起投票");
-        }
+        // 将数据保存到数据库
+        acRecordRepository.saveAll(acRecords);
+        voteDetailRepository.saveAll(voteDetails);
 
+        // 发送消息
+        notifyService.voteAcMessage(vote.getId(), result);
+
+        // 计算助研金
+        voteDetails.forEach(vd -> performanceService.computeSalary(vd.getUser().getId() , dateTime.toLocalDate()));
     }
-
-
-    //--------------------------------------------
-    //  外部论文评审相关操作
-    //--------------------------------------------
-
-
 
 }
