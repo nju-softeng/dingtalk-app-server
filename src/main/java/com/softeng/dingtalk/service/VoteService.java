@@ -319,11 +319,11 @@ public class VoteService {
                 .collect(Collectors.toList());
         acRecordRepository.deleteAll(oldAcRecords);
 
-        // 重新计算投票者的 acRecord
-        Paper paper = vote.isExternal() ? externalPaperRepository.findByVid(vote.getId()) : internalPaperRepository.findByVid(vote.getId());
 
+        Paper paper = vote.isExternal() ? externalPaperRepository.findByVid(vote.getId()) : internalPaperRepository.findByVid(vote.getId());
         if (paper == null) throw new RuntimeException("投票对应的论文不存在，请联系开发者");
 
+        // 重新计算投票者的 acRecord
         List<AcRecord> acRecords = new ArrayList<>();
         voteDetails.forEach(vd -> {
             AcRecord acRecord = generateAcRecord(paper.getTitle(), vd.getUser(), vd.getResult() == result, dateTime);
@@ -339,13 +339,7 @@ public class VoteService {
         notifyService.voteAcMessage(vote.getId(), result);
 
         // 计算助研金
-        int yearmonth = dateTime.getYear() * 100 + dateTime.getMonthValue();
-        voteDetails.forEach(vd -> {
-            performanceService.computeSalary(vd.getUser().getId() , yearmonth);
-        });
+        voteDetails.forEach(vd -> performanceService.computeSalary(vd.getUser().getId() , dateTime.toLocalDate()));
     }
-
-
-
 
 }

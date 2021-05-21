@@ -400,11 +400,7 @@ public class IterationService {
         // 发送消息
         notifyService.autoSetProjectAcMessage(acRecords);
         // 计算助研金
-        LocalDate date = LocalDate.now();
-        int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        for (AcRecord ac : acRecords) {
-            performanceService.computeSalary(ac.getUser().getId(), yearmonth);
-        }
+        acRecords.forEach(ac -> performanceService.computeSalary(ac.getUser().getId(), LocalDate.now()));
 
     }
 
@@ -457,11 +453,7 @@ public class IterationService {
         // 发送消息
         notifyService.manualSetProjectAcMessage(acRecords);
         // 计算助研金
-        LocalDate date = LocalDate.now();
-        int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        for (AcRecord ac : acRecords) {
-            performanceService.computeSalary(ac.getUser().getId(), yearmonth);
-        }
+        acRecords.forEach(ac -> performanceService.computeSalary(ac.getUser().getId(), LocalDate.now()));
 
         return acRecords;
     }

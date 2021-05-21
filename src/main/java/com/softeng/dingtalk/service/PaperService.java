@@ -159,12 +159,7 @@ public class PaperService {
         // 发送消息
         notifyService.paperAcMessage(id, result);
         // 计算助研金
-        LocalDate date = LocalDate.now();
-        int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        for (PaperDetail pd : paperDetails) {
-            performanceService.computeSalary(pd.getUser().getId(), yearmonth);
-        }
-
+        paperDetails.forEach(pd -> performanceService.computeSalary(pd.getUser().getId(), LocalDate.now()));
     }
 
 
