@@ -299,10 +299,12 @@ public class VoteService {
             List<VoteDetail> voteDetails = voteDetailRepository.listByVid(vote.getId());
             List<AcRecord> acRecords = new ArrayList<>();
 
-            List<AcRecord> oldAcRecord = Optional.ofNullable(voteDetails).map(List::stream).orElseGet(Stream::empty)
-                    .filter(x -> x.getAcRecord() != null).map(x -> x.getAcRecord()).collect(Collectors.toList());
+            List<AcRecord> oldAcRecords = Optional.ofNullable(voteDetails)
+                    .orElse(new ArrayList<>()).stream().filter(x -> x.getAcRecord() != null).map(x -> x.getAcRecord())
+                    .collect(Collectors.toList());
+
             // 删除旧的 acRecord
-            acRecordRepository.deleteAll(oldAcRecord);
+            acRecordRepository.deleteAll(oldAcRecords);
 
             // todo 修复 bug
             String title;

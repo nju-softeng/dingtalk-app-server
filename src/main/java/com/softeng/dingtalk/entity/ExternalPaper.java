@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ExternalPaper {
+public class ExternalPaper implements Paper {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -40,5 +40,10 @@ public class ExternalPaper {
 
     public ExternalPaper(String title) {
         this.title = title;
+    }
+
+    @Override
+    public boolean isExternal() {
+        return true;
     }
 }
