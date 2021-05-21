@@ -4,6 +4,7 @@ import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.enums.PaperType;
+import com.softeng.dingtalk.repository.InternalPaperRepository;
 import com.softeng.dingtalk.service.VoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -22,10 +23,13 @@ public class DingtalkApplicationTests {
 
     @Autowired
     VoteService voteService;
+    @Autowired
+    InternalPaperRepository internalPaperRepository;
 
     @Test
     public void test() {
-        voteService.computeVoteAc(new Vote(1001), true, LocalDateTime.now());
+        Vote vote = internalPaperRepository.findVoteById(12);
+        voteService.computeVoteAc(vote,true, LocalDateTime.now());
     }
 
     @Test
