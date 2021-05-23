@@ -7,24 +7,8 @@
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
 
-GET http://localhost:8080/api/application/latestAuditor/7
-token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
-
-###
-
-
-GET http://localhost:8080/api/dcsummary/202001
-token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
-
-###
-
-GET http://localhost:8080/api/application/page/1/5
-token: c7d8fc96e3cd17db2ba7614339db8f725fba3fadf02e391ab848a415aafc4338198a45802cf409bdd94fec1e10f7bfe1
-
-
-###
-
-POST http://localhost:8080/api/getdate
+# 返回请求中的时间是本月第几周
+POST http://localhost:8080/api/date_code
 token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
 Content-Type: application/json
 
@@ -32,46 +16,55 @@ Content-Type: application/json
 
 ###
 
-# 用户提交周绩效申请
+# 提交新的绩效申请
 POST http://localhost:8080/api/application
 token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
 Content-Type: application/json
 
 {
-  "dcRecord": {
-    "auditor": {
-      "id":1
-    },
-    "dvalue": 0.75,
-    "yearmonth": 202001,
-    "week": 5
-  },
+  "auditorid": 9,
+  "date": "2021-05-23",
+  "dvalue": 0.5,
   "acItems": [
-
+    {
+      "ac": 1,
+      "reason": "测试1111"
+    }
   ]
 }
 
 ###
 
-# 获取指定用户的周报
-GET http://localhost:8080/api/report/
-token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
 
-###
-
-# 分页获取指定用户的申请
-GET http://localhost:8080/api/application/5/page=1
+# 跟新已经提交的申请
+PUT http://localhost:8080/api/application/1310
 token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
 Content-Type: application/json
 
+{
+  "id": 1310,
+  "auditorid": 8,
+  "date": "2021-05-23",
+  "dvalue": 0.7,
+  "acItems": [
+    {
+      "ac": 2,
+      "reason": "测试2"
+    }
+  ]
+}
+
 ###
 
-# 分页获取指定用户的申请
-GET http://localhost:8080/api/application/1/page/0
-token: e7effab3c1171cb851869125383974fe94314492df0357ca5c843c6b64826124bee59555fcc4b851acd295d64de7d1fb
-Content-Type: application/json
+# 用户分页查询已提交的申请
+GET http://localhost:8080/api/application/page/1/size/10
+token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
 
 ###
 
+# 查询申请人最近一次绩效申请的审核人是谁
+GET http://localhost:8080/api/application/recent_auditor/5
+token: 49c17292b0d3a5ff67400899c4928a75661578d716edd6b2756fd25a5e2a407784f3fb679be9834a8d5a0f8d11015116
 
+###
 

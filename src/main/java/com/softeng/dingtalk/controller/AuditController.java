@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.component.Utils;
+import com.softeng.dingtalk.component.DateUtils;
 import com.softeng.dingtalk.api.ReportApi;
 import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.service.AuditService;
@@ -34,7 +34,7 @@ public class AuditController {
     @Autowired
     UserService userService;
     @Autowired
-    Utils utils;
+    DateUtils dateUtils;
     @Autowired
     NotifyService notifyService;
 
@@ -101,9 +101,9 @@ public class AuditController {
      */
     @PostMapping("/audit/checked/date")
     public List<CheckedVO> listCheckedByDate(@RequestAttribute int uid, @RequestBody Map<String, LocalDate> map) {
-        int[] date = utils.getTimeFlag(map.get("date"));
-        int yearmonth = date[0];
-        int week = date[1];
+        int dateCode = dateUtils.getDateCode(map.get("date"));
+        int yearmonth = dateCode / 10;
+        int week = dateCode % 10;
         return auditService.listCheckedByDate(uid, yearmonth, week);
     }
 

@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.component.Utils;
+import com.softeng.dingtalk.component.DateUtils;
 import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class ProjectService {
     @Autowired
     AcRecordRepository acRecordRepository;
     @Autowired
-    Utils utils;
+    DateUtils dateUtils;
     
 
     /**

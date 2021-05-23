@@ -35,9 +35,7 @@ public class EncryptorComponent {
         try {
             String json = objectMapper.writeValueAsString(payload);
             return Encryptors.text(secretKey, salt).encrypt(json);
-        } catch (JsonProcessingException e) {
-
-        }
+        } catch (JsonProcessingException e) {}
         return null;
     }
 

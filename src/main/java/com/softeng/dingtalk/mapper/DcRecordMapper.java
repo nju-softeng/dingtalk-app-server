@@ -35,6 +35,6 @@ public interface DcRecordMapper {
     * @param uid 申请人id
     * @return
     */
-   UserVO findLatestAuditorByApplicantId(int uid);
+   UserVO getRecentAuditorByApplicantId(int uid);
 }
 

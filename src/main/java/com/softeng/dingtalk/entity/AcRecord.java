@@ -53,10 +53,11 @@ public class AcRecord {
         this.classify = classify;
     }
 
-    public AcRecord(DcRecord dcRecord, AcItem acItem) {
+    public AcRecord(DcRecord dcRecord, AcItem acItem, LocalDateTime createTime) {
         this.ac = acItem.getAc();
         this.reason = acItem.getReason();
         this.user = dcRecord.getApplicant();
         this.auditor = dcRecord.getAuditor();
+        this.createTime = createTime;
     }
 }
