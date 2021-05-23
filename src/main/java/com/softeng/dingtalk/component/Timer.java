@@ -2,7 +2,6 @@ package com.softeng.dingtalk.component;
 
 import com.softeng.dingtalk.api.MessageApi;
 import com.softeng.dingtalk.entity.ExternalPaper;
-import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.repository.ExternalPaperRepository;
@@ -16,9 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -86,8 +83,15 @@ public class Timer {
             String url = generateVoteDetailUrl(paper.isExternal(), paper.getId());
             String markdown = voteResultInfo(paper.getTitle(), v.getResult(), v.getAccept(), v.getTotal());
             messageApi.sendActionCard("投票结果", markdown, "查看详情", url);
-
         });
+    }
+
+    /**
+     * 每月1日3点执行 initDcDummary 方法
+     */
+    @Scheduled(cron = "0 0 3 1 * ?")
+    public void initMonthlyDcSummary() {
+        initService.initDcSummary();
     }
 
     /**
@@ -124,14 +128,6 @@ public class Timer {
      */
     private String startVoteInfo(String title, LocalDateTime dateTime) {
         return " #### 投票 \n ##### 论文： " + title + " \n 截止时间: " + dateTime.toLocalTime().toString();
-    }
-
-    /**
-     * 每月1日3点执行 initDcDummary 方法
-     */
-    @Scheduled(cron = "0 0 3 1 * ?")
-    public void initMonthlyDcSummary() {
-        initService.initDcSummary();
     }
 
 }

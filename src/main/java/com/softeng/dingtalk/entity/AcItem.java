@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * @author zhanyeye
@@ -27,6 +28,7 @@ public class AcItem {
     private double ac;
     private String reason;
     private boolean status;
+
     /**
      * ac申请属于的周绩效申请
      * 设置many端对one端延时加载，仅需要其ID
@@ -38,4 +40,9 @@ public class AcItem {
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private AcRecord acRecord;
+
+    public AcItem(String reason, double ac) {
+        this.reason = reason;
+        this.ac = ac;
+    }
 }

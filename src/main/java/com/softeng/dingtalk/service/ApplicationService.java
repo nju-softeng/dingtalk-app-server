@@ -1,10 +1,9 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.component.Utils;
+import com.softeng.dingtalk.component.DateUtils;
 import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.DcRecord;
-import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.mapper.DcRecordMapper;
 import com.softeng.dingtalk.repository.AcItemRepository;
 import com.softeng.dingtalk.repository.AcRecordRepository;
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -38,116 +38,78 @@ public class ApplicationService {
     @Autowired
     AcItemRepository acItemRepository;
     @Autowired
-    Utils utils;
+    AcRecordRepository acRecordRepository;
     @Autowired
     DcRecordMapper dcRecordMapper;
-    @Autowired
-    AcRecordRepository acRecordRepository;
     @Autowired
     AuditService auditService;
     @Autowired
     NotifyService notifyService;
+    @Autowired
+    DateUtils dateUtils;
+
 
     /**
-     * 添加 / 更新 申请
-     * @param vo
-     * @param uid
-     * @return
+     * 添加新的绩效申请
+     * @param vo 申请信息的值对象
+     * @param uid 申请人的id
      */
-    public void submitApplication(ApplyVO vo, int uid) {
-        // 获取申请时间的时间标志, 数组大小为2, result[0]: yearmonth, result[1] week
-        int[] result = utils.getTimeFlag(vo.getDate());
-        int dateCode = utils.getTimeCode(vo.getDate());
+    public void addApplication(ApplyVO vo, int uid) {
+        int dateCode = dateUtils.getDateCode(vo.getDate());
+        // 确保一周只能向同一审核人提交一次申请
+        assertException(uid, vo.getAuditorid(), vo.getId(), dateCode);
+        // 判断是否在指定时间申请
+        assertTimeException(vo.getDate());
+        DcRecord dc = new DcRecord(uid, vo, dateCode);
+        dcRecordRepository.save(dc);
 
-        // 断言 确保一周只能向审核人提交一次
-        assertException(uid, vo.getAuditorid(), vo.getId(), result[0], result[1]);
-
-        if (vo.getId() == 0) {
-            // 提交的是新的申请
-
-            assertTimeException(vo.getDate());
-
-            DcRecord dc = DcRecord.builder().applicant(new User(uid)).auditor(new User(vo.getAuditorid()))
-                    .dvalue(vo.getDvalue()).ac(vo.getAc()).weekdate(vo.getDate()).yearmonth(result[0])
-                    .week(result[1]).dateCode(dateCode).build();
-            dcRecordRepository.save(dc);
-            for (AcItem acItem : vo.getAcItems()) {
-                // 持久化ac申请，并将绩效申请作为外键
-                acItem.setDcRecord(dc);
-            }
-            acItemRepository.saveAll(vo.getAcItems());
-        } else {
-            DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
-            dc.reApply(vo.getAuditorid(), vo.getDvalue(), vo.getDate(), result[0], result[1], dateCode);
-            dcRecordRepository.save(dc);
-            // 强制存入数据库
-            dcRecordRepository.flush();
-            //删除之前的记录
-            acItemRepository.deleteByDcRecord(dc);
-            for (AcItem acItem : vo.getAcItems()) {
-                acItem.setDcRecord(dc);
-            }
-            acItemRepository.saveAll(vo.getAcItems());
-        }
+        // 持久化ac申请，并将绩效申请作为外键
+        vo.getAcItems().forEach(acItem -> acItem.setDcRecord(dc));
+        acItemRepository.saveAll(vo.getAcItems());
     }
 
 
     /**
-     * 审核人填写个人绩效不用审核
+     * 更新已提交的绩效申请
+     * @param vo 申请信息包装对象
+     * @param uid 申请人的id
+     */
+    public void updateApplication(ApplyVO vo, int uid) {
+        int dateCode = dateUtils.getDateCode(vo.getDate());
+        // 断言 确保一周只能向审核人提交一次
+        assertException(uid, vo.getAuditorid(), vo.getId(), dateCode);
+        DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
+        dc.reApply(vo.getAuditorid(), vo.getDvalue(), vo.getDate(), dateCode);
+        // 删除之前的acItems记录
+        acItemRepository.deleteByDcRecord(dc);
+        // 保存新的acItems记录
+        vo.getAcItems().forEach(acItem -> acItem.setDcRecord(dc));
+        acItemRepository.saveAll(vo.getAcItems());
+    }
+
+
+    /**
+     * 审核人添加新的绩效申请
      * @param vo
      * @param uid
      */
-    public void auditorSubmit(ApplyVO vo, int uid) {
-        // 获取申请时间的时间标志, 数组大小为2, result[0]: yearmonth, result[1] week
-        int[] result = utils.getTimeFlag(vo.getDate());
-        int dateCode = utils.getTimeCode(vo.getDate());
-
+    public void addApplicationByAuditor(ApplyVO vo, int uid) {
+        int dateCode = dateUtils.getDateCode(vo.getDate());
         // 断言 确保一周只能向审核人提交一次
-        assertException(uid, vo.getAuditorid(), vo.getId(), result[0], result[1]);
+        assertException(uid, vo.getAuditorid(), vo.getId(), dateCode);
+        assertTimeException(vo.getDate());
 
-        DcRecord dc;
-        if (vo.getId() == 0) {
-            // 提交新的申请
-
-            assertTimeException(vo.getDate());
-
-            dc = DcRecord.builder()
-                    .applicant(new User(uid))
-                    .auditor(new User(vo.getAuditorid()))
-                    .weekdate(vo.getDate())
-                    .yearmonth(result[0])
-                    .week(result[1])
-                    .dateCode(dateCode)
-                    .dvalue(vo.getDvalue())
-                    .cvalue(vo.getCvalue())
-                    .dc(vo.getCvalue() * vo.getDvalue())
-                    .status(true)
-                    .build();
-            dcRecordRepository.save(dc);
-        } else {
-            dc = dcRecordRepository.findById(vo.getId()).get();
-            dc.reApply(vo.getAuditorid(), vo.getDvalue(), vo.getDate(), result[0], result[1], dateCode);
-            dc.setCvalue(vo.getCvalue());
-            dc.setDc(vo.getDvalue() * vo.getCvalue());
-            dc.setStatus(true);
-            dcRecordRepository.save(dc);
-            // 删除旧的AcItems，
-            // 同时级联删除相关AcRecord !!!!!! 见AcItem实体类
-            acItemRepository.deleteByDcRecord(dc);
-        }
+        DcRecord dc = new DcRecord().setByAuditor(uid, vo, dateCode);
+        dcRecordRepository.save(dc);
+        dcRecordRepository.refresh(dc);
 
         // 持久化ac申请，并将绩效申请作为外键
-        double acSum = 0;
-        for (AcItem acItem : vo.getAcItems()) {
+        vo.getAcItems().forEach(acItem -> {
             acItem.setDcRecord(dc);
-            AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem));
+            AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem, dc.getInsertTime()));
             acItem.setAcRecord(acRecord);
-            acSum += acItem.getAc();
-        }
+        });
         acItemRepository.saveAll(vo.getAcItems());
-
-        // 设置总ac值
-        dc.setAc(acSum);
 
         // 更新dcsummary
         auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
@@ -155,15 +117,49 @@ public class ApplicationService {
         notifyService.updateDcMessage(dc);
     }
 
+
+    /**
+     * 审核人更新已提交的绩效申请
+     * @param vo
+     * @param uid
+     */
+    public void updateApplicationByAuditor(ApplyVO vo, int uid) {
+        int dateCode = dateUtils.getDateCode(vo.getDate());
+
+        // 断言 确保一周只能向审核人提交一次
+        assertException(uid, vo.getAuditorid(), vo.getId(), dateCode);
+
+        DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
+        dc.setByAuditor(uid, vo, dateCode);
+        dcRecordRepository.save(dc);
+
+        // 删除旧的AcItems，同时级联删除相关AcRecord:见AcItem实体类
+        acItemRepository.deleteByDcRecord(dc);
+
+        // 持久化ac申请，并将绩效申请作为外键
+        vo.getAcItems().forEach(acItem -> {
+            acItem.setDcRecord(dc);
+            AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem, dc.getInsertTime()));
+            acItem.setAcRecord(acRecord);
+        });
+        acItemRepository.saveAll(vo.getAcItems());
+
+        // 更新 dcsummary
+        auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
+        // 发送消息
+        notifyService.updateDcMessage(dc);
+    }
+
+
     /**
      * 判断提交的申请是否符合"一周只能向审核人提交一次"的要求
      * @param uid 申请者id
      * @param aid 审核人id
      * @param vid 提交的申请记录id
-     * @param yearmonth 申请所在年月
-     * @param week 申请所在周
      */
-    private void assertException(int uid, int aid, int vid, int yearmonth, int week) {
+    private void assertException(int uid, int aid, int vid, int dateCode) {
+        int yearmonth = dateCode / 10;
+        int week = dateCode % 10;
         // 是否本周已经提交记录，如果有则获得它的id，否则为null
         Integer hasExist = isExist(uid, aid, yearmonth, week);
         // 如果本周已经提交记录 && 不是对已提交的记录进行修改
@@ -173,17 +169,18 @@ public class ApplicationService {
         }
     }
 
+
     /**
      * 判断提交申请的时间是否符合要求
      * @param date
      */
     private void assertTimeException(LocalDate date) {
-//        long gap = date.until(LocalDate.now(), ChronoUnit.DAYS);
-//        if (gap > 10) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "过期一周不支持补登记！");
-//        } else if (gap < 0) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "选中的时间还没到，不可以穿越的 ~");
-//        }
+        long gap = date.until(LocalDate.now(), ChronoUnit.DAYS);
+        if (gap > 10) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "过期一周不支持补登记！");
+        } else if (gap < 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "选中的时间还没到，不可以穿越的 ~");
+        }
     }
 
 
@@ -203,24 +200,23 @@ public class ApplicationService {
 
     /**
      * 用户每周只能向同一审核人提交一个申请，判断数据库中是否已存在
-     * @param uid
-     * @param aid
-     * @param yearmonth
-     * @param week
+     * @param uid 申请人id
+     * @param aid 审核人id
+     * @param yearmonth 年月
+     * @param week 第几周
      * @return
      */
     public Integer isExist(int uid, int aid, int yearmonth, int week) {
         return dcRecordRepository.isExist(uid, aid, yearmonth, week);
     }
 
+
     /**
-     * 查询申请人最近一次绩效申请的审核人是谁
-     * @param aid 申请人id
-     * @return
+     * 查询申请人最近一次绩效申请提交给谁
+     * @param uid 申请人id
+     * @return 审核人信息的包装对象
      */
-    public UserVO findLatestAuditor(int aid) {
-        return dcRecordMapper.findLatestAuditorByApplicantId(aid);
+    public UserVO getRecentAuditor(int uid) {
+        return dcRecordMapper.getRecentAuditorByApplicantId(uid);
     }
-
-
 }

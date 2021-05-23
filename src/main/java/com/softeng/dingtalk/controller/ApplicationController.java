@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.component.Utils;
+import com.softeng.dingtalk.component.DateUtils;
 import com.softeng.dingtalk.repository.DcSummaryRepository;
 import com.softeng.dingtalk.service.ApplicationService;
 import com.softeng.dingtalk.service.AuditService;
@@ -31,35 +31,50 @@ public class ApplicationController {
     @Autowired
     UserService userService;
     @Autowired
-    Utils utils;
+    DateUtils dateUtils;
     @Autowired
     DcSummaryRepository dcSummaryRepository;
 
     /**
      * 返回请求中的时间是本月第几周
      * @param date
-     * @return int[] 数组大小为2，第一个时yearmonth, 第二个时week
+     * @return int[] 数组长度为 2，第一个元素表示：yearmonth, 第二个元素表示：week
      */
-    @PostMapping("/getdate")
-    public int[] getdate(@RequestBody LocalDate date) {
-        return utils.getTimeFlag(date);
+    @PostMapping("/date_code")
+    public int[] getDate(@RequestBody LocalDate date) {
+        int dateCode = dateUtils.getDateCode(date);
+        int yearmonth = dateCode / 10;
+        int week = dateCode % 10;
+        return new int[] {yearmonth, week};
     }
 
-
     /**
-     * 提交或更新dc申请
-     * @param uid
-     * @param vo
+     * 提交新的绩效申请
+     * @param uid 申请人的 id
+     * @param vo  申请的绩效内容
      */
     @PostMapping("/application")
-    public void submitApplication(@RequestAttribute int uid, @Valid @RequestBody ApplyVO vo) {
+    public void addApplication(@RequestAttribute int uid, @Valid @RequestBody ApplyVO vo) {
         if (userService.isAuditor(uid) && uid == vo.getAuditorid()) {
-            applicationService.auditorSubmit(vo, uid);
+            applicationService.addApplicationByAuditor(vo, uid);
         } else {
-            applicationService.submitApplication(vo, uid);
+            applicationService.addApplication(vo, uid);
         }
     }
 
+    /**
+     * 跟新已经提交的申请
+     * @param uid
+     * @param vo
+     */
+    @PutMapping("/application/{id}")
+    public void updateApplication(@RequestAttribute int uid, @Valid @RequestBody ApplyVO vo) {
+        if (userService.isAuditor(uid) && uid == vo.getAuditorid()) {
+            applicationService.updateApplicationByAuditor(vo, uid);
+        } else {
+            applicationService.updateApplication(vo, uid);
+        }
+    }
 
     /**
      * 用户分页查询已提交的申请
@@ -67,19 +82,19 @@ public class ApplicationController {
      * @param page
      * @return
      */
-    @GetMapping("/application/page/{page}/{size}")
+    @GetMapping("/application/page/{page}/size/{size}")
     public Map getUserApplication(@RequestAttribute int uid, @PathVariable int page, @PathVariable int size) {
         return applicationService.listDcRecord(uid, page, size);
     }
 
     /**
      * 查询申请人最近一次绩效申请的审核人是谁
-     * @param aid
+     * @param uid 申请人id
      * @return
      */
-    @GetMapping("/application/latestAuditor/{aid}")
-    public UserVO findLatestAuditor(@PathVariable int aid) {
-        return applicationService.findLatestAuditor(aid);
+    @GetMapping("/application/recent_auditor/{uid}")
+    public UserVO findLatestAuditor(@PathVariable int uid) {
+        return applicationService.getRecentAuditor(uid);
     }
 
 }
