@@ -63,7 +63,7 @@ public class AuditService {
             acItem.setDcRecord(dc);
             if (acItem.isStatus()) {
                 // ac申请被同意
-                AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem));
+                AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem, dc.getInsertTime()));
                 acItem.setAcRecord(acRecord);
             }
         }

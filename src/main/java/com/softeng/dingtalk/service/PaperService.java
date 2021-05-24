@@ -149,7 +149,7 @@ public class PaperService {
             } else {
                 ac = sum * rate[pd.getNum() - 1];
             }
-            AcRecord acRecord = new AcRecord(pd.getUser(), null, ac, reason, AcRecord.PAPER);
+            AcRecord acRecord = new AcRecord(pd.getUser(), null, ac, reason, AcRecord.PAPER, internalPaper.getUpdateDate().atTime(8,0));
             pd.setAc(ac);
             pd.setAcRecord(acRecord);
             acRecordRepository.save(acRecord);

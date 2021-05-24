@@ -110,7 +110,7 @@ public class BugService {
                     ac = - 0.1;
                     reason = "开发任务： " +  bug.getProject().getTitle() + " 存在bug, 为主要负责人";
                 }
-                acRecord = new AcRecord(u, auditor, ac, reason, AcRecord.BUG);
+                acRecord = new AcRecord(u, auditor, ac, reason, AcRecord.BUG, bug.getInsertTime());
                 acRecords.add(acRecord);
                 BugDetail bugDetail = new BugDetail(new Bug(vo.getId()), u, false, ac, acRecord);
                 bugDetails.add(bugDetail);
