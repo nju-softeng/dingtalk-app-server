@@ -2,12 +2,15 @@ package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.softeng.dingtalk.vo.ApplyVO;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author zhanyeye
@@ -17,6 +20,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@ToString
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
@@ -86,16 +90,51 @@ public class DcRecord {
 
     }
 
-    public void reApply(int authorid, double dvalue, LocalDate weekdate, int yearmonth, int week, int dateCode) {
+    public void reApply(int authorid, double dvalue, LocalDate weekdate, int dateCode) {
         this.auditor = new User(authorid);
         this.dvalue = dvalue;
         this.weekdate = weekdate;
         this.status = false;
-        this.yearmonth = yearmonth;
-        this.week = week;
+        this.yearmonth = dateCode / 10;
+        this.week = dateCode % 10;
         this.dateCode = dateCode;
     }
 
+    public DcRecord(int uid, ApplyVO vo, int dateCode) {
+        this.applicant = new User(uid);
+        this.auditor = new User(vo.getAuditorid());
+        this.dvalue = vo.getDvalue();
+        this.ac = vo.getAc();
+        this.weekdate = vo.getDate();
+        this.dateCode = dateCode;
+        this.yearmonth = dateCode / 10;
+        this.week = dateCode % 10;
+    }
+
+    /**
+     * 审核人创建新的申请时用该方法更新
+     * @param uid
+     * @param vo
+     * @param dateCode
+     */
+    public DcRecord setByAuditor(int uid, ApplyVO vo, int dateCode) {
+        this.applicant = new User(uid);
+        this.auditor = new User(vo.getAuditorid());
+        this.dvalue = vo.getDvalue();
+        this.cvalue = vo.getCvalue();
+        this.dc = vo.getDvalue() * vo.getCvalue();
+        this.weekdate = vo.getDate();
+        this.dateCode = dateCode;
+        this.yearmonth = dateCode / 10;
+        this.week = dateCode % 10;
+        this.ac = 0;
+        this.status = true;
+        Optional.ofNullable(vo.getAcItems()).orElse(new ArrayList<>())
+                .forEach(acItem -> {
+                    this.ac += acItem.getAc();
+                });
+        return this;
+    }
 
 
 

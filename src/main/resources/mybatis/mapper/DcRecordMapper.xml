@@ -51,7 +51,7 @@
     </select>
 
 
-    <select id="findLatestAuditorByApplicantId" resultType="com.softeng.dingtalk.vo.UserVO">
+    <select id="getRecentAuditorByApplicantId" resultType="com.softeng.dingtalk.vo.UserVO">
         SELECT
     	d.auditor_id AS id,
     	u.`name` AS NAME

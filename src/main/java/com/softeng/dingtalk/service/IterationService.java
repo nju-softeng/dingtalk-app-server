@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.component.Utils;
+import com.softeng.dingtalk.component.DateUtils;
 import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.IterateInfoVO;
@@ -42,7 +42,7 @@ public class IterationService {
     @Autowired
     AcRecordRepository acRecordRepository;
     @Autowired
-    Utils utils;
+    DateUtils dateUtils;
     @Autowired
     NotifyService notifyService;
     @Autowired
@@ -251,12 +251,12 @@ public class IterationService {
         double[] dclist = new double[num];
 
         //  开始年月周
-        int begin = utils.getTimeCode(iteration.getBeginTime());
+        int begin = dateUtils.getDateCode(iteration.getBeginTime());
         // 结束年月周
-        int end = utils.getTimeCode(finishdate);
+        int end = dateUtils.getDateCode(finishdate);
 
 
-        String period = utils.getTimeStr(iteration.getBeginTime()) + " ~ " + utils.getTimeStr(finishdate);
+        String period = dateUtils.getDateStr(iteration.getBeginTime()) + " ~ " + dateUtils.getDateStr(finishdate);
         String info;
         if (begin == end) {
             info = "迭代在一周之内,有效占比: " + actualDay + "/7 ";
@@ -356,8 +356,8 @@ public class IterationService {
 
         double[] dclist = new double[num];
 
-        int begin = utils.getTimeCode(iteration.getBeginTime());
-        int end = utils.getTimeCode(finishdate);
+        int begin = dateUtils.getDateCode(iteration.getBeginTime());
+        int end = dateUtils.getDateCode(finishdate);
         int index = 0;
         double dcSum = 0;
         for (IterationDetail itd : iteration.getIterationDetails()) {
@@ -383,7 +383,7 @@ public class IterationService {
             }
             // AC 计算公式
             double ac = (AcActual + AcAward - AcReduce) * dclist[index] /dcSum * dclist[index] * 2;
-            AcRecord acRecord = new AcRecord(itd.getUser(), project.getAuditor(), ac, "完成开发任务: " + project.getTitle() + " 第" + project.getCnt() + "迭代" , AcRecord.PROJECT);
+            AcRecord acRecord = new AcRecord(itd.getUser(), project.getAuditor(), ac, "完成开发任务: " + project.getTitle() + " 第" + project.getCnt() + "迭代" , AcRecord.PROJECT, iteration.getFinishTime().atTime(8,0));
             // 实例化ac记录
             acRecordRepository.save(acRecord);
             itd.setAcRecord(acRecord);
@@ -443,7 +443,7 @@ public class IterationService {
             }
             // 更新AC
             iterationDetail.setAc(td.getAc());
-            AcRecord acRecord = new AcRecord(td.getUser(), iteration.getAuditor(), td.getAc(), "完成开发任务: " + project.getTitle() + "第" + iteration.getCnt() + "次迭代", AcRecord.PROJECT);
+            AcRecord acRecord = new AcRecord(td.getUser(), iteration.getAuditor(), td.getAc(), "完成开发任务: " + project.getTitle() + "第" + iteration.getCnt() + "次迭代", AcRecord.PROJECT, iteration.getFinishTime().atTime(8,0));
             acRecordRepository.save(acRecord);
             iterationDetail.setAcRecord(acRecord);
             acRecords.add(acRecord);

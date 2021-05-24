@@ -38,25 +38,20 @@ public class AcRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 
-    public AcRecord(User user, User auditor, double ac, String reason, int classify) {
+    public AcRecord(User user, User auditor, double ac, String reason, int classify, LocalDateTime createTime) {
         this.user = user;
         this.auditor = auditor;
         this.ac = ac;
         this.reason = reason;
         this.classify = classify;
+        this.createTime = createTime;
     }
 
-    public AcRecord(User user, double ac, String reason, int classify) {
-        this.user = user;
-        this.ac = ac;
-        this.reason = reason;
-        this.classify = classify;
-    }
-
-    public AcRecord(DcRecord dcRecord, AcItem acItem) {
+    public AcRecord(DcRecord dcRecord, AcItem acItem, LocalDateTime createTime) {
         this.ac = acItem.getAc();
         this.reason = acItem.getReason();
         this.user = dcRecord.getApplicant();
         this.auditor = dcRecord.getAuditor();
+        this.createTime = createTime;
     }
 }
