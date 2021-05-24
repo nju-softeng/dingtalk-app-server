@@ -35,11 +35,13 @@ public class PerformanceService {
 
 
     /**
+     * 计算指定月份某用户的助研金
      * 计算助研金 Gain = Base * DC * (1+ (AC/50)) + topup
-     * @param uid
-     * @param yearmonth
+     * @param uid 用户id
+     * @param yearmonth 指定年月
      */
     public void computeSalary(int uid, int yearmonth) {
+        // 获取当前月份的总dc值
         double dc = dcSummaryRepository.getDcTotal(uid, yearmonth);
         // 获取到目前为止用户的AC总和
         double ac = acRecordRepository.getUserAcByDate(uid, yearmonth);
@@ -47,10 +49,9 @@ public class PerformanceService {
         double topup = dcSummaryRepository.findTopup(uid, yearmonth);
         Position position = userRepository.getUserPosition(uid);
         double base = systemService.getSubsidy(position);
-        log.debug("base subsidy : " + base);
         double salary = Math.round(base * dc * (1 + (ac/50)) + topup);
         dcSummaryRepository.updateSalary(uid, yearmonth, ac, topup, salary);
-        log.debug(salary + "");
+        log.debug("uid: {}, salary: {}", uid, salary);
     }
 
     public void computeSalary(int uid, LocalDate date) {
@@ -135,6 +136,5 @@ public class PerformanceService {
             return Map.of("acTotal", acTotal, "dcTotal", dc.getTotal(), "w1", dc.getWeek1(), "w2", dc.getWeek2(), "w3", dc.getWeek3(), "w4", dc.getWeek4(), "w5",dc.getWeek5());
         }
     }
-
 
 }
