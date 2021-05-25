@@ -139,8 +139,9 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integ
      * @param uid, yearmonth, week
      * @return java.lang.Double
      * @Date 8:34 PM 1/2/2020
+     *
      **/
-    @Query(value = "select sum(dc) from dc_record where applicant_id = :uid and yearmonth = :yearmonth and week = :week",
+    @Query(value = "SELECT IFNULL((select sum(dc) from dc_record where applicant_id = :uid and yearmonth = :yearmonth and week = :week), 0)",
             nativeQuery = true)
     Double getUserWeekTotalDc(@Param("uid") int uid, @Param("yearmonth") int yearmonth, @Param("week") int week);
 

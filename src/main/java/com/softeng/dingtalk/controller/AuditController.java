@@ -51,7 +51,7 @@ public class AuditController {
     public void submitAuditResult(@Valid @RequestBody CheckVO checkVO) {
 
         // 持久化审核结果
-        DcRecord dc = auditService.submitAudit(checkVO);
+        DcRecord dc = auditService.updateAuditResult(checkVO);
         // 更新dcsummary
         auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
         // 发送消息
