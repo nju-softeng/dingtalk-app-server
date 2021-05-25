@@ -7,31 +7,44 @@
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
 
-POST http://localhost:8080/api/audit/report/1
+# 审核人提交绩效
+POST http://localhost:8080/api/audit
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
 Content-Type: application/json
 
 {
-"date": "2020-04-25"
+  "id":1329,
+  "uid":37,
+  "name":"刘博涵",
+  "dvalue":0.7777,
+  "yearmonth":202105,
+  "week":4,
+  "insertTime":"2021-05-24T20:43:01",
+  "acItems":[],
+  "weekdate":"2021-05-20",
+  "index":0
 }
 
 ###
 
+POST http://localhost:8080/api/audit/report/7
+token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
+Content-Type: application/json
+
+"2020-04-25"
+
+###
 
 POST http://localhost:8080/api/audit/checked/date
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
 Content-Type: application/json
 
-{
-  "date": "2020-01-30"
-}
+"2020-01-30"
 
 ###
 
-GET http://localhost:8080/api/audit/uncheckcnt
+GET http://localhost:8080/api/audit/uncheck_cnt
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
-
-
 
 ###
 
@@ -40,45 +53,8 @@ token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430
 
 ###
 
-
-
-GET http://localhost:8080/api/getreportlist
-token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
-
-
-
-###
-
-# 获取审核人
-GET http://localhost:8080/api/user/getAuditors
-token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
-
-###
-
 # 获取审核人待审核申请
 GET http://localhost:8080/api/pending_audit/
 token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
-
-
-###
-
-# 审核人提交绩效
-POST http://localhost:8080/api/audit
-token: b8399dc845a122db993470e7483bf6ea3680446a8178dedbe8f74eb71317417c69f1c5430da8c7861d75a0d8259ab2b5
-Content-Type: application/json
-
-{
-  "id":2,
-  "cvalue": 1,
-  "dc": 0.75,
-  "ac": 1,
-  "acRecords": [
-    {
-      "ac": 1,
-      "reason": "hhhhhh"
-    }
-  ]
-
-}
 
 ###

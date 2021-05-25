@@ -127,7 +127,7 @@ public class AuditService {
      * @param uid 审核人的id
      * @return
      */
-    public List<ToCheckVO> getPendingApplication(int uid) {
+    public List<ToCheckVO> listPendingApplication(int uid) {
         List<ToCheckVO> toCheckVOList = dcRecordRepository.listToCheckVO(uid);
         toCheckVOList.forEach(toCheckVO -> {
             toCheckVO.setAcItems(acItemRepository.findAllByDcRecordID(toCheckVO.getId()));
