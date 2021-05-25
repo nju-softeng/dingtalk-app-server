@@ -35,8 +35,6 @@ public class VoteController {
     @Autowired
     private VoteRepository voteRepository;
 
-
-
     /**
      * 创建一个投票
      * @param voteVO
@@ -47,7 +45,6 @@ public class VoteController {
         log.debug(voteVO.toString());
         return voteService.createVote(voteVO);
     }
-
 
     /**
      * 用户投票
@@ -64,7 +61,6 @@ public class VoteController {
         WebSocketController.sendInfo(objectMapper.writeValueAsString(map));
         return map;
     }
-
 
     /**
      * 根据paperid获取投票详情
@@ -84,7 +80,6 @@ public class VoteController {
         }
     }
 
-
     /**
      * 根据voteid获取投票详情
      * @param pid
@@ -102,11 +97,5 @@ public class VoteController {
             return voteService.getVotingDetail(vid, uid);
         }
     }
-
-
-
-
-
-
 
 }

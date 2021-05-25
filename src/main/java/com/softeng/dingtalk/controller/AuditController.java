@@ -49,7 +49,6 @@ public class AuditController {
      **/
     @PostMapping("/audit")
     public void submitAuditResult(@Valid @RequestBody CheckVO checkVO) {
-
         // 持久化审核结果
         DcRecord dc = auditService.updateAuditResult(checkVO);
         // 更新dcsummary
@@ -64,7 +63,7 @@ public class AuditController {
      * @param uid
      * @return
      */
-    @GetMapping("/audit/uncheckcnt")
+    @GetMapping("/audit/uncheck_cnt")
     public int  getUnCheckCnt(@RequestAttribute int uid) {
         return auditService.getUnCheckCnt(uid);
     }
@@ -77,7 +76,7 @@ public class AuditController {
      */
     @GetMapping("/audit/pending")
     public List<ToCheckVO> getAuditApplication(@RequestAttribute int uid) {
-        return auditService.getPendingApplication(uid);
+        return auditService.listPendingApplication(uid);
     }
 
 
@@ -96,12 +95,12 @@ public class AuditController {
     /**
      * 审核人根据时间筛选已经审核的申请
      * @param uid
-     * @param map
+     * @param date
      * @return
      */
     @PostMapping("/audit/checked/date")
-    public List<CheckedVO> listCheckedByDate(@RequestAttribute int uid, @RequestBody Map<String, LocalDate> map) {
-        int dateCode = dateUtils.getDateCode(map.get("date"));
+    public List<CheckedVO> listCheckedByDate(@RequestAttribute int uid, @RequestBody LocalDate date) {
+        int dateCode = dateUtils.getDateCode(date);
         int yearmonth = dateCode / 10;
         int week = dateCode % 10;
         return auditService.listCheckedByDate(uid, yearmonth, week);
@@ -115,9 +114,9 @@ public class AuditController {
      * @Date 9:12 PM 2/4/2020
      **/
     @PostMapping("/audit/report/{uid}")
-    public Map getReport(@PathVariable int uid, @RequestBody Map<String, LocalDate> map) {
+    public Map getReport(@PathVariable int uid, @RequestBody LocalDate date) {
         String userid = userService.getUserid(uid);
-        LocalDateTime startTime = LocalDateTime.of(map.get("date"), LocalTime.of(8,0));
+        LocalDateTime startTime = date.atTime(8, 0);
         return reportApi.getReport(userid, startTime, startTime.plusDays(5));
     }
 
