@@ -33,8 +33,10 @@ public class ReportApi extends BaseApi{
         request.setSize(1L);
 
         OapiReportListResponse response = executeRequest(request, "https://oapi.dingtalk.com/topapi/report/list");
-        List<OapiReportListResponse.ReportOapiVo> dataList = response.getResult().getDataList();
 
+        if (!response.isSuccess()) throw new RuntimeException("调用钉钉日志接口失败，或无周报信息");
+
+        List<OapiReportListResponse.ReportOapiVo> dataList = response.getResult().getDataList();
         return dataList.size() == 0 ? Map.of() : Map.of("contents", dataList.get(0).getContents().stream()
                 .filter(x -> !x.getValue().isEmpty())
                 .collect(Collectors.toList()));
