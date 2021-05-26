@@ -21,7 +21,7 @@ public class ExcelController {
 
     @PostMapping("/excel/ac_data")
     public void downAcData(@RequestBody LocalDate date, HttpServletResponse response) throws IOException {
-        response.setContentType("application/ octet-stream");
+        response.setContentType("application/octet-stream");
         response.setCharacterEncoding("utf-8");
         // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
         String fileName = URLEncoder.encode("测试", "UTF-8").replaceAll("\\+", "%20");
