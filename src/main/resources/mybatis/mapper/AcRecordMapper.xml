@@ -12,7 +12,7 @@
             GROUP_CONCAT( CONCAT( a.reason, ' :  ', a.ac ) SEPARATOR '\n' ) as reason
         FROM
             `user` u
-                INNER JOIN ( SELECT * FROM ac_record WHERE YEAR ( create_time ) = 2021 AND MONTH ( create_time ) = 5 ) a ON a.user_id = u.id
+                INNER JOIN ( SELECT * FROM ac_record WHERE YEAR ( create_time ) = #{year} AND MONTH ( create_time ) = #{month} ) a ON a.user_id = u.id
                 AND u.is_deleted = 0
         GROUP BY
             u.id

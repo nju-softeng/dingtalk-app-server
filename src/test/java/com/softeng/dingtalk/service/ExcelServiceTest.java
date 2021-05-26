@@ -16,6 +16,6 @@ public class ExcelServiceTest {
 
     @Test
     public void func() {
-        excelService.WriteAcLogByDate();
+//        excelService.WriteAcDataByDate();
     }
 }

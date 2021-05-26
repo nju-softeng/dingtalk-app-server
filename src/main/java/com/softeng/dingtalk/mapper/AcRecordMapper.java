@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface AcRecordMapper {
-    List<AcData> listAcDataByYearMonth(String year, String month);
+    List<AcData> listAcDataByYearMonth(int year, Month month);
 }
