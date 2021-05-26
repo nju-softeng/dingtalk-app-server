@@ -29,7 +29,7 @@ public class ExcelController {
         try {
             excelService.WriteAcDataByDate(date, response.getOutputStream());
         } catch (Exception e) {
-            log.info("导出excel失败");
+            log.info("导出excel失败：{}", e.getMessage());
             response.reset();
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
