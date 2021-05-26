@@ -30,13 +30,11 @@ public class ExcelController {
         try {
             excelService.WriteAcDataByDate(date, response.getOutputStream());
         } catch (Exception e) {
+            log.info("导出excel失败");
             response.reset();
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
-            Map<String, String> map = new HashMap<String, String>();
-            map.put("status", "failure");
-            map.put("message", "下载文件失败" + e.getMessage());
-            response.getWriter().println(map);
+            response.getWriter().println("下载文件失败: " + e.getMessage());
         }
 
     }
