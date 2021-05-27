@@ -25,7 +25,7 @@ jobs:
           script: |
             cd ~/dingtalk/dingtalk-springboot/
             git pull origin master
-            mvn package -Dmaven.test.skip=true
+            mvn package -DskipTests
             cd ~/dingtalk
             docker-compose build
             docker-compose up -d

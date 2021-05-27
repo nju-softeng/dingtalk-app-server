@@ -1,5 +1,6 @@
 package com.softeng.dingtalk;
 
+import com.softeng.dingtalk.component.EncryptorComponent;
 import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Vote;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -25,11 +27,12 @@ public class DingtalkApplicationTests {
     VoteService voteService;
     @Autowired
     InternalPaperRepository internalPaperRepository;
+    @Autowired
+    EncryptorComponent encryptorComponent;
 
     @Test
     public void test() {
-        Vote vote = internalPaperRepository.findVoteById(12);
-        voteService.computeVoteAc(vote,true, LocalDateTime.now());
+        log.info(encryptorComponent.encrypt(Map.of("uid", 2, "authorityid", 0)));
     }
 
     @Test
