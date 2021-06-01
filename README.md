@@ -177,6 +177,10 @@ docker-compose 编排配置如下：
 ![project-detail-2.png](https://i.loli.net/2021/01/11/UihclBsEJA5wZab.png)
 
 
-<img align="left" width="250" height="auto" src="https://i.loli.net/2020/12/12/j4s6RKzX7JTqyiM.png"/> 
-<img align="left" width="250" height="auto" src="https://i.loli.net/2020/12/12/FTiDv3c1HGk5eKM.png"/> 
-<img align="center" width="250" height="auto" src="https://i.loli.net/2020/12/12/GqWDFnU4dLmwXa7.png"/> 
+|                                                        |                                                        |                                                        |
+| ------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------ |
+| <img src="https://i.loli.net/2020/12/12/j4s6RKzX7JTqyiM.png"/> | <img src="https://i.loli.net/2020/12/12/FTiDv3c1HGk5eKM.png"/> | <img src="https://i.loli.net/2020/12/12/GqWDFnU4dLmwXa7.png"/> |
+
+  
+
+ 
