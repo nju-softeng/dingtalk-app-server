@@ -137,7 +137,7 @@ docker-compose 编排配置如下：
 
 ![02](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093431.png)
 
-![03](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093514.png)·
+![03](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093514.png)
 
 ![04](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093441.png)
 
