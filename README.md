@@ -89,8 +89,8 @@
   </tbody>
 </table>
 
-+ sdk使用代码：[com.softeng.dingtalk.api](https://github.com/zhanyeye/dingtalk-springboot/tree/master/src/main/java/com/softeng/dingtalk/api)
-+ 前端代码：[dingtalk-vue](https://github.com/zhanyeye/dingtalk-vue) (👈预览)
++ 钉钉SDK的封装 👉 ：[com.softeng.dingtalk.api](https://github.com/zhanyeye/dingtalk-springboot/tree/master/src/main/java/com/softeng/dingtalk/api)
++ 项目前端代码  👉 ：[dingtalk-vue](https://github.com/zhanyeye/dingtalk-vue)
 
 
 
