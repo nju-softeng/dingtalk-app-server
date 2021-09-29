@@ -103,18 +103,25 @@ public class ApplicationService {
         dcRecordRepository.save(dc);
         dcRecordRepository.refresh(dc);
 
-        // 持久化ac申请，并将绩效申请作为外键
-        vo.getAcItems().forEach(acItem -> {
-            acItem.setDcRecord(dc);
-            AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem, dc.getInsertTime()));
-            acItem.setAcRecord(acRecord);
-        });
-        acItemRepository.saveAll(vo.getAcItems());
-
+        saveAcItemsAndUseDcIdAsForeignKey(vo.getAcItems(), dc);
         // 更新dcsummary
         auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
         // 发送消息
         notifyService.updateDcMessage(dc);
+    }
+
+    /**
+     * 持久化ac申请，并将绩效申请作为外键
+     * @param acItems
+     * @param dc
+     */
+    private void saveAcItemsAndUseDcIdAsForeignKey(List<AcItem> acItems, DcRecord dc) {
+        acItems.forEach(acItem -> {
+            acItem.setDcRecord(dc);
+            AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem, dc.getInsertTime()));
+            acItem.setAcRecord(acRecord);
+        });
+        acItemRepository.saveAll(acItems);
     }
 
 
@@ -136,14 +143,7 @@ public class ApplicationService {
         // 删除旧的AcItems，同时级联删除相关AcRecord:见AcItem实体类
         acItemRepository.deleteByDcRecord(dc);
 
-        // 持久化ac申请，并将绩效申请作为外键
-        vo.getAcItems().forEach(acItem -> {
-            acItem.setDcRecord(dc);
-            AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem, dc.getInsertTime()));
-            acItem.setAcRecord(acRecord);
-        });
-        acItemRepository.saveAll(vo.getAcItems());
-
+        saveAcItemsAndUseDcIdAsForeignKey(vo.getAcItems(), dc);
         // 更新 dcsummary
         auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
         // 发送消息
