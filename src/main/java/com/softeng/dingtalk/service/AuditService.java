@@ -43,6 +43,25 @@ public class AuditService {
 
 
     /**
+     * 持久化被审核通过的 acItems
+     * @param acItems
+     * @param dc
+     */
+    private void saveCheckedAcRecord(List<AcItem> acItems, DcRecord dc) {
+        acItems.forEach(acItem -> {
+            // 前端传来的没有dcRecord属性, 手动添加
+            acItem.setDcRecord(dc);
+            if (acItem.isStatus()) {
+                // ac申请被同意
+                AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem, dc.getInsertTime()));
+                acItem.setAcRecord(acRecord);
+            }
+        });
+        acItemRepository.saveAll(acItems);
+    }
+
+
+    /**
      * 更新审核结果
      * @param checkVO 审核人提交的审核结果
      * @return
@@ -55,18 +74,10 @@ public class AuditService {
         }
         // 更新 cvalue, dc, ac
         dc.update(checkVO.getCvalue(), checkVO.getDc(), checkVO.getAc());
-        checkVO.getAcItems().forEach(acItem -> {
-            // 前端传来的没有dcRecord属性, 手动添加
-            acItem.setDcRecord(dc);
-            if (acItem.isStatus()) {
-                // ac申请被同意
-                AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem, dc.getInsertTime()));
-                acItem.setAcRecord(acRecord);
-            }
-        });
-        acItemRepository.saveAll(checkVO.getAcItems());
+        saveCheckedAcRecord(checkVO.getAcItems(), dc);
         return dc;
     }
+
 
     /**
      * 当用户某条周绩效申请被审核时，需要更新DcSummary数据
