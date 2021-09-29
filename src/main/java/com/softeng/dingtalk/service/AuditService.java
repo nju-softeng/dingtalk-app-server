@@ -41,13 +41,17 @@ public class AuditService {
     @Autowired
     NotifyService notifyService;
 
+    // 自己注入自己防止事务失效
+    @Autowired
+    AuditService auditService;
+
 
     /**
      * 持久化被审核通过的 acItems
      * @param acItems
      * @param dc
      */
-    private void saveCheckedAcRecord(List<AcItem> acItems, DcRecord dc) {
+    public void saveCheckedAcRecord(List<AcItem> acItems, DcRecord dc) {
         acItems.forEach(acItem -> {
             // 前端传来的没有dcRecord属性, 手动添加
             acItem.setDcRecord(dc);
@@ -74,7 +78,7 @@ public class AuditService {
         }
         // 更新 cvalue, dc, ac
         dc.update(checkVO.getCvalue(), checkVO.getDc(), checkVO.getAc());
-        saveCheckedAcRecord(checkVO.getAcItems(), dc);
+        auditService.saveCheckedAcRecord(checkVO.getAcItems(), dc);
         return dc;
     }
 
