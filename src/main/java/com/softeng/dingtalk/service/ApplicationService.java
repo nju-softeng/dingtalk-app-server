@@ -48,6 +48,17 @@ public class ApplicationService {
     @Autowired
     DateUtils dateUtils;
 
+    /**
+     * 持久化dc, ac申请，并将绩效申请dc作为外键
+     * @param acItems
+     * @param dc
+     */
+    private void saveAcItemsAndDcRecord(List<AcItem> acItems, DcRecord dc) {
+        dcRecordRepository.save(dc);
+        acItems.forEach(acItem -> acItem.setDcRecord(dc));
+        acItemRepository.saveAll(acItems);
+    }
+
 
     /**
      * 添加新的绩效申请
@@ -60,12 +71,8 @@ public class ApplicationService {
         assertException(uid, vo.getAuditorid(), vo.getId(), dateCode);
         // 判断是否在指定时间申请
         assertTimeException(vo.getDate());
-        DcRecord dc = new DcRecord(uid, vo, dateCode);
-        dcRecordRepository.save(dc);
 
-        // 持久化ac申请，并将绩效申请作为外键
-        vo.getAcItems().forEach(acItem -> acItem.setDcRecord(dc));
-        acItemRepository.saveAll(vo.getAcItems());
+        saveAcItemsAndDcRecord(vo.getAcItems(), new DcRecord(uid, vo, dateCode));
     }
 
 
@@ -79,12 +86,11 @@ public class ApplicationService {
         // 断言 确保一周只能向审核人提交一次
         assertException(uid, vo.getAuditorid(), vo.getId(), dateCode);
         DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
-        dc.reApply(vo.getAuditorid(), vo.getDvalue(), vo.getDate(), dateCode);
         // 删除之前的acItems记录
         acItemRepository.deleteByDcRecord(dc);
-        // 保存新的acItems记录
-        vo.getAcItems().forEach(acItem -> acItem.setDcRecord(dc));
-        acItemRepository.saveAll(vo.getAcItems());
+        dc.reApply(vo.getAuditorid(), vo.getDvalue(), vo.getDate(), dateCode);
+
+        saveAcItemsAndDcRecord(vo.getAcItems(), dc);
     }
 
     /**
@@ -126,7 +132,6 @@ public class ApplicationService {
         assertTimeException(vo.getDate());
 
         DcRecord dc = new DcRecord().setByAuditor(uid, vo, dateCode);
-
         auditorUpdateDcRecordAndAcRecords(dc, vo.getAcItems());
     }
 
@@ -146,7 +151,7 @@ public class ApplicationService {
 
         // 删除旧的AcItems，同时级联删除相关AcRecord:见AcItem实体类
         acItemRepository.deleteByDcRecord(dc);
-        
+
         auditorUpdateDcRecordAndAcRecords(dc, vo.getAcItems());
     }
 
