@@ -87,29 +87,6 @@ public class ApplicationService {
         acItemRepository.saveAll(vo.getAcItems());
     }
 
-
-    /**
-     * 审核人添加新的绩效申请
-     * @param vo
-     * @param uid
-     */
-    public void addApplicationByAuditor(ApplyVO vo, int uid) {
-        int dateCode = dateUtils.getDateCode(vo.getDate());
-        // 断言 确保一周只能向审核人提交一次
-        assertException(uid, vo.getAuditorid(), vo.getId(), dateCode);
-        assertTimeException(vo.getDate());
-
-        DcRecord dc = new DcRecord().setByAuditor(uid, vo, dateCode);
-        dcRecordRepository.save(dc);
-        dcRecordRepository.refresh(dc);
-
-        saveAcRecordsWithDcIdAsForeignKey(vo.getAcItems(), dc);
-        // 更新dcsummary
-        auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
-        // 发送消息
-        notifyService.updateDcMessage(dc);
-    }
-
     /**
      * 持久化ac申请，并将绩效申请作为外键
      * @param acItems
@@ -124,6 +101,34 @@ public class ApplicationService {
         acItemRepository.saveAll(acItems);
     }
 
+    /**
+     * 审核人更新DcRecord,AcRecords,DcSummary,并发送更新DcMessage结果消息
+     * @param dc
+     * @param acItems
+     */
+    private void auditorUpdateDcRecordAndAcRecords(DcRecord dc, List<AcItem> acItems) {
+        dcRecordRepository.save(dc);
+        dcRecordRepository.refresh(dc);
+        saveAcRecordsWithDcIdAsForeignKey(acItems, dc);
+        auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
+        notifyService.updateDcMessage(dc);
+    }
+
+    /**
+     * 审核人添加新的绩效申请 (免审核)
+     * @param vo
+     * @param uid
+     */
+    public void addApplicationByAuditor(ApplyVO vo, int uid) {
+        int dateCode = dateUtils.getDateCode(vo.getDate());
+        // 断言 确保一周只能向审核人提交一次
+        assertException(uid, vo.getAuditorid(), vo.getId(), dateCode);
+        assertTimeException(vo.getDate());
+
+        DcRecord dc = new DcRecord().setByAuditor(uid, vo, dateCode);
+
+        auditorUpdateDcRecordAndAcRecords(dc, vo.getAcItems());
+    }
 
     /**
      * 审核人更新已提交的绩效申请
@@ -138,16 +143,11 @@ public class ApplicationService {
 
         DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
         dc.setByAuditor(uid, vo, dateCode);
-        dcRecordRepository.save(dc);
 
         // 删除旧的AcItems，同时级联删除相关AcRecord:见AcItem实体类
         acItemRepository.deleteByDcRecord(dc);
-
-        saveAcRecordsWithDcIdAsForeignKey(vo.getAcItems(), dc);
-        // 更新 dcsummary
-        auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
-        // 发送消息
-        notifyService.updateDcMessage(dc);
+        
+        auditorUpdateDcRecordAndAcRecords(dc, vo.getAcItems());
     }
 
 
