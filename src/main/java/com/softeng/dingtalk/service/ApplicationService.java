@@ -196,9 +196,9 @@ public class ApplicationService {
      */
     public Map listDcRecord(int uid, int page, int size) {
         int offset = (page - 1) * size;
-        List<DcRecordVO> dcRecordlist = dcRecordMapper.listDcRecordVO(uid, offset, size);
+        List<DcRecordVO> dcRecordList = dcRecordMapper.listDcRecordVO(uid, offset, size);
         int total = dcRecordMapper.countDcRecordByuid(uid);
-        return Map.of("list", dcRecordlist, "total", total);
+        return Map.of("list", dcRecordList, "total", total);
     }
 
 
