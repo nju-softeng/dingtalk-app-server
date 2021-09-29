@@ -49,9 +49,9 @@ public class ApplicationService {
     DateUtils dateUtils;
 
     /**
-     * 持久化dc, ac申请，并将绩效申请dc作为外键
-     * @param acItems
-     * @param dc
+     * 持久化dc（周绩效申请）, ac（学术学分）申请，并将绩dc作为ac的外键
+     * @param acItems 学术学分申请项
+     * @param dc 周绩效申请
      */
     private void saveAcItemsAndDcRecord(List<AcItem> acItems, DcRecord dc) {
         dcRecordRepository.save(dc);
@@ -67,9 +67,8 @@ public class ApplicationService {
      */
     public void addApplication(ApplyVO vo, int uid) {
         int dateCode = dateUtils.getDateCode(vo.getDate());
-        // 确保一周只能向同一审核人提交一次申请
-        assertException(uid, vo.getAuditorid(), vo.getId(), dateCode);
-        // 判断是否在指定时间申请
+
+        assertUniqueConstraintException(uid, vo.getAuditorid(), vo.getId(), dateCode);
         assertTimeException(vo.getDate());
 
         saveAcItemsAndDcRecord(vo.getAcItems(), new DcRecord(uid, vo, dateCode));
@@ -83,13 +82,14 @@ public class ApplicationService {
      */
     public void updateApplication(ApplyVO vo, int uid) {
         int dateCode = dateUtils.getDateCode(vo.getDate());
-        // 断言 确保一周只能向审核人提交一次
-        assertException(uid, vo.getAuditorid(), vo.getId(), dateCode);
+
+        assertUniqueConstraintException(uid, vo.getAuditorid(), vo.getId(), dateCode);
+
         DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
-        // 删除之前的acItems记录
-        acItemRepository.deleteByDcRecord(dc);
         dc.reApply(vo.getAuditorid(), vo.getDvalue(), vo.getDate(), dateCode);
 
+        // 删除之前的acItems记录
+        acItemRepository.deleteByDcRecord(dc);
         saveAcItemsAndDcRecord(vo.getAcItems(), dc);
     }
 
@@ -128,11 +128,11 @@ public class ApplicationService {
     public void addApplicationByAuditor(ApplyVO vo, int uid) {
         int dateCode = dateUtils.getDateCode(vo.getDate());
         // 断言 确保一周只能向审核人提交一次
-        assertException(uid, vo.getAuditorid(), vo.getId(), dateCode);
+        assertUniqueConstraintException(uid, vo.getAuditorid(), vo.getId(), dateCode);
         assertTimeException(vo.getDate());
 
         DcRecord dc = new DcRecord().setByAuditor(uid, vo, dateCode);
-        auditorUpdateDcRecordAndAcRecords(dc, vo.getAcItems());
+        auditorUpdateDcRecordAndAcRecords(new DcRecord().setByAuditor(uid, vo, dateCode), vo.getAcItems());
     }
 
     /**
@@ -143,26 +143,24 @@ public class ApplicationService {
     public void updateApplicationByAuditor(ApplyVO vo, int uid) {
         int dateCode = dateUtils.getDateCode(vo.getDate());
 
-        // 断言 确保一周只能向审核人提交一次
-        assertException(uid, vo.getAuditorid(), vo.getId(), dateCode);
+        assertUniqueConstraintException(uid, vo.getAuditorid(), vo.getId(), dateCode);
 
         DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
         dc.setByAuditor(uid, vo, dateCode);
 
         // 删除旧的AcItems，同时级联删除相关AcRecord:见AcItem实体类
         acItemRepository.deleteByDcRecord(dc);
-
         auditorUpdateDcRecordAndAcRecords(dc, vo.getAcItems());
     }
 
 
     /**
-     * 判断提交的申请是否符合"一周只能向审核人提交一次"的要求
+     * 确保一周只能向同一审核人提交一次申请
      * @param uid 申请者id
      * @param aid 审核人id
      * @param vid 提交的申请记录id
      */
-    private void assertException(int uid, int aid, int vid, int dateCode) {
+    private void assertUniqueConstraintException(int uid, int aid, int vid, int dateCode) {
         int yearmonth = dateCode / 10;
         int week = dateCode % 10;
         // 是否本周已经提交记录，如果有则获得它的id，否则为null
@@ -176,7 +174,7 @@ public class ApplicationService {
 
 
     /**
-     * 判断提交申请的时间是否符合要求
+     * 判断是否在指定时间申请
      * @param date
      */
     private void assertTimeException(LocalDate date) {
