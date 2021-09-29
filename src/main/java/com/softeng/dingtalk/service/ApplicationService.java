@@ -103,7 +103,7 @@ public class ApplicationService {
         dcRecordRepository.save(dc);
         dcRecordRepository.refresh(dc);
 
-        saveAcItemsAndUseDcIdAsForeignKey(vo.getAcItems(), dc);
+        saveAcRecordsWithDcIdAsForeignKey(vo.getAcItems(), dc);
         // 更新dcsummary
         auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
         // 发送消息
@@ -115,7 +115,7 @@ public class ApplicationService {
      * @param acItems
      * @param dc
      */
-    private void saveAcItemsAndUseDcIdAsForeignKey(List<AcItem> acItems, DcRecord dc) {
+    private void saveAcRecordsWithDcIdAsForeignKey(List<AcItem> acItems, DcRecord dc) {
         acItems.forEach(acItem -> {
             acItem.setDcRecord(dc);
             AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem, dc.getInsertTime()));
@@ -143,7 +143,7 @@ public class ApplicationService {
         // 删除旧的AcItems，同时级联删除相关AcRecord:见AcItem实体类
         acItemRepository.deleteByDcRecord(dc);
 
-        saveAcItemsAndUseDcIdAsForeignKey(vo.getAcItems(), dc);
+        saveAcRecordsWithDcIdAsForeignKey(vo.getAcItems(), dc);
         // 更新 dcsummary
         auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
         // 发送消息
