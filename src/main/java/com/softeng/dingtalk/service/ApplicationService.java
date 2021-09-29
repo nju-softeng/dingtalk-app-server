@@ -68,7 +68,6 @@ public class ApplicationService {
      */
     public void addApplication(ApplyVO vo, int uid) {
         int dateCode = dateUtils.getDateCode(vo.getDate());
-
         assertUniqueConstraintException(uid, vo.getAuditorid(), vo.getId(), dateCode);
         assertTimeException(vo.getDate());
 
@@ -83,7 +82,6 @@ public class ApplicationService {
      */
     public void updateApplication(ApplyVO vo, int uid) {
         int dateCode = dateUtils.getDateCode(vo.getDate());
-
         assertUniqueConstraintException(uid, vo.getAuditorid(), vo.getId(), dateCode);
 
         DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
@@ -131,7 +129,6 @@ public class ApplicationService {
      */
     public void addApplicationByAuditor(ApplyVO vo, int uid) {
         int dateCode = dateUtils.getDateCode(vo.getDate());
-        // 断言 确保一周只能向审核人提交一次
         assertUniqueConstraintException(uid, vo.getAuditorid(), vo.getId(), dateCode);
         assertTimeException(vo.getDate());
 
@@ -147,7 +144,6 @@ public class ApplicationService {
      */
     public void updateApplicationByAuditor(ApplyVO vo, int uid) {
         int dateCode = dateUtils.getDateCode(vo.getDate());
-
         assertUniqueConstraintException(uid, vo.getAuditorid(), vo.getId(), dateCode);
 
         DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
