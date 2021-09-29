@@ -48,6 +48,7 @@ public class ApplicationService {
     @Autowired
     DateUtils dateUtils;
 
+
     /**
      * 持久化dc（周绩效申请）, ac（学术学分）申请，并将绩dc作为ac的外键
      * @param acItems 学术学分申请项
@@ -93,6 +94,7 @@ public class ApplicationService {
         saveAcItemsAndDcRecord(vo.getAcItems(), dc);
     }
 
+
     /**
      * 持久化ac申请，并将绩效申请作为外键
      * @param acItems
@@ -107,6 +109,7 @@ public class ApplicationService {
         acItemRepository.saveAll(acItems);
     }
 
+
     /**
      * 审核人更新DcRecord,AcRecords,DcSummary,并发送更新DcMessage结果消息
      * @param dc
@@ -119,6 +122,7 @@ public class ApplicationService {
         auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
         notifyService.updateDcMessage(dc);
     }
+
 
     /**
      * 审核人添加新的绩效申请 (免审核)
@@ -134,6 +138,7 @@ public class ApplicationService {
         DcRecord dc = new DcRecord().setByAuditor(uid, vo, dateCode);
         auditorUpdateDcRecordAndAcRecords(new DcRecord().setByAuditor(uid, vo, dateCode), vo.getAcItems());
     }
+
 
     /**
      * 审核人更新已提交的绩效申请
