@@ -90,7 +90,7 @@ public class DcRecord {
 
     }
 
-    public void reApply(int authorid, double dvalue, LocalDate weekdate, int dateCode) {
+    public DcRecord reApply(int authorid, double dvalue, LocalDate weekdate, int dateCode) {
         this.auditor = new User(authorid);
         this.dvalue = dvalue;
         this.weekdate = weekdate;
@@ -98,6 +98,7 @@ public class DcRecord {
         this.yearmonth = dateCode / 10;
         this.week = dateCode % 10;
         this.dateCode = dateCode;
+        return this;
     }
 
     public DcRecord(int uid, ApplyVO vo, int dateCode) {
@@ -110,6 +111,7 @@ public class DcRecord {
         this.yearmonth = dateCode / 10;
         this.week = dateCode % 10;
     }
+
 
     /**
      * 审核人创建新的申请时用该方法更新
