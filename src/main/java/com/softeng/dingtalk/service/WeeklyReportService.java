@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,13 +32,19 @@ public class WeeklyReportService {
     @Autowired
     DateUtils dateUtils;
 
+    public boolean hasSubmittedWeeklyReport(String userid, LocalDateTime startTime, LocalDateTime endTime) {
+        return reportApi.getReport(userid, startTime, endTime).size() == 0 ? false : true;
+    }
+
     public void queryUnsubmittedWeeklyReportUser(YearMonth yearMonth) {
         // 所有可用用户
         List<UserVO> userVOS = userRepository.listUserVOS();
         for (int i = 0; i < 5; i++) {
+            List<UserVO> tmpUserList = new ArrayList<>(userVOS);
             LocalDate[] during = dateUtils.getWeekBeginAndStart(yearMonth, i);
-            if (during != null) {
-
+            if (during == null) continue;
+            for (UserVO user : userVOS) {
+//                if ()
             }
         }
 
