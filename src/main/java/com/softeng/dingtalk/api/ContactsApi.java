@@ -11,6 +11,7 @@ import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +56,11 @@ public class ContactsApi extends BaseApi{
         OapiDepartmentListRequest request = new OapiDepartmentListRequest();
         request.setHttpMethod("GET");
         OapiDepartmentListResponse response = executeRequest(request, "https://oapi.dingtalk.com/department/list");
-        return response.getDepartment().stream().map(x -> String.valueOf(x.getId())).collect(Collectors.toList());
+        if (response.getDepartment() == null) {
+            return new ArrayList<>();
+        } else {
+            return response.getDepartment().stream().map(x -> String.valueOf(x.getId())).collect(Collectors.toList());
+        }
     }
 
     /**
