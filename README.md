@@ -14,9 +14,9 @@
 #### 目标与期望
 
 基于钉钉微应用开发的实验室绩效管理系统，将实验室的绩效、学分、论文评审管理与钉钉对接。  
-主要功能有：绩效、学分申请与审核，论文评审投票及学分管理，实验室助研金计算等。
+主要功能有：绩效、学分申请与审核，论文评审投票及学分管理，实验室助研金计算等，导出绩效和助研金报表。
 
-#### 涉及的技术
+#### 开发环境
 
 <table>
   <tbody>
@@ -89,8 +89,8 @@
   </tbody>
 </table>
 
-+ sdk使用代码：[com.softeng.dingtalk.api](https://github.com/zhanyeye/dingtalk-springboot/tree/master/src/main/java/com/softeng/dingtalk/api)
-+ 前端代码：[dingtalk-vue](https://github.com/zhanyeye/dingtalk-vue) (👈预览)
++ 钉钉SDK的封装 👉 ：[com.softeng.dingtalk.api](https://github.com/zhanyeye/dingtalk-springboot/tree/master/src/main/java/com/softeng/dingtalk/api)
++ 项目前端代码  👉 ：[dingtalk-vue](https://github.com/zhanyeye/dingtalk-vue)
 
 
 
@@ -137,7 +137,7 @@ docker-compose 编排配置如下：
 
 ![02](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093431.png)
 
-![03](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093514.png)·
+![03](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093514.png)
 
 ![04](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093441.png)
 
@@ -177,6 +177,10 @@ docker-compose 编排配置如下：
 ![project-detail-2.png](https://i.loli.net/2021/01/11/UihclBsEJA5wZab.png)
 
 
-<img align="left" width="250" height="auto" src="https://i.loli.net/2020/12/12/j4s6RKzX7JTqyiM.png"/> 
-<img align="left" width="250" height="auto" src="https://i.loli.net/2020/12/12/FTiDv3c1HGk5eKM.png"/> 
-<img align="center" width="250" height="auto" src="https://i.loli.net/2020/12/12/GqWDFnU4dLmwXa7.png"/> 
+|                                                        |                                                        |                                                        |
+| ------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------ |
+| <img src="https://i.loli.net/2020/12/12/j4s6RKzX7JTqyiM.png"/> | <img src="https://i.loli.net/2020/12/12/FTiDv3c1HGk5eKM.png"/> | <img src="https://i.loli.net/2020/12/12/GqWDFnU4dLmwXa7.png"/> |
+
+  
+
+ 
