@@ -36,7 +36,7 @@ public class PerformanceService {
 
     /**
      * 计算指定月份某用户的助研金
-     * 计算助研金 Gain = Base * DC * (1+ (AC/50)) + topup
+     * 计算助研金 Gain = Base * DC * (1+ (AC/100)) + topup
      * @param uid 用户id
      * @param yearmonth 指定年月
      */
@@ -49,7 +49,7 @@ public class PerformanceService {
         double topup = dcSummaryRepository.findTopup(uid, yearmonth);
         Position position = userRepository.getUserPosition(uid);
         double base = systemService.getSubsidy(position);
-        double salary = Math.round(base * dc * (1 + (ac/50)) + topup);
+        double salary = Math.round(base * dc * (1 + (ac/100)) + topup);
         dcSummaryRepository.updateSalary(uid, yearmonth, ac, topup, salary);
         log.debug("uid: {}, salary: {}", uid, salary);
     }
