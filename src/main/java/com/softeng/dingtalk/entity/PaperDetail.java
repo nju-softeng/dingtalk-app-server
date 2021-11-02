@@ -41,4 +41,10 @@ public class PaperDetail {
         this.num = num;
     }
 
+    public PaperDetail(InternalPaper internalPaper, int uid, int num) {
+        this.internalPaper = internalPaper;
+        this.user = new User(uid);
+        this.num = num;
+    }
+
 }

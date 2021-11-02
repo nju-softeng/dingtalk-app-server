@@ -7,18 +7,23 @@ import com.softeng.dingtalk.mapper.InternalPaperMapper;
 import com.softeng.dingtalk.repository.*;
 
 import com.softeng.dingtalk.vo.AuthorVO;
+import com.softeng.dingtalk.vo.ExternalPaperVO;
 import com.softeng.dingtalk.vo.PaperInfoVO;
-import com.softeng.dingtalk.vo.PaperVO;
+import com.softeng.dingtalk.vo.InternalPaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -57,54 +62,92 @@ public class PaperService {
 
 
     /**
-     * 添加论文记录
-     * @param vo
+     * 根据 internalPaper 和 List<AuthorVO> 生成 PaperDetails
+     * @param paper 实验室内部论文
+     * @param authorVOS 论文作者VO list
+     * @return
      */
-    public void addPaper(PaperVO vo) {
-        InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate());
-        internalPaperRepository.save(internalPaper);
+    public List<PaperDetail> setPaperDetailsByAuthorsAndPaper(InternalPaper paper, List<AuthorVO> authorVOS) {
         List<PaperDetail> paperDetails = new ArrayList<>();
-        for (AuthorVO author : vo.getAuthors()) {
-            PaperDetail pd = new PaperDetail(internalPaper, new User(author.getUid()), author.getNum());
-            paperDetails.add(pd);
-        }
-        paperDetailRepository.saveBatch(paperDetails);
+        authorVOS.forEach(author -> {
+            paperDetails.add(new PaperDetail(paper, author.getUid(), author.getNum()));
+        });
+        return paperDetails;
     }
 
 
     /**
-     * 更新论文记录
-     * @param paperVO
+     * 添加实验室内部论文
+     * @param vo 实验室内部论文VO对象
      */
-    @CacheEvict(value =  "authors_id" , key = "#paperVO.id")
-    public void updatePaper(PaperVO paperVO) {
-        InternalPaper internalPaper = internalPaperRepository.findById(paperVO.getId()).get();
-        internalPaper.update(paperVO.getTitle(), paperVO.getJournal(), paperVO.getPaperType(), paperVO.getIssueDate());
-        // 更新
+    public void addInternalPaper(InternalPaperVO vo) {
+        InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate());
+        internalPaperRepository.save(internalPaper);
+        paperDetailRepository.saveBatch(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
+    }
+
+
+    /**
+     * 添加实验室外部论文
+     * @param vo 实验室外部论文vo对象
+     */
+    public void addExternalPaper(ExternalPaperVO vo) {
+        // 创建对应的外部论文对象
+        ExternalPaper externalPaper = new ExternalPaper(vo.getTitle());
+        externalPaperRepository.save(externalPaper);
+        // 创建外部论文对应的投票
+        Vote vote = new Vote(vo.getStartTime(), vo.getEndTime(), true, externalPaper.getId());
+        voteRepository.save(vote);
+        externalPaper.setVote(vote);
+    }
+
+
+    /**
+     * 更新内部论文记录
+     * @param vo
+     */
+    public void updateInternalPaper(InternalPaperVO vo) {
+        InternalPaper internalPaper = internalPaperRepository.findById(vo.getId()).get();
+        // 更新 paper 信息
+        internalPaper.update(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate());
         internalPaperRepository.save(internalPaper);
         // 删除旧的paperDetail
         paperDetailRepository.deleteByInternalPaper(internalPaper);
         // 重新添加paperDetail
-        List<PaperDetail> paperDetails = new ArrayList<>();
-        for (AuthorVO author : paperVO.getAuthors()) {
-            PaperDetail pd = new PaperDetail(internalPaper, new User(author.getUid()), author.getNum());
-            paperDetails.add(pd);
-        }
-        paperDetailRepository.saveBatch(paperDetails);
+        paperDetailRepository.saveBatch(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
     }
 
 
     /**
-     * 删除论文
+     * 更新外部论文记录
+     * @param vo
+     */
+    public void updateExternalPaper(ExternalPaperVO vo) {
+        Vote vote = externalPaperRepository.findVoteById(vo.getId());
+        if (vote.getStartTime().isBefore(LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "投票通知已发出,不可以再修改了");
+        }
+        ExternalPaper externalPaper = externalPaperRepository.findById(vo.getId()).get();
+        externalPaper.setTitle(vo.getTitle());
+        vote.setStartTime(vo.getStartTime());
+        vote.setEndTime(vo.getEndTime());
+        externalPaperRepository.save(externalPaper);
+        voteRepository.save(vote);
+    }
+
+
+    /**
+     * 删除实验室内部论文记录
      * @param id
      */
-    public void deletePaper(int id) {
+    public void deleteInternalPaper(int id) {
         paperDetailRepository.deleteByInternalPaper(new InternalPaper(id));
         internalPaperRepository.deleteById(id);
         reviewRepository.deleteByPaperid(id);
     }
 
     /**
+     * todo 需要重构
      * 更新内部论文投稿结果, 并计算ac
      * @param id
      * @param result
@@ -247,24 +290,35 @@ public class PaperService {
 
     /**
      * 查询指定论文的作者id
-     * 缓存查询的结果
      * @param pid
      * @return
      */
-    @Cacheable(value = "authors_id", key = "#pid")
-    public Set<Integer> listAuthorid(int pid) {
+    public Set<Integer> listAuthorId(int pid) {
         return paperDetailRepository.listAuthorIdByPid(pid);
     }
 
     //-----------------------------------------
 
+//    /**
+//     * todo 添加分页功能
+//     *
+//     * 查询所有外部论文
+//     * // 查询指定用户的消息
+//     * public Page<Message> listUserMessage(int uid, int page, int size) {
+//     *     Pageable pageable = PageRequest.of(page, size, Sort.by("createTime").descending());
+//     *     return messageRepository.findByUid(uid, pageable);
+//     * }
+//     * @return
+//     */
     /**
-     * todo 添加分页功能
-     * 查询所有外部论文
+     *
+     * @param page
+     * @param size
      * @return
      */
-    public List<ExternalPaper> listExternalPaper() {
-        return externalPaperRepository.findAll();
+    public List<ExternalPaper> listExternalPaper(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("insertTime").descending());
+        return externalPaperRepository.findAll(pageable).toList();
     }
 
     /**
