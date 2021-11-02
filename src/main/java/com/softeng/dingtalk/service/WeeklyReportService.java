@@ -36,18 +36,16 @@ public class WeeklyReportService {
         return reportApi.getReport(userid, startTime, endTime).size() == 0 ? false : true;
     }
 
-    public void queryUnsubmittedWeeklyReportUser(YearMonth yearMonth) {
-        // 所有可用用户
-        List<UserVO> userVOS = userRepository.listUserVOS();
-        for (int i = 0; i < 5; i++) {
-            List<UserVO> tmpUserList = new ArrayList<>(userVOS);
-            LocalDate[] during = dateUtils.getWeekBeginAndStart(yearMonth, i);
-            if (during == null) continue;
-            for (UserVO user : userVOS) {
-//                if ()
-            }
-        }
-
-    }
+//    public void queryUnsubmittedWeeklyReportUser(YearMonth yearMonth) {
+//        // 所有可用用户
+//        List<UserVO> userVOS = userRepository.listUserVOS();
+//        for (int i = 0; i < 5; i++) {
+//            List<UserVO> tmpUserList = new ArrayList<>(userVOS);
+//            LocalDate[] during = dateUtils.getWeekBeginAndStart(yearMonth, i);
+//            if (during == null) continue;
+//            for (UserVO user : userVOS) {
+//            }
+//        }
+//    }
 
 }
