@@ -12,7 +12,7 @@ import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.ExternalPaperVO;
 import com.softeng.dingtalk.vo.PaperResultVO;
-import com.softeng.dingtalk.vo.PaperVO;
+import com.softeng.dingtalk.vo.InternalPaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,13 +54,13 @@ public class PaperController {
      * @param papervo
      */
     @PostMapping("/paper")
-    public void addPaper(@RequestBody PaperVO papervo) {
+    public void addPaper(@RequestBody InternalPaperVO papervo) {
         log.debug("/paper");
         if (papervo.getId() == null) {
             log.debug("add paper");
-            paperService.addPaper(papervo);
+            paperService.addInternalPaper(papervo);
         } else {
-            paperService.updatePaper(papervo);
+            paperService.updateInternalPaper(papervo);
             log.debug("update paper");
         }
     }
@@ -72,7 +72,7 @@ public class PaperController {
      */
     @GetMapping("/paper/delete/{id}")
     public void deletePaper(@PathVariable int id) {
-        paperService.deletePaper(id);
+        paperService.deleteInternalPaper(id);
     }
 
 
@@ -190,27 +190,9 @@ public class PaperController {
     @PostMapping("/ex-paper")
     public void addExternalPaper(@RequestBody ExternalPaperVO vo) {
         if (vo.getId() == null) {
-            // 首先创建一个外部论文
-            ExternalPaper externalPaper = new ExternalPaper(vo.getTitle());
-            externalPaperRepository.save(externalPaper);
-            // 再创建一个投票
-            Vote vote = new Vote(vo.getStartTime(), vo.getEndTime(), true, externalPaper.getId());
-            voteRepository.save(vote);
-            externalPaper.setVote(vote);
-            externalPaperRepository.save(externalPaper);
+            paperService.addExternalPaper(vo);
         } else {
-            // todo :更新论文记录操作
-            Vote vote = externalPaperRepository.findVoteById(vo.getId());
-            LocalDateTime now = LocalDateTime.now();
-            if (vote.getStartTime().isBefore(now)) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "投票通知已发出,不可以再修改了");
-            }
-            ExternalPaper externalPaper = externalPaperRepository.findById(vo.getId()).get();
-            externalPaper.setTitle(vo.getTitle());
-            vote.setStartTime(vo.getStartTime());
-            vote.setEndTime(vo.getEndTime());
-            externalPaperRepository.save(externalPaper);
-            voteRepository.save(vote);
+            paperService.updateExternalPaper(vo);
         }
     }
 
@@ -227,10 +209,10 @@ public class PaperController {
      * 查询所有的评审投票
      * @return
      */
-    @GetMapping("/ex-paper/list")
-    public List<ExternalPaper> listExternalPaper() {
-        return paperService.listExternalPaper();
-    }
+//    @GetMapping("/ex-paper/list")
+//    public List<ExternalPaper> listExternalPaper() {
+////        return paperService.listExternalPaper();
+//    }
 
 
     /**

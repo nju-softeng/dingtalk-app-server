@@ -12,7 +12,8 @@ import java.util.List;
  * @create 2/6/2020 11:16 AM
  */
 @Data
-public class PaperVO {
+@AllArgsConstructor
+public class InternalPaperVO {
     private Integer id;
     private String title;
     private String journal;
