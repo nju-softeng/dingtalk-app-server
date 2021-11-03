@@ -45,26 +45,31 @@ public class PaperController {
     InternalPaperRepository internalPaperRepository;
 
 
-    // ----------------------------------
-    // 内部论文评审操作
-    // ----------------------------------
-
     /**
-     * 添加或更新论文记录
-     * @param papervo
+     * 添加或更新实验室内部论文记录
+     * @param vo
      */
     @PostMapping("/paper")
-    public void addPaper(@RequestBody InternalPaperVO papervo) {
-        log.debug("/paper");
-        if (papervo.getId() == null) {
-            log.debug("add paper");
-            paperService.addInternalPaper(papervo);
+    public void addPaper(@RequestBody InternalPaperVO vo) {
+        if (vo.getId() == null) {
+            paperService.addInternalPaper(vo);
         } else {
-            paperService.updateInternalPaper(papervo);
-            log.debug("update paper");
+            paperService.updateInternalPaper(vo);
         }
     }
 
+    /**
+     * 创建、更新一个外部论文记录及投票
+     * @param vo
+     */
+    @PostMapping("/ex-paper")
+    public void addExternalPaper(@RequestBody ExternalPaperVO vo) {
+        if (vo.getId() == null) {
+            paperService.addExternalPaper(vo);
+        } else {
+            paperService.updateExternalPaper(vo);
+        }
+    }
 
     /**
      * 删除论文记录
@@ -77,15 +82,40 @@ public class PaperController {
 
 
     /**
+     * 删除指定的外部论文
+     * @param id
+     */
+    @GetMapping("/ex-paper/rm/{id}")
+    public void deleteExternalPaper(@PathVariable int id) {
+        paperService.deleteExternalPaper(id);
+    }
+
+    /**
      * 论文参与者或审核人更新论文投稿结果
      * @param pid
      * @param vo
      */
     @PostMapping("/paper_result/{pid}")
     public void updateResult(@PathVariable int pid, @RequestBody PaperResultVO vo) {
-        paperService.updatePaperResult(pid, vo.isResult(), vo.getUpdateDate());
+        paperService.updateInternalPaperResult(pid, vo.isResult(), vo.getUpdateDate());
         Vote vote = internalPaperRepository.findVoteById(pid);
         voteService.computeVoteAc(vote, vo.isResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8, 0)));
+    }
+
+
+    /**
+     * 更新外部论文的评审状态
+     * @param pid
+     * @param map
+     */
+    @PostMapping("/ex-paper_result/{pid}")
+    public void updateExPaperResult(@PathVariable int pid, @RequestBody PaperResultVO vo) {
+        // 更新论文记录
+        paperService.updateExPaperResult(pid, vo.isResult(), vo.getUpdateDate());
+        Vote vote = externalPaperRepository.findVoteById(pid);
+        // 更具投票结果计算，投票人的ac值
+        voteService.computeVoteAc(vote, vo.isResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8,0)));
+        // todo 发送论文消息
     }
 
 
@@ -96,8 +126,17 @@ public class PaperController {
      */
     @GetMapping("/paper/page/{page}/{size}")
     public Map listPaper(@PathVariable int page, @PathVariable int size) {
-        return paperService.listPaper(page, size);
+        return paperService.listInternalPaper(page, size);
     }
+
+    /**
+     * 查询所有的评审投票
+     * @return
+     */
+//    @GetMapping("/ex-paper/list")
+//    public List<ExternalPaper> listExternalPaper() {
+////        return paperService.listExternalPaper();
+//    }
 
 
     /**
@@ -107,7 +146,18 @@ public class PaperController {
      */
     @GetMapping("/paper/{id}")
     public InternalPaper getPaper(@PathVariable int id) {
-        return paperService.getPaper(id);
+        return paperService.getInternalPaper(id);
+    }
+
+
+    /**
+     * 查询指定id的ExternalPaper
+     * @param id
+     * @return
+     */
+    @GetMapping("/ex-papper/{id}")
+    public ExternalPaper getExPaper(@PathVariable int id) {
+        return paperService.getExInternalPaper(id);
     }
 
 
@@ -179,40 +229,7 @@ public class PaperController {
     }
 
 
-    // -------------------------
-    // 外部论文评审操作
-    // -------------------------
 
-    /**
-     * 创建、更新一个外部论文记录及投票
-     * @param vo
-     */
-    @PostMapping("/ex-paper")
-    public void addExternalPaper(@RequestBody ExternalPaperVO vo) {
-        if (vo.getId() == null) {
-            paperService.addExternalPaper(vo);
-        } else {
-            paperService.updateExternalPaper(vo);
-        }
-    }
-
-    /**
-     * 删除指定的外部论文
-     * @param id
-     */
-    @GetMapping("/ex-paper/rm/{id}")
-    public void deleteExternalPaper(@PathVariable int id) {
-        paperService.deleteExternalPaper(id);
-    }
-
-    /**
-     * 查询所有的评审投票
-     * @return
-     */
-//    @GetMapping("/ex-paper/list")
-//    public List<ExternalPaper> listExternalPaper() {
-////        return paperService.listExternalPaper();
-//    }
 
 
     /**
@@ -225,30 +242,7 @@ public class PaperController {
         return paperService.getExPaperVote(pid);
     }
 
-    /**
-     * 查询指定id的ExternalPaper
-     * @param id
-     * @return
-     */
-    @GetMapping("/ex-papper/{id}")
-    public ExternalPaper getExPaper(@PathVariable int id) {
-        return paperService.getExPaper(id);
-    }
 
-    /**
-     * 更新外部论文的评审状态
-     * @param pid
-     * @param map
-     */
-    @PostMapping("/ex-paper_result/{pid}")
-    public void updateExPaperResult(@PathVariable int pid, @RequestBody PaperResultVO vo) {
-        // 更新论文记录
-        paperService.updateExPaperResult(pid, vo.isResult(), vo.getUpdateDate());
-        Vote vote = externalPaperRepository.findVoteById(pid);
-        // 更具投票结果计算，投票人的ac值
-        voteService.computeVoteAc(vote, vo.isResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8,0)));
-        // todo 发送论文消息
-    }
 
 
 
