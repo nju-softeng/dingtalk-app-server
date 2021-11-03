@@ -18,7 +18,7 @@ public interface PaperLevelRepository extends CustomizedRepository<PaperLevel, I
      * @return
      */
     @Query("select pl.total from PaperLevel pl where pl.paperType = :papertype")
-    Double getvalue(@Param("papertype") PaperType papertype);
+    Double getValue(@Param("papertype") PaperType papertype);
 
     /**
      * 更新论文获得的AC标准
