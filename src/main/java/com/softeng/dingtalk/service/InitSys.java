@@ -14,6 +14,8 @@ public class InitSys implements InitializingBean {
 
     @Autowired
     private InitService initService;
+
+
     @Override
     public void afterPropertiesSet() {
         initService.initPaperLevel();
