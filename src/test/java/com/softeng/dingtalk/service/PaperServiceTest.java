@@ -60,4 +60,9 @@ public class PaperServiceTest {
         ExternalPaperVO vo = new ExternalPaperVO(12, "external_xxxx", LocalDateTime.now().plusHours(2), LocalDateTime.now().plusHours(3));
         paperService.updateExternalPaper(vo);
     }
+
+    @Test
+    public void testListExternalPaper() {
+
+    }
 }

@@ -12,6 +12,7 @@ import com.softeng.dingtalk.vo.PaperInfoVO;
 import com.softeng.dingtalk.vo.InternalPaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -265,9 +266,9 @@ public class PaperService {
      * @param size
      * @return
      */
-    public List<ExternalPaper> listExternalPaper(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("insertTime").descending());
-        return externalPaperRepository.findAll(pageable).toList();
+    public Page<ExternalPaper> listExternalPaper(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("insertTime").descending());
+        return externalPaperRepository.findAll(pageable);
     }
 
 
