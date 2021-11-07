@@ -15,6 +15,7 @@ import com.softeng.dingtalk.vo.PaperResultVO;
 import com.softeng.dingtalk.vo.InternalPaperVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -106,7 +107,7 @@ public class PaperController {
     /**
      * 更新外部论文的评审状态
      * @param pid
-     * @param map
+     * @param
      */
     @PostMapping("/ex-paper_result/{pid}")
     public void updateExPaperResult(@PathVariable int pid, @RequestBody PaperResultVO vo) {
@@ -133,10 +134,11 @@ public class PaperController {
      * 查询所有的评审投票
      * @return
      */
-//    @GetMapping("/ex-paper/list")
-//    public List<ExternalPaper> listExternalPaper() {
-////        return paperService.listExternalPaper();
-//    }
+    @GetMapping("/ex-paper/page/{page}/size/{size}")
+    public Map listExternalPaper(@PathVariable int page, @PathVariable int size) {
+        Page<ExternalPaper> pages = paperService.listExternalPaper(page, size);
+        return Map.of("list", pages.getContent(), "total", pages.getTotalElements());
+    }
 
 
     /**
