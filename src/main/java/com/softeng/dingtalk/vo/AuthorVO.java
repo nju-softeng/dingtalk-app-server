@@ -2,6 +2,7 @@ package com.softeng.dingtalk.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author zhanyeye
@@ -10,6 +11,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class AuthorVO {
     private int uid;
     private String name;
