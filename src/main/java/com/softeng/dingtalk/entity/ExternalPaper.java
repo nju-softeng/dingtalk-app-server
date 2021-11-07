@@ -1,11 +1,13 @@
 package com.softeng.dingtalk.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @description:
@@ -13,8 +15,7 @@ import java.time.LocalDate;
  * @create: 2020-10-21 20:07
  **/
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class ExternalPaper implements Paper {
     @Id
@@ -37,6 +38,12 @@ public class ExternalPaper implements Paper {
      * 更新时间
      */
     private LocalDate updateDate;
+
+    /**
+     * 插入时间
+     */
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    private LocalDateTime insertTime;
 
     public ExternalPaper(String title) {
         this.title = title;
