@@ -13,6 +13,7 @@ import java.util.List;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class InternalPaperVO {
     private Integer id;
     private String title;
