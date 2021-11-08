@@ -2,6 +2,7 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.api.ReportApi;
 import com.softeng.dingtalk.component.DateUtils;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.UserRepository;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -33,7 +35,17 @@ public class WeeklyReportService {
     DateUtils dateUtils;
 
     public boolean hasSubmittedWeeklyReport(String userid, LocalDateTime startTime, LocalDateTime endTime) {
-        return reportApi.getReport(userid, startTime, endTime).size() == 0 ? false : true;
+        return reportApi.getReport(userid, startTime, endTime).size() != 0;
+    }
+
+    public List<User> queryUnsubmittedWeeklyReportUser(LocalDateTime startTime, LocalDateTime endTime) {
+        var unsubmittedWeeklyReportUser = new LinkedList<User>();
+        for(var userId : userRepository.listAllStudentUserId()) {
+            if(!hasSubmittedWeeklyReport(userId, startTime, endTime)) {
+                unsubmittedWeeklyReportUser.add(userRepository.findByUserid(userId));
+            }
+        }
+        return unsubmittedWeeklyReportUser;
     }
 
 //    public void queryUnsubmittedWeeklyReportUser(YearMonth yearMonth) {
