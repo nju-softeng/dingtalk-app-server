@@ -1,4 +1,4 @@
-package com.softeng.dingtalk;
+package com.softeng.dingtalk.config;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
