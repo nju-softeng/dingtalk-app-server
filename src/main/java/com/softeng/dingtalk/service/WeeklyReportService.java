@@ -34,18 +34,25 @@ public class WeeklyReportService {
     @Autowired
     DateUtils dateUtils;
 
+    /**
+     * 查询用户在某时间区间内是否提交周报
+     * @param userid 用户的钉钉id
+     * @param startTime 收集周报的起始时间
+     * @param endTime 收集周报的结束时间
+     * @return
+     */
     public boolean hasSubmittedWeeklyReport(String userid, LocalDateTime startTime, LocalDateTime endTime) {
         return reportApi.getReport(userid, startTime, endTime).size() != 0;
     }
 
-    public List<User> queryUnsubmittedWeeklyReportUser(LocalDateTime startTime, LocalDateTime endTime) {
-        var unsubmittedWeeklyReportUser = new LinkedList<User>();
+    public List<User> queryUnSubmittedWeeklyReportUser(LocalDateTime startTime, LocalDateTime endTime) {
+        var unSubmittedWeeklyReportUser = new LinkedList<User>();
         for(var userId : userRepository.listAllStudentUserId()) {
             if(!hasSubmittedWeeklyReport(userId, startTime, endTime)) {
-                unsubmittedWeeklyReportUser.add(userRepository.findByUserid(userId));
+                unSubmittedWeeklyReportUser.add(userRepository.findByUserid(userId));
             }
         }
-        return unsubmittedWeeklyReportUser;
+        return unSubmittedWeeklyReportUser;
     }
 
 //    public void queryUnsubmittedWeeklyReportUser(YearMonth yearMonth) {
