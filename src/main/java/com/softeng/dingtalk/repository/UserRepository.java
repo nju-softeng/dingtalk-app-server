@@ -88,6 +88,12 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     @Query("select u.userid from User u")
     List<String> listAllUserid();
 
+    /**
+     * 查询所有在读的学生的userId
+     */
+    @Query("select u.userid from User u where u.deleted = false and u.position <> '待定'")
+    List<String> listAllStudentUserId();
+
 
     /**
      * 根据userid 查询用户系统 uid
