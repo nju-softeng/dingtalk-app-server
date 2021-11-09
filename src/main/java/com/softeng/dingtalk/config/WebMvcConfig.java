@@ -1,4 +1,4 @@
-package com.softeng.dingtalk;
+package com.softeng.dingtalk.config;
 
 import com.softeng.dingtalk.interceptor.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
