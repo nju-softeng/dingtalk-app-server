@@ -5,6 +5,7 @@ import com.softeng.dingtalk.controller.WebSocketController;
 import com.softeng.dingtalk.api.MessageApi;
 import com.softeng.dingtalk.entity.*;
 
+import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.VoteVO;
 import lombok.extern.slf4j.Slf4j;
@@ -295,7 +296,8 @@ public class VoteService {
     private AcRecord generateAcRecord(String title, User user, boolean isRight, LocalDateTime dateTime) {
         return AcRecord.builder()
                 .user(user)
-                .ac(isRight ? 1 : -1)
+                // 论文投票AC变化，对于硕士生是1分，对于博士生是2分
+                .ac((isRight ? 1 : -1) * (user.getPosition() == Position.POSTGRADUATE ? 1 : 2))
                 .classify(AcRecord.VOTE)
                 .reason((isRight ? "投票预测正确：" : "投票预测错误：") + title)
                 .createTime(dateTime)
