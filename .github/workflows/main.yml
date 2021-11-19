@@ -1,12 +1,12 @@
-name: Prod
+name: Main
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     paths:
       - 'src/**'
       - '.github/workflows/**'
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     paths:
       - 'src/**'
       - '.github/workflows/**'
