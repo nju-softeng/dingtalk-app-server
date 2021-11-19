@@ -101,7 +101,7 @@
 + 系统启动时，[初始化操作](https://github.com/zhanyeye/dingtalk-springboot/blob/9e302075e2e8d55eb3736162066bf4bf203232c9/src/main/java/com/softeng/dingtalk/service/InitSys.java#L20)会调用钉钉SDK，拉取钉钉组织的所有用户, **请先在开发平台设置出口IP**
 
 
-#### 系统部署
+#### 持续部署
 本项目使用 GitHub Actions 实现 CI，受外网网速限制，没有采用在 GitHub 机器上构件镜像，再拉取到服务器上运行的方式。而是在每次 CI 触发后，GitHub 机器 ssh 登陆服务器，执行脚本来拉取最新代码，构建镜像，并运行容器，具体如下：
 
 1. 从GitHub仓库中拉去最新代码到服务器本地仓库
