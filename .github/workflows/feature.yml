@@ -1,12 +1,12 @@
 name: Test
 on:
   push:
-    branches: [ test ]
+    branches: [ feature ]
     paths:
       - 'src/**'
       - '.github/workflows/**'
   pull_request:
-    branches: [ test ]
+    branches: [ feature ]
     paths:
       - 'src/**'
       - '.github/workflows/**'
