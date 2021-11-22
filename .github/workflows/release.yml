@@ -1,12 +1,12 @@
-name: Feature
+name: Release
 on:
   push:
-    branches: [ feature ]
+    branches: [ release ]
     paths:
       - 'src/**'
       - '.github/workflows/**'
   pull_request:
-    branches: [ feature ]
+    branches: [ release ]
     paths:
       - 'src/**'
       - '.github/workflows/**'
@@ -18,14 +18,14 @@ jobs:
       - name: Pull Docker And Run Container With SSH
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.TEST_HOST }}
-          username: ${{ secrets.TEST_USER }}
-          key: ${{ secrets.TEST_KEY }}
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_KEY }}
           port: ${{ secrets.PORT }}
           script: |
             cd ~/dingtalk/dingtalk-springboot/
-            git pull origin test
-            mvn package
+            git pull origin master
+            mvn package -DskipTests
             cd ~/dingtalk
             docker-compose build
             docker-compose up -d
