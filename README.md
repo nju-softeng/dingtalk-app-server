@@ -1,10 +1,10 @@
 <p align="center"><img width="100" src="https://i.loli.net/2020/11/12/8pP5y6eHwX1VfLd.png" alt="logo"></p>
 
 <p align="center">
-  <a href="https://github.com/zhanyeye/dingtalk-springboot/actions?query=workflow%3AMain">
+  <a href="https://github.com/nju-softeng/dingtalk-app-back-end/actions?query=workflow%3AMain">
     <img src="https://github.com/nju-softeng/dingtalk-app-back-end/actions/workflows/main.yml/badge.svg?branch=main" alt="Main Status">
   </a>
-  <a href="https://github.com/zhanyeye/dingtalk-springboot/actions?query=workflow%3AFeature">
+  <a href="https://github.com/nju-softeng/dingtalk-app-back-end/actions?query=workflow%3AFeature">
     <img src="https://github.com/nju-softeng/dingtalk-app-back-end/actions/workflows/feature.yml/badge.svg?branch=feature">
   </a>
 </p>
