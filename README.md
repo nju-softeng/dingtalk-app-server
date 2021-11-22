@@ -111,8 +111,8 @@
 5. `docker image prune -f` 清理无用的镜像 
    
 GitHub Actions 的 CI 脚本如下
-+ 生产环境CI脚本：[.github/workflows/prod.yml](https://github.com/zhanyeye/dingtalk-springboot/blob/master/.github/workflows/prod.yml)  
-+ 测试环境CI脚本：[.github/workflows/test.yml](https://github.com/zhanyeye/dingtalk-springboot/blob/master/.github/workflows/test.yml)  
++ 生产环境CI脚本：[.github/workflows/prod.yml](https://github.com/nju-softeng/dingtalk-app-back-end/blob/main/.github/workflows/release.yml)  
++ 测试环境CI脚本：[.github/workflows/test.yml](https://github.com/nju-softeng/dingtalk-app-back-end/blob/main/.github/workflows/main.yml)  
 + 与 CI 脚本对应的项目结构如下
   ```
   .
