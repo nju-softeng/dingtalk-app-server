@@ -171,7 +171,6 @@ docker-compose 编排配置如下：
 
 ![19](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516131332.png)
 
-
 ![project-detail-1.png](https://i.loli.net/2021/01/11/w8Tr7lUkK1pOaL9.png)
 
 ![project-detail-2.png](https://i.loli.net/2021/01/11/UihclBsEJA5wZab.png)
