@@ -18,14 +18,14 @@ jobs:
       - name: Pull Docker And Run Container With SSH
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.PROD_USER }}
-          key: ${{ secrets.PROD_KEY }}
+          host: ${{ secrets.TEST_HOST }}
+          username: ${{ secrets.TEST_USER }}
+          key: ${{ secrets.TEST_KEY }}
           port: ${{ secrets.PORT }}
           script: |
             cd ~/dingtalk/dingtalk-springboot/
-            git pull origin master
-            mvn package -DskipTests
+            git pull origin test
+            mvn package
             cd ~/dingtalk
             docker-compose build
             docker-compose up -d
