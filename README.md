@@ -1,15 +1,15 @@
 <p align="center"><img width="100" src="https://i.loli.net/2020/11/12/8pP5y6eHwX1VfLd.png" alt="logo"></p>
 
 <p align="center">
-  <a href="https://github.com/nju-softeng/dingtalk-app-back-end/actions?query=workflow%3ARelease">
-    <img src="https://github.com/nju-softeng/dingtalk-app-back-end/actions/workflows/release.yml/badge.svg?branch=release">
+  <a href="https://github.com/nju-softeng/dingtalk-app-server/actions?query=workflow%3ARelease">
+    <img src="https://github.com/nju-softeng/dingtalk-app-server/actions/workflows/release.yml/badge.svg?branch=release">
   </a>
-  <a href="https://github.com/nju-softeng/dingtalk-app-back-end/actions?query=workflow%3AMain">
-    <img src="https://github.com/nju-softeng/dingtalk-app-back-end/actions/workflows/main.yml/badge.svg?branch=main">
+  <a href="https://github.com/nju-softeng/dingtalk-app-server/actions?query=workflow%3AMain">
+    <img src="https://github.com/nju-softeng/dingtalk-app-server/actions/workflows/main.yml/badge.svg?branch=main">
   </a>
 </p>
 
-<h1 align="center">Dingtalk App Back End</h1>
+<h1 align="center">Dingtalk App Server</h1>
 
 #### 目标与期望
 
@@ -89,8 +89,8 @@
   </tbody>
 </table>
 
-+ 钉钉SDK的封装 👉 ：[com.softeng.dingtalk.api](https://github.com/zhanyeye/dingtalk-springboot/tree/master/src/main/java/com/softeng/dingtalk/api)
-+ 项目前端代码  👉 ：[dingtalk-vue](https://github.com/zhanyeye/dingtalk-vue)
++ 钉钉SDK的封装 👉 ：[com.softeng.dingtalk.api](https://github.com/nju-softeng/dingtalk-app-server/tree/master/src/main/java/com/softeng/dingtalk/api)
++ 项目前端代码  👉 ：[dingtalk-app-web](https://github.com/nju-softeng/dingtalk-app-web)
 
 
 
@@ -98,7 +98,7 @@
 
 + 使用了lombok 插件简化代码，idea 需要安装lombok 插件，否则编译过不去
 + 由于目前钉钉小程序只支持 GET/POST, 考虑到兼容性这里的接口全部为GET/POST方式
-+ 系统启动时，[初始化操作](https://github.com/zhanyeye/dingtalk-springboot/blob/9e302075e2e8d55eb3736162066bf4bf203232c9/src/main/java/com/softeng/dingtalk/service/InitSys.java#L20)会调用钉钉SDK，拉取钉钉组织的所有用户, **请先在开发平台设置出口IP**
++ 系统启动时，[初始化操作](https://github.com/nju-softeng/dingtalk-app-server/blob/9e302075e2e8d55eb3736162066bf4bf203232c9/src/main/java/com/softeng/dingtalk/service/InitSys.java#L20)会调用钉钉SDK，拉取钉钉组织的所有用户, **请先在开发平台设置出口IP**
 
 
 #### 持续部署
@@ -111,8 +111,8 @@
 5. `docker image prune -f` 清理无用的镜像 
    
 GitHub Actions 的 CI 脚本如下
-+ 生产环境CI脚本：[.github/workflows/prod.yml](https://github.com/nju-softeng/dingtalk-app-back-end/blob/main/.github/workflows/release.yml)  
-+ 测试环境CI脚本：[.github/workflows/test.yml](https://github.com/nju-softeng/dingtalk-app-back-end/blob/main/.github/workflows/main.yml)  
++ 生产环境CI脚本：[.github/workflows/prod.yml](https://github.com/nju-softeng/dingtalk-app-server/blob/main/.github/workflows/release.yml)  
++ 测试环境CI脚本：[.github/workflows/test.yml](https://github.com/nju-softeng/dingtalk-app-server/blob/main/.github/workflows/main.yml)  
 + 与 CI 脚本对应的项目结构如下
   ```
   .
@@ -123,7 +123,7 @@ GitHub Actions 的 CI 脚本如下
   ```
 
 docker-compose 编排配置如下： 
-+ [docker-compose.yml 配置文件](https://github.com/zhanyeye/dingtalk-springboot/wiki/docker_compose.yml)
++ [docker-compose.yml 配置文件](https://github.com/nju-softeng/dingtalk-app-server/wiki/docker_compose.yml)
 
 #### 系统运维
 + [定时备份docker中的数据库](https://www.yuque.com/zhanyeye/devops/gii4pk)
