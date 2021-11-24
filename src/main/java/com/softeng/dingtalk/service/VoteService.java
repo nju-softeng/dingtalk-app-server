@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,44 +62,48 @@ public class VoteService {
     @Autowired
     MessageApi messageApi;
 
+    private final ReentrantLock lock = new ReentrantLock();
 
-    //--------------------------------------------
-    //  内部论文评审相关操作
-    //--------------------------------------------
+    private static final String VOTE_INFO_MARKDOWN = " #### 投票 \n ##### 论文：  %s \n ##### 作者： %s \n 截止时间: %s";
+    private static final String VOTE_INFO_URL = "/paper/in-detail/%d/vote";
 
     /**
-     * 创建投票 (内部投票)
-     * 钉钉发送消息
-     * 同时清空清空未结束投票缓存
-     * @param voteVO
+     * 创建论文评审投票
+     * @param vo
+     * @return
      */
     @CacheEvict(value = "voting", allEntries = true)
-    public Vote createVote(VoteVO voteVO) {
-
-        // 判断投票是否已经创建过
-        if (voteRepository.isExisted(voteVO.getPaperid(), false) != 0) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "慢了一步，投票已经被别人发起了");
+    public Vote createVote(VoteVO vo) {
+        try {
+            // 确保线程安全问题
+            lock.lock();
+            if (voteRepository.isExisted(vo.getPaperid(), false) == 0) {
+                // 如果投票还没有被创建
+                Vote vote = new Vote(LocalDateTime.now(), vo.getEndTime(), vo.getPaperid());
+                voteRepository.save(vote);
+                internalPaperRepository.updatePaperVote(vo.getPaperid(), vote.getId());
+                sendVoteInfoCardToDingtalk(vo.getPaperid(), vo.getEndTime().toLocalTime());
+                return voteRepository.refresh(vote);
+            } else {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "慢了一步，投票已经被别人发起了");
+            }
+        } finally {
+            lock.unlock();
         }
-
-        Vote vote = new Vote(LocalDateTime.now() ,LocalDateTime.of(LocalDate.now(), voteVO.getEndTime()), voteVO.getPaperid());
-
-        voteRepository.save(vote);
-        internalPaperRepository.updatePaperVote(voteVO.getPaperid(), vote.getId());
-        // 发送投票信息
-        String title = internalPaperRepository.getPaperTitleById(voteVO.getPaperid());
-        List<String> namelist = paperDetailRepository.listPaperAuthor(voteVO.getPaperid());
+    }
 
 
-        StringBuilder markdown = new StringBuilder().append(" #### 投票 \n ##### 论文： ").append(title).append(" \n ##### 作者： ");
-        for (String name : namelist) {
-            markdown.append(name).append(", ");
-        }
-        markdown.append(" \n 截止时间: ").append(voteVO.getEndTime().toString());
-        String url = new StringBuilder().append("/paper/in-detail/").append(voteVO.getPaperid()).append("/vote").toString();
+    /**
+     * 向钉钉群中发送投票消息卡片
+     * @param paperId
+     */
+    private void sendVoteInfoCardToDingtalk(int paperId, LocalTime endTime) {
+        String title = internalPaperRepository.getPaperTitleById(paperId);
+        List<String> nameList = paperDetailRepository.listPaperAuthor(paperId);
 
-        messageApi.sendActionCard("内部评审投票", markdown.toString(), "前往投票", url);
-
-        return voteRepository.refresh(vote);
+        String markdown = String.format(VOTE_INFO_MARKDOWN, title, nameList.toString(), endTime.toString());
+        String url = String.format(VOTE_INFO_URL, paperId);
+        messageApi.sendActionCard("内部评审投票", markdown, "前往投票", url);
     }
 
 
