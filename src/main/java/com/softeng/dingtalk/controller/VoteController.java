@@ -41,7 +41,7 @@ public class VoteController {
      * @return
      */
     @PostMapping("/vote")
-    public Vote addvote(@RequestBody VoteVO voteVO) {
+    public Vote addVote(@RequestBody VoteVO voteVO) {
         log.debug(voteVO.toString());
         return voteService.createVote(voteVO);
     }

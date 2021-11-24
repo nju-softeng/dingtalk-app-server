@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -18,5 +19,5 @@ import java.time.LocalTime;
 @ToString
 public class VoteVO {
     private int paperid;
-    private LocalTime endTime;
+    private LocalDateTime endTime;
 }
