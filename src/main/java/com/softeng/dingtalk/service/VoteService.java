@@ -197,98 +197,83 @@ public class VoteService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "投票已经截止！");
         }
 
-        // 返回当前的投票结果
-        List<String> acceptlist =  voteDetailRepository.listAcceptNamelist(vid);
-        List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
-
-        // accept 票数
-        int accept = acceptlist.size();
-        // reject 票数
-        int reject = rejectlist.size();
-        // 总投票数
-        int total = accept + reject;
-        return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "myresult", voteDetail.getResult(),"acceptnames",acceptlist,"rejectnames", rejectlist);
+        return getVotingDetails(vid, uid);
     }
 
 
     /**
-     * 投票还未结束,用户获取投票信息
-     * @param vid
-     * @param uid
-     * @return
+     * 获取投票详情
+     * @param vid 某次投票的id
+     * @param uid 用户id
+     * @return map 待重构为具体对象
      */
-    public Map getVotingDetail(int vid, int uid){
-        Boolean myresult = voteDetailRepository.getVoteDetail(vid, uid);
-        if (myresult != null) {
-            //用户已经投票，可以查看结果
-            List<String> acceptlist =  voteDetailRepository.listAcceptNamelist(vid);
-            List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
-            // accept 票数
-            int accept = acceptlist.size();
-            // reject 票数
-            int reject = rejectlist.size();
-            // 总投票数
-            int total = accept + reject;
+    public Map getVotingDetails(int vid, int uid) {
+        Vote vote = voteRepository.findById(vid).get();
+        // myVote 我的投票，in (accept, reject, unvote)
+        Boolean myVote = voteDetailRepository.getVoteDetail(vid, uid);
+        // myVoteMsg 我的投票对应的字符串，in (“accept”, “reject”, “unvote”)
+        String myVoteMsg = myVote == null ? "unvote" : (myVote ? "accept" : "reject");
+        // isOver 投票是否结束
+        Boolean isOver = vote.getEndTime().isBefore(LocalDateTime.now());
 
-            return Map.of("vid", vid, "status", false,"accept", accept, "total", total, "reject", reject, "myresult", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist);
-        } else {
-            //用户没有投票，不可以查看结果
-            return Map.of("vid", vid, "status", false);
-        }
-    }
-
-
-    /**
-     * 获取已经结束的投票信息
-     * @param vid
-     * @param uid
-     * @return
-     */
-    public Map getVotedDetail(int vid, int uid, boolean isExternal) {
-        List<String> acceptlist = voteDetailRepository.listAcceptNamelist(vid);
-        List<String> rejectlist = voteDetailRepository.listRejectNamelist(vid);
+        // acceptlist accept人员
+        List<User> acceptUserList = new ArrayList<>();
+        // rejectlist reject人员
+        List<User> rejectUserList = new ArrayList<>();
+        // unVoteNames 未投票人员的名单
+        List<String> unVoteNames  = new ArrayList<>();
         // accept 票数
-        int accept = acceptlist.size();
+        int accept  = 0;
         // reject 票数
-        int reject = rejectlist.size();
-        // 总投票数
-        int total = accept + reject;
-        // 用户本人的投票情况：accept, reject, 未参与(null)
-        Boolean myresult = voteDetailRepository.getVoteDetail(vid, uid);
+        int reject  = 0;
+        // total 总投票人数
+        int total   = 0;
+        //
+        double acceptWeights = 0.0;
+        double rejectWeights = 0.0;
+        if(isOver) {
+            // 投票已结束
+            acceptUserList  = voteDetailRepository.listAcceptUserlist(vid);
+            rejectUserList  = voteDetailRepository.listRejectUserlist(vid);
+            unVoteNames     = voteDetailRepository.findUnVoteUsername(vid);
 
+            acceptWeights = acceptUserList.stream().mapToDouble(user -> {
+                switch (user.getPosition()) {
+                    case DOCTOR:
+                        return 2.0;
+                    case POSTGRADUATE:
+                        return 1.0;
+                    default:
+                        return 0.0;
+                }
+            }).sum();
+            rejectWeights = rejectUserList.stream().mapToDouble(user -> {
+                switch (user.getPosition()) {
+                    case DOCTOR:
+                        return 2.0;
+                    case POSTGRADUATE:
+                        return 1.0;
+                    default:
+                        return 0.0;
+                }
+            }).sum();
 
-        // 获取投票的截止时间
-        LocalDateTime endTime = voteRepository.getEndTimeByVid(vid);
-
-        // 未投票人员名单
-        // 1. 查询所有不是待定且在投票之前加入的用户用户的id，已经投票的用户的id，
-        Set<Integer> totalIds = userRepository.listStudentIdBeforeVoteTime(endTime);
-        Set<Integer> votedIds = voteDetailRepository.findVoteUserid(vid);
-
-
-        // 2. 减去所有投票用户和论文作者的id
-        totalIds.removeAll(votedIds);
-
-        if (isExternal == false) {
-            InternalPaper internalPaper = internalPaperRepository.findByVid(vid);
-            Set<Integer> authorids = paperService.listAuthorId(internalPaper.getId());
-            totalIds.removeAll(authorids);
+            accept = acceptUserList.size();
+            reject = rejectUserList.size();
+            total  = accept + reject;
         }
-
-        //totalIds.removeAll(alumniids);
-
-        // 3. 通过为投票用户id集合去查询用户姓名
-        Set<String> unVoteNames = new HashSet<>();
-        if (totalIds.size() > 0) {
-            unVoteNames = userRepository.listNameByids(totalIds);
-        }
-
-        if (myresult == null) {
-            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", unVoteNames);
-        } else {
-            return Map.of("vid", vid, "status", true,"accept", accept, "total", total, "reject", reject, "myresult", myresult, "acceptnames",acceptlist,"rejectnames", rejectlist, "unvotenames", unVoteNames);
-        }
-
+        return Map.of(
+                "vid",                vid,
+                "status",             isOver,
+                "accept",             accept,
+                "total",              total,
+                "reject",             reject,
+                "myvote",             myVoteMsg,
+                "acceptnames",        acceptUserList.stream().map(User::getName).collect(Collectors.toList()),
+                "rejectnames",        rejectUserList.stream().map(User::getName).collect(Collectors.toList()),
+                "unvotenames",        unVoteNames,
+                "acceptedPercentage", acceptWeights / (acceptWeights + rejectWeights)
+        );
     }
 
     /**

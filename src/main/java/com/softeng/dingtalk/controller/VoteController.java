@@ -70,32 +70,18 @@ public class VoteController {
      */
     @GetMapping("/vote/paper/{pid}/detail")
     public Map getVoteDetailByPid(@PathVariable int pid, @RequestAttribute int uid) {
-        Vote vote = paperService.getVoteByPid(pid);
-        if (vote.getEndTime().isBefore(LocalDateTime.now())) {
-            //如果投票已经结束
-            return voteService.getVotedDetail(vote.getId(), uid, vote.isExternal());
-        } else {
-            //如果投票未结束
-            return voteService.getVotingDetail(vote.getId(), uid);
-        }
+        return voteService.getVotingDetails(paperService.getVoteByPid(pid).getId(), uid);
     }
 
     /**
      * 根据voteid获取投票详情
-     * @param pid
+     * @param vid
      * @param uid
      * @return
      */
     @GetMapping("/vote/{vid}/detail")
     public Map getVoteDetailByVid(@PathVariable int vid, @RequestAttribute int uid) {
-        Vote vote = voteRepository.findById(vid).get();
-        if (vote.getEndTime().isBefore(LocalDateTime.now())) {
-            //如果投票已经结束
-            return voteService.getVotedDetail(vid, uid, vote.isExternal());
-        } else {
-            //如果投票未结束
-            return voteService.getVotingDetail(vid, uid);
-        }
+        return voteService.getVotingDetails(vid, uid);
     }
 
 }
