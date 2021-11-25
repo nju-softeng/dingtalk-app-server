@@ -44,7 +44,7 @@ public class Timer {
     MessageApi messageApi;
 
     /**
-     * 每分钟扫描一次，看是否有待启动的投票
+     * 每20s扫描一次，看是否有待启动的投票
      */
     @Scheduled(cron = "0/20 * * * * ?")
     public void checkVote() {
@@ -68,7 +68,7 @@ public class Timer {
     }
 
     /**
-     * 每分钟扫描一次，看是否有待结束的投票
+     * 每20s扫描一次，看是否有待结束的投票
      */
     @Scheduled(cron = "0/20 * * * * ?")
     public void checkVote2() {
@@ -96,8 +96,8 @@ public class Timer {
 
     /**
      * 投票消息卡片跳转的 url
-     * @param isExternal
-     * @param pid
+     * @param isExternal 是否是外部论文
+     * @param pid 论文id
      * @return
      */
     private String generateVoteDetailUrl(boolean isExternal, int pid) {
@@ -106,10 +106,10 @@ public class Timer {
 
     /**
      * 确认投票结果的消息模板
-     * @param title
-     * @param result
-     * @param acceptCnt
-     * @param totalCnt
+     * @param title 论文标题
+     * @param result 投票预测结果
+     * @param acceptCnt accept数量
+     * @param totalCnt 总投票数量
      * @return
      */
     private String voteResultInfo(String title, boolean result, int acceptCnt, int totalCnt) {
@@ -122,8 +122,8 @@ public class Timer {
 
     /**
      * 发起投票的消息模板
-     * @param title
-     * @param dateTime
+     * @param title 论文标题
+     * @param dateTime 截至时间
      * @return
      */
     private String startVoteInfo(String title, LocalDateTime dateTime) {
