@@ -1,5 +1,7 @@
 package com.softeng.dingtalk.repository;
 
+import com.google.gson.JsonElement;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.entity.VoteDetail;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
@@ -23,6 +25,19 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      */
     @Query("select vd.user.id from VoteDetail vd where vd.vote.id = :vid")
     Set<Integer> findVoteUserid(int vid);
+
+    /**
+     * 查询未参与指定投票的用户 name, 不包括已删除的人，不包括职位为待定，不包括作者
+     * @param vid 所指定的投票
+     * @return set
+     */
+    @Query("select u.name from User u " +
+            "where u.deleted = false and u.position <> '待定' and " +
+            "u.id not in " +
+            "(select vd.user.id from VoteDetail vd where vd.vote.id = :vid) and " +
+            "u.id not in " +
+            "(select pd.user.id from PaperDetail pd where pd.internalPaper.id in (select ip.id from InternalPaper ip where ip.vote.id = :vid))")
+    List<String> findUnVoteUsername(int vid);
 
     /**
      * 获得指定投票的支持人数
@@ -79,6 +94,14 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
     @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = true")
     List<String> listAcceptNamelist(int vid);
 
+    /**
+     * 获取投accept票的人的名单列表
+     * @param vid
+     * @return
+     */
+    @Query("select vd.user from VoteDetail vd where vd.vote.id = :vid and vd.result = true")
+    List<User> listAcceptUserlist(int vid);
+
 
     /**
      * 获取投reject票的人的名单列表
@@ -87,6 +110,14 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      */
     @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = false")
     List<String> listRejectNamelist(int vid);
+
+    /**
+     * 获取投reject票的人的名单列表
+     * @param vid
+     * @return
+     */
+    @Query("select vd.user from VoteDetail vd where vd.vote.id = :vid and vd.result = false")
+    List<User> listRejectUserlist(int vid);
 
 
 }
