@@ -28,6 +28,6 @@ jobs:
             fi
             git checkout release
             git pull origin
-            cd dingtalk-app-build
+            cd dingtalk-app-release
             chmod +x build.sh
             ./build.sh -b main -t server
