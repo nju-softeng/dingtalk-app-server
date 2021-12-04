@@ -11,6 +11,9 @@
 
 <h1 align="center">Dingtalk App Server</h1>
 
+#### 开发活动
+![Alt](https://repobeats.axiom.co/api/embed/006a17484e3c703be3dfc039ab66cdd743f478a8.svg "Repobeats analytics image")
+
 #### 目标与期望
 
 基于钉钉微应用开发的实验室绩效管理系统，将实验室的绩效、学分、论文评审管理与钉钉对接。  
