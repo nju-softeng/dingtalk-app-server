@@ -11,8 +11,7 @@
 
 <h1 align="center">Dingtalk App Server</h1>
 
-#### 开发活动
-![Alt](https://repobeats.axiom.co/api/embed/006a17484e3c703be3dfc039ab66cdd743f478a8.svg "Repobeats analytics image")
+
 
 #### 目标与期望
 
@@ -95,7 +94,8 @@
 + 钉钉SDK的封装 👉 ：[com.softeng.dingtalk.api](https://github.com/nju-softeng/dingtalk-app-server/tree/main/src/main/java/com/softeng/dingtalk/api)
 + 项目前端代码  👉 ：[dingtalk-app-web](https://github.com/nju-softeng/dingtalk-app-web)
 
-
+#### 开发活动
+![Alt](https://repobeats.axiom.co/api/embed/006a17484e3c703be3dfc039ab66cdd743f478a8.svg "Repobeats analytics image")
 
 #### 注意事项
 
