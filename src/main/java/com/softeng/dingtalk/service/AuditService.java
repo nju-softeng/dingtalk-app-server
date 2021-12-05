@@ -13,8 +13,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -84,22 +87,16 @@ public class AuditService {
 
 
     /**
-     * 当用户某条周绩效申请被审核时，需要更新DcSummary数据
+     * 更新用户指定周的dc值
      * @param uid 用户id
      * @param yearmonth 所在年月
      * @param week 所在周
      */
     public void updateDcSummary(int uid, int yearmonth, int week) {
-        // 某一周指定用户的dc之和
-        Double dcSum = dcRecordRepository.getUserWeekTotalDc(uid, yearmonth, week);
-        DcSummary dcSummary = dcSummaryRepository.getDcSummary(uid, yearmonth);
-        if (dcSummary == null) {
-            dcSummary = new DcSummary(uid, yearmonth);
-        }
-        dcSummary.updateWeek(week, dcSum);
+        DcSummary dcSummary = Optional.ofNullable(dcSummaryRepository.getDcSummary(uid, yearmonth))
+                .orElse(new DcSummary(uid, yearmonth));
+        dcSummary.updateWeek(week, dcRecordRepository.getUserWeekTotalDc(uid, yearmonth, week));
         dcSummaryRepository.save(dcSummary);
-        //重新计算助研金
-        performanceService.computeSalary(uid, yearmonth);
     }
 
 
@@ -117,7 +114,10 @@ public class AuditService {
         contents.forEach(checked -> {
             checked.setAcItems(acItemRepository.findAllByDcRecordID(checked.getId()));
         });
-        return Map.of("content", contents, "total", pages.getTotalElements());
+        return Map.of(
+                "content", contents,
+                "total", pages.getTotalElements()
+        );
     }
 
 

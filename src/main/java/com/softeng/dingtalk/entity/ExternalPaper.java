@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @NoArgsConstructor
+@Deprecated
 public class ExternalPaper implements Paper {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -51,14 +51,17 @@ public class DcRecord {
     /**
      * 表示申请所属 年、月
      */
+    @Deprecated
     private int yearmonth;
     /**
      * 申请所属周
      */
+    @Deprecated
     private int week;
     /**
      * 所属周的一天
      */
+    @Deprecated
     private LocalDate weekdate;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;
@@ -66,6 +69,7 @@ public class DcRecord {
     @Version
     private int version;
     @JsonIgnore
+    @Deprecated
     private int dateCode;
 
     /**
@@ -78,6 +82,7 @@ public class DcRecord {
 
     @JsonIgnoreProperties("dcRecord")
     @OneToMany(mappedBy = "dcRecord")
+    @Deprecated
     private List<AcItem> acItems;
 
 
