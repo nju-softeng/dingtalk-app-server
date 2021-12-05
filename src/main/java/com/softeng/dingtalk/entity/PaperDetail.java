@@ -25,14 +25,14 @@ public class PaperDetail {
     private int id;
     private int num;
     @Column(columnDefinition="DECIMAL(10,3)")
+    @Deprecated
     private double ac;
     @JsonIgnoreProperties("paperDetails")
     @ManyToOne(fetch = FetchType.LAZY)
     private InternalPaper internalPaper;
     @ManyToOne
     private User user;
-    @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToOne(cascade = CascadeType.REMOVE)
     private AcRecord acRecord;
 
     public PaperDetail(InternalPaper internalPaper, User user, int num) {

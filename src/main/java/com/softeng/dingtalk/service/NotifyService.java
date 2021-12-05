@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -40,11 +41,11 @@ public class NotifyService {
      */
     public void reviewDcMessage(DcRecord dc) {
         String month =  String.valueOf(dc.getYearmonth() % 100);
-        String title = new StringBuilder().append(month).append("月第").append(dc.getWeek()).append("周绩效").toString();
-        String content = new StringBuilder().append("C值: ").append(dc.getCvalue()).append(",  DC值: ").append(dc.getDc()).append(",  AC值: ").append(dc.getAc()).toString();
-        Message message = new Message(title, content, dc.getApplicant().getId());
-
-        messageRepository.save(message);
+        messageRepository.save(new Message(
+                month + "月第" + dc.getWeek() + "周绩效",
+                "C值: " + dc.getCvalue() + "DC值: " + dc.getDc() + ",  AC值: " + dc.getAc(),
+                dc.getApplicant().getId()
+        ));
     }
 
 
@@ -53,12 +54,7 @@ public class NotifyService {
      * @param dc
      */
     public void updateDcMessage(DcRecord dc) {
-        String month =  String.valueOf(dc.getYearmonth() % 100);
-        String title = new StringBuilder().append(month).append("月第").append(dc.getWeek()).append("周绩效 被更新").toString();
-        String content = new StringBuilder().append("C值: ").append(dc.getCvalue()).append(",  DC值: ").append(dc.getDc()).append(",  AC值: ").append(dc.getAc()).toString();
-        Message message = new Message(title, content, dc.getApplicant().getId());
-
-        messageRepository.save(message);
+        reviewDcMessage(dc);
     }
 
 
@@ -70,27 +66,32 @@ public class NotifyService {
      * @return
      */
     public Page<Message> listUserMessage(int uid, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createTime").descending());
-        return messageRepository.findByUid(uid, pageable);
+        return messageRepository.findByUid(
+                uid,
+                PageRequest.of(page, size, Sort.by("createTime").descending())
+        );
     }
 
+    public String subString(String msg, int len) {
+        return msg.substring(0, Math.min(len, msg.length()));
+    }
 
     /**
      * 论文AC消息
-     * @param pid
-     * @param result
+     * @param internalPaper 最新的内部论文对象
      */
-    public void paperAcMessage(int pid, boolean result) {
-        InternalPaper internalPaper = internalPaperRepository.findById(pid).get();
-        String papertitel = internalPaper.getTitle();
-        int len = 20 < papertitel.length() ? 20 : papertitel.length();
-        for (PaperDetail pd : internalPaper.getPaperDetails()) {
-           //double acsum = acRecordRepository.getUserAcSum(pd.getUser().getId());
-            String title = "论文: " + papertitel.substring(0, len) + (result ? "... 投稿成功":"... 投稿失败");
-            String content = "AC: " + pd.getAc();
-            Message msg = new Message(title, content, pd.getUser().getId());
-            messageRepository.save(msg);
-        }
+    public void paperAcMessage(InternalPaper internalPaper) {
+        String title = "论文: " +
+                subString(internalPaper.getTitle(), 20) +
+                (internalPaper.hasAccepted() ? "... 投稿成功":"... 投稿失败");
+
+        messageRepository.saveAll(internalPaper.getPaperDetails().stream()
+                .map(paperDetail -> new Message(
+                        title,
+                        "AC: " + paperDetail.getAcRecord().getAc(),
+                        paperDetail.getUser().getId()))
+                .collect(Collectors.toList())
+        );
     }
 
 
@@ -101,31 +102,19 @@ public class NotifyService {
      */
     public void voteAcMessage(int vid, boolean result) {
         Vote v = voteRepository.findById(vid).get();
-        String papertitel;
-        if (v.isExternal()) {
-            // 如果是外部评审
-            ExternalPaper externalPaper = externalPaperRepository.findByVid(vid);
-            papertitel = "外部评审：" + externalPaper.getTitle();
-        } else {
-            // 如果是内部评审
-            InternalPaper internalPaper = internalPaperRepository.findByVid(vid);
-            papertitel = "内部评审：" + internalPaper.getTitle();
-        }
-        String title;
-        String content;
-        int len = 24 < papertitel.length() ? 24 : papertitel.length();
-        for (VoteDetail vd : v.getVoteDetails()) {
-            //double acsum = acRecordRepository.getUserAcSum(vd.getUser().getId());
-            if (vd.getResult() == result) {
-                title = "投票预测正确,  " + papertitel.substring(0, len) + "... 投稿成功";
-                content = "AC: + 1    ";
-            } else {
-                title = "投票预测错误,  " + papertitel.substring(0, len) + "... 投稿失败";
-                content = "AC: - 1    ";
-            }
-            Message msg = new Message(title, content, vd.getUser().getId());
-            messageRepository.save(msg);
-        }
+        String paperTitle = v.isExternal() ?
+                "外部评审：" + subString(externalPaperRepository.findByVid(vid).getTitle(), 20) :
+                "内部评审：" + subString(internalPaperRepository.findByVid(vid).getTitle(), 20);
+        messageRepository.saveAll(v.getVoteDetails().stream()
+                .map(voteDetail -> new Message(
+                        "投票预测结果",
+                        voteDetail.getResult() == result ?
+                                "投票预测正确,  " + paperTitle + "... 投稿成功" :
+                                "投票预测错误,  " + paperTitle + "... 投稿失败",
+                        voteDetail.getUser().getId())
+                )
+                .collect(Collectors.toList())
+        );
     }
 
 
@@ -134,10 +123,14 @@ public class NotifyService {
      * @param acRecords
      */
     public void autoSetProjectAcMessage(List<AcRecord> acRecords) {
-        for (AcRecord ac : acRecords) {
-            Message msg = new Message(ac.getReason(), "AC: + " + ac.getAc(), ac.getUser().getId());
-            messageRepository.save(msg);
-        }
+        messageRepository.saveAll(acRecords.stream()
+                .map(acRecord -> new Message(
+                        acRecord.getReason(),
+                        "AC: " + acRecord.getAc(),
+                        acRecord.getUser().getId()
+                ))
+                .collect(Collectors.toList())
+        );
     }
 
 
@@ -146,10 +139,7 @@ public class NotifyService {
      * @param acRecords
      */
     public void manualSetProjectAcMessage(List<AcRecord> acRecords) {
-        for (AcRecord ac : acRecords) {
-            Message msg = new Message(ac.getReason(), "AC: + " + ac.getAc(), ac.getUser().getId());
-            messageRepository.save(msg);
-        }
+        autoSetProjectAcMessage(acRecords);
     }
 
 
@@ -158,10 +148,7 @@ public class NotifyService {
      * @param acRecords
      */
     public void bugMessage(List<AcRecord> acRecords) {
-        for (AcRecord ac : acRecords) {
-            Message msg = new Message(ac.getReason(), "AC: " + ac.getAc(), ac.getUser().getId());
-            messageRepository.save(msg);
-        }
+        autoSetProjectAcMessage(acRecords);
     }
 
 

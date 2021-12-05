@@ -85,4 +85,11 @@ public class InternalPaper implements Paper {
     public boolean isExternal() {
         return false;
     }
+
+    public boolean hasAccepted() {
+        return result == ACCEPT;
+    }
+    public boolean hasRejected() {
+        return result == REJECT;
+    }
 }

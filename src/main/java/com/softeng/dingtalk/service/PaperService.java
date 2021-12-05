@@ -23,10 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -65,15 +62,13 @@ public class PaperService {
     /**
      * 根据 internalPaper 和 List<AuthorVO> 生成 PaperDetails
      * @param paper 实验室内部论文
-     * @param authorVOS 论文作者VO list
+     * @param authors 论文作者VO list
      * @return
      */
-    public List<PaperDetail> setPaperDetailsByAuthorsAndPaper(InternalPaper paper, List<AuthorVO> authorVOS) {
-        List<PaperDetail> paperDetails = new ArrayList<>();
-        authorVOS.forEach(author -> {
-            paperDetails.add(new PaperDetail(paper, author.getUid(), author.getNum()));
-        });
-        return paperDetails;
+    public List<PaperDetail> setPaperDetailsByAuthorsAndPaper(InternalPaper paper, List<AuthorVO> authors) {
+        return authors.stream()
+                .map(author -> new PaperDetail(paper, author.getUid(), author.getNum()))
+                .collect(Collectors.toList());
     }
 
 
@@ -95,11 +90,12 @@ public class PaperService {
     public void addExternalPaper(ExternalPaperVO vo) {
         // 创建对应的外部论文对象
         ExternalPaper externalPaper = new ExternalPaper(vo.getTitle());
-        externalPaperRepository.save(externalPaper);
         // 创建外部论文对应的投票
         Vote vote = new Vote(vo.getStartTime(), vo.getEndTime(), true, externalPaper.getId());
-        voteRepository.save(vote);
         externalPaper.setVote(vote);
+
+        voteRepository.save(vote);
+        externalPaperRepository.save(externalPaper);
     }
 
 
@@ -109,13 +105,19 @@ public class PaperService {
      */
     public void updateInternalPaper(InternalPaperVO vo) {
         InternalPaper internalPaper = internalPaperRepository.findById(vo.getId()).get();
-        // 更新 paper 信息
+        // 1. 更新 paper 信息
         internalPaper.update(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate());
-        internalPaperRepository.save(internalPaper);
-        // 删除旧的paperDetail
+        // 2. 删除旧的paperDetail
         paperDetailRepository.deleteByInternalPaper(internalPaper);
-        // 重新添加paperDetail
-        paperDetailRepository.saveBatch(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
+        // 3. 插入新的paperDetail
+        internalPaper.setPaperDetails(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
+        // 4. 重新计算ac
+        if(internalPaper.hasAccepted() || internalPaper.hasRejected()) {
+            calculateInternalPaperAc(internalPaper);
+        }
+        // 5. 重新添加paperDetail
+        paperDetailRepository.saveBatch(internalPaper.getPaperDetails());
+        internalPaperRepository.save(internalPaper);
     }
 
 
@@ -124,14 +126,17 @@ public class PaperService {
      * @param vo
      */
     public void updateExternalPaper(ExternalPaperVO vo) {
-        Vote vote = externalPaperRepository.findVoteById(vo.getId());
+        var externalPaper = externalPaperRepository.findById(vo.getId()).get();
+        var vote = externalPaperRepository.findVoteById(vo.getId());
+
         if (vote.getStartTime().isBefore(LocalDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "投票通知已发出,不可以再修改了");
         }
-        ExternalPaper externalPaper = externalPaperRepository.findById(vo.getId()).get();
+
         externalPaper.setTitle(vo.getTitle());
         vote.setStartTime(vo.getStartTime());
         vote.setEndTime(vo.getEndTime());
+
         externalPaperRepository.save(externalPaper);
         voteRepository.save(vote);
     }
@@ -164,37 +169,65 @@ public class PaperService {
      * @return
      */
     public double calculateRatioOfAc(int rank) {
-        double[] rate = new double[]{0.5, 0.25, 0.15, 0.1};
-        return rank >= 4 ? 0.1 : rate[rank - 1];
+        switch (rank) {
+            case 1:  return 0.5;
+            case 2:  return 0.25;
+            case 3:  return 0.15;
+            default: return 0.1;
+        }
+    }
+
+    /**
+     * 计算某个作者的 AC 加减分, 根据论文投稿情况、该论文类型对应的 AC 奖池、作者排名
+     * @param isAccept 论文投稿情况
+     * @param sum AC 奖池
+     * @param rank 作者排名
+     * @return AC值
+     */
+    public double calculateAc(boolean isAccept, double sum, int rank) {
+        return (isAccept ? 1.0 : -0.5) * sum * calculateRatioOfAc(rank);
     }
 
     /**
      * 计算论文结果对应的 AC
      */
-    public void calculateInternalPaperAc(InternalPaper internalPaper, boolean result) {
-        // 获取论文参与者信息
-        List<PaperDetail> paperDetails = paperDetailRepository.findByInternalPaper(internalPaper);
+    public void calculateInternalPaperAc(InternalPaper internalPaper) {
+        // 1. 获取 paperDetails
+        var paperDetails = internalPaper.getPaperDetails();
 
-        // 删除 paperDetail 对应的旧的 AcRecord
-        acRecordRepository.deleteAll(paperDetails.stream().filter(x-> x.getAcRecord() != null)
-                .map(x-> x.getAcRecord()).collect(Collectors.toList()));
+        // 2. 删除 paperDetail 对应的旧的 AcRecord. 防止admin后续修改作者信息导致混乱
+        acRecordRepository.deleteAll(
+                paperDetails.stream()
+                        .map(PaperDetail::getAcRecord)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList())
+        );
 
-        // 查询该类型论文对应的总 AC
+        // 3. 查询该类型论文对应的总 AC
         double sum = paperLevelRepository.getValue(internalPaper.getPaperType());
-        // AC 变更原因
-        String reason = internalPaper.getTitle() + (result == true ? " Accept" : " Reject");
-        // 创建 paperDetail 对应的新的 AcRecord
-        paperDetails.forEach(pd -> {
-            double ac = sum * (result == true ? 1 : -0.5) * calculateRatioOfAc(pd.getNum());
-            AcRecord acRecord = new AcRecord(pd.getUser(), null, ac, reason, AcRecord.PAPER, internalPaper.getUpdateDate().atTime(8,0));
-            pd.setAc(ac);
-            pd.setAcRecord(acRecord);
-            acRecordRepository.save(acRecord);
+
+        // 4. 生成 AC 变更原因
+        String reason = internalPaper.getTitle() + (internalPaper.hasAccepted() ? " Accept" : " Reject");
+
+        // 5. 更新 paperDetail 对应的 AcRecord
+        paperDetails.forEach(paperDetail -> {
+            paperDetail.setAcRecord(new AcRecord(
+                    paperDetail.getUser(),
+                    null,
+                    calculateAc(internalPaper.hasAccepted(), sum, paperDetail.getNum()),
+                    reason,
+                    AcRecord.PAPER,
+                    internalPaper.getUpdateDate().atTime(8,0)
+            ));
         });
 
+        // 6. 更新paperDetails表和acRecord表
+        acRecordRepository.saveAll(
+                paperDetails.stream()
+                        .map(PaperDetail::getAcRecord)
+                        .collect(Collectors.toList())
+        );
         paperDetailRepository.saveAll(paperDetails);
-        // 更新助研金
-        paperDetails.forEach(pd -> performanceService.computeSalary(pd.getUser().getId(), LocalDate.now()));
     }
 
 
@@ -206,26 +239,25 @@ public class PaperService {
      * @param updateDate
      */
     public void updateInternalPaperResult(int id, boolean result, LocalDate updateDate) {
-
+        // 1. 获取对应的内部论文
         InternalPaper internalPaper = internalPaperRepository.findById(id).get();
 
-        if (internalPaper.getVote().getResult() == null || internalPaper.getVote().getResult() == false) {
+        // 2. 校验论文投票和投稿情况
+        if (internalPaper.getVote().getResult() == null || !internalPaper.getVote().getResult()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
         }
 
-        // 更新指定论文的投稿结果和更新时间
+        // 3. 更新指定论文的投稿结果和更新时间
         internalPaper.setResult(result ? InternalPaper.ACCEPT : InternalPaper.REJECT);
         internalPaper.setUpdateDate(updateDate);
         internalPaperRepository.save(internalPaper);
 
-        // 更新论文 ac 和助研金
-        paperService.calculateInternalPaperAc(internalPaper, result);
-        // 发送消息
-        notifyService.paperAcMessage(id, result);
+        // 4. 更新论文 ac
+        paperService.calculateInternalPaperAc(internalPaper);
 
+        // 5. 插入相关消息
+        notifyService.paperAcMessage(internalPaper);
     }
-
-
 
 
     /**
@@ -253,12 +285,11 @@ public class PaperService {
      * @return
      */
     public Map listInternalPaper(int page, int size) {
-        int offset = (page - 1) * size;
-        List<PaperInfoVO> paperlist = internalPaperMapper.listInternalPaperInfo(offset, size);
-        int total = internalPaperMapper.countPaper();
-        return Map.of("list", paperlist, "total", total);
+        return Map.of(
+                "list", internalPaperMapper.listInternalPaperInfo((page - 1) * size, size),
+                "total", internalPaperMapper.countPaper()
+        );
     }
-
 
     /**
      *
@@ -267,10 +298,14 @@ public class PaperService {
      * @return
      */
     public Page<ExternalPaper> listExternalPaper(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("insertTime").descending());
-        return externalPaperRepository.findAll(pageable);
+        return externalPaperRepository.findAll(
+                PageRequest.of(
+                        page - 1,
+                        size,
+                        Sort.by("insertTime").descending()
+                )
+        );
     }
-
 
     /**
      * 获取论文的详细信息
@@ -368,6 +403,4 @@ public class PaperService {
     public Vote getExPaperVote(int id) {
         return externalPaperRepository.findById(id).get().getVote();
     }
-
-
 }
