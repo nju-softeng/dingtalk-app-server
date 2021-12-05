@@ -35,7 +35,7 @@ public class UserService {
      * @return
      */
     public boolean isAuditor(int uid) {
-        return userRepository.getUserAuthority(uid) == User.AUDITOR_AUTHORITY ? true : false;
+        return userRepository.getUserAuthority(uid) == User.AUDITOR_AUTHORITY;
     }
 
 

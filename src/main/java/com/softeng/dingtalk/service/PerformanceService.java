@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author zhanyeye
@@ -66,13 +67,10 @@ public class PerformanceService {
      * @param topup
      */
     public void updateTopup(int uid, int yearmonth, double topup) {
-        DcSummary dcSummary = dcSummaryRepository.getDcSummary(uid, yearmonth);
-        if (dcSummary == null) {
-            dcSummary = new DcSummary(uid, yearmonth);
-        }
+        DcSummary dcSummary = Optional.ofNullable(dcSummaryRepository.getDcSummary(uid, yearmonth))
+                .orElse(new DcSummary(uid, yearmonth));
         dcSummary.setTopup(topup);
         dcSummaryRepository.save(dcSummary);
-        computeSalary(uid, yearmonth);
     }
 
 
@@ -94,11 +92,9 @@ public class PerformanceService {
      */
     public List<Map<String, Object>> listDcSummaryVO(LocalDate date, boolean isDesc) {
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        if (isDesc) {
-            return dcSummaryRepository.listDcSummaryDesc(yearmonth);
-        } else {
-            return dcSummaryRepository.listDcSummaryAsc(yearmonth);
-        }
+        return isDesc ?
+                dcSummaryRepository.listDcSummaryDesc(yearmonth) :
+                dcSummaryRepository.listDcSummaryAsc(yearmonth);
     }
 
 
@@ -128,13 +124,16 @@ public class PerformanceService {
     public Map getUserPerformance(int uid) {
         LocalDate date  = LocalDate.now();
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        double acTotal = acRecordRepository.getUserAcSum(uid);
-        DcSummary dc = dcSummaryRepository.findByUserIdAndYearmonth(uid, yearmonth);
-        if (dc == null) {
-            return Map.of("acTotal", acTotal, "dcTotal", 0, "w1", 0, "w2",0, "w3", 0, "w4", 0, "w5", 0);
-        } else {
-            return Map.of("acTotal", acTotal, "dcTotal", dc.getTotal(), "w1", dc.getWeek1(), "w2", dc.getWeek2(), "w3", dc.getWeek3(), "w4", dc.getWeek4(), "w5",dc.getWeek5());
-        }
+        DcSummary dc = Optional.ofNullable(dcSummaryRepository.findByUserIdAndYearmonth(uid, yearmonth))
+                .orElse(new DcSummary());
+        return Map.of(
+                "acTotal", acRecordRepository.getUserAcSum(uid),
+                "dcTotal", dc.getTotal(),
+                "w1", dc.getWeek1(),
+                "w2", dc.getWeek2(),
+                "w3", dc.getWeek3(),
+                "w4", dc.getWeek4(),
+                "w5", dc.getWeek5());
     }
 
 }

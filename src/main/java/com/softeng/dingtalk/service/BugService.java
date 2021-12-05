@@ -83,7 +83,7 @@ public class BugService {
      */
     public void checkbug(BugCheckVO vo) {
         bugDetailRepository.deleteBugDetailByBugId(vo.getId());
-        if (vo.isStatus() == false) {
+        if (!vo.isStatus()) {
             // bug 不存在
             bugRepository.updateBugStatus(vo.getId(), false);
         } else {

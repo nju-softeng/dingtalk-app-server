@@ -17,6 +17,8 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @Author zhanyeye
@@ -46,13 +48,9 @@ public class WeeklyReportService {
     }
 
     public List<User> queryUnSubmittedWeeklyReportUser(LocalDateTime startTime, LocalDateTime endTime) {
-        var unSubmittedWeeklyReportUser = new LinkedList<User>();
-        for(var userId : userRepository.listAllStudentUserId()) {
-            if(!hasSubmittedWeeklyReport(userId, startTime, endTime)) {
-                unSubmittedWeeklyReportUser.add(userRepository.findByUserid(userId));
-            }
-        }
-        return unSubmittedWeeklyReportUser;
+        return Optional.ofNullable(userRepository.listAllStudent()).orElse(new ArrayList<>()).stream()
+                .filter(user -> !hasSubmittedWeeklyReport(user.getUserid(), startTime, endTime))
+                .collect(Collectors.toList());
     }
 
 //    public void queryUnsubmittedWeeklyReportUser(YearMonth yearMonth) {
