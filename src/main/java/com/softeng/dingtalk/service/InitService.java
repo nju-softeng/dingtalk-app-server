@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author zhanyeye
@@ -88,11 +89,10 @@ public class InitService {
         Set<Integer> existed = dcSummaryRepository.findIdsByDate(yearmonth);
         Set<Integer> total = userRepository.listUserids();
         total.removeAll(existed);
-        List<DcSummary> dcSummaries = new ArrayList<>();
-        for (Integer id : total) {
-            dcSummaries.add(new DcSummary(id, yearmonth));
-        }
-        dcSummaryRepository.saveBatch(dcSummaries);
+        dcSummaryRepository.saveBatch(total.stream()
+                .map(id -> new DcSummary(id, yearmonth))
+                .collect(Collectors.toList())
+        );
     }
 
 

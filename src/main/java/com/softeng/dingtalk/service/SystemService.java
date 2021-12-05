@@ -26,10 +26,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -60,18 +57,13 @@ public class SystemService {
 
 
     /**
-     * 根据钉钉 userid 获取系统 uid，前端JSAPI选人
-     * @param userid
+     * 根据钉钉 userId 获取系统 uid，前端JSAPI选人
+     * @param userId
      * @return
      */
-    public int getIdByUserid(String userid) {
-        Integer id = userRepository.findIdByUserid(userid);
-        if (id == null) {
-            // 如果该用户不在系统中，重新拉取
-            User user = addNewUser(userid);
-            return user.getId();
-        }
-        return id;
+    public int getIdByUserid(String userId) {
+        Integer id = userRepository.findIdByUserid(userId);
+        return id != null ? id : addNewUser(userId).getId();
     }
 
 
@@ -79,18 +71,9 @@ public class SystemService {
      * 从钉钉服务器拉取所有用户同步到系统
      */
     public void fetchUsers() {
-        List<String> depids = contactsApi.listDepid();
-        Set<String> remoteUserids = new HashSet<>();
-
-        for (String depid : depids) {
-            remoteUserids.addAll(contactsApi.listUserId(depid));
-        }
-
-//        List<String> localUserids = userRepository.listAllUserid();
-//        remoteUserids.removeAll(localUserids);
-        for (String userid : remoteUserids) {
-            addNewUser(userid);
-        }
+        contactsApi.listDepid().stream()
+                .flatMap(depId -> contactsApi.listUserId(depId).stream())
+                .forEach(this::addNewUser);
     }
 
 
@@ -107,7 +90,7 @@ public class SystemService {
         if (response.getIsBoss()) {
             // 是否为企业的老板
             authority = User.ADMIN_AUTHORITY;
-        } else if (response.getIsLeaderInDepts().indexOf("true") != -1) {
+        } else if (response.getIsLeaderInDepts().contains("true")) {
             // 是否为管理员
             authority = User.AUDITOR_AUTHORITY;
         } else {
@@ -116,31 +99,28 @@ public class SystemService {
 
         // 职位
         Position position;
-        if (response.getPosition() == null) {
-            position = Position.OTHER;
-        } else {
-            switch (response.getPosition()){
-                case "本" : position = Position.UNDERGRADUATE; break;
-                case "硕" : position = Position.POSTGRADUATE;  break;
-                case "博" : position = Position.DOCTOR;  break;
-                default: position = Position.OTHER;  break;
-            }
+        switch (response.getPosition()){
+            case "本": position = Position.UNDERGRADUATE; break;
+            case "硕": position = Position.POSTGRADUATE;  break;
+            case "博": position = Position.DOCTOR;  break;
+            default:   position = Position.OTHER;  break;
         }
 
-        // 如果用户已存在
-        User user = userRepository.findByUserid(userid);
-        if (user == null) {
-            user = userRepository.save(new User(response.getUserid(), response.getUnionid(), response.getName(), response.getAvatar(), authority, position));
-            userRepository.refresh(user);
-        } else {
-            user.setAvatar(response.getAvatar());
-            user.setName(response.getName());
-            user.setUnionid(response.getUnionid());
-        }
-
-
-
-        return user;
+        User user = Optional.ofNullable(userRepository.findByUserid(userid))
+                .orElse(
+                        new User(
+                                response.getUserid(),
+                                response.getUnionid(),
+                                response.getName(),
+                                response.getAvatar(),
+                                authority,
+                                position
+                        )
+                );
+        user.setAvatar(response.getAvatar());
+        user.setName(response.getName());
+        user.setUnionid(response.getUnionid());
+        return userRepository.save(user);
     }
 
 
@@ -154,27 +134,24 @@ public class SystemService {
      * @return
      */
     public Page<User> multiQueryUser(int page, int size, String name, String position) {
-        Specification<User> spec = new Specification<User>() {
-            @Override
-            public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                List<Predicate> predicates = new ArrayList<>();
-                predicates.add(criteriaBuilder.equal(root.get("deleted"), false));
-                predicates.add(criteriaBuilder.notEqual(root.get("authority"), User.ADMIN_AUTHORITY));
-                if ("" != name) {
-                    // 根据姓名模糊查询
-                    predicates.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
-                }
-                if ("" != position) {
-                    // 根据学位模糊查询
-                    Position eposition = Stream.of(Position.values())
-                            .filter(c -> c.getTitle().equals(position))
-                            .findFirst()
-                            .orElseThrow(IllegalArgumentException::new);
-                    predicates.add(criteriaBuilder.equal(root.get("position"), eposition));
-                }
-                Predicate[] arr = new Predicate[predicates.size()];
-                return criteriaBuilder.and(predicates.toArray(arr));
+        Specification<User> spec = (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(root.get("deleted"), false));
+            predicates.add(criteriaBuilder.notEqual(root.get("authority"), User.ADMIN_AUTHORITY));
+            if (!"".equals(name)) {
+                // 根据姓名模糊查询
+                predicates.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
             }
+            if (!"".equals(position)) {
+                // 根据学位模糊查询
+                Position eposition = Stream.of(Position.values())
+                        .filter(c -> c.getTitle().equals(position))
+                        .findFirst()
+                        .orElseThrow(IllegalArgumentException::new);
+                predicates.add(criteriaBuilder.equal(root.get("position"), eposition));
+            }
+            Predicate[] arr = new Predicate[predicates.size()];
+            return criteriaBuilder.and(predicates.toArray(arr));
         };
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());

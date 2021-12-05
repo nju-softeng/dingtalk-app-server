@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @ToString
+@Deprecated
 public class AcItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

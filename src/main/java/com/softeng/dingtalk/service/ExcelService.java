@@ -20,8 +20,10 @@ public class ExcelService {
     @Autowired
     AcRecordMapper acRecordMapper;
 
-    public void WriteAcDataByDate(LocalDate date, OutputStream outputStream) {
-        EasyExcel.write(outputStream, AcData.class).sheet(date.toString().substring(0, 7)).doWrite(acRecordMapper.listAcDataByYearMonth(date.getYear(), date.getMonth()));
+    public void writeAcDataByDate(LocalDate date, OutputStream outputStream) {
+        EasyExcel.write(outputStream, AcData.class)
+                .sheet(date.toString().substring(0, 7))
+                .doWrite(acRecordMapper.listAcDataByYearMonth(date.getYear(), date.getMonth()));
     }
 
 
