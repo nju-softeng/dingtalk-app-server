@@ -79,10 +79,15 @@ public class Timer {
         votes.forEach(v -> {
             // 更新汇总投票结果
             v = voteService.updateVote(v);
-            Paper paper = v.isExternal() ? externalPaperRepository.findByVid(v.getId()) : internalPaperRepository.findByVid(v.getId());
-            String url = generateVoteDetailUrl(paper.isExternal(), paper.getId());
-            String markdown = voteResultInfo(paper.getTitle(), v.getResult(), v.getAccept(), v.getTotal());
-            messageApi.sendActionCard("投票结果", markdown, "查看详情", url);
+            Paper paper = v.isExternal() ?
+                    externalPaperRepository.findByVid(v.getId()) :
+                    internalPaperRepository.findByVid(v.getId());
+            messageApi.sendActionCard(
+                    "投票结果",
+                    voteResultInfo(paper.getTitle(), v.getResult(), v.getAccept(), v.getTotal()),
+                    "查看详情",
+                    generateVoteDetailUrl(paper.isExternal(), paper.getId())
+            );
         });
     }
 

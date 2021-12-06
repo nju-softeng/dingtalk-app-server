@@ -74,9 +74,9 @@ public class VoteService {
      */
     @CacheEvict(value = "voting", allEntries = true)
     public Vote createVote(VoteVO vo) {
+        lock.lock();
         try {
             // 确保线程安全问题
-            lock.lock();
             if (voteRepository.isExisted(vo.getPaperid(), false) == 0) {
                 // 如果投票还没有被创建
                 Vote vote = new Vote(LocalDateTime.now(), vo.getEndTime(), vo.getPaperid());
