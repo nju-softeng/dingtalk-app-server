@@ -99,7 +99,7 @@ public class SystemService {
 
         // 职位
         Position position;
-        switch (response.getPosition()){
+        switch (Optional.ofNullable(response.getPosition()).orElse("")){
             case "本": position = Position.UNDERGRADUATE; break;
             case "硕": position = Position.POSTGRADUATE;  break;
             case "博": position = Position.DOCTOR;  break;
