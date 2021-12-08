@@ -90,12 +90,12 @@ public class PaperService {
     public void addExternalPaper(ExternalPaperVO vo) {
         // 创建对应的外部论文对象
         ExternalPaper externalPaper = new ExternalPaper(vo.getTitle());
+        externalPaperRepository.save(externalPaper);
         // 创建外部论文对应的投票
         Vote vote = new Vote(vo.getStartTime(), vo.getEndTime(), true, externalPaper.getId());
         externalPaper.setVote(vote);
 
         voteRepository.save(vote);
-        externalPaperRepository.save(externalPaper);
     }
 
 
