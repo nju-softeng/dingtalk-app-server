@@ -33,6 +33,8 @@ public class NotifyService {
     VoteRepository voteRepository;
     @Autowired
     ExternalPaperRepository externalPaperRepository;
+    @Autowired
+    NotifyService notifyService;
 
 
     /**
@@ -139,7 +141,7 @@ public class NotifyService {
      * @param acRecords
      */
     public void manualSetProjectAcMessage(List<AcRecord> acRecords) {
-        autoSetProjectAcMessage(acRecords);
+        notifyService.autoSetProjectAcMessage(acRecords);
     }
 
 
@@ -148,7 +150,7 @@ public class NotifyService {
      * @param acRecords
      */
     public void bugMessage(List<AcRecord> acRecords) {
-        autoSetProjectAcMessage(acRecords);
+        notifyService.autoSetProjectAcMessage(acRecords);
     }
 
 

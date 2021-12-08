@@ -113,7 +113,7 @@ public class PaperService {
         internalPaper.setPaperDetails(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
         // 4. 重新计算ac
         if(internalPaper.hasAccepted() || internalPaper.hasRejected()) {
-            calculateInternalPaperAc(internalPaper);
+            paperService.calculateInternalPaperAc(internalPaper);
         }
         // 5. 重新添加paperDetail
         paperDetailRepository.saveBatch(internalPaper.getPaperDetails());
