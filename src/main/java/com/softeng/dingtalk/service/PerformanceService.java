@@ -71,6 +71,7 @@ public class PerformanceService {
                 .orElse(new DcSummary(uid, yearmonth));
         dcSummary.setTopup(topup);
         dcSummaryRepository.save(dcSummary);
+        computeSalary(uid, yearmonth);
     }
 
 
