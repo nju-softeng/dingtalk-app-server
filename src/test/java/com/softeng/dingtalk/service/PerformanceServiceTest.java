@@ -1,5 +1,7 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.excel.DcSummaryData;
+import com.softeng.dingtalk.mapper.DcSummaryMapper;
 import com.softeng.dingtalk.repository.DcSummaryRepository;
 import com.softeng.dingtalk.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +10,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author zhanyeye
@@ -26,11 +31,14 @@ public class PerformanceServiceTest {
     UserRepository userRepository;
     @Autowired
     SystemService systemService;
+    @Autowired
+    DcSummaryMapper dcSummaryMapper;
 
     @Test
     public void test1() {
-        Double d =  dcSummaryRepository.findTopup(1, 202006);
-        log.debug(d.toString());
+        List<DcSummaryData> dataList = dcSummaryMapper.listDcSummaryDataByYearMonth(202110);
+        log.info(dataList.toString());
+
     }
 
 
