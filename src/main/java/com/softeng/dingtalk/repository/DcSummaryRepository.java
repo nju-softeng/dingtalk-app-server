@@ -19,6 +19,13 @@ import java.util.Set;
 public interface DcSummaryRepository extends CustomizedRepository<DcSummary, Integer> {
 
     /**
+     * 查询指定月份的 dc_summary
+     * @param yearmonth
+     * @return
+     */
+    List<DcSummary> findAllByYearmonth(int yearmonth);
+
+    /**
      * 获取用户指定月份的 dcSummary
      * @param uid
      * @param yearmonth
