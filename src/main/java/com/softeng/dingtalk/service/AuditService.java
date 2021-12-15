@@ -97,6 +97,7 @@ public class AuditService {
                 .orElse(new DcSummary(uid, yearmonth));
         dcSummary.updateWeek(week, dcRecordRepository.getUserWeekTotalDc(uid, yearmonth, week));
         dcSummaryRepository.save(dcSummary);
+        performanceService.computeSalary(uid, yearmonth);
     }
 
 
