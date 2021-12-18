@@ -1,22 +1,28 @@
 package com.softeng.dingtalk.component;
 
 import com.softeng.dingtalk.api.MessageApi;
+import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.ExternalPaper;
 import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.enums.Position;
+import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.ExternalPaperRepository;
 import com.softeng.dingtalk.repository.InternalPaperRepository;
 import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.service.InitService;
 import com.softeng.dingtalk.service.VoteService;
+import com.softeng.dingtalk.service.WeeklyReportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author zhanyeye
@@ -39,9 +45,34 @@ public class Timer {
     InitService initService;
     @Autowired
     ExternalPaperRepository externalPaperRepository;
+    @Autowired
+    WeeklyReportService weeklyReportService;
+    @Autowired
+    AcRecordRepository acRecordRepository;
 
     @Autowired
     MessageApi messageApi;
+
+    /**
+     * 每周一凌晨2点扫描一次，查询周日一整天没有提交周报的博士、硕士，每人扣 1 ac
+     */
+    @Scheduled(cron = "0 0 2 ? * 2")
+    public void deductedPointsUnsubmittedWeeklyReport() {
+        var end = LocalDate.now().atTime(0, 0, 0);
+        var start = end.minusDays(7);
+        var users = weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end);
+        acRecordRepository.saveAll(
+                users.stream()
+                        .map(user -> AcRecord.builder()
+                                .user(user)
+                                .ac(AcAlgorithm.getPointOfUnsubmittedWeekReport(user))
+                                .classify(AcRecord.NORMAL)
+                                .reason(String.format("%s - %s 未提交周报", start.toLocalDate(), end.toLocalDate()))
+                                .createTime(end)
+                                .build())
+                        .collect(Collectors.toList())
+        );
+    }
 
     /**
      * 每20s扫描一次，看是否有待启动的投票
