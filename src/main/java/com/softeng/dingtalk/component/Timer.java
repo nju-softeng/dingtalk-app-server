@@ -56,8 +56,9 @@ public class Timer {
     /**
      * 每周一凌晨2点扫描一次，查询周日一整天没有提交周报的博士、硕士，每人扣 1 ac
      */
-    @Scheduled(cron = "0 0 2 ? * 2")
+    @Scheduled(cron = "0 0 2 ? * MON")
     public void deductedPointsUnsubmittedWeeklyReport() {
+        log.info(LocalDate.now() + " 定时扫描扣分");
         var end = LocalDate.now().atTime(0, 0, 0);
         var start = end.minusDays(7);
         var users = weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end);
