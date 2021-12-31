@@ -134,43 +134,26 @@ docker-compose 编排配置如下：
 #### 前端预览
 
 
-![01](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093121.png)
+![01](https://user-images.githubusercontent.com/35565811/147812078-ee6d23d6-183b-46ee-9cab-fa511a9db3e1.png)
+![02](https://user-images.githubusercontent.com/35565811/147812086-3de4a6d8-0951-45fa-b954-012c1bdecf0e.png)
+![03](https://user-images.githubusercontent.com/35565811/147812088-b7efadb5-4cb7-492b-8b91-3fdcf1d45f33.png)
+![04](https://user-images.githubusercontent.com/35565811/147812093-98630a58-0f5c-4f57-b004-e63d017ad573.png)
+![05](https://user-images.githubusercontent.com/35565811/147812102-c0d0771b-5260-4475-89fe-6a5ca2e70bc5.png)
+![06](https://user-images.githubusercontent.com/35565811/147812111-2b46366e-be0a-4ab1-9790-32e8346afccc.png)
+![07](https://user-images.githubusercontent.com/35565811/147812115-381fe5c5-5090-44ba-8adb-fe4126f702b8.png)
+![08](https://user-images.githubusercontent.com/35565811/147812121-983cac86-4d19-42c8-8c79-d72117603c46.png)
+![09](https://user-images.githubusercontent.com/35565811/147812126-3a237f3d-3305-4428-b9f2-7ad2b36075eb.png)
+![10](https://user-images.githubusercontent.com/35565811/147812129-0294e664-6eed-46cf-b04e-128b153b974d.png)
+![11](https://user-images.githubusercontent.com/35565811/147812136-f8fea23c-0d52-4af9-a017-cc8cfaf2b4aa.png)
+![12](https://user-images.githubusercontent.com/35565811/147812141-fcc1ba3f-5b27-4c92-b311-148117e31aef.png)
+![13](https://user-images.githubusercontent.com/35565811/147812148-e3b09cc8-3499-402b-b45c-087d2651b205.png)
+![14](https://user-images.githubusercontent.com/35565811/147812150-7f8a93a7-a6b8-4e73-82ab-24d17210b46c.png)
+![15](https://user-images.githubusercontent.com/35565811/147812155-ad4aadc4-9e23-4595-983e-7f648cd888cc.png)
+![16](https://user-images.githubusercontent.com/35565811/147812167-b1e5ee61-550b-49fe-be29-75db3e656a8c.png)
+![17](https://user-images.githubusercontent.com/35565811/147812171-74e74dc2-a89e-4efe-9792-32894b697004.png)
+![18](https://user-images.githubusercontent.com/35565811/147812176-5587bd9a-8297-43bf-9941-64204d07f6e6.png)
+![19](https://user-images.githubusercontent.com/35565811/147812180-e26104c1-cff6-4faa-b190-bffc4e793b43.png)
 
-![02](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093431.png)
-
-![03](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093514.png)
-
-![04](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093441.png)
-
-![05](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093452.png)
-
-![06](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093502.png)
-
-![07](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093234.png)
-
-![08](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093258.png)
-
-![09](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516130529.png)
-
-![10](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516130436.png)
-
-![11](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516130546.png)
-
-![12](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516130546.png)
-
-![13](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516130612.png)
-
-![14](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093335.png)
-
-![15](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093409.png)
-
-![16](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093418.png)
-
-![17](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093523.png)
-
-![18](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516093536.png)
-
-![19](https://raw.githubusercontent.com/zhanyeye/Figure-bed/win-pic/img/20210516131332.png)
 
 ![project-detail-1.png](https://i.loli.net/2021/01/11/w8Tr7lUkK1pOaL9.png)
 
