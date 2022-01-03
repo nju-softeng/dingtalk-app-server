@@ -98,7 +98,7 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
      * 查询所有在读的学生（博士、硕士）
      * @return
      */
-    @Query("select  u from User u where u.deleted = false and (u.position = '硕士' or u.position = '博士')")
+    @Query("select  u from User u where u.deleted = false and (u.position = '硕士生' or u.position = '博士生')")
     List<User> listAllStudent();
 
 
