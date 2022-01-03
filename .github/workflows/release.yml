@@ -18,10 +18,10 @@ jobs:
       - name: Build Docker With SSH
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.PROD_USER }}
-          key: ${{ secrets.PROD_KEY }}
-          port: ${{ secrets.PORT }}
+          host: ${{ secrets.DINGTALK_REALEASE_HOST }}
+          username: ${{ secrets.DINGTALK_REALEASE_USERNAME }}
+          key: ${{ secrets.DINGTALK_REALEASE_KEY }}
+          port: ${{ secrets.DINGTALK_HOST_PORT }}
           script: |
             if [ ! -d "dingtalk-app-release" ]; then
               git clone git@github.com:nju-softeng/dingtalk-app-build.git dingtalk-app-release
