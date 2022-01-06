@@ -238,7 +238,7 @@ public class VoteService {
      * @return
      */
     public boolean getVotingResult(Vote vote) {
-        return calculatePercentageOfVotesAccepted(vote) > 0.5;
+        return calculatePercentageOfVotesAccepted(vote) > 2.0 / 3.0;
     }
 
 
