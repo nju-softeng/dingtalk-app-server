@@ -1,3 +1,4 @@
+# 防止怪物删除我们的仓库
 name: Sync To Gitee
 on: [ push, delete, create ]
 jobs:
