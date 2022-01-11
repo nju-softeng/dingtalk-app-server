@@ -60,7 +60,7 @@ public class Timer {
     public void deductedPointsUnsubmittedWeeklyReport() {
         log.info(LocalDate.now() + " 定时扫描扣分");
         var end = LocalDate.now().atTime(0, 0, 0);
-        var start = end.minusDays(7);
+        var start = end.minusDays(1);
         var users = weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end);
         acRecordRepository.saveAll(
                 users.stream()
@@ -68,7 +68,10 @@ public class Timer {
                                 .user(user)
                                 .ac(AcAlgorithm.getPointOfUnsubmittedWeekReport(user))
                                 .classify(AcRecord.NORMAL)
-                                .reason(String.format("%s - %s 未提交周报", start.toLocalDate(), end.toLocalDate()))
+                                .reason(String.format(
+                                        "%s 未按时提交周报",
+                                        end.minusDays(1).toLocalDate().toString()
+                                ))
                                 .createTime(end)
                                 .build())
                         .collect(Collectors.toList())

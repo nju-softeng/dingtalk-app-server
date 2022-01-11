@@ -1,6 +1,10 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.api.ReportApi;
+import com.softeng.dingtalk.component.AcAlgorithm;
+import com.softeng.dingtalk.component.Timer;
+import com.softeng.dingtalk.entity.AcRecord;
+import com.softeng.dingtalk.repository.AcRecordRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -10,6 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * @Author zhanyeye
@@ -27,6 +34,9 @@ public class WeeklyReportServiceTest {
     @Autowired
     WeeklyReportService weeklyReportService;
 
+    @Autowired
+    AcRecordRepository acRecordRepository;
+
     @Test
     public void testHasSubmittedWeeklyReport() {
         Assert.assertEquals(weeklyReportService.hasSubmittedWeeklyReport("", LocalDateTime.of(2021, 10, 1, 0, 0), LocalDateTime.of(2021, 10, 3, 0, 0, 0)), false);
@@ -34,30 +44,41 @@ public class WeeklyReportServiceTest {
 
     @Test
     public void testQueryUnSubmittedWeeklyReportUser() {
-        // 1. 10.11 - 10.17 未按时交周报的同学
-        log.info("10.11 - 10.17 未按时交周报的同学");
-        var users = weeklyReportService.queryUnSubmittedWeeklyReportUser(
-                LocalDateTime.of(2021, 10, 11, 0, 0, 0),
-                LocalDateTime.of(2021, 10, 18, 0, 0, 0));
-        for(var user : users) {
-            System.out.println(user.getName());
-        }
-        // 2. 10.18 - 10.24 未按时交周报的同学
-        log.info("10.18 - 10.24 未按时交周报的同学");
-        users = weeklyReportService.queryUnSubmittedWeeklyReportUser(
-                LocalDateTime.of(2021, 10, 18, 0, 0, 0),
-                LocalDateTime.of(2021, 10, 25, 0, 0, 0));
-        for(var user : users) {
-            System.out.println(user.getName());
-        }
-        // 2. 10.25 - 10.31 未按时交周报的同学
-        log.info("10.25 - 10.31 未按时交周报的同学");
-        users = weeklyReportService.queryUnSubmittedWeeklyReportUser(
-                LocalDateTime.of(2021, 10, 25, 0, 0, 0),
-                LocalDateTime.of(2021, 11, 1, 0, 0, 0));
-        for(var user : users) {
-            log.info(user.getName());
-        }
+        Arrays.asList(
+                LocalDateTime.of(2021, 11, 29, 0, 0, 0),
+                LocalDateTime.of(2021, 12, 6, 0, 0, 0),
+                LocalDateTime.of(2021, 12, 13, 0, 0, 0),
+                LocalDateTime.of(2021, 12, 20, 0, 0, 0),
+                LocalDateTime.of(2021, 12, 27, 0, 0, 0),
+                LocalDateTime.of(2022, 1, 3, 0, 0, 0)
+        ).forEach(startTime -> {
+            var endTime = startTime.plusDays(7);
+            var reason = String.format(
+                    "%s 未按时提交周报",
+                    endTime.minusDays(1).toLocalDate().toString()
+            );
+            log.info(reason);
+            var users = weeklyReportService.queryUnSubmittedWeeklyReportUser(
+                    endTime.minusDays(1),
+                    endTime
+            );
+            users.forEach(user -> {log.info(user.getName());});
+
+//            // 批量修改数据库
+//            acRecordRepository.saveAll(
+//                    users.stream()
+//                            .map(user -> AcRecord.builder()
+//                                    .user(user)
+//                                    .ac(AcAlgorithm.getPointOfUnsubmittedWeekReport(user))
+//                                    .classify(AcRecord.NORMAL)
+//                                    .reason(reason)
+//                                    .createTime(endTime)
+//                                    .build())
+//                            .collect(Collectors.toList())
+//            );
+        });
+
+
     }
 
 }
