@@ -107,7 +107,7 @@
 + 生产环境CI脚本：[.github/workflows/release.yml](https://github.com/nju-softeng/dingtalk-app-server/blob/main/.github/workflows/release.yml)  
 + 测试环境CI脚本：[.github/workflows/main.yml](https://github.com/nju-softeng/dingtalk-app-server/blob/main/.github/workflows/main.yml)  
 + 对应的构建部署脚本：[dingtalk-app-build (private)](https://github.com/nju-softeng/dingtalk-app-build)
-+ docker-compose 配置示例：[docker-compose.yml 配置文件](https://github.com/nju-softeng/dingtalk-app-server/wiki/docker_compose.yml)
++ docker-compose 配置：[docker-compose.yml 配置文件](https://github.com/nju-softeng/dingtalk-app-server/wiki/docker_compose.yml)
 
 ### 系统运维  
 + [定时备份docker中的数据库](https://www.yuque.com/zhanyeye/devops/gii4pk)
