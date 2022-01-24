@@ -1,10 +1,8 @@
 package com.softeng.dingtalk.component;
 
 import com.softeng.dingtalk.api.MessageApi;
-import com.softeng.dingtalk.entity.AcRecord;
-import com.softeng.dingtalk.entity.ExternalPaper;
-import com.softeng.dingtalk.entity.Paper;
-import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.constant.LocalUrlConstant;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.ExternalPaperRepository;
@@ -52,6 +50,24 @@ public class Timer {
 
     @Autowired
     MessageApi messageApi;
+
+    /**
+     * 每周周日23点扫描一次，给当天还未提交周报的博士、硕士发送提醒消息
+     */
+    @Scheduled(cron = "0 0 23 ? * SUN")
+    public void weeklyReportAndPerformanceFillingReminder() {
+        log.info(LocalDate.now() + "定时扫描提醒周报和绩效填写");
+        var end = LocalDate.now().atTime(0, 0, 0).plusDays(1);
+        var start = end.minusDays(1);
+        messageApi.sendLinkMessage(
+                "周报、绩效填写提醒",
+                LocalUrlConstant.FRONTEND_PERFORMANCE_URL,
+                "您还未提交本周周报，请在周日24点前提交周报并随后申请绩效",
+                weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end).stream()
+                        .map(User::getUserid)
+                        .collect(Collectors.toList())
+        );
+    }
 
     /**
      * 每周一凌晨2点扫描一次，查询周日一整天没有提交周报的博士、硕士，每人扣 1 ac

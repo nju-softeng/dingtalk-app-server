@@ -1,8 +1,14 @@
 package com.softeng.dingtalk.api;
 
 import com.dingtalk.api.request.OapiChatSendRequest;
+import com.dingtalk.api.request.OapiMessageCorpconversationAsyncsendV2Request;
+import com.alibaba.fastjson.JSONObject;
+import com.softeng.dingtalk.constant.DingApiUrlConstant;
+import com.softeng.dingtalk.constant.ImageUrlConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @date: 2021/4/23 19:59
@@ -56,4 +62,35 @@ public class MessageApi extends BaseApi {
 
         executeRequest(request, "https://oapi.dingtalk.com/chat/send");
     }
+
+    /**
+     * 向指定的人以本应用的名义发送连接消息
+     */
+    public void sendLinkMessage(String title, String linkUrl, String text, List<String> users) {
+        if(users.size() > 100) {
+            throw new RuntimeException("群发消息一次不能超过一百人(钉钉接口文档注明)");
+        }
+
+        var link = new OapiMessageCorpconversationAsyncsendV2Request.Link();
+        link.setMessageUrl(createLinkRedirectToApp(linkUrl));
+        link.setPicUrl(ImageUrlConstant.SYSTEM_IMAGE_URL);
+        link.setText(text);
+        link.setTitle(title);
+
+        var msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
+        msg.setMsgtype("link");
+        msg.setLink(link);
+
+        OapiMessageCorpconversationAsyncsendV2Request req = new OapiMessageCorpconversationAsyncsendV2Request();
+        req.setAgentId(AGENTID);
+        req.setUseridList(String.join(",", users));
+        req.setMsg(msg);
+
+        var resp = executeRequest(req, DingApiUrlConstant.LINK_MESSAGE_API_URL);
+        log.info("send link message response: {}", JSONObject.toJSON(resp));
+
+    }
+
+
 }
+
