@@ -2,6 +2,7 @@
   <img width="100" src="https://i.loli.net/2020/11/12/8pP5y6eHwX1VfLd.png" alt="logo">
   <h2 align="center">Dingtalk App Server</h2>
   <p align="center">
+    <a href="https://www.codefactor.io/repository/github/nju-softeng/dingtalk-app-server"><img src="https://www.codefactor.io/repository/github/nju-softeng/dingtalk-app-server/badge" alt="CodeFactor" /></a>
     <a href="https://github.com/nju-softeng/dingtalk-app-server/actions?query=workflow%3ARelease">
       <img src="https://github.com/nju-softeng/dingtalk-app-server/actions/workflows/release.yml/badge.svg?branch=release">
     </a>
