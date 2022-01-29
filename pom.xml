@@ -120,20 +120,18 @@
             <version>2.9.7</version>
         </dependency>
 
-        <!-- 钉钉SDK -->
+        <!-- 钉钉旧版服务端SDK -->
         <dependency>
-            <groupId>com.dingtalk.open</groupId>
-            <artifactId>taobao-sdk-java-auto</artifactId>
-            <version>2019.12.05</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/src/main/resources/lib/taobao-sdk-java-auto.jar</systemPath>
+            <groupId>com.aliyun</groupId>
+            <artifactId>alibaba-dingtalk-service-sdk</artifactId>
+            <version>2.0.0</version>
         </dependency>
 
-        <!--  钉钉ISV -->
+        <!-- 钉钉新版服务端SDK -->
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>dingtalk</artifactId>
-            <version>1.0.58</version>
+            <version>1.2.8</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.alibaba/easyexcel -->
@@ -175,9 +173,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <includeSystemScope>true</includeSystemScope>
-                </configuration>
             </plugin>
         </plugins>
     </build>
