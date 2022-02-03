@@ -202,7 +202,8 @@ public class VoteService {
     public static double getWeight(User user) {
         switch (user.getPosition()) {
             case DOCTOR:        return 2.0;
-            case POSTGRADUATE:  return 1.0;
+            case ACADEMIC:
+            case PROFESSIONAL:  return 1.0;
             default:            return 0.0;
         }
     }
@@ -294,7 +295,7 @@ public class VoteService {
         return AcRecord.builder()
                 .user(user)
                 // 论文投票AC变化，对于硕士生是1分，对于博士生是2分
-                .ac((isRight ? 1 : -1) * (user.getPosition() == Position.POSTGRADUATE ? 1 : 2))
+                .ac((isRight ? 1 : -1) * (user.getPosition() == Position.DOCTOR ? 2 : 1))
                 .classify(AcRecord.VOTE)
                 .reason((isRight ? "投票预测正确：" : "投票预测错误：") + title)
                 .createTime(dateTime)

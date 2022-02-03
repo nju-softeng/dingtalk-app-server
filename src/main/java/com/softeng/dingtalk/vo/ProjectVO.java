@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.vo;
 
+import com.softeng.dingtalk.enums.LongitudinalLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,4 +24,14 @@ public class ProjectVO {
     private LocalDate[] dates;
     private List<String> dingIds;
     private boolean updateDingIds;
+
+    /**
+     * @Description
+     * @Author Jerrian Zhao
+     * @Data 01/28/2022
+     */
+    private int leaderId;
+    private boolean nature;
+    private char horizontalLevel;
+    private LongitudinalLevel longitudinalLevel;
 }

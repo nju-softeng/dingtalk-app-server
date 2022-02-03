@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.*;
 
 /**
@@ -111,7 +112,7 @@ public class UserService {
      */
     public UserInfoVO getUserDetail(int uid) {
         User u = userRepository.findById(uid).get();
-        return new UserInfoVO(u.getName(), u.getAvatar(), u.getPosition(), u.getStuNum());
+        return new UserInfoVO(u.getName(), u.getAvatar(), u.getPosition(), u.getStuNum(), u.getUndergraduateCollege(), u.getMasterCollege(), u.getIdCardNo(), u.getCreditCard(), u.getRentingStart(), u.getRentingEnd(), u.getAddress(), u.getWorkState(), u.getRemark());
     }
 
 
@@ -119,8 +120,16 @@ public class UserService {
         User u = userRepository.findById(uid).get();
         u.setStuNum(userInfoVO.getStuNum());
         u.setName(userInfoVO.getName());
+        u.setCreditCard(userInfoVO.getCreditCard());
+        u.setIdCardNo(userInfoVO.getIdCardNo());
+        u.setMasterCollege(userInfoVO.getMasterCollege());
+        u.setUndergraduateCollege(userInfoVO.getUndergraduateCollege());
+        u.setWorkState(userInfoVO.getWorkState());
+        u.setRemark(userInfoVO.getRemark());
+        u.setAddress(userInfoVO.getAddress());
+        u.setRentingEnd(userInfoVO.getRentingEnd());
+        u.setRentingStart(userInfoVO.getRentingStart());
         userRepository.save(u);
     }
-
 
 }

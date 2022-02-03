@@ -101,7 +101,8 @@ public class SystemService {
         Position position;
         switch (Optional.ofNullable(response.getPosition()).orElse("")){
             case "本": position = Position.UNDERGRADUATE; break;
-            case "硕": position = Position.POSTGRADUATE;  break;
+            case "学硕": position = Position.ACADEMIC;  break;
+            case "专硕": position = Position.PROFESSIONAL;  break;
             case "博": position = Position.DOCTOR;  break;
             default:   position = Position.OTHER;  break;
         }

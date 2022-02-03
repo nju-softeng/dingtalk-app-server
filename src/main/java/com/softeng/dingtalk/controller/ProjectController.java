@@ -5,6 +5,7 @@ import com.softeng.dingtalk.service.IterationService;
 import com.softeng.dingtalk.service.ProjectService;
 import com.softeng.dingtalk.vo.IterateAcVO;
 import com.softeng.dingtalk.vo.IterationVO;
+import com.softeng.dingtalk.vo.ProjectVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,15 +32,14 @@ public class ProjectController {
 
     /**
      * 审核人创建或更新项目
-     * @param project, uid
+     * @param projectVO, uid
      **/
     @PostMapping("/project")
-    public void createOrUpdateProject(@RequestBody Project project, @RequestAttribute int uid) {
-        if (project.getId() == 0) {
-            project.setAuditor(new User(uid));
-            projectService.createProject(project);
+    public void createOrUpdateProject(@RequestBody ProjectVO projectVO, @RequestAttribute int uid) {
+        if (projectVO.getId() == 0) {
+            projectService.createProject(projectVO, uid);
         } else {
-            projectService.updateProject(project);
+            projectService.updateProject(projectVO);
         }
     }
 

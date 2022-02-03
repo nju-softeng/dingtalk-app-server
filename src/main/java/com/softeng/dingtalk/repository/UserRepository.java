@@ -77,7 +77,7 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
      * 查询所有可用用户id
      * @return
      */
-    @Query("select u.id from User u where u.deleted = 0")
+    @Query("select u.id from User u where u.deleted = false")
     List<Integer> listUid();
 
 
@@ -116,7 +116,7 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
      * @param uid
      * @return
      */
-    @Query("select u.position from User u where id = :uid")
+    @Query("select u.position from User u where u.id = :uid")
     Position getUserPosition(@Param("uid") int uid);
 
 

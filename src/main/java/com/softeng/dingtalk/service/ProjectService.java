@@ -3,6 +3,7 @@ package com.softeng.dingtalk.service;
 import com.softeng.dingtalk.component.DateUtils;
 import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.repository.*;
+import com.softeng.dingtalk.vo.ProjectVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,14 +37,28 @@ public class ProjectService {
     AcRecordRepository acRecordRepository;
     @Autowired
     DateUtils dateUtils;
-    
+
 
     /**
      * 创建项目
-     * @param project
+     *
+     * @param projectVO
      */
-    public void createProject(Project project) {
+    public void createProject(ProjectVO projectVO, int uid) {
+        Project project = new Project();
+        project.setAuditor(new User(uid));
+        setSameAttribute(projectVO, project);
         projectRepository.save(project);
+    }
+
+    private void setSameAttribute(ProjectVO projectVO, Project project) {
+        project.setTitle(projectVO.getName());
+        project.setLeader(new User(projectVO.getLeaderId()));
+        project.setNature(projectVO.isNature());
+        if (projectVO.getHorizontalLevel()>='A' && projectVO.getHorizontalLevel()<='D') {
+            project.setHorizontalLevel(projectVO.getHorizontalLevel());
+        }
+        project.setLongitudinalLevel(projectVO.getLongitudinalLevel());
     }
 
 
@@ -81,10 +96,12 @@ public class ProjectService {
 
     /**
      * 更新项目
-     * @param project
+     * @param projectVO
      */
-    public void updateProject(Project project) {
-        projectRepository.updateTitle(project.getId(), project.getTitle());
+    public void updateProject(ProjectVO projectVO) {
+        Project project = new Project();
+        setSameAttribute(projectVO, project);
+        projectRepository.save(project);
     }
 
 
