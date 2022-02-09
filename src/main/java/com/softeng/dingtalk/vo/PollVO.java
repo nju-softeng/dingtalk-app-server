@@ -9,6 +9,6 @@ import lombok.Data;
  **/
 @Data
 public class PollVO {
-    private Boolean result;
+    private boolean result;
     private Integer vid;
 }

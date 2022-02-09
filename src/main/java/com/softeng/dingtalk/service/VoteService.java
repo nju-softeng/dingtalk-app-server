@@ -151,7 +151,7 @@ public class VoteService {
         if (!vote.isExternal()) {
             internalPaperRepository.updatePaperResult(
                     vote.getPid(),
-                    vote.getResult() ? InternalPaper.REVIEWING : InternalPaper.NOTPASS
+                    vote.getResult() == 1 ? InternalPaper.REVIEWING : InternalPaper.NOTPASS
             );
         }
 
@@ -238,8 +238,15 @@ public class VoteService {
      * @param vote
      * @return
      */
-    public boolean getVotingResult(Vote vote) {
-        return calculatePercentageOfVotesAccepted(vote) > 2.0 / 3.0;
+    public int getVotingResult(Vote vote) {
+        double result=calculatePercentageOfVotesAccepted(vote);
+        if (result > 2.0 / 3.0){
+            return 1;
+        }else if (result == 2.0 / 3.0){
+            return 2;
+        }else {
+            return 0;
+        }
     }
 
 
@@ -307,7 +314,7 @@ public class VoteService {
      * @param vote
      * @param result
      */
-    public void computeVoteAc(Vote vote, boolean result, LocalDateTime dateTime) {
+    public void computeVoteAc(Vote vote, int result, LocalDateTime dateTime) {
         // 1. 校验数据
         if (vote == null) {
             throw new RuntimeException("未发起投票");
@@ -336,7 +343,7 @@ public class VoteService {
             voteDetail.setAcRecord(generateAcRecord(
                     paper.getTitle(),
                     voteDetail.getUser(),
-                    voteDetail.getResult() == result,
+                    voteDetail.isResult() == (result == 1), //TODO
                     dateTime));
         });
         voteDetailRepository.saveAll(voteDetails);
@@ -348,7 +355,8 @@ public class VoteService {
         );
 
         // 6. 生成消息数据
-        notifyService.voteAcMessage(vote.getId(), result);
+//        TODO:notifyService.voteAcMessage(vote.getId(), result);
+        notifyService.voteAcMessage(vote.getId(), true);
     }
 
 }

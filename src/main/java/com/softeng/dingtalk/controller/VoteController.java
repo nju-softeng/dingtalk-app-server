@@ -56,7 +56,7 @@ public class VoteController {
      */
     @PostMapping("/vote/{vid}")
     public Map addpoll(@PathVariable int vid, @RequestAttribute int uid, @RequestBody PollVO vo) throws IOException {
-        VoteDetail voteDetail = new VoteDetail(new Vote(vo.getVid()), vo.getResult(), new User(uid));
+        VoteDetail voteDetail = new VoteDetail(new Vote(vo.getVid()), vo.isResult(), new User(uid));
         Map map = voteService.poll(vid, uid, voteDetail);
         WebSocketController.sendInfo(objectMapper.writeValueAsString(map));
         return map;

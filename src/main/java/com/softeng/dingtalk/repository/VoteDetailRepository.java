@@ -44,7 +44,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @param vid
      * @return
      */
-    @Query(value = "select count(id) from vote_detail where vote_id = :vid and result = true", nativeQuery = true)
+    @Query(value = "select count(id) from vote_detail where vote_id = :vid and result = 1", nativeQuery = true)
     Integer getAcceptCnt(int vid);
 
     /**
@@ -91,7 +91,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @param vid
      * @return
      */
-    @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = true")
+    @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = 1")
     List<String> listAcceptNamelist(int vid);
 
     /**
@@ -99,7 +99,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @param vid
      * @return
      */
-    @Query("select vd.user from VoteDetail vd where vd.vote.id = :vid and vd.result = true")
+    @Query("select vd.user from VoteDetail vd where vd.vote.id = :vid and vd.result = 1")
     List<User> listAcceptUserlist(int vid);
 
 
@@ -108,7 +108,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @param vid
      * @return
      */
-    @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = false")
+    @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = 0")
     List<String> listRejectNamelist(int vid);
 
     /**
@@ -116,7 +116,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, I
      * @param vid
      * @return
      */
-    @Query("select vd.user from VoteDetail vd where vd.vote.id = :vid and vd.result = false")
+    @Query("select vd.user from VoteDetail vd where vd.vote.id = :vid and vd.result = 0")
     List<User> listRejectUserlist(int vid);
 
 

@@ -98,9 +98,9 @@ public class PaperController {
      */
     @PostMapping("/paper_result/{pid}")
     public void updateResult(@PathVariable int pid, @RequestBody PaperResultVO vo) {
-        paperService.updateInternalPaperResult(pid, vo.isResult(), vo.getUpdateDate());
+        paperService.updateInternalPaperResult(pid, vo.getResult(), vo.getUpdateDate());
         Vote vote = internalPaperRepository.findVoteById(pid);
-        voteService.computeVoteAc(vote, vo.isResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8, 0)));
+        voteService.computeVoteAc(vote, vo.getResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8, 0)));
     }
 
 
@@ -112,10 +112,10 @@ public class PaperController {
     @PostMapping("/ex-paper_result/{pid}")
     public void updateExPaperResult(@PathVariable int pid, @RequestBody PaperResultVO vo) {
         // 更新论文记录
-        paperService.updateExPaperResult(pid, vo.isResult(), vo.getUpdateDate());
+        paperService.updateExPaperResult(pid, vo.getResult(), vo.getUpdateDate());
         Vote vote = externalPaperRepository.findVoteById(pid);
         // 更具投票结果计算，投票人的ac值
-        voteService.computeVoteAc(vote, vo.isResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8,0)));
+        voteService.computeVoteAc(vote, vo.getResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8,0)));
         // todo 发送论文消息
     }
 
