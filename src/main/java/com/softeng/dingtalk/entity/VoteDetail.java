@@ -22,7 +22,7 @@ public class VoteDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private Boolean result;
+    private boolean result;
 
     @JsonIgnoreProperties("voteDetails")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,7 +36,7 @@ public class VoteDetail {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private AcRecord acRecord;
 
-    public VoteDetail(Vote vote, Boolean result, User user) {
+    public VoteDetail(Vote vote, boolean result, User user) {
         this.vote = vote;
         this.result = result;
         this.user = user;

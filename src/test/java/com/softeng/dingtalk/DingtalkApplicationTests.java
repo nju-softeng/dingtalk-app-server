@@ -37,7 +37,7 @@ public class DingtalkApplicationTests {
 
     @Test
     public void test2() {
-        Paper paper = new InternalPaper("标题11111", "journal", PaperType.JOURNAL_A, LocalDate.now());
+        Paper paper = new InternalPaper("标题11111", "journal", PaperType.JOURNAL_A, LocalDate.now(), true, null);
         log.debug(paper.getTitle());
     }
 

@@ -21,4 +21,7 @@ public class InternalPaperVO {
     private PaperType paperType;
     private LocalDate issueDate;
     private List<AuthorVO> authors;
+
+    private Boolean isStudentFirstAuthor;
+    private String firstAuthor;
 }

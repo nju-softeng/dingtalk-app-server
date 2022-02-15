@@ -77,7 +77,7 @@ public class PaperService {
      * @param vo 实验室内部论文VO对象
      */
     public void addInternalPaper(InternalPaperVO vo) {
-        InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate());
+        InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getIsStudentFirstAuthor(), vo.getFirstAuthor());
         internalPaperRepository.save(internalPaper);
         paperDetailRepository.saveBatch(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
     }
@@ -106,7 +106,7 @@ public class PaperService {
     public void updateInternalPaper(InternalPaperVO vo) {
         InternalPaper internalPaper = internalPaperRepository.findById(vo.getId()).get();
         // 1. 更新 paper 信息
-        internalPaper.update(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate());
+        internalPaper.update(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getFirstAuthor());
         // 2. 删除旧的paperDetail
         paperDetailRepository.deleteByInternalPaper(internalPaper);
         // 3. 插入新的paperDetail
@@ -238,17 +238,17 @@ public class PaperService {
      * @param result
      * @param updateDate
      */
-    public void updateInternalPaperResult(int id, boolean result, LocalDate updateDate) {
+    public void updateInternalPaperResult(int id, int result, LocalDate updateDate) {
         // 1. 获取对应的内部论文
         InternalPaper internalPaper = internalPaperRepository.findById(id).get();
 
         // 2. 校验论文投票和投稿情况
-        if (internalPaper.getVote().getResult() == null || !internalPaper.getVote().getResult()) {
+        if (internalPaper.getVote().getResult() == null || internalPaper.getVote().getResult()==0) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
         }
 
         // 3. 更新指定论文的投稿结果和更新时间
-        internalPaper.setResult(result ? InternalPaper.ACCEPT : InternalPaper.REJECT);
+        internalPaper.setResult(result == 1 ? InternalPaper.ACCEPT : (result == 0 ? InternalPaper.REJECT:InternalPaper.SUSPEND));
         internalPaper.setUpdateDate(updateDate);
         internalPaperRepository.save(internalPaper);
 
@@ -266,7 +266,7 @@ public class PaperService {
      * @param result
      * @param updateDate
      */
-    public void updateExPaperResult(int id, boolean result, LocalDate updateDate) {
+    public void updateExPaperResult(int id, int result, LocalDate updateDate) {
         ExternalPaper externalPaper = externalPaperRepository.findById(id).get();
 
         if (externalPaper.getVote().getResult() == null) {

@@ -25,8 +25,12 @@ public class PositionConverter implements AttributeConverter<Position, String> {
         if (title == null) {
             return null;
         }
+        if (title.equals("硕士生")){
+            title = "待定";
+        }
+        String finalTitle = title;
         return Stream.of(Position.values())
-                .filter(c -> c.getTitle().equals(title))
+                .filter(c -> c.getTitle().equals(finalTitle))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
     }

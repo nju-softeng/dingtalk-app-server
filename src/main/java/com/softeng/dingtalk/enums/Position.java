@@ -10,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Position {
     DOCTOR("博士生"),
-    POSTGRADUATE("硕士生"),
+    ACADEMIC("学硕"),
+    PROFESSIONAL("专硕"),
     UNDERGRADUATE("本科生"),
     OTHER("待定");
 

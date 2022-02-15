@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.softeng.dingtalk.enums.LongitudinalLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,5 +40,32 @@ public class Project {
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
 
+    /**
+     * @Description 新增项目属性
+     * @Author Jerrian Zhao
+     * @Data 01/28/2022
+     */
 
+    /**
+     * 负责人
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User leader;
+
+    /**
+     * 项目性质
+     * true为横向 false为纵向
+     */
+    @Column(nullable = false)
+    private Boolean nature;
+
+    /**
+     * 横向项目级别
+     */
+    private char horizontalLevel;
+
+    /**
+     * 纵向项目级别
+     */
+    private LongitudinalLevel LongitudinalLevel;
 }

@@ -26,9 +26,14 @@ public class Vote {
     Integer id;
 
     /**
-     * 投票最终结果
+     * 投票最终结果, 0为拒绝, 1为接受, 2为平票
      */
-    Boolean result;
+    Integer result;
+
+    /**
+     * 平票后作者是否选择外投
+     */
+    Boolean authorTendency;
 
     /**
      * 支持人数

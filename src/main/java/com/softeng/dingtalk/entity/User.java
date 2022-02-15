@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.softeng.dingtalk.enums.Position;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,9 @@ import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author zhanyeye
@@ -83,6 +86,68 @@ public class User {
     @Column(nullable = false, name = "is_deleted")
     private boolean deleted;
 
+    /**
+     * @Author Jerrian Zhao
+     * @Data 01/22/2022
+     */
+
+
+    /**
+     * 本科学校
+     */
+
+    private String undergraduateCollege;
+
+    /**
+     * 硕士学校
+     */
+
+    private String masterCollege;
+
+    /**
+     * 身份证号
+     */
+    private String idCardNo;
+
+    /**
+     * 银行卡号
+     */
+    private String creditCard;
+
+    /**
+     * 租房开始时间
+     */
+    @Deprecated
+    private LocalDate rentingStart;
+
+    /**
+     * 租房结束时间
+     */
+    @Deprecated
+    private LocalDate rentingEnd;
+
+    /**
+     * 住址
+     */
+    private String address;
+
+    /**
+     * 状态
+     * true为在实习，false为在校
+     */
+    private Boolean workState;
+
+    /**
+     * 备注
+     */
+    private String remark;
+
+    /**
+     * 获奖情况
+     */
+    @JsonIgnoreProperties("user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Prize> allPrizes;
 
     public User(String userid, String unionid, String name, String avatar, int authority, Position position) {
         this.userid = userid;

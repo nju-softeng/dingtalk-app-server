@@ -152,8 +152,9 @@ public class Timer {
 
     /**
      * 投票消息卡片跳转的 url
+     *
      * @param isExternal 是否是外部论文
-     * @param pid 论文id
+     * @param pid        论文id
      * @return
      */
     private String generateVoteDetailUrl(boolean isExternal, int pid) {
@@ -162,15 +163,16 @@ public class Timer {
 
     /**
      * 确认投票结果的消息模板
-     * @param title 论文标题
-     * @param result 投票预测结果
+     *
+     * @param title     论文标题
+     * @param result    投票预测结果
      * @param acceptCnt accept数量
-     * @param totalCnt 总投票数量
+     * @param totalCnt  总投票数量
      * @return
      */
-    private String voteResultInfo(String title, boolean result, int acceptCnt, int totalCnt) {
+    private String voteResultInfo(String title, int result, int acceptCnt, int totalCnt) {
         return new StringBuilder().append(" #### 投票结果 \n ##### 论文： ").append(title)
-                .append(" \n 最终结果： ").append(result ? "Accept" : "reject")
+                .append(" \n 最终结果： ").append(result == 1 ? "Accept" : result == 0 ? "reject" : "flat")
                 .append("  \n  Accept: ").append(acceptCnt).append(" 票  \n ")
                 .append("Reject: ").append(totalCnt - acceptCnt).append(" 票  \n ")
                 .append("已参与人数： ").append(totalCnt).append("人  \n ").toString();
@@ -178,7 +180,8 @@ public class Timer {
 
     /**
      * 发起投票的消息模板
-     * @param title 论文标题
+     *
+     * @param title    论文标题
      * @param dateTime 截至时间
      * @return
      */

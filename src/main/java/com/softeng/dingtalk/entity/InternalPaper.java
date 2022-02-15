@@ -2,6 +2,7 @@ package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.softeng.dingtalk.enums.PaperType;
+import com.sun.istack.Nullable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,8 +28,9 @@ public class InternalPaper implements Paper {
     public static final int WAIT = 0;
     public static final int NOTPASS = 1;
     public static final int REVIEWING = 2;
-    public static final int REJECT= 3;
+    public static final int REJECT = 3;
     public static final int ACCEPT = 4;
+    public static final int SUSPEND = 5;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,22 +65,58 @@ public class InternalPaper implements Paper {
     @OneToMany(mappedBy = "internalPaper")
     private List<PaperDetail> paperDetails;
 
+    /**
+     * @Description 增加非学生一作及上传相关字段及方法
+     * @Author Jerrian Zhao
+     * @Data 02/03/2022
+     */
+
+    /**
+     * 是否为学生一作
+     */
+    @Column(nullable = false)
+    private Boolean isStudentFirstAuthor;
+
+    /**
+     * 第一作者
+     */
+    private String firstAuthor;
+
+    /**
+     * 版本
+     */
+    private int version;
+
+    /**
+     * 路径
+     */
+    private String path;
+
+    /**
+     * 哈希
+     */
+    private String hash;
+
+
     public InternalPaper(int id) {
         this.id = id;
     }
 
-    public InternalPaper(String title, String journal, PaperType paperType, LocalDate updateDate) {
+    public InternalPaper(String title, String journal, PaperType paperType, LocalDate updateDate, Boolean isStudentFirstAuthor, String firstAuthor) {
         this.title = title;
         this.journal = journal;
         this.paperType = paperType;
         this.updateDate = updateDate;
+        this.isStudentFirstAuthor = isStudentFirstAuthor;
+        this.firstAuthor = firstAuthor;
     }
 
-    public void update(String title, String journal, PaperType paperType, LocalDate issueDate) {
+    public void update(String title, String journal, PaperType paperType, LocalDate issueDate, String firstAuthor) {
         this.title = title;
         this.journal = journal;
         this.paperType = paperType;
         this.updateDate = issueDate;
+        this.firstAuthor = firstAuthor;
     }
 
     @Override
@@ -89,7 +127,20 @@ public class InternalPaper implements Paper {
     public boolean hasAccepted() {
         return result == ACCEPT;
     }
+
     public boolean hasRejected() {
         return result == REJECT;
+    }
+
+    public void increaseVersion() {
+        this.version += 1;
+    }
+
+    public void updatePath(String path) {
+        this.path = path;
+    }
+
+    public void updateHash(String hash) {
+        this.hash = hash;
     }
 }

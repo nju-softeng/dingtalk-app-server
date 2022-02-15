@@ -102,7 +102,7 @@ public class NotifyService {
      * @param vid
      * @param result
      */
-    public void voteAcMessage(int vid, boolean result) {
+    public void voteAcMessage(int vid, Boolean result) {
         Vote v = voteRepository.findById(vid).get();
         String paperTitle = v.isExternal() ?
                 "外部评审：" + subString(externalPaperRepository.findByVid(vid).getTitle(), 20) :
@@ -110,7 +110,7 @@ public class NotifyService {
         messageRepository.saveAll(v.getVoteDetails().stream()
                 .map(voteDetail -> new Message(
                         "投票预测结果",
-                        voteDetail.getResult() == result ?
+                        voteDetail.isResult() == result ?
                                 "投票预测正确,  " + paperTitle + "... 投稿成功" :
                                 "投票预测错误,  " + paperTitle + "... 投稿失败",
                         voteDetail.getUser().getId())

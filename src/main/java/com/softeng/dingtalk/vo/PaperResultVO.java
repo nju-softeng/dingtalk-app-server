@@ -6,6 +6,6 @@ import java.time.LocalDate;
 
 @Data
 public class PaperResultVO {
-    private boolean result;
+    private int result;
     private LocalDate updateDate;
 }
