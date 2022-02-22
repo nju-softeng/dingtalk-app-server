@@ -423,7 +423,7 @@ public class PaperService {
     public Map listNonFirstPaper(int page, int size) {
         return Map.of(
                 "list", internalPaperMapper.listNonFirstPaperInfo((page - 1) * size, size),
-                "total", internalPaperMapper.countPaper()
+                "total", internalPaperMapper.countNonFirstPaper()
         );
     }
 }
