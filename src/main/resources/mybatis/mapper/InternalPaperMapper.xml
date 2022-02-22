@@ -37,13 +37,35 @@
 	        v.status as v_status,
 	        v.result as v_result
         FROM
-	        (SELECT id, title, journal, update_date, result, paper_type FROM internal_paper ORDER BY id DESC LIMIT #{offset}, #{size}) p
+	        (SELECT id, title, journal, update_date, result, paper_type FROM internal_paper WHERE is_student_first_author = true OR is_student_first_author IS NULL ORDER BY id DESC LIMIT #{offset}, #{size}) p
+	        LEFT JOIN paper_detail pd on p.id = pd.internal_paper_id
+	        LEFT JOIN user u on pd.user_id = u.id
+	        LEFT JOIN vote v on v.pid = p.id and v.external = false
+	    ORDER BY
+	        id DESC, num ASC
+
+    </select>
+
+    <select id="listNonFirstPaperInfo" resultMap="PaperInfo">
+        SELECT
+	        p.id,
+	        p.title,
+	        p.journal,
+	        p.update_date,
+	        p.result,
+	        p.paper_type,
+	        u.id as uid,
+	        u.name,
+	        pd.num,
+	        v.status as v_status,
+	        v.result as v_result
+        FROM
+	        (SELECT id, title, journal, update_date, result, paper_type FROM internal_paper WHERE is_student_first_author = false ORDER BY id DESC LIMIT #{offset}, #{size}) p
 	        LEFT JOIN paper_detail pd on p.id = pd.internal_paper_id
 	        LEFT JOIN user u on pd.user_id = u.id
 	        LEFT JOIN vote v on v.pid = p.id and v.external = false
 	    ORDER BY
 	        id DESC, num ASC
     </select>
-
 
 </mapper>

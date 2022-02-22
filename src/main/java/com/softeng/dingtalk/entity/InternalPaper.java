@@ -66,7 +66,7 @@ public class InternalPaper implements Paper {
     private List<PaperDetail> paperDetails;
 
     /**
-     * @Description 增加非学生一作及上传相关字段及方法
+     * @Description 增加非学生一作、平票及上传相关字段及方法
      * @Author Jerrian Zhao
      * @Data 02/03/2022
      */
@@ -96,6 +96,12 @@ public class InternalPaper implements Paper {
      * 哈希
      */
     private String hash;
+
+    /**
+     * 平票后作者决定
+     * -1为无需决定；0为拒绝，投稿中止；1为接受
+     */
+    private int flatDecision = -1;
 
 
     public InternalPaper(int id) {

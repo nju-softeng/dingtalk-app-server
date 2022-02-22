@@ -24,4 +24,8 @@ public class InternalPaperVO {
 
     private Boolean isStudentFirstAuthor;
     private String firstAuthor;
+    private int version;
+    private String path;
+    private String hash;
+    private int flatDecision;
 }
