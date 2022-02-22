@@ -294,17 +294,26 @@ public class VoteService {
      * 生成投票的ac记录
      * @param title
      * @param user
-     * @param isRight
+     * @param voteDetail
+     * @param finalResult
      * @param dateTime
      * @return
      */
-    private AcRecord generateAcRecord(String title, User user, boolean isRight, LocalDateTime dateTime) {
+    private AcRecord generateAcRecord(String title, User user, boolean voteDetail, int finalResult, LocalDateTime dateTime) {
+        int coefficient = 0;
+        if (finalResult != 2){
+            if ((voteDetail && finalResult == 1) || (!voteDetail && finalResult == 0)){
+                coefficient = 1;
+            }else {
+                coefficient = -1;
+            }
+        }
         return AcRecord.builder()
                 .user(user)
                 // 论文投票AC变化，对于硕士生是1分，对于博士生是2分
-                .ac((isRight ? 1 : -1) * (user.getPosition() == Position.DOCTOR ? 2 : 1))
+                .ac(coefficient * (user.getPosition() == Position.DOCTOR ? 2 : 1))
                 .classify(AcRecord.VOTE)
-                .reason((isRight ? "投票预测正确：" : "投票预测错误：") + title)
+                .reason((coefficient == 0 ? "投稿中止：":(coefficient == 1 ? "投票预测正确：" : "投票预测错误：") + title))
                 .createTime(dateTime)
                 .build();
     }
@@ -343,7 +352,8 @@ public class VoteService {
             voteDetail.setAcRecord(generateAcRecord(
                     paper.getTitle(),
                     voteDetail.getUser(),
-                    voteDetail.isResult() == (result == 1), //TODO
+                    voteDetail.isResult(),
+                    result,
                     dateTime));
         });
         voteDetailRepository.saveAll(voteDetails);
@@ -355,8 +365,7 @@ public class VoteService {
         );
 
         // 6. 生成消息数据
-//        TODO:notifyService.voteAcMessage(vote.getId(), result);
-        notifyService.voteAcMessage(vote.getId(), true);
+        notifyService.voteAcMessage(vote.getId(), result);
     }
 
 }
