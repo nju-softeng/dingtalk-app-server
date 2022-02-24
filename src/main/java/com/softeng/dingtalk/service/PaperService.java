@@ -279,17 +279,6 @@ public class PaperService {
         externalPaperRepository.save(externalPaper);
     }
 
-    /**
-     * 分页查看论文
-     * @param page
-     * @return
-     */
-    public Map listInternalPaper(int page, int size) {
-        return Map.of(
-                "list", internalPaperMapper.listInternalPaperInfo((page - 1) * size, size),
-                "total", internalPaperMapper.countPaper()
-        );
-    }
 
     /**
      *
@@ -402,5 +391,39 @@ public class PaperService {
      */
     public Vote getExPaperVote(int id) {
         return externalPaperRepository.findById(id).get().getVote();
+    }
+
+    /**
+     * @Description
+     * @Author Jerrian Zhao
+     * @Data 02/10/2022
+     */
+
+    public void decideFlat(InternalPaperVO internalPaperVO){
+
+    }
+
+    /**
+     * 分页查看内部论文
+     * @param page
+     * @return
+     */
+    public Map listInternalPaper(int page, int size) {
+        return Map.of(
+                "list", internalPaperMapper.listInternalPaperInfo((page - 1) * size, size),
+                "total", internalPaperMapper.countPaper()
+        );
+    }
+
+    /**
+     * 分页查看非学生一作
+     * @param page
+     * @return
+     */
+    public Map listNonFirstPaper(int page, int size) {
+        return Map.of(
+                "list", internalPaperMapper.listNonFirstPaperInfo((page - 1) * size, size),
+                "total", internalPaperMapper.countNonFirstPaper()
+        );
     }
 }

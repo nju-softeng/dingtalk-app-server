@@ -172,7 +172,7 @@ public class Timer {
      */
     private String voteResultInfo(String title, int result, int acceptCnt, int totalCnt) {
         return new StringBuilder().append(" #### 投票结果 \n ##### 论文： ").append(title)
-                .append(" \n 最终结果： ").append(result == 1 ? "Accept" : result == 0 ? "reject" : "flat")
+                .append(" \n 最终结果： ").append(result == 1 ? "accept" : result == 0 ? "reject" : "flat")
                 .append("  \n  Accept: ").append(acceptCnt).append(" 票  \n ")
                 .append("Reject: ").append(totalCnt - acceptCnt).append(" 票  \n ")
                 .append("已参与人数： ").append(totalCnt).append("人  \n ").toString();

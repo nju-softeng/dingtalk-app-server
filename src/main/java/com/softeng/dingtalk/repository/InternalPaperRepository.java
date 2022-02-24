@@ -2,6 +2,8 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.entity.Vote;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +21,7 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
 
     /**
      * 根据id 获取论文title
+     *
      * @param id
      * @return
      */
@@ -27,6 +30,7 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
 
     /**
      * 获取指定投票对应的论文id和标题
+     *
      * @param vid
      * @return
      */
@@ -35,6 +39,7 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
 
     /**
      * 查询对应指定投票id的论文
+     *
      * @param vid
      * @return
      */
@@ -43,6 +48,7 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
 
     /**
      * 发起论文投票时，更新论文记录
+     *
      * @param id
      * @param vid
      */
@@ -52,6 +58,7 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
 
     /**
      * 查询指定论文的投票id
+     *
      * @param id
      * @return
      */
@@ -60,6 +67,7 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
 
     /**
      * 查询指定论文的投票
+     *
      * @param id
      * @return
      */
@@ -69,6 +77,7 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
 
     /**
      * 更新论文的投稿状态
+     *
      * @param id
      * @param result
      */

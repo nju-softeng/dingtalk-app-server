@@ -96,13 +96,29 @@ public class NotifyService {
         );
     }
 
-
+    private String generateMessage(Boolean voteResult, int finalResult, String paperTitle){
+        if (finalResult == 2){
+            return paperTitle+"... 投稿中止";
+        }else if(finalResult == 1){
+            if (voteResult){
+                return "投票预测正确,  " + paperTitle + "... 投稿成功";
+            }else {
+                return "投票预测失败,  " + paperTitle + "... 投稿成功";
+            }
+        }else {
+            if (voteResult){
+                return "投票预测失败,  " + paperTitle + "... 投稿成功";
+            }else {
+                return "投票预测正确,  " + paperTitle + "... 投稿失败";
+            }
+        }
+    }
     /**
      * 投票AC消息
      * @param vid
      * @param result
      */
-    public void voteAcMessage(int vid, Boolean result) {
+    public void voteAcMessage(int vid, int result) {
         Vote v = voteRepository.findById(vid).get();
         String paperTitle = v.isExternal() ?
                 "外部评审：" + subString(externalPaperRepository.findByVid(vid).getTitle(), 20) :
@@ -110,9 +126,7 @@ public class NotifyService {
         messageRepository.saveAll(v.getVoteDetails().stream()
                 .map(voteDetail -> new Message(
                         "投票预测结果",
-                        voteDetail.isResult() == result ?
-                                "投票预测正确,  " + paperTitle + "... 投稿成功" :
-                                "投票预测错误,  " + paperTitle + "... 投稿失败",
+                        generateMessage(voteDetail.isResult(), result, paperTitle),
                         voteDetail.getUser().getId())
                 )
                 .collect(Collectors.toList())

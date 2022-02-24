@@ -47,7 +47,7 @@ public class PaperController {
 
 
     /**
-     * 添加或更新实验室内部论文记录
+     * 添加或更新实验室内部及非学生一作论文记录
      * @param vo
      */
     @PostMapping("/paper")
@@ -244,8 +244,27 @@ public class PaperController {
         return paperService.getExPaperVote(pid);
     }
 
+    /**
+     * @Description
+     * @Author Jerrian Zhao
+     * @Data 02/10/2022
+     */
 
+    /**
+     * 指定是否接受平票论文
+     */
+    @PatchMapping("/paper/{id}")
+    public void decideFlat(@RequestBody InternalPaperVO internalPaperVO){
+        paperService.decideFlat(internalPaperVO);
+    }
 
-
-
+    /**
+     * 分页获取非学生一作
+     * @param page
+     * @return
+     */
+    @GetMapping("/non-first/page/{page}/{size}")
+    public Map listNonFirstPaper(@PathVariable int page, @PathVariable int size) {
+        return paperService.listNonFirstPaper(page, size);
+    }
 }

@@ -21,6 +21,11 @@ public interface InternalPaperMapper {
      */
     List<PaperInfoVO> listInternalPaperInfo(int offset, int size);
 
-    @Select("select count(id) from internal_paper")
+    List<PaperInfoVO> listNonFirstPaperInfo(int offset, int size);
+
+    @Select("select count(id) from internal_paper where is_student_first_author = true or is_student_first_author is null")
     Integer countPaper();
+
+    @Select("select count(id) from internal_paper where is_student_first_author = false")
+    Integer countNonFirstPaper();
 }
