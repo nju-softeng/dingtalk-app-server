@@ -21,6 +21,6 @@ public class PaperInfoVO {
     private PaperType paperType;
     private String firstAuthor;
     private Boolean v_status;
-    private Boolean v_result;
+    private int v_result;
     private List<AuthorVO> authors;
 }

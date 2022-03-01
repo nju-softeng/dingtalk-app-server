@@ -6,10 +6,7 @@ import com.softeng.dingtalk.mapper.InternalPaperMapper;
 
 import com.softeng.dingtalk.repository.*;
 
-import com.softeng.dingtalk.vo.AuthorVO;
-import com.softeng.dingtalk.vo.ExternalPaperVO;
-import com.softeng.dingtalk.vo.PaperInfoVO;
-import com.softeng.dingtalk.vo.InternalPaperVO;
+import com.softeng.dingtalk.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -61,7 +58,8 @@ public class PaperService {
 
     /**
      * 根据 internalPaper 和 List<AuthorVO> 生成 PaperDetails
-     * @param paper 实验室内部论文
+     *
+     * @param paper   实验室内部论文
      * @param authors 论文作者VO list
      * @return
      */
@@ -74,11 +72,12 @@ public class PaperService {
 
     /**
      * 添加实验室内部论文
+     *
      * @param vo 实验室内部论文VO对象
      */
     public void addInternalPaper(InternalPaperVO vo) {
         InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getIsStudentFirstAuthor(), vo.getFirstAuthor());
-        if (!internalPaper.getIsStudentFirstAuthor()){
+        if (!internalPaper.getIsStudentFirstAuthor()) {
             internalPaper.setResult(2);
         }
         internalPaperRepository.save(internalPaper);
@@ -88,6 +87,7 @@ public class PaperService {
 
     /**
      * 添加实验室外部论文
+     *
      * @param vo 实验室外部论文vo对象
      */
     public void addExternalPaper(ExternalPaperVO vo) {
@@ -104,6 +104,7 @@ public class PaperService {
 
     /**
      * 更新内部论文记录
+     *
      * @param vo
      */
     public void updateInternalPaper(InternalPaperVO vo) {
@@ -115,7 +116,7 @@ public class PaperService {
         // 3. 插入新的paperDetail
         internalPaper.setPaperDetails(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
         // 4. 重新计算ac
-        if(internalPaper.hasAccepted() || internalPaper.hasRejected()) {
+        if (internalPaper.hasAccepted() || internalPaper.hasRejected()) {
             paperService.calculateInternalPaperAc(internalPaper);
         }
         // 5. 重新添加paperDetail
@@ -126,6 +127,7 @@ public class PaperService {
 
     /**
      * 更新外部论文记录
+     *
      * @param vo
      */
     public void updateExternalPaper(ExternalPaperVO vo) {
@@ -147,6 +149,7 @@ public class PaperService {
 
     /**
      * 删除实验室内部论文记录
+     *
      * @param id
      */
     public void deleteInternalPaper(int id) {
@@ -158,6 +161,7 @@ public class PaperService {
 
     /**
      * 删除实验室外部论文记录
+     *
      * @param id
      */
     public void deleteExternalPaper(int id) {
@@ -168,23 +172,29 @@ public class PaperService {
      * 按照作者排名分配ac值
      * 按照顺序分别比例分别是：0.5， 0.25，0.15，0.1
      * 再后面的作者都按照 0.1 算
+     *
      * @param rank 排名
      * @return
      */
     public double calculateRatioOfAc(int rank) {
         switch (rank) {
-            case 1:  return 0.5;
-            case 2:  return 0.25;
-            case 3:  return 0.15;
-            default: return 0.1;
+            case 1:
+                return 0.5;
+            case 2:
+                return 0.25;
+            case 3:
+                return 0.15;
+            default:
+                return 0.1;
         }
     }
 
     /**
      * 计算某个作者的 AC 加减分, 根据论文投稿情况、该论文类型对应的 AC 奖池、作者排名
+     *
      * @param isAccept 论文投稿情况
-     * @param sum AC 奖池
-     * @param rank 作者排名
+     * @param sum      AC 奖池
+     * @param rank     作者排名
      * @return AC值
      */
     public double calculateAc(boolean isAccept, double sum, int rank) {
@@ -195,6 +205,7 @@ public class PaperService {
      * 计算论文结果对应的 AC
      */
     public void calculateInternalPaperAc(InternalPaper internalPaper) {
+        double weight = (internalPaper.getResult() == 6 ? 0.5 : 1); // 如果平票则只计算50%AC
         // 1. 获取 paperDetails
         var paperDetails = internalPaper.getPaperDetails();
 
@@ -210,17 +221,22 @@ public class PaperService {
         double sum = paperLevelRepository.getValue(internalPaper.getPaperType());
 
         // 4. 生成 AC 变更原因
-        String reason = internalPaper.getTitle() + (internalPaper.hasAccepted() ? " Accept" : " Reject");
+        String reason;
+        if (weight == 0.5) {
+            reason = internalPaper.getTitle() + " Suspend";
+        } else {
+            reason = internalPaper.getTitle() + (internalPaper.hasAccepted() ? " Accept" : " Reject");
+        }
 
         // 5. 更新 paperDetail 对应的 AcRecord
         paperDetails.forEach(paperDetail -> {
             paperDetail.setAcRecord(new AcRecord(
                     paperDetail.getUser(),
                     null,
-                    calculateAc(internalPaper.hasAccepted(), sum, paperDetail.getNum()),
+                    weight * calculateAc(internalPaper.hasAccepted(), sum, paperDetail.getNum()), // weight等于0.5时表示中止的AC
                     reason,
                     AcRecord.PAPER,
-                    internalPaper.getUpdateDate().atTime(8,0)
+                    internalPaper.getUpdateDate().atTime(8, 0)
             ));
         });
 
@@ -237,6 +253,7 @@ public class PaperService {
     /**
      * todo 需要重构
      * 更新内部论文投稿结果, 并计算ac
+     *
      * @param id
      * @param result
      * @param updateDate
@@ -269,6 +286,7 @@ public class PaperService {
 
     /**
      * 更新外部论文投稿结果
+     *
      * @param id
      * @param result
      * @param updateDate
@@ -288,7 +306,6 @@ public class PaperService {
 
 
     /**
-     *
      * @param page
      * @param size
      * @return
@@ -305,6 +322,7 @@ public class PaperService {
 
     /**
      * 获取论文的详细信息
+     *
      * @param id
      * @return
      */
@@ -316,6 +334,7 @@ public class PaperService {
 
     /**
      * 根据指定id 查询外部评审论文
+     *
      * @param id
      * @return
      */
@@ -326,16 +345,18 @@ public class PaperService {
 
     /**
      * 获取论文对应的投票
+     *
      * @param pid
      * @return
      */
-    public Vote getVoteByPid (int pid) {
+    public Vote getVoteByPid(int pid) {
         return internalPaperRepository.findVoteById(pid);
     }
 
 
     /**
      * 提交论文评审建议
+     *
      * @param review
      * @param uid
      * @return
@@ -347,7 +368,6 @@ public class PaperService {
     }
 
     /**
-     *
      * @param paperId
      * @param isExternal
      * @return
@@ -359,17 +379,19 @@ public class PaperService {
 
     /**
      * 更新评审意见
+     *
      * @param review 被更新的评审细节
      */
     public void updateReview(Review review) {
-       reviewRepository.save(review);
-       log.debug(review.getUpdateTime().toString());
+        reviewRepository.save(review);
+        log.debug(review.getUpdateTime().toString());
     }
 
 
     /**
      * 删除评审意见
-     * @param id 评审的id
+     *
+     * @param id  评审的id
      * @param uid 要删除的用户的id
      */
     public void deleteReview(int id, int uid) {
@@ -383,6 +405,7 @@ public class PaperService {
 
     /**
      * 查询指定论文的作者id
+     *
      * @param pid
      * @return
      */
@@ -393,6 +416,7 @@ public class PaperService {
 
     /**
      * 根据指定id 查询外部论文的投票
+     *
      * @param id
      * @return
      */
@@ -406,14 +430,27 @@ public class PaperService {
      * @Data 02/10/2022
      */
 
-    public void decideFlat(InternalPaperVO internalPaperVO){
-        if (internalPaperVO.getFlatDecision() == 1){
-
+    public void decideFlat(FlatDecisionVO flatDecisionVO) {
+        InternalPaper internalPaper = internalPaperRepository.findById(flatDecisionVO.getId()).get();
+        if (flatDecisionVO.getDecision()) {
+            internalPaper.setFlatDecision(1);
+            internalPaper.setResult(2);
+            internalPaperRepository.save(internalPaper);
+        } else {
+            internalPaper.setFlatDecision(0);
+            internalPaper.setResult(6); //投稿中止
+            internalPaper.setUpdateDate(LocalDate.now());
+            internalPaperRepository.save(internalPaper);
+            // 更新论文 ac
+            paperService.calculateInternalPaperAc(internalPaper);
+            // 插入相关消息
+            notifyService.paperAcMessage(internalPaper);
         }
     }
 
     /**
      * 分页查看内部论文
+     *
      * @param page
      * @return
      */
@@ -426,6 +463,7 @@ public class PaperService {
 
     /**
      * 分页查看非学生一作
+     *
      * @param page
      * @return
      */
