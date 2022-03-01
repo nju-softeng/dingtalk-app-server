@@ -78,6 +78,9 @@ public class PaperService {
      */
     public void addInternalPaper(InternalPaperVO vo) {
         InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getIsStudentFirstAuthor(), vo.getFirstAuthor());
+        if (!internalPaper.getIsStudentFirstAuthor()){
+            internalPaper.setResult(2);
+        }
         internalPaperRepository.save(internalPaper);
         paperDetailRepository.saveBatch(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
     }
@@ -243,12 +246,16 @@ public class PaperService {
         InternalPaper internalPaper = internalPaperRepository.findById(id).get();
 
         // 2. 校验论文投票和投稿情况
-        if (internalPaper.getVote().getResult() == null || internalPaper.getVote().getResult()==0) {
+        if (internalPaper.getVote().getResult() == -1 || internalPaper.getVote().getResult() == 0) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
         }
 
+        if (internalPaper.getResult() == 5 || internalPaper.getResult() == 6) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "作者未决定投稿或已中止投稿！");
+        }
+
         // 3. 更新指定论文的投稿结果和更新时间
-        internalPaper.setResult(result == 1 ? InternalPaper.ACCEPT : (result == 0 ? InternalPaper.REJECT:InternalPaper.SUSPEND));
+        internalPaper.setResult(result == 1 ? InternalPaper.ACCEPT : InternalPaper.REJECT);
         internalPaper.setUpdateDate(updateDate);
         internalPaperRepository.save(internalPaper);
 
@@ -269,7 +276,7 @@ public class PaperService {
     public void updateExPaperResult(int id, int result, LocalDate updateDate) {
         ExternalPaper externalPaper = externalPaperRepository.findById(id).get();
 
-        if (externalPaper.getVote().getResult() == null) {
+        if (externalPaper.getVote().getResult() == -1) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "投票尚未结束");
         }
 
@@ -400,7 +407,9 @@ public class PaperService {
      */
 
     public void decideFlat(InternalPaperVO internalPaperVO){
+        if (internalPaperVO.getFlatDecision() == 1){
 
+        }
     }
 
     /**

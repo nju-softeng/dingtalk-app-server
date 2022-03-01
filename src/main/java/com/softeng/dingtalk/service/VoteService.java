@@ -69,6 +69,7 @@ public class VoteService {
 
     /**
      * 创建论文评审投票
+     *
      * @param vo
      * @return
      */
@@ -95,6 +96,7 @@ public class VoteService {
 
     /**
      * 向钉钉群中发送投票消息卡片
+     *
      * @param paperId
      */
     private void sendVoteInfoCardToDingtalk(int paperId, LocalTime endTime) {
@@ -112,7 +114,6 @@ public class VoteService {
 
 
     /**
-     *
      * @param now
      * @return
      */
@@ -124,6 +125,7 @@ public class VoteService {
     /**
      * 查询没有结束的投票,但即将结束的投票
      * 缓存未结束的投票，用于减少查询数据的次数，当创建新投票后要清空缓存
+     *
      * @param now
      * @return
      */
@@ -135,6 +137,7 @@ public class VoteService {
 
     /**
      * 更新投票的最终结果，投票截止后调用, 被定时器调用
+     *
      * @param vote
      * @return
      */
@@ -151,8 +154,8 @@ public class VoteService {
         if (!vote.isExternal()) {
             internalPaperRepository.updatePaperResult(
                     vote.getPid(),
-                    vote.getResult() == 1 ? InternalPaper.REVIEWING : InternalPaper.NOTPASS
-            );
+                    vote.getResult() == 1 ? InternalPaper.REVIEWING : (vote.getResult() == 2 ? InternalPaper.FLAT : InternalPaper.NOTPASS)
+                    );
         }
 
         try {
@@ -170,6 +173,7 @@ public class VoteService {
 
     /**
      * 用户投票
+     *
      * @param vid
      * @param uid
      * @param voteDetail
@@ -181,12 +185,12 @@ public class VoteService {
         Vote vote = voteRepository.findById(vid).get();
 
         // 如果是内部评审论文，判断投票人是否为论文作者
-        if(paperService.listAuthorId(vote.getPid()).contains(uid)) {
+        if (paperService.listAuthorId(vote.getPid()).contains(uid)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "论文作者不能参与投票！");
         }
 
         // 投票已经截止
-        if(now.isAfter(vote.getEndTime())) {
+        if (now.isAfter(vote.getEndTime())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "投票已经截止！");
         }
 
@@ -196,20 +200,25 @@ public class VoteService {
 
     /**
      * 不同的职位对应不同的票权
+     *
      * @param user 用户
      * @return 票权值
      */
     public static double getWeight(User user) {
         switch (user.getPosition()) {
-            case DOCTOR:        return 2.0;
+            case DOCTOR:
+                return 2.0;
             case ACADEMIC:
-            case PROFESSIONAL:  return 1.0;
-            default:            return 0.0;
+            case PROFESSIONAL:
+                return 1.0;
+            default:
+                return 0.0;
         }
     }
 
     /**
      * 根据投接受票的投拒绝票的人加权后算出接受的百分比值
+     *
      * @param acceptUserList 投接受的人的列表
      * @param rejectUserList 投拒绝的人的列表
      * @return [0, 1)
@@ -217,12 +226,13 @@ public class VoteService {
     public double calculatePercentageOfVotesAccepted(List<User> acceptUserList, List<User> rejectUserList) {
         double acceptWeights = acceptUserList.stream().mapToDouble(VoteService::getWeight).sum();
         double rejectWeights = rejectUserList.stream().mapToDouble(VoteService::getWeight).sum();
-        double totleWeights  = acceptWeights + rejectWeights;
+        double totleWeights = acceptWeights + rejectWeights;
         return totleWeights == 0.0 ? 0.0 : acceptWeights / totleWeights;
     }
 
     /**
      * 算出某次投票的接受的加权百分比
+     *
      * @param vote
      * @return [0, 1)
      */
@@ -235,16 +245,17 @@ public class VoteService {
 
     /**
      * 判断某次投票是否通过
+     *
      * @param vote
      * @return
      */
     public int getVotingResult(Vote vote) {
-        double result=calculatePercentageOfVotesAccepted(vote);
-        if (result > 2.0 / 3.0){
+        double result = calculatePercentageOfVotesAccepted(vote);
+        if (result > 2.0 / 3.0) {
             return 1;
-        }else if (result == 2.0 / 3.0){
+        } else if (result == 2.0 / 3.0) {
             return 2;
-        }else {
+        } else {
             return 0;
         }
     }
@@ -252,6 +263,7 @@ public class VoteService {
 
     /**
      * 获取投票详情
+     *
      * @param vid 某次投票的id
      * @param uid 用户id
      * @return map 待重构为具体对象
@@ -265,33 +277,34 @@ public class VoteService {
 
         List<User> acceptUserList = new ArrayList<>();
         List<User> rejectUserList = new ArrayList<>();
-        List<String> unVoteNames  = new ArrayList<>();
+        List<String> unVoteNames = new ArrayList<>();
 
         double acceptedPercentage = 0.0;
 
-        if(isOver) {
+        if (isOver) {
             // 投票已结束
-            acceptUserList      = voteDetailRepository.listAcceptUserlist(vid);
-            rejectUserList      = voteDetailRepository.listRejectUserlist(vid);
-            unVoteNames         = voteDetailRepository.findUnVoteUsername(vid);
-            acceptedPercentage  = calculatePercentageOfVotesAccepted(acceptUserList, rejectUserList);
+            acceptUserList = voteDetailRepository.listAcceptUserlist(vid);
+            rejectUserList = voteDetailRepository.listRejectUserlist(vid);
+            unVoteNames = voteDetailRepository.findUnVoteUsername(vid);
+            acceptedPercentage = calculatePercentageOfVotesAccepted(acceptUserList, rejectUserList);
         }
         return Map.of(
-                "vid",                vid,
-                "status",             isOver,
-                "accept",             acceptUserList.size(),
-                "reject",             rejectUserList.size(),
-                "total",              acceptUserList.size() + rejectUserList.size(),
-                "myvote",             myVote == null ? "unvote" : (myVote ? "accept" : "reject"),
-                "acceptnames",        acceptUserList.stream().map(User::getName).collect(Collectors.toList()),
-                "rejectnames",        rejectUserList.stream().map(User::getName).collect(Collectors.toList()),
-                "unvotenames",        unVoteNames,
+                "vid", vid,
+                "status", isOver,
+                "accept", acceptUserList.size(),
+                "reject", rejectUserList.size(),
+                "total", acceptUserList.size() + rejectUserList.size(),
+                "myvote", myVote == null ? "unvote" : (myVote ? "accept" : "reject"),
+                "acceptnames", acceptUserList.stream().map(User::getName).collect(Collectors.toList()),
+                "rejectnames", rejectUserList.stream().map(User::getName).collect(Collectors.toList()),
+                "unvotenames", unVoteNames,
                 "acceptedPercentage", acceptedPercentage
         );
     }
 
     /**
      * 生成投票的ac记录
+     *
      * @param title
      * @param user
      * @param voteDetail
@@ -301,10 +314,10 @@ public class VoteService {
      */
     private AcRecord generateAcRecord(String title, User user, boolean voteDetail, int finalResult, LocalDateTime dateTime) {
         int coefficient = 0;
-        if (finalResult != 2){
-            if ((voteDetail && finalResult == 1) || (!voteDetail && finalResult == 0)){
+        if (finalResult != 2) {
+            if ((voteDetail && finalResult == 1) || (!voteDetail && finalResult == 0)) {
                 coefficient = 1;
-            }else {
+            } else {
                 coefficient = -1;
             }
         }
@@ -313,13 +326,14 @@ public class VoteService {
                 // 论文投票AC变化，对于硕士生是1分，对于博士生是2分
                 .ac(coefficient * (user.getPosition() == Position.DOCTOR ? 2 : 1))
                 .classify(AcRecord.VOTE)
-                .reason((coefficient == 0 ? "投稿中止：":(coefficient == 1 ? "投票预测正确：" : "投票预测错误：") + title))
+                .reason((coefficient == 0 ? "投稿中止：" : (coefficient == 1 ? "投票预测正确：" : "投票预测错误：") + title))
                 .createTime(dateTime)
                 .build();
     }
 
     /**
      * 根据论文最终结果计算投票者的ac
+     *
      * @param vote
      * @param result
      */

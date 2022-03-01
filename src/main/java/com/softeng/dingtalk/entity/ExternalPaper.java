@@ -27,9 +27,9 @@ public class ExternalPaper implements Paper {
      */
     private String title;
     /**
-     * 该外部论文的最终录用结果, 0为拒绝, 1为接受, 2为中止
+     * 该外部论文的最终录用结果, -1为还没有结果, 0为拒绝, 1为接受, 2为中止
      */
-    private int result;
+    private int result = -1;
 
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(unique = true)

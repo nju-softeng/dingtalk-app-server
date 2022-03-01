@@ -26,9 +26,9 @@ public class Vote {
     Integer id;
 
     /**
-     * 投票最终结果, 0为拒绝, 1为接受, 2为平票
+     * 投票最终结果, -1为未结束, 0为拒绝, 1为接受, 2为平票
      */
-    Integer result;
+    int result = -1;
 
     /**
      * 平票后作者是否选择外投
