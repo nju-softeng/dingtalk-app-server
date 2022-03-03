@@ -85,7 +85,7 @@ public class NotifyService {
     public void paperAcMessage(InternalPaper internalPaper) {
         String title = "论文: " +
                 subString(internalPaper.getTitle(), 20) +
-                (internalPaper.hasAccepted() ? "... 投稿成功":"... 投稿失败");
+                (internalPaper.hasAccepted() ? "... 投稿成功":(internalPaper.hasRejected() ? "... 投稿失败":"... 投稿中止"));
 
         messageRepository.saveAll(internalPaper.getPaperDetails().stream()
                 .map(paperDetail -> new Message(

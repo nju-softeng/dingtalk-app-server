@@ -12,6 +12,7 @@
         <result column="journal" property="journal"/>
         <result column="result" property="result"/>
         <result column="paper_type" property="paperType"/>
+		<result column="first_author" property="firstAuthor"/>
         <result column="update_date" property="issueDate"/>
         <result column="v_status" property="v_status"/>
         <result column="v_result" property="v_result"/>
@@ -54,13 +55,14 @@
 	        p.update_date,
 	        p.result,
 	        p.paper_type,
+	        p.first_author,
 	        u.id as uid,
 	        u.name,
 	        pd.num,
 	        v.status as v_status,
 	        v.result as v_result
         FROM
-	        (SELECT id, title, journal, update_date, result, paper_type FROM internal_paper WHERE is_student_first_author = false ORDER BY id DESC LIMIT #{offset}, #{size}) p
+	        (SELECT id, title, journal, update_date, result, paper_type, first_author FROM internal_paper WHERE is_student_first_author = false ORDER BY id DESC LIMIT #{offset}, #{size}) p
 	        LEFT JOIN paper_detail pd on p.id = pd.internal_paper_id
 	        LEFT JOIN user u on pd.user_id = u.id
 	        LEFT JOIN vote v on v.pid = p.id and v.external = false

@@ -30,7 +30,8 @@ public class InternalPaper implements Paper {
     public static final int REVIEWING = 2;
     public static final int REJECT = 3;
     public static final int ACCEPT = 4;
-    public static final int SUSPEND = 5;
+    public static final int FLAT = 5;
+    public static final int SUSPEND = 6;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

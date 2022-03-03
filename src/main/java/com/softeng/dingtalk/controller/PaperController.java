@@ -11,6 +11,7 @@ import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.ExternalPaperVO;
+import com.softeng.dingtalk.vo.FlatDecisionVO;
 import com.softeng.dingtalk.vo.PaperResultVO;
 import com.softeng.dingtalk.vo.InternalPaperVO;
 import lombok.extern.slf4j.Slf4j;
@@ -254,8 +255,8 @@ public class PaperController {
      * 指定是否接受平票论文
      */
     @PatchMapping("/paper/{id}")
-    public void decideFlat(@RequestBody InternalPaperVO internalPaperVO){
-        paperService.decideFlat(internalPaperVO);
+    public void decideFlat(@RequestBody FlatDecisionVO flatDecisionVO){
+        paperService.decideFlat(flatDecisionVO);
     }
 
     /**
