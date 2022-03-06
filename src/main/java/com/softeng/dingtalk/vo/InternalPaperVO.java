@@ -2,6 +2,7 @@ package com.softeng.dingtalk.vo;
 
 import com.softeng.dingtalk.enums.PaperType;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,11 +22,11 @@ public class InternalPaperVO {
     private PaperType paperType;
     private LocalDate issueDate;
     private List<AuthorVO> authors;
-
     private Boolean isStudentFirstAuthor;
     private String firstAuthor;
     private int version;
     private String path;
     private String hash;
     private int flatDecision;
+    private String reviewFileName;
 }
