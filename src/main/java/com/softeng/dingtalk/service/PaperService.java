@@ -76,7 +76,7 @@ public class PaperService {
      * @param vo 实验室内部论文VO对象
      */
     public void addInternalPaper(InternalPaperVO vo) {
-        InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getIsStudentFirstAuthor(), vo.getFirstAuthor());
+        InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getIsStudentFirstAuthor(), vo.getFirstAuthor(), vo.getReviewFileName());
         if (!internalPaper.getIsStudentFirstAuthor()) {
             internalPaper.setResult(2);
         }

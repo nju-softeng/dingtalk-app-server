@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.softeng.dingtalk.entity.ExternalPaper;
 import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.entity.Review;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -49,10 +51,13 @@ public class PaperController {
 
     /**
      * 添加或更新实验室内部及非学生一作论文记录
-     * @param vo
+     * @param file
+     * @param paperFormJsonStr
      */
     @PostMapping("/paper")
-    public void addPaper(@RequestBody InternalPaperVO vo) {
+    public void addPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "paperFormJsonStr") String paperFormJsonStr) {
+        InternalPaperVO vo= JSONObject.parseObject(paperFormJsonStr,InternalPaperVO.class);
+        vo.setReviewFileName(file.getOriginalFilename());
         if (vo.getId() == null) {
             paperService.addInternalPaper(vo);
         } else {
