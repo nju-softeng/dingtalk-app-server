@@ -1,21 +1,24 @@
 package com.softeng.dingtalk.api;
 
+import com.aliyun.dingtalkdrive_1_0.models.*;
+import com.aliyun.teaopenapi.models.Config;
+import com.aliyun.teautil.models.RuntimeOptions;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
+
 import com.dingtalk.api.request.OapiGetJsapiTicketRequest;
 import com.dingtalk.api.request.OapiGettokenRequest;
-import com.dingtalk.api.response.OapiGetJsapiTicketResponse;
-import com.dingtalk.api.response.OapiGettokenResponse;
+
 import com.github.benmanes.caffeine.cache.Cache;
 import com.taobao.api.ApiException;
+
 import com.taobao.api.TaobaoRequest;
 import com.taobao.api.TaobaoResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
-
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -38,7 +41,7 @@ public class BaseApi {
     protected static Long AGENTID;         // 钉钉微应用的 AgentId
     protected static String CHAT_ID;       // 发送群消息的群id
     protected static String DOMAIN;        // 该服务器的域名，用于调用api时鉴权
-
+    private static final String MD5="md5";
     @Value("${my.corpid}")
     public void setCORPID(String corpid) {
         CORPID = corpid;
@@ -75,6 +78,17 @@ public class BaseApi {
     @Autowired
     Cache<String, String> cache;
 
+    /**
+     * 使用 Token 初始化账号Client
+     * @return Client
+     * @throws Exception
+     */
+    private com.aliyun.dingtalkdrive_1_0.Client createClient() throws Exception {
+        Config config = new Config();
+        config.protocol = "https";
+        config.regionId = "central";
+        return new com.aliyun.dingtalkdrive_1_0.Client(config);
+    }
 
     /**
      * 执行封装好的请求, 需要accessToken
@@ -127,6 +141,41 @@ public class BaseApi {
             cache.put("AccessToken", res);
         }
         return res;
+    }
+
+    /**
+     * 获取云盘空间的Id
+     * @param uid
+     * @return java.lang.String
+     */
+    public String getSpaceId(String uid) throws Exception {
+        com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
+        ListSpacesHeaders listSpacesHeaders = new ListSpacesHeaders();
+        listSpacesHeaders.xAcsDingtalkAccessToken = "<your access token>";
+        ListSpacesRequest listSpacesRequest = new ListSpacesRequest()
+                .setUnionId(uid)
+                .setSpaceType("org")
+                .setNextToken("")
+                .setMaxResults(50);
+        ListSpacesResponse listSpacesResponse=client.listSpacesWithOptions(listSpacesRequest, listSpacesHeaders, new RuntimeOptions());
+        return listSpacesResponse.getBody().getSpaces().get(0).getSpaceId();
+    }
+
+    public String getMediaId(String uid, String mediaId, File file) throws Exception {
+        com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
+        GetUploadInfoHeaders getUploadInfoHeaders = new GetUploadInfoHeaders();
+        getUploadInfoHeaders.xAcsDingtalkAccessToken = "<your access token>";
+        GetUploadInfoRequest getUploadInfoRequest = new GetUploadInfoRequest()
+                .setUnionId(uid)
+                .setFileName(file.getName())
+                .setFileSize(file.length())
+                .setMd5(MD5)
+                .setAddConflictPolicy("autoRename");
+        if(mediaId!=null){
+            getUploadInfoRequest.setMediaId(mediaId);
+        }
+        GetUploadInfoResponse getUploadInfoResponse=client.getUploadInfoWithOptions(this.getSpaceId(uid), "0", getUploadInfoRequest, getUploadInfoHeaders, new RuntimeOptions());
+        return getUploadInfoResponse.getBody().getStsUploadInfo().getMediaId();
     }
 
     /**
@@ -195,4 +244,9 @@ public class BaseApi {
         String signature = sign(getJsapiTicket(),nonceStr, timeStamp, url);
         return Map.of("agentId", AGENTID,"url", url, "nonceStr", nonceStr, "timeStamp", timeStamp, "corpId", CORPID, "signature", signature);
     }
+
+    public String uploadFile(File file,String uid){
+        return null;
+    }
+
 }

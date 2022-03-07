@@ -9,6 +9,7 @@ import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.repository.ExternalPaperRepository;
 import com.softeng.dingtalk.repository.InternalPaperRepository;
 import com.softeng.dingtalk.repository.VoteRepository;
+import com.softeng.dingtalk.service.FileService;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.ExternalPaperVO;
@@ -47,7 +48,8 @@ public class PaperController {
     VoteRepository voteRepository;
     @Autowired
     InternalPaperRepository internalPaperRepository;
-
+    @Autowired
+    FileService fileService;
 
     /**
      * 添加或更新实验室内部及非学生一作论文记录
@@ -55,9 +57,10 @@ public class PaperController {
      * @param paperFormJsonStr
      */
     @PostMapping("/paper")
-    public void addPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "paperFormJsonStr") String paperFormJsonStr) {
+    public void addPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "paperFormJsonStr") String paperFormJsonStr, @RequestAttribute String uid) {
         InternalPaperVO vo= JSONObject.parseObject(paperFormJsonStr,InternalPaperVO.class);
         vo.setReviewFileName(file.getOriginalFilename());
+        fileService.addFile(file,uid);
         if (vo.getId() == null) {
             paperService.addInternalPaper(vo);
         } else {
