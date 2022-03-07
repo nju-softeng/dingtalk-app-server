@@ -433,8 +433,7 @@ public class PaperService {
     public void decideFlat(FlatDecisionVO flatDecisionVO) {
         InternalPaper internalPaper = internalPaperRepository.findById(flatDecisionVO.getId()).get();
         if (flatDecisionVO.getDecision()) {
-            internalPaper.setFlatDecision(1);
-            internalPaper.setResult(2);
+            internalPaper.setFlatDecision(1);            internalPaper.setResult(2);
             internalPaperRepository.save(internalPaper);
         } else {
             internalPaper.setFlatDecision(0);
