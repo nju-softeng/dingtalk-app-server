@@ -59,13 +59,13 @@ public class PaperService {
 
     @Value("${paper.acDeductionRate}")
     private double acDeductionRate;
-    @Value("${paper.rank1Rate=0.5}")
+    @Value("${paper.rank1Rate}")
     private double rank1Rate;
-    @Value("${paper.rank2Rate=0.25}")
+    @Value("${paper.rank2Rate}")
     private double rank2Rate;
-    @Value("${paper.rank3Rate=0.15}")
+    @Value("${paper.rank3Rate}")
     private double rank3Rate;
-    @Value("${paper.rankDefaultRate=0.1}")
+    @Value("${paper.rankDefaultRate}")
     private double rankDefaultRate;
 
     /**

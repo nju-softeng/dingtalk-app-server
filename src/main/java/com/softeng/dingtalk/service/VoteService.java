@@ -68,8 +68,10 @@ public class VoteService {
     private static final String VOTE_INFO_MARKDOWN = " #### 投票 \n ##### 论文：  %s \n ##### 作者： %s \n 截止时间: %s";
     private static final String VOTE_INFO_URL = "/paper/in-detail/%d/vote";
 
-    @Value("${paper.flatRate}")
-    private double flatRate;
+    @Value("${paper.flatRateNumerator}")
+    private double flatRateNumerator;
+    @Value("${paper.flatRateDenominator}")
+    private double flatRateDenominator;
 
     /**
      * 创建论文评审投票
@@ -255,9 +257,9 @@ public class VoteService {
      */
     public int getVotingResult(Vote vote) {
         double result = calculatePercentageOfVotesAccepted(vote);
-        if (result > flatRate) {
+        if (result > flatRateNumerator/flatRateDenominator) {
             return 1;
-        } else if (result == flatRate) {
+        } else if (result == flatRateNumerator/flatRateDenominator) {
             return 2;
         } else {
             return 0;
