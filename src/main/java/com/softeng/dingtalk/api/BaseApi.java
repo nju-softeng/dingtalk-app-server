@@ -1,6 +1,12 @@
 package com.softeng.dingtalk.api;
 
 import com.aliyun.dingtalkdrive_1_0.models.*;
+import com.aliyun.oss.ClientConfiguration;
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.common.auth.CredentialsProvider;
+import com.aliyun.oss.common.auth.DefaultCredentialProvider;
+import com.aliyun.oss.common.comm.Protocol;
+import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyun.teautil.models.RuntimeOptions;
 import com.dingtalk.api.DefaultDingTalkClient;
@@ -143,40 +149,6 @@ public class BaseApi {
         return res;
     }
 
-    /**
-     * 获取云盘空间的Id
-     * @param uid
-     * @return java.lang.String
-     */
-    public String getSpaceId(String uid) throws Exception {
-        com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
-        ListSpacesHeaders listSpacesHeaders = new ListSpacesHeaders();
-        listSpacesHeaders.xAcsDingtalkAccessToken = "<your access token>";
-        ListSpacesRequest listSpacesRequest = new ListSpacesRequest()
-                .setUnionId(uid)
-                .setSpaceType("org")
-                .setNextToken("")
-                .setMaxResults(50);
-        ListSpacesResponse listSpacesResponse=client.listSpacesWithOptions(listSpacesRequest, listSpacesHeaders, new RuntimeOptions());
-        return listSpacesResponse.getBody().getSpaces().get(0).getSpaceId();
-    }
-
-    public String getMediaId(String uid, String mediaId, File file) throws Exception {
-        com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
-        GetUploadInfoHeaders getUploadInfoHeaders = new GetUploadInfoHeaders();
-        getUploadInfoHeaders.xAcsDingtalkAccessToken = "<your access token>";
-        GetUploadInfoRequest getUploadInfoRequest = new GetUploadInfoRequest()
-                .setUnionId(uid)
-                .setFileName(file.getName())
-                .setFileSize(file.length())
-                .setMd5(MD5)
-                .setAddConflictPolicy("autoRename");
-        if(mediaId!=null){
-            getUploadInfoRequest.setMediaId(mediaId);
-        }
-        GetUploadInfoResponse getUploadInfoResponse=client.getUploadInfoWithOptions(this.getSpaceId(uid), "0", getUploadInfoRequest, getUploadInfoHeaders, new RuntimeOptions());
-        return getUploadInfoResponse.getBody().getStsUploadInfo().getMediaId();
-    }
 
     /**
      * 获取钉钉前端鉴权所需的 Jsapi Ticket，获取后会缓存起来，过期之后再重新获取
@@ -245,8 +217,106 @@ public class BaseApi {
         return Map.of("agentId", AGENTID,"url", url, "nonceStr", nonceStr, "timeStamp", timeStamp, "corpId", CORPID, "signature", signature);
     }
 
-    public String uploadFile(File file,String uid){
-        return null;
+    /**
+     * 获取云盘空间的Id
+     * @param unionId
+     * @return java.lang.String
+     */
+    public String getSpaceId(String unionId) throws Exception {
+        ListSpacesHeaders listSpacesHeaders = new ListSpacesHeaders();
+        listSpacesHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
+        ListSpacesRequest listSpacesRequest = new ListSpacesRequest()
+                .setUnionId(unionId)
+                .setSpaceType("org")
+                .setNextToken("")
+                .setMaxResults(50);
+        try{
+            com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
+            ListSpacesResponse listSpacesResponse=client.listSpacesWithOptions(listSpacesRequest, listSpacesHeaders, new RuntimeOptions());
+            return listSpacesResponse.getBody().getSpaces().get(0).getSpaceId();
+        }catch (Exception e){
+            log.info("getSpaceId WRONG! "+e.getMessage());
+            return null;
+        }
+
+    }
+
+    /**
+     * 获取文件上传信息
+     * @param unionId
+     * @param mediaId
+     * @param file
+     * @return java.lang.String
+     */
+    public GetUploadInfoResponseBody.GetUploadInfoResponseBodyStsUploadInfo getFileUploadInfo(String unionId, String mediaId, File file,String fileName) {
+        GetUploadInfoHeaders getUploadInfoHeaders = new GetUploadInfoHeaders();
+        getUploadInfoHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
+        GetUploadInfoRequest getUploadInfoRequest = new GetUploadInfoRequest()
+                .setUnionId(unionId)
+                .setFileName(fileName)
+                .setFileSize(file.length())
+                .setMd5(MD5)
+                .setAddConflictPolicy("autoRename");
+        if(mediaId!=null){
+            getUploadInfoRequest.setMediaId(mediaId);
+        }
+        log.info("fileName: "+file.getName());
+        try{
+            com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
+            GetUploadInfoResponse getUploadInfoResponse=client.getUploadInfoWithOptions(this.getSpaceId(unionId), "0", getUploadInfoRequest, getUploadInfoHeaders, new RuntimeOptions());
+            return getUploadInfoResponse.getBody().getStsUploadInfo();
+        }catch (Exception e){
+            log.info("getUploadInfo WRONG! "+e.getMessage());
+
+            return null;
+        }
+
+    }
+
+    /**
+     * 返回文件mediaId
+     * @param file
+     * @param unionId
+     * @return
+     */
+    public String uploadFile(File file,String unionId,
+                             GetUploadInfoResponseBody.GetUploadInfoResponseBodyStsUploadInfo uploadInfo){
+        CredentialsProvider credentialsProvider = new DefaultCredentialProvider(uploadInfo.getAccessKeyId(), uploadInfo.getAccessKeySecret(), uploadInfo.getAccessToken());
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
+        clientConfiguration.setProtocol(Protocol.HTTPS);
+        OSSClient ossClient = new OSSClient(uploadInfo.getEndPoint(), credentialsProvider, clientConfiguration);
+        PutObjectRequest putObjectRequest = new PutObjectRequest(uploadInfo.getBucket(), uploadInfo.getMediaId(), file);
+        ossClient.putObject(putObjectRequest);
+        ossClient.shutdown();
+        return uploadInfo.getMediaId();
+    }
+
+    /**
+     * 返回文件Id
+     * @param file
+     * @param unionId
+     * @return
+     */
+    public String addFile(File file, String unionId, String fileName){
+        GetUploadInfoResponseBody.GetUploadInfoResponseBodyStsUploadInfo uploadInfo=this.getFileUploadInfo(unionId,null,file,fileName);
+        this.uploadFile(file,unionId,uploadInfo);
+        AddFileHeaders addFileHeaders = new AddFileHeaders();
+        addFileHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
+        AddFileRequest addFileRequest = new AddFileRequest()
+                .setParentId("0")
+                .setFileType("file")
+                .setFileName(fileName)
+                .setMediaId(uploadInfo.getMediaId())
+                .setAddConflictPolicy("autoRename")
+                .setUnionId(unionId);
+        try{
+            com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
+            AddFileResponse addFileResponse=client.addFileWithOptions(this.getSpaceId(unionId), addFileRequest, addFileHeaders, new RuntimeOptions());
+            return addFileResponse.getBody().getFileId();
+        }catch (Exception e){
+            log.info("addFile WRONG!");
+            return null;
+        }
     }
 
 }

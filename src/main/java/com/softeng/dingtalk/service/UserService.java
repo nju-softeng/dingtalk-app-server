@@ -58,7 +58,7 @@ public class UserService {
         return userRepository.findById(id).get().getUserid();
     }
 
-
+    public String getUserUnionId(int uid) {return userRepository.findById(uid).get().getUnionid();}
     /**
      * 通过useID获取用户 -> 通过用户进入系统时调用API获得的userID查询用户，判断用户是否在系统中，还是新用户
      * @param userid
