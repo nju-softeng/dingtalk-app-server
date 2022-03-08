@@ -57,7 +57,8 @@ public class PaperController {
      * @param paperFormJsonStr
      */
     @PostMapping("/paper")
-    public void addPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "paperFormJsonStr") String paperFormJsonStr, @RequestAttribute String uid) {
+    public void addPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "paperFormJsonStr") String paperFormJsonStr, @RequestAttribute int uid) {
+        log.info("uid: "+String.valueOf(uid));
         InternalPaperVO vo= JSONObject.parseObject(paperFormJsonStr,InternalPaperVO.class);
         vo.setReviewFileName(file.getOriginalFilename());
         fileService.addFile(file,uid);
