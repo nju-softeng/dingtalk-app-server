@@ -9,6 +9,7 @@ import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -55,6 +56,17 @@ public class PaperService {
 
     @Autowired
     PaperService paperService;
+
+    @Value("${paper.acDeductionRate}")
+    private double acDeductionRate;
+    @Value("${paper.rank1Rate=0.5}")
+    private double rank1Rate;
+    @Value("${paper.rank2Rate=0.25}")
+    private double rank2Rate;
+    @Value("${paper.rank3Rate=0.15}")
+    private double rank3Rate;
+    @Value("${paper.rankDefaultRate=0.1}")
+    private double rankDefaultRate;
 
     /**
      * 根据 internalPaper 和 List<AuthorVO> 生成 PaperDetails
@@ -179,13 +191,13 @@ public class PaperService {
     public double calculateRatioOfAc(int rank) {
         switch (rank) {
             case 1:
-                return 0.5;
+                return rank1Rate;
             case 2:
-                return 0.25;
+                return rank2Rate;
             case 3:
-                return 0.15;
+                return rank3Rate;
             default:
-                return 0.1;
+                return rankDefaultRate;
         }
     }
 
@@ -205,7 +217,7 @@ public class PaperService {
      * 计算论文结果对应的 AC
      */
     public void calculateInternalPaperAc(InternalPaper internalPaper) {
-        double weight = (internalPaper.getResult() == 6 ? 0.5 : 1); // 如果平票则只计算50%AC
+        double weight = (internalPaper.getResult() == 6 ? acDeductionRate : 1); // 如果平票则只计算50%AC
         // 1. 获取 paperDetails
         var paperDetails = internalPaper.getPaperDetails();
 
@@ -222,7 +234,7 @@ public class PaperService {
 
         // 4. 生成 AC 变更原因
         String reason;
-        if (weight == 0.5) {
+        if (weight == acDeductionRate) {
             reason = internalPaper.getTitle() + " Suspend";
         } else {
             reason = internalPaper.getTitle() + (internalPaper.hasAccepted() ? " Accept" : " Reject");
