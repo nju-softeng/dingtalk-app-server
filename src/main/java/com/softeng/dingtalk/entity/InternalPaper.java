@@ -110,7 +110,42 @@ public class InternalPaper implements Paper {
     /**
      *组内评审版本文件名称
      */
-    private String reviewFileName = null;
+    private String reviewFileName;
+
+    /**
+     *组内评审版本文件Id
+     */
+    String reviewFileId;
+
+    /**
+     *提交版本文件名称
+     */
+    String submissionFileName;
+
+    /**
+     *提交版本文件Id
+     */
+    String submissionFileId;
+
+    /**
+     *发表版本文件名称
+     */
+    String publishedFileName;
+
+    /**
+     *发表版本文件Id
+     */
+    String publishedFileId;
+
+    /**
+     *发表版本Latex文件名称
+     */
+    String publishedLatexFileName;
+
+    /**
+     *发表版本Latex文件Id
+     */
+    String publishedLatexFileId;
 
     public InternalPaper(int id) {
         this.id = id;

@@ -29,4 +29,6 @@ public class InternalPaperVO {
     private String hash;
     private int flatDecision;
     private String reviewFileName;
+    private String fileName;
+    private String fileId;
 }

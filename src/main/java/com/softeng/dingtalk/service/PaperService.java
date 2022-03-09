@@ -79,6 +79,11 @@ public class PaperService {
         InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getIsStudentFirstAuthor(), vo.getFirstAuthor(), vo.getReviewFileName());
         if (!internalPaper.getIsStudentFirstAuthor()) {
             internalPaper.setResult(2);
+            internalPaper.setSubmissionFileName(vo.getFileName());
+            internalPaper.setSubmissionFileId(vo.getFileId());
+        }else {
+            internalPaper.setReviewFileName(vo.getFileName());
+            internalPaper.setReviewFileId(vo.getFileId());
         }
         internalPaperRepository.save(internalPaper);
         paperDetailRepository.saveBatch(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
