@@ -58,10 +58,10 @@ public class PaperController {
     public void addPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "paperFormJsonStr") String paperFormJsonStr, @RequestAttribute int uid) {
         log.info("uid: "+String.valueOf(uid));
         InternalPaperVO vo= JSONObject.parseObject(paperFormJsonStr,InternalPaperVO.class);
-        vo.setReviewFileName(file.getOriginalFilename());
-        String fileId=fileService.addFile(file,uid);
-        vo.setFileId(fileId);
         if (vo.getId() == null) {
+            vo.setReviewFileName(file.getOriginalFilename());
+            String fileId=fileService.addFile(file,uid);
+            vo.setFileId(fileId);
             paperService.addInternalPaper(vo);
         } else {
             paperService.updateInternalPaper(vo);
