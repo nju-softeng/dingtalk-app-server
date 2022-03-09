@@ -12,10 +12,7 @@ import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.service.FileService;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
-import com.softeng.dingtalk.vo.ExternalPaperVO;
-import com.softeng.dingtalk.vo.FlatDecisionVO;
-import com.softeng.dingtalk.vo.PaperResultVO;
-import com.softeng.dingtalk.vo.InternalPaperVO;
+import com.softeng.dingtalk.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -61,7 +59,8 @@ public class PaperController {
         log.info("uid: "+String.valueOf(uid));
         InternalPaperVO vo= JSONObject.parseObject(paperFormJsonStr,InternalPaperVO.class);
         vo.setReviewFileName(file.getOriginalFilename());
-        fileService.addFile(file,uid);
+        String fileId=fileService.addFile(file,uid);
+        vo.setFileId(fileId);
         if (vo.getId() == null) {
             paperService.addInternalPaper(vo);
         } else {
@@ -276,5 +275,38 @@ public class PaperController {
     @GetMapping("/non-first/page/{page}/{size}")
     public Map listNonFirstPaper(@PathVariable int page, @PathVariable int size) {
         return paperService.listNonFirstPaper(page, size);
+    }
+
+    /**
+     * 上传论文文件
+     * @param id
+     * @param file
+     * @param fileType
+     * @return
+     */
+    @PostMapping("/paperFile/{id}")
+    public void addPaperFile(@PathVariable int id, @RequestParam MultipartFile file, @RequestParam String fileType){
+
+    }
+
+    /**
+     * 获取论文文件
+     * @param fileId
+     * @return
+     */
+    @GetMapping("paperFile/{fileId}")
+    public PaperFileDownloadInfoVO getPaperFileDownloadInfo(@PathVariable int fileId, @RequestAttribute int uid){
+
+        return null;
+    }
+
+    /**
+     * 获取论文文件
+     * @param id
+     * @return
+     */
+    @GetMapping("paperFileInfo/{id}")
+    public PaperFileInfoVO getPaperFileInfo(@PathVariable int id){
+        return null;
     }
 }

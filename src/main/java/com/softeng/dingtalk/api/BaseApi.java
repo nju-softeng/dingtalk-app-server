@@ -6,6 +6,7 @@ import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.auth.CredentialsProvider;
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.aliyun.oss.common.comm.Protocol;
+import com.aliyun.oss.model.Callback;
 import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyun.teautil.models.RuntimeOptions;
@@ -16,20 +17,27 @@ import com.dingtalk.api.request.OapiGetJsapiTicketRequest;
 import com.dingtalk.api.request.OapiGettokenRequest;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import com.softeng.dingtalk.vo.PaperFileDownloadInfoVO;
 import com.taobao.api.ApiException;
 
 import com.taobao.api.TaobaoRequest;
 import com.taobao.api.TaobaoResponse;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.*;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Sink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Formatter;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -315,6 +323,27 @@ public class BaseApi {
             return addFileResponse.getBody().getFileId();
         }catch (Exception e){
             log.info("addFile WRONG!");
+            return null;
+        }
+    }
+
+    /**
+     * @param unionId
+     * @param fileId
+     * @return
+     */
+    public GetDownloadInfoResponseBody.GetDownloadInfoResponseBodyDownloadInfo getFileDownloadInfo(String unionId, String fileId){
+        GetDownloadInfoHeaders getDownloadInfoHeaders = new GetDownloadInfoHeaders();
+        getDownloadInfoHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
+        GetDownloadInfoRequest getDownloadInfoRequest = new GetDownloadInfoRequest()
+                .setUnionId(unionId);
+        try {
+            com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
+            GetDownloadInfoResponse getDownloadInfoResponse = client.getDownloadInfoWithOptions(this.getSpaceId(unionId),
+                    fileId, getDownloadInfoRequest, getDownloadInfoHeaders, new RuntimeOptions());
+            return getDownloadInfoResponse.getBody().getDownloadInfo();
+        }catch (Exception e){
+            log.info(e.getMessage());
             return null;
         }
     }
