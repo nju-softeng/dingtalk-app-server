@@ -151,14 +151,13 @@ public class InternalPaper implements Paper {
         this.id = id;
     }
 
-    public InternalPaper(String title, String journal, PaperType paperType, LocalDate updateDate, Boolean isStudentFirstAuthor, String firstAuthor, String reviewFileName) {
+    public InternalPaper(String title, String journal, PaperType paperType, LocalDate updateDate, Boolean isStudentFirstAuthor, String firstAuthor) {
         this.title = title;
         this.journal = journal;
         this.paperType = paperType;
         this.updateDate = updateDate;
         this.isStudentFirstAuthor = isStudentFirstAuthor;
         this.firstAuthor = firstAuthor;
-        this.reviewFileName=reviewFileName;
     }
 
     public void update(String title, String journal, PaperType paperType, LocalDate issueDate, String firstAuthor) {

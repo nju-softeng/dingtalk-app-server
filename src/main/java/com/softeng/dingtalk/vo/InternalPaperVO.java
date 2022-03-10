@@ -28,7 +28,6 @@ public class InternalPaperVO {
     private String path;
     private String hash;
     private int flatDecision;
-    private String reviewFileName;
     private String fileName;
     private String fileId;
 }

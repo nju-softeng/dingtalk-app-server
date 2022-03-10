@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.service;
 
 
+import com.softeng.dingtalk.api.BaseApi;
 import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.mapper.InternalPaperMapper;
 
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -56,6 +58,9 @@ public class PaperService {
     @Autowired
     PaperService paperService;
 
+    @Autowired
+    BaseApi baseApi;
+
     /**
      * 根据 internalPaper 和 List<AuthorVO> 生成 PaperDetails
      *
@@ -76,7 +81,7 @@ public class PaperService {
      * @param vo 实验室内部论文VO对象
      */
     public void addInternalPaper(InternalPaperVO vo) {
-        InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getIsStudentFirstAuthor(), vo.getFirstAuthor(), vo.getReviewFileName());
+        InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getIsStudentFirstAuthor(), vo.getFirstAuthor());
         if (!internalPaper.getIsStudentFirstAuthor()) {
             internalPaper.setResult(2);
             internalPaper.setSubmissionFileName(vo.getFileName());

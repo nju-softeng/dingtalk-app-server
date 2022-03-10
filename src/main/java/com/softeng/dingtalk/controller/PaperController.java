@@ -59,7 +59,7 @@ public class PaperController {
         log.info("uid: "+String.valueOf(uid));
         InternalPaperVO vo= JSONObject.parseObject(paperFormJsonStr,InternalPaperVO.class);
         if (vo.getId() == null) {
-            vo.setReviewFileName(file.getOriginalFilename());
+            vo.setFileName(file.getOriginalFilename());
             String fileId=fileService.addFile(file,uid);
             vo.setFileId(fileId);
             paperService.addInternalPaper(vo);
@@ -275,38 +275,5 @@ public class PaperController {
     @GetMapping("/non-first/page/{page}/{size}")
     public Map listNonFirstPaper(@PathVariable int page, @PathVariable int size) {
         return paperService.listNonFirstPaper(page, size);
-    }
-
-    /**
-     * 上传论文文件
-     * @param id
-     * @param file
-     * @param fileType
-     * @return
-     */
-    @PostMapping("/paperFile/{id}")
-    public void addPaperFile(@PathVariable int id, @RequestParam MultipartFile file, @RequestParam String fileType){
-
-    }
-
-    /**
-     * 获取论文文件
-     * @param fileId
-     * @return
-     */
-    @GetMapping("paperFile/{fileId}")
-    public PaperFileDownloadInfoVO getPaperFileDownloadInfo(@PathVariable int fileId, @RequestAttribute int uid){
-
-        return null;
-    }
-
-    /**
-     * 获取论文文件
-     * @param id
-     * @return
-     */
-    @GetMapping("paperFileInfo/{id}")
-    public PaperFileInfoVO getPaperFileInfo(@PathVariable int id){
-        return null;
     }
 }
