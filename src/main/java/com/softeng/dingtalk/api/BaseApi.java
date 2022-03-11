@@ -1,26 +1,43 @@
 package com.softeng.dingtalk.api;
 
+import com.aliyun.dingtalkdrive_1_0.models.*;
+import com.aliyun.oss.ClientConfiguration;
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.common.auth.CredentialsProvider;
+import com.aliyun.oss.common.auth.DefaultCredentialProvider;
+import com.aliyun.oss.common.comm.Protocol;
+import com.aliyun.oss.model.Callback;
+import com.aliyun.oss.model.PutObjectRequest;
+import com.aliyun.teaopenapi.models.Config;
+import com.aliyun.teautil.models.RuntimeOptions;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
+
 import com.dingtalk.api.request.OapiGetJsapiTicketRequest;
 import com.dingtalk.api.request.OapiGettokenRequest;
-import com.dingtalk.api.response.OapiGetJsapiTicketResponse;
-import com.dingtalk.api.response.OapiGettokenResponse;
+
 import com.github.benmanes.caffeine.cache.Cache;
+import com.softeng.dingtalk.vo.PaperFileDownloadInfoVO;
 import com.taobao.api.ApiException;
+
 import com.taobao.api.TaobaoRequest;
 import com.taobao.api.TaobaoResponse;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.*;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Sink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
-
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Formatter;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -38,7 +55,7 @@ public class BaseApi {
     protected static Long AGENTID;         // 钉钉微应用的 AgentId
     protected static String CHAT_ID;       // 发送群消息的群id
     protected static String DOMAIN;        // 该服务器的域名，用于调用api时鉴权
-
+    private static final String MD5="md5";
     @Value("${my.corpid}")
     public void setCORPID(String corpid) {
         CORPID = corpid;
@@ -75,6 +92,17 @@ public class BaseApi {
     @Autowired
     Cache<String, String> cache;
 
+    /**
+     * 使用 Token 初始化账号Client
+     * @return Client
+     * @throws Exception
+     */
+    private com.aliyun.dingtalkdrive_1_0.Client createClient() throws Exception {
+        Config config = new Config();
+        config.protocol = "https";
+        config.regionId = "central";
+        return new com.aliyun.dingtalkdrive_1_0.Client(config);
+    }
 
     /**
      * 执行封装好的请求, 需要accessToken
@@ -128,6 +156,7 @@ public class BaseApi {
         }
         return res;
     }
+
 
     /**
      * 获取钉钉前端鉴权所需的 Jsapi Ticket，获取后会缓存起来，过期之后再重新获取
@@ -195,4 +224,128 @@ public class BaseApi {
         String signature = sign(getJsapiTicket(),nonceStr, timeStamp, url);
         return Map.of("agentId", AGENTID,"url", url, "nonceStr", nonceStr, "timeStamp", timeStamp, "corpId", CORPID, "signature", signature);
     }
+
+    /**
+     * 获取云盘空间的Id
+     * @param unionId
+     * @return java.lang.String
+     */
+    public String getSpaceId(String unionId) throws Exception {
+        ListSpacesHeaders listSpacesHeaders = new ListSpacesHeaders();
+        listSpacesHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
+        ListSpacesRequest listSpacesRequest = new ListSpacesRequest()
+                .setUnionId(unionId)
+                .setSpaceType("org")
+                .setNextToken("")
+                .setMaxResults(50);
+        try{
+            com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
+            ListSpacesResponse listSpacesResponse=client.listSpacesWithOptions(listSpacesRequest, listSpacesHeaders, new RuntimeOptions());
+            return listSpacesResponse.getBody().getSpaces().get(0).getSpaceId();
+        }catch (Exception e){
+            log.info("getSpaceId WRONG! "+e.getMessage());
+            return null;
+        }
+
+    }
+
+    /**
+     * 获取文件上传信息
+     * @param unionId
+     * @param mediaId
+     * @param file
+     * @return java.lang.String
+     */
+    public GetUploadInfoResponseBody.GetUploadInfoResponseBodyStsUploadInfo getFileUploadInfo(String unionId, String mediaId, File file,String fileName) {
+        GetUploadInfoHeaders getUploadInfoHeaders = new GetUploadInfoHeaders();
+        getUploadInfoHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
+        GetUploadInfoRequest getUploadInfoRequest = new GetUploadInfoRequest()
+                .setUnionId(unionId)
+                .setFileName(fileName)
+                .setFileSize(file.length())
+                .setMd5(MD5)
+                .setAddConflictPolicy("autoRename");
+        if(mediaId!=null){
+            getUploadInfoRequest.setMediaId(mediaId);
+        }
+        log.info("fileName: "+file.getName());
+        try{
+            com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
+            GetUploadInfoResponse getUploadInfoResponse=client.getUploadInfoWithOptions(this.getSpaceId(unionId), "0", getUploadInfoRequest, getUploadInfoHeaders, new RuntimeOptions());
+            return getUploadInfoResponse.getBody().getStsUploadInfo();
+        }catch (Exception e){
+            log.info("getUploadInfo WRONG! "+e.getMessage());
+
+            return null;
+        }
+
+    }
+
+    /**
+     * 返回文件mediaId
+     * @param file
+     * @param unionId
+     * @return
+     */
+    public String uploadFile(File file,String unionId,
+                             GetUploadInfoResponseBody.GetUploadInfoResponseBodyStsUploadInfo uploadInfo){
+        CredentialsProvider credentialsProvider = new DefaultCredentialProvider(uploadInfo.getAccessKeyId(), uploadInfo.getAccessKeySecret(), uploadInfo.getAccessToken());
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
+        clientConfiguration.setProtocol(Protocol.HTTPS);
+        OSSClient ossClient = new OSSClient(uploadInfo.getEndPoint(), credentialsProvider, clientConfiguration);
+        PutObjectRequest putObjectRequest = new PutObjectRequest(uploadInfo.getBucket(), uploadInfo.getMediaId(), file);
+        ossClient.putObject(putObjectRequest);
+        ossClient.shutdown();
+        return uploadInfo.getMediaId();
+    }
+
+    /**
+     * 返回文件Id
+     * @param file
+     * @param unionId
+     * @return
+     */
+    public String addFile(File file, String unionId, String fileName){
+        GetUploadInfoResponseBody.GetUploadInfoResponseBodyStsUploadInfo uploadInfo=this.getFileUploadInfo(unionId,null,file,fileName);
+        this.uploadFile(file,unionId,uploadInfo);
+        AddFileHeaders addFileHeaders = new AddFileHeaders();
+        addFileHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
+        AddFileRequest addFileRequest = new AddFileRequest()
+                .setParentId("0")
+                .setFileType("file")
+                .setFileName(fileName)
+                .setMediaId(uploadInfo.getMediaId())
+                .setAddConflictPolicy("autoRename")
+                .setUnionId(unionId);
+        try{
+            com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
+            AddFileResponse addFileResponse=client.addFileWithOptions(this.getSpaceId(unionId), addFileRequest, addFileHeaders, new RuntimeOptions());
+            return addFileResponse.getBody().getFileId();
+        }catch (Exception e){
+            log.info("addFile WRONG!");
+            return null;
+        }
+    }
+
+    /**
+     * @param unionId
+     * @param fileId
+     * @return
+     */
+    public GetDownloadInfoResponseBody.GetDownloadInfoResponseBodyDownloadInfo getFileDownloadInfo(String unionId, String fileId){
+        GetDownloadInfoHeaders getDownloadInfoHeaders = new GetDownloadInfoHeaders();
+        getDownloadInfoHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
+        GetDownloadInfoRequest getDownloadInfoRequest = new GetDownloadInfoRequest()
+                .setUnionId(unionId);
+        try {
+            com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
+            GetDownloadInfoResponse getDownloadInfoResponse = client.getDownloadInfoWithOptions(this.getSpaceId(unionId),
+                    fileId, getDownloadInfoRequest, getDownloadInfoHeaders, new RuntimeOptions());
+            return getDownloadInfoResponse.getBody().getDownloadInfo();
+        }catch (Exception e){
+            log.info(e.getMessage());
+            return null;
+        }
+    }
+
 }

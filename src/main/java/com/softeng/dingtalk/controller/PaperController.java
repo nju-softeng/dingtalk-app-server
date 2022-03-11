@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.softeng.dingtalk.entity.ExternalPaper;
 import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.entity.Review;
@@ -8,19 +9,19 @@ import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.repository.ExternalPaperRepository;
 import com.softeng.dingtalk.repository.InternalPaperRepository;
 import com.softeng.dingtalk.repository.VoteRepository;
+import com.softeng.dingtalk.service.FileService;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
-import com.softeng.dingtalk.vo.ExternalPaperVO;
-import com.softeng.dingtalk.vo.FlatDecisionVO;
-import com.softeng.dingtalk.vo.PaperResultVO;
-import com.softeng.dingtalk.vo.InternalPaperVO;
+import com.softeng.dingtalk.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -45,15 +46,22 @@ public class PaperController {
     VoteRepository voteRepository;
     @Autowired
     InternalPaperRepository internalPaperRepository;
-
+    @Autowired
+    FileService fileService;
 
     /**
      * 添加或更新实验室内部及非学生一作论文记录
-     * @param vo
+     * @param file
+     * @param paperFormJsonStr
      */
     @PostMapping("/paper")
-    public void addPaper(@RequestBody InternalPaperVO vo) {
+    public void addPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "paperFormJsonStr") String paperFormJsonStr, @RequestAttribute int uid) {
+        log.info("uid: "+String.valueOf(uid));
+        InternalPaperVO vo= JSONObject.parseObject(paperFormJsonStr,InternalPaperVO.class);
         if (vo.getId() == null) {
+            vo.setFileName(file.getOriginalFilename());
+            String fileId=fileService.addFile(file,uid);
+            vo.setFileId(fileId);
             paperService.addInternalPaper(vo);
         } else {
             paperService.updateInternalPaper(vo);
