@@ -50,15 +50,19 @@ public class PaperFileService {
             case "reviewFile":
                 paper.setReviewFileId(fileId);
                 paper.setReviewFileName(fileName);
+                break;
             case "submissionFile":
                 paper.setSubmissionFileId(fileId);
                 paper.setSubmissionFileName(fileName);
+                break;
             case "publishedFile":
                 paper.setPublishedFileId(fileId);
                 paper.setPublishedFileName(fileName);
+                break;
             case "publishedLatexFile":
                 paper.setPublishedLatexFileId(fileId);
                 paper.setPublishedLatexFileName(fileName);
+                break;
         }
         internalPaperRepository.save(paper);
     }
