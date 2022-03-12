@@ -328,6 +328,25 @@ public class BaseApi {
     }
 
     /**
+     * 删除文件
+     * @param fileId
+     * @param unionId
+     */
+    public void deleteFile(String fileId,String unionId) {
+        DeleteFileHeaders deleteFileHeaders = new DeleteFileHeaders();
+        deleteFileHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
+        DeleteFileRequest deleteFileRequest = new DeleteFileRequest()
+                .setUnionId(unionId)
+                .setDeletePolicy("toRecycle");
+        try{
+            com.aliyun.dingtalkdrive_1_0.Client client=this.createClient();
+            client.deleteFileWithOptions(this.getSpaceId(unionId), fileId, deleteFileRequest, deleteFileHeaders, new RuntimeOptions());
+        }catch (Exception e){
+            log.info(e.getMessage());
+        }
+    }
+
+    /**
      * @param unionId
      * @param fileId
      * @return

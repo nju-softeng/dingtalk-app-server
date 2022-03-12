@@ -67,6 +67,31 @@ public class PaperFileService {
         internalPaperRepository.save(paper);
     }
 
+    public void deletePaperFile(int uid, String fileId,int paperId,String fileType) {
+        String unionId=userService.getUserUnionId(uid);
+        InternalPaper paper=paperService.getInternalPaper(paperId);
+        switch (fileType){
+            case "reviewFile":
+                paper.setReviewFileId(null);
+                paper.setReviewFileName(null);
+                break;
+            case "submissionFile":
+                paper.setSubmissionFileId(null);
+                paper.setSubmissionFileName(null);
+                break;
+            case "publishedFile":
+                paper.setPublishedFileId(null);
+                paper.setPublishedFileName(null);
+                break;
+            case "publishedLatexFile":
+                paper.setPublishedLatexFileId(null);
+                paper.setPublishedLatexFileName(null);
+                break;
+        }
+        baseApi.deleteFile(fileId,unionId);
+
+    }
+
     /**
      * 获取论文下载信息
      * @param uid
