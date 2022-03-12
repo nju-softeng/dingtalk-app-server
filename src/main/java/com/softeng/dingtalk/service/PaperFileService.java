@@ -50,17 +50,46 @@ public class PaperFileService {
             case "reviewFile":
                 paper.setReviewFileId(fileId);
                 paper.setReviewFileName(fileName);
+                break;
             case "submissionFile":
                 paper.setSubmissionFileId(fileId);
                 paper.setSubmissionFileName(fileName);
+                break;
             case "publishedFile":
                 paper.setPublishedFileId(fileId);
                 paper.setPublishedFileName(fileName);
+                break;
             case "publishedLatexFile":
                 paper.setPublishedLatexFileId(fileId);
                 paper.setPublishedLatexFileName(fileName);
+                break;
         }
         internalPaperRepository.save(paper);
+    }
+
+    public void deletePaperFile(int uid, String fileId,int paperId,String fileType) {
+        String unionId=userService.getUserUnionId(uid);
+        InternalPaper paper=paperService.getInternalPaper(paperId);
+        switch (fileType){
+            case "reviewFile":
+                paper.setReviewFileId(null);
+                paper.setReviewFileName(null);
+                break;
+            case "submissionFile":
+                paper.setSubmissionFileId(null);
+                paper.setSubmissionFileName(null);
+                break;
+            case "publishedFile":
+                paper.setPublishedFileId(null);
+                paper.setPublishedFileName(null);
+                break;
+            case "publishedLatexFile":
+                paper.setPublishedLatexFileId(null);
+                paper.setPublishedLatexFileName(null);
+                break;
+        }
+        baseApi.deleteFile(fileId,unionId);
+
     }
 
     /**

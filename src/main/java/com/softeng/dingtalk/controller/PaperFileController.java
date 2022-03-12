@@ -56,4 +56,9 @@ public class PaperFileController {
         return paperFileService.getPaperFileInfo(paperId);
     }
 
+    @DeleteMapping("{uid}/paper/{paperId}/paperFile/{fileId}")
+    public void deletePaperFile(@PathVariable int uid, @PathVariable String fileId, @RequestParam String fileType, @PathVariable int paperId){
+        paperFileService.deletePaperFile(uid,fileId,paperId,fileType);
+    }
+
 }
