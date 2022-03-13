@@ -131,6 +131,40 @@ public class PaperFileService {
                 paper.setPublishedLatexFileName(null);
                 break;
         }
+        internalPaperRepository.save(paper);
+        baseApi.deleteFile(fileId,unionId);
+
+    }
+
+    /**
+     * 删除外部评审论文文件
+     * @param uid
+     * @param fileId
+     * @param paperId
+     * @param fileType
+     */
+    public void deleteExternalPaperFile(int uid, String fileId,int paperId,String fileType) {
+        String unionId=userService.getUserUnionId(uid);
+        ExternalPaper paper=externalPaperRepository.findById(paperId).get();
+        switch (fileType){
+            case "reviewFile":
+                paper.setReviewFileId(null);
+                paper.setReviewFileName(null);
+                break;
+            case "submissionFile":
+                paper.setSubmissionFileId(null);
+                paper.setSubmissionFileName(null);
+                break;
+            case "publishedFile":
+                paper.setPublishedFileId(null);
+                paper.setPublishedFileName(null);
+                break;
+            case "publishedLatexFile":
+                paper.setPublishedLatexFileId(null);
+                paper.setPublishedLatexFileName(null);
+                break;
+        }
+        externalPaperRepository.save(paper);
         baseApi.deleteFile(fileId,unionId);
 
     }
@@ -148,6 +182,7 @@ public class PaperFileService {
         return paperFileDownloadInfoVO;
     }
 
+
     /**
      * 获得论文文件信息
      * @param paperId
@@ -155,5 +190,14 @@ public class PaperFileService {
      */
     public PaperFileInfoVO getPaperFileInfo(int paperId){
         return internalPaperRepository.getPaperFileInfo(paperId);
+    }
+
+    /**
+     * 获得外部评审论文文件信息
+     * @param paperId
+     * @return
+     */
+    public PaperFileInfoVO getExternalPaperFileInfo(int paperId){
+        return externalPaperRepository.getExternalPaperFileInfo(paperId);
     }
 }

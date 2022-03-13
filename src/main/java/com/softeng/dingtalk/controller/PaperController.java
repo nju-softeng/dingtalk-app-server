@@ -69,11 +69,16 @@ public class PaperController {
     }
 
     /**
-     * 创建、更新一个外部论文记录及投票
-     * @param vo
+     * 添加外部评审论文记录
+     * @param file
+     * @param externalPaperFormJsonStr
+     * @param uid
      */
     @PostMapping("/ex-paper")
-    public void addExternalPaper(@RequestBody ExternalPaperVO vo) {
+    public void addExternalPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "externalPaperFormJsonStr") String externalPaperFormJsonStr, @RequestAttribute int uid) {
+        ExternalPaperVO vo=JSONObject.parseObject(externalPaperFormJsonStr,ExternalPaperVO.class);
+        String fileId=fileService.addFile(file,uid);
+        vo.setFileId(fileId);
         if (vo.getId() == null) {
             paperService.addExternalPaper(vo);
         } else {

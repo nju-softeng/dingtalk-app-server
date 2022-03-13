@@ -2,7 +2,9 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.ExternalPaper;
 import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.vo.PaperFileInfoVO;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * @description:
@@ -25,4 +27,14 @@ public interface ExternalPaperRepository extends CustomizedRepository<ExternalPa
      */
     @Query("select ep.vote from ExternalPaper ep where ep.id = :id")
     Vote findVoteById(int id);
+
+    /**
+     * 查询外部评审论文文件信息
+     * @param id
+     * @return
+     */
+    @Query("select new com.softeng.dingtalk.vo.PaperFileInfoVO(p.id, p.reviewFileName, p.reviewFileId,p.submissionFileName," +
+            "p.submissionFileId,p.publishedFileName,p.publishedFileId,p.publishedLatexFileName,p.publishedLatexFileId) " +
+            "from ExternalPaper  p where p.id= :id")
+    PaperFileInfoVO getExternalPaperFileInfo(@Param("id") int id);
 }

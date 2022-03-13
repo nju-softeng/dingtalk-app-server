@@ -20,4 +20,6 @@ public class ExternalPaperVO {
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private String fileName;
+    private String fileId;
 }
