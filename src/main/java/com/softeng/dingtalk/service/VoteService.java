@@ -10,6 +10,7 @@ import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.VoteVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -66,6 +67,11 @@ public class VoteService {
 
     private static final String VOTE_INFO_MARKDOWN = " #### 投票 \n ##### 论文：  %s \n ##### 作者： %s \n 截止时间: %s";
     private static final String VOTE_INFO_URL = "/paper/in-detail/%d/vote";
+
+    @Value("${paper.flatRateNumerator}")
+    private double flatRateNumerator;
+    @Value("${paper.flatRateDenominator}")
+    private double flatRateDenominator;
 
     /**
      * 创建论文评审投票
@@ -251,9 +257,9 @@ public class VoteService {
      */
     public int getVotingResult(Vote vote) {
         double result = calculatePercentageOfVotesAccepted(vote);
-        if (result > 2.0 / 3.0) {
+        if (result > flatRateNumerator/flatRateDenominator) {
             return 1;
-        } else if (result == 2.0 / 3.0) {
+        } else if (result == flatRateNumerator/flatRateDenominator) {
             return 2;
         } else {
             return 0;
