@@ -6,8 +6,10 @@ import com.sun.istack.Nullable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -104,6 +106,46 @@ public class InternalPaper implements Paper {
      */
     private int flatDecision = -1;
 
+
+    /**
+     *组内评审版本文件名称
+     */
+    private String reviewFileName;
+
+    /**
+     *组内评审版本文件Id
+     */
+    String reviewFileId;
+
+    /**
+     *提交版本文件名称
+     */
+    String submissionFileName;
+
+    /**
+     *提交版本文件Id
+     */
+    String submissionFileId;
+
+    /**
+     *发表版本文件名称
+     */
+    String publishedFileName;
+
+    /**
+     *发表版本文件Id
+     */
+    String publishedFileId;
+
+    /**
+     *发表版本Latex文件名称
+     */
+    String publishedLatexFileName;
+
+    /**
+     *发表版本Latex文件Id
+     */
+    String publishedLatexFileId;
 
     public InternalPaper(int id) {
         this.id = id;

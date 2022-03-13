@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.service;
 
 
+import com.softeng.dingtalk.api.BaseApi;
 import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.mapper.InternalPaperMapper;
 
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -67,6 +69,8 @@ public class PaperService {
     private double rank3Rate;
     @Value("${paper.rankDefaultRate}")
     private double rankDefaultRate;
+    @Autowired
+    BaseApi baseApi;
 
     /**
      * 根据 internalPaper 和 List<AuthorVO> 生成 PaperDetails
@@ -91,6 +95,11 @@ public class PaperService {
         InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getIsStudentFirstAuthor(), vo.getFirstAuthor());
         if (!internalPaper.getIsStudentFirstAuthor()) {
             internalPaper.setResult(2);
+            internalPaper.setSubmissionFileName(vo.getFileName());
+            internalPaper.setSubmissionFileId(vo.getFileId());
+        }else {
+            internalPaper.setReviewFileName(vo.getFileName());
+            internalPaper.setReviewFileId(vo.getFileId());
         }
         internalPaperRepository.save(internalPaper);
         paperDetailRepository.saveBatch(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
@@ -105,6 +114,8 @@ public class PaperService {
     public void addExternalPaper(ExternalPaperVO vo) {
         // 创建对应的外部论文对象
         ExternalPaper externalPaper = new ExternalPaper(vo.getTitle());
+        externalPaper.setReviewFileName(vo.getFileName());
+        externalPaper.setReviewFileId(vo.getFileId());
         externalPaperRepository.save(externalPaper);
         // 创建外部论文对应的投票
         Vote vote = new Vote(vo.getStartTime(), vo.getEndTime(), true, externalPaper.getId());

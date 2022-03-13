@@ -2,6 +2,7 @@ package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.vo.PaperFileInfoVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -85,7 +86,9 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
     @Query("update InternalPaper set result = :result where id = :id")
     void updatePaperResult(int id, int result);
 
-
-
+    @Query("select new com.softeng.dingtalk.vo.PaperFileInfoVO(p.id, p.reviewFileName, p.reviewFileId,p.submissionFileName," +
+            "p.submissionFileId,p.publishedFileName,p.publishedFileId,p.publishedLatexFileName,p.publishedLatexFileId) " +
+            "from InternalPaper  p where p.id= :id")
+    PaperFileInfoVO getPaperFileInfo(@Param("id") int id);
 
 }

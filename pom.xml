@@ -165,12 +165,19 @@
             <artifactId>validation-api</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.hyperledger.fabric-sdk-java/fabric-sdk-java -->
-        <dependency>
-            <groupId>org.hyperledger.fabric-sdk-java</groupId>
-            <artifactId>fabric-sdk-java</artifactId>
-            <version>1.4.7</version>
-        </dependency>
+      <!-- https://mvnrepository.com/artifact/org.hyperledger.fabric-sdk-java/fabric-sdk-java -->
+      <dependency>
+          <groupId>org.hyperledger.fabric-sdk-java</groupId>
+          <artifactId>fabric-sdk-java</artifactId>
+          <version>1.4.7</version>
+      </dependency>
+
+
+      <dependency>
+          <groupId>com.aliyun.oss</groupId>
+          <artifactId>aliyun-sdk-oss</artifactId>
+          <version>3.8.0</version>
+      </dependency>
 
     </dependencies>
 
