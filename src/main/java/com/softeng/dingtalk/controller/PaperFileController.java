@@ -58,16 +58,6 @@ public class PaperFileController {
     }
 
     /**
-     * 获取外部评审论文文件
-     * @param fileId
-     * @return
-     */
-    @GetMapping("{uid}/ex-paperFile/{fileId}")
-    public PaperFileDownloadInfoVO getExternalPaperFileDownloadInfo(@PathVariable String fileId, @PathVariable int uid){
-        return paperFileService.getPaperFileDownloadInfo(uid,fileId);
-    }
-
-    /**
      * 获取论文文件信息
      * @param paperId
      * @return
@@ -84,7 +74,7 @@ public class PaperFileController {
      */
     @GetMapping("{uid}/ex-paperFileInfo/{paperId}")
     public PaperFileInfoVO getExternalPaperFileInfo(@PathVariable int paperId){
-        return paperFileService.getPaperFileInfo(paperId);
+        return paperFileService.getExternalPaperFileInfo(paperId);
     }
 
     /**
@@ -108,7 +98,7 @@ public class PaperFileController {
      */
     @DeleteMapping("{uid}/ex-paper/{paperId}/ex-paperFile/{fileId}")
     public void deleteExternalPaperFile(@PathVariable int uid, @PathVariable String fileId, @RequestParam String fileType, @PathVariable int paperId){
-        paperFileService.deletePaperFile(uid,fileId,paperId,fileType);
+        paperFileService.deleteExternalPaperFile(uid,fileId,paperId,fileType);
     }
 
 }
