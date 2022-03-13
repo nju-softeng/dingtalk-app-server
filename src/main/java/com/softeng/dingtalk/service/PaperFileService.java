@@ -2,8 +2,10 @@ package com.softeng.dingtalk.service;
 
 import com.aliyun.dingtalkdrive_1_0.models.GetDownloadInfoResponseBody;
 import com.softeng.dingtalk.api.BaseApi;
+import com.softeng.dingtalk.entity.ExternalPaper;
 import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.repository.ExternalPaperRepository;
 import com.softeng.dingtalk.repository.InternalPaperRepository;
 import com.softeng.dingtalk.vo.PaperFileDownloadInfoVO;
 import com.softeng.dingtalk.vo.PaperFileInfoVO;
@@ -34,6 +36,8 @@ public class PaperFileService {
     PaperService paperService;
     @Autowired
     InternalPaperRepository internalPaperRepository;
+    @Autowired
+    ExternalPaperRepository externalPaperRepository;
 
     /**
      * 添加论文文件
@@ -67,6 +71,45 @@ public class PaperFileService {
         internalPaperRepository.save(paper);
     }
 
+    /**
+     * 添加外部评审论文文件
+     * @param paperId
+     * @param uid
+     * @param file
+     * @param fileType
+     */
+    public void addExternalPaperFile(int paperId, int uid, MultipartFile file, String fileType) {
+        String fileId=fileService.addFile(file,uid);
+        String fileName=file.getOriginalFilename();
+        ExternalPaper paper=externalPaperRepository.findById(paperId).get();
+        switch (fileType){
+            case "reviewFile":
+                paper.setReviewFileId(fileId);
+                paper.setReviewFileName(fileName);
+                break;
+            case "submissionFile":
+                paper.setSubmissionFileId(fileId);
+                paper.setSubmissionFileName(fileName);
+                break;
+            case "publishedFile":
+                paper.setPublishedFileId(fileId);
+                paper.setPublishedFileName(fileName);
+                break;
+            case "publishedLatexFile":
+                paper.setPublishedLatexFileId(fileId);
+                paper.setPublishedLatexFileName(fileName);
+                break;
+        }
+        externalPaperRepository.save(paper);
+    }
+
+    /**
+     * 删除论文文件
+     * @param uid
+     * @param fileId
+     * @param paperId
+     * @param fileType
+     */
     public void deletePaperFile(int uid, String fileId,int paperId,String fileType) {
         String unionId=userService.getUserUnionId(uid);
         InternalPaper paper=paperService.getInternalPaper(paperId);
@@ -105,6 +148,11 @@ public class PaperFileService {
         return paperFileDownloadInfoVO;
     }
 
+    /**
+     * 获得论文文件信息
+     * @param paperId
+     * @return
+     */
     public PaperFileInfoVO getPaperFileInfo(int paperId){
         return internalPaperRepository.getPaperFileInfo(paperId);
     }
