@@ -37,6 +37,17 @@ public class PaperFileController {
     }
 
     /**
+     * 上传外部评审论文文件
+     * @param file
+     * @param fileType
+     * @return
+     */
+    @PostMapping("{uid}/ex-paperFile/{paperId}")
+    public void addExternalPaperFile(@PathVariable int paperId, @PathVariable int uid, @RequestParam MultipartFile file, @RequestParam String fileType){
+        paperFileService.addExternalPaperFile(paperId,uid,file,fileType);
+    }
+
+    /**
      * 获取论文文件
      * @param fileId
      * @return
@@ -47,7 +58,17 @@ public class PaperFileController {
     }
 
     /**
-     * 获取论文文件
+     * 获取外部评审论文文件
+     * @param fileId
+     * @return
+     */
+    @GetMapping("{uid}/ex-paperFile/{fileId}")
+    public PaperFileDownloadInfoVO getExternalPaperFileDownloadInfo(@PathVariable String fileId, @PathVariable int uid){
+        return paperFileService.getPaperFileDownloadInfo(uid,fileId);
+    }
+
+    /**
+     * 获取论文文件信息
      * @param paperId
      * @return
      */
@@ -56,8 +77,37 @@ public class PaperFileController {
         return paperFileService.getPaperFileInfo(paperId);
     }
 
+    /**
+     * 获取外部评审论文文件信息
+     * @param paperId
+     * @return
+     */
+    @GetMapping("{uid}/ex-paperFileInfo/{paperId}")
+    public PaperFileInfoVO getExternalPaperFileInfo(@PathVariable int paperId){
+        return paperFileService.getPaperFileInfo(paperId);
+    }
+
+    /**
+     * 删除论文文件
+     * @param uid
+     * @param fileId
+     * @param fileType
+     * @param paperId
+     */
     @DeleteMapping("{uid}/paper/{paperId}/paperFile/{fileId}")
     public void deletePaperFile(@PathVariable int uid, @PathVariable String fileId, @RequestParam String fileType, @PathVariable int paperId){
+        paperFileService.deletePaperFile(uid,fileId,paperId,fileType);
+    }
+
+    /**
+     * 删除外部评审论文文件
+     * @param uid
+     * @param fileId
+     * @param fileType
+     * @param paperId
+     */
+    @DeleteMapping("{uid}/ex-paper/{paperId}/ex-paperFile/{fileId}")
+    public void deleteExternalPaperFile(@PathVariable int uid, @PathVariable String fileId, @RequestParam String fileType, @PathVariable int paperId){
         paperFileService.deletePaperFile(uid,fileId,paperId,fileType);
     }
 
