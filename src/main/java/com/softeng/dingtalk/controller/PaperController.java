@@ -77,6 +77,7 @@ public class PaperController {
     @PostMapping("/ex-paper")
     public void addExternalPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "externalPaperFormJsonStr") String externalPaperFormJsonStr, @RequestAttribute int uid) {
         ExternalPaperVO vo=JSONObject.parseObject(externalPaperFormJsonStr,ExternalPaperVO.class);
+        vo.setFileName(file.getOriginalFilename());
         String fileId=fileService.addFile(file,uid);
         vo.setFileId(fileId);
         if (vo.getId() == null) {
