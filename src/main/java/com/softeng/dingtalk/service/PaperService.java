@@ -88,7 +88,7 @@ public class PaperService {
 
     /**
      * 添加实验室内部论文
-     *
+     * 
      * @param vo 实验室内部论文VO对象
      */
     public void addInternalPaper(InternalPaperVO vo) {
