@@ -19,6 +19,6 @@ public interface PropertyRepository extends CustomizedRepository<Property, Integ
      * @param userId
      * @return
      */
-    @Query(value = "select * from Property where user_id = :userId and deleted=false", nativeQuery = true)
+    @Query(value = "select * from property where user_id = :userId and deleted=false", nativeQuery = true)
     List<Property> findByUserId(int userId);
 }
