@@ -146,6 +146,30 @@ public class InternalPaper implements Paper {
      *发表版本Latex文件Id
      */
     String publishedLatexFileId;
+    /**
+     *对外版本文件名称
+     */
+    String publicFileName;
+    /**
+     *对外版本文件Id
+     */
+    String publicFileId;
+    /**
+     *源文件名称
+     */
+    String sourceFileName;
+    /**
+     *源文件Id
+     */
+    String sourceFileId;
+    /**
+     *评审文件名称
+     */
+    String commentFileName;
+    /**
+     *评审文件Id
+     */
+    String commentFileId;
 
     public InternalPaper(int id) {
         this.id = id;
