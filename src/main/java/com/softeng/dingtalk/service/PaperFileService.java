@@ -4,9 +4,11 @@ import com.aliyun.dingtalkdrive_1_0.models.GetDownloadInfoResponseBody;
 import com.softeng.dingtalk.api.BaseApi;
 import com.softeng.dingtalk.entity.ExternalPaper;
 import com.softeng.dingtalk.entity.InternalPaper;
+import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.ExternalPaperRepository;
 import com.softeng.dingtalk.repository.InternalPaperRepository;
+import com.softeng.dingtalk.vo.ExternalPaperVO;
 import com.softeng.dingtalk.vo.PaperFileDownloadInfoVO;
 import com.softeng.dingtalk.vo.PaperFileInfoVO;
 import lombok.extern.slf4j.Slf4j;
@@ -50,24 +52,7 @@ public class PaperFileService {
         String fileId=fileService.addFile(file,uid);
         String fileName=file.getOriginalFilename();
         InternalPaper paper=paperService.getInternalPaper(paperId);
-        switch (fileType){
-            case "reviewFile":
-                paper.setReviewFileId(fileId);
-                paper.setReviewFileName(fileName);
-                break;
-            case "submissionFile":
-                paper.setSubmissionFileId(fileId);
-                paper.setSubmissionFileName(fileName);
-                break;
-            case "publishedFile":
-                paper.setPublishedFileId(fileId);
-                paper.setPublishedFileName(fileName);
-                break;
-            case "publishedLatexFile":
-                paper.setPublishedLatexFileId(fileId);
-                paper.setPublishedLatexFileName(fileName);
-                break;
-        }
+        setPaperFileIdAndName(paper,fileType,fileId,fileName);
         internalPaperRepository.save(paper);
     }
 
@@ -82,24 +67,7 @@ public class PaperFileService {
         String fileId=fileService.addFile(file,uid);
         String fileName=file.getOriginalFilename();
         ExternalPaper paper=externalPaperRepository.findById(paperId).get();
-        switch (fileType){
-            case "reviewFile":
-                paper.setReviewFileId(fileId);
-                paper.setReviewFileName(fileName);
-                break;
-            case "submissionFile":
-                paper.setSubmissionFileId(fileId);
-                paper.setSubmissionFileName(fileName);
-                break;
-            case "publishedFile":
-                paper.setPublishedFileId(fileId);
-                paper.setPublishedFileName(fileName);
-                break;
-            case "publishedLatexFile":
-                paper.setPublishedLatexFileId(fileId);
-                paper.setPublishedLatexFileName(fileName);
-                break;
-        }
+        setExternalPaperFileIdAndName(paper,fileType,fileId,fileName);
         externalPaperRepository.save(paper);
     }
 
@@ -113,24 +81,7 @@ public class PaperFileService {
     public void deletePaperFile(int uid, String fileId,int paperId,String fileType) {
         String unionId=userService.getUserUnionId(uid);
         InternalPaper paper=paperService.getInternalPaper(paperId);
-        switch (fileType){
-            case "reviewFile":
-                paper.setReviewFileId(null);
-                paper.setReviewFileName(null);
-                break;
-            case "submissionFile":
-                paper.setSubmissionFileId(null);
-                paper.setSubmissionFileName(null);
-                break;
-            case "publishedFile":
-                paper.setPublishedFileId(null);
-                paper.setPublishedFileName(null);
-                break;
-            case "publishedLatexFile":
-                paper.setPublishedLatexFileId(null);
-                paper.setPublishedLatexFileName(null);
-                break;
-        }
+        setPaperFileIdAndName(paper,fileType,null,null);
         internalPaperRepository.save(paper);
         baseApi.deleteFile(fileId,unionId);
 
@@ -146,27 +97,9 @@ public class PaperFileService {
     public void deleteExternalPaperFile(int uid, String fileId,int paperId,String fileType) {
         String unionId=userService.getUserUnionId(uid);
         ExternalPaper paper=externalPaperRepository.findById(paperId).get();
-        switch (fileType){
-            case "reviewFile":
-                paper.setReviewFileId(null);
-                paper.setReviewFileName(null);
-                break;
-            case "submissionFile":
-                paper.setSubmissionFileId(null);
-                paper.setSubmissionFileName(null);
-                break;
-            case "publishedFile":
-                paper.setPublishedFileId(null);
-                paper.setPublishedFileName(null);
-                break;
-            case "publishedLatexFile":
-                paper.setPublishedLatexFileId(null);
-                paper.setPublishedLatexFileName(null);
-                break;
-        }
+        setExternalPaperFileIdAndName(paper,fileType,null,null);
         externalPaperRepository.save(paper);
         baseApi.deleteFile(fileId,unionId);
-
     }
 
     /**
@@ -199,5 +132,70 @@ public class PaperFileService {
      */
     public PaperFileInfoVO getExternalPaperFileInfo(int paperId){
         return externalPaperRepository.getExternalPaperFileInfo(paperId);
+    }
+
+    private void setPaperFileIdAndName(InternalPaper paper, String fileType, String fileId, String fileName){
+        switch (fileType){
+            case "reviewFile":
+                paper.setReviewFileId(fileId);
+                paper.setReviewFileName(fileName);
+                break;
+            case "submissionFile":
+                paper.setSubmissionFileId(fileId);
+                paper.setSubmissionFileName(fileName);
+                break;
+            case "publishedFile":
+                paper.setPublishedFileId(fileId);
+                paper.setPublishedFileName(fileName);
+                break;
+            case "publishedLatexFile":
+                paper.setPublishedLatexFileId(fileId);
+                paper.setPublishedLatexFileName(fileName);
+                break;
+            case "publicFile":
+                paper.setPublicFileId(fileId);
+                paper.setPublicFileName(fileName);
+                break;
+            case "sourceFile":
+                paper.setSourceFileId(fileId);
+                paper.setSourceFileName(fileName);
+                break;
+            case "commentFile":
+                paper.setCommentFileId(fileId);
+                paper.setCommentFileName(fileName);
+                break;
+        }
+    }
+    private void setExternalPaperFileIdAndName(ExternalPaper paper, String fileType, String fileId, String fileName){
+        switch (fileType){
+            case "reviewFile":
+                paper.setReviewFileId(fileId);
+                paper.setReviewFileName(fileName);
+                break;
+            case "submissionFile":
+                paper.setSubmissionFileId(fileId);
+                paper.setSubmissionFileName(fileName);
+                break;
+            case "publishedFile":
+                paper.setPublishedFileId(fileId);
+                paper.setPublishedFileName(fileName);
+                break;
+            case "publishedLatexFile":
+                paper.setPublishedLatexFileId(fileId);
+                paper.setPublishedLatexFileName(fileName);
+                break;
+            case "publicFile":
+                paper.setPublicFileId(fileId);
+                paper.setPublicFileName(fileName);
+                break;
+            case "sourceFile":
+                paper.setSourceFileId(fileId);
+                paper.setSourceFileName(fileName);
+                break;
+            case "commentFile":
+                paper.setCommentFileId(fileId);
+                paper.setCommentFileName(fileName);
+                break;
+        }
     }
 }
