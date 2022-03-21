@@ -92,7 +92,8 @@ public class PaperService {
      * @param vo 实验室内部论文VO对象
      */
     public void addInternalPaper(InternalPaperVO vo) {
-        InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getIsStudentFirstAuthor(), vo.getFirstAuthor());
+        InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(),
+                vo.getIsStudentFirstAuthor(), vo.getFirstAuthor(),vo.getTheme(),vo.getYear());
         if (!internalPaper.getIsStudentFirstAuthor()) {
             internalPaper.setResult(2);
             internalPaper.setSubmissionFileName(vo.getFileName());
@@ -116,6 +117,7 @@ public class PaperService {
         ExternalPaper externalPaper = new ExternalPaper(vo.getTitle());
         externalPaper.setReviewFileName(vo.getFileName());
         externalPaper.setReviewFileId(vo.getFileId());
+        externalPaper.setTheme(vo.getTheme());
         externalPaperRepository.save(externalPaper);
         // 创建外部论文对应的投票
         Vote vote = new Vote(vo.getStartTime(), vo.getEndTime(), true, externalPaper.getId());
