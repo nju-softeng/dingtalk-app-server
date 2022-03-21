@@ -89,6 +89,14 @@ public class InternalPaper implements Paper {
      * 版本
      */
     private int version;
+    /**
+     * 主题
+     */
+    private String subject;
+    /**
+     * 年份
+     */
+    private String year;
 
     /**
      * 路径
