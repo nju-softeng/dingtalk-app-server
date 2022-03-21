@@ -184,7 +184,7 @@ public class InternalPaper implements Paper {
     }
 
     public InternalPaper(String title, String journal, PaperType paperType, LocalDate updateDate,
-                         Boolean isStudentFirstAuthor,  String firstAuthor,String Path,String theme,String year) {
+                         Boolean isStudentFirstAuthor,  String firstAuthor,String path,String theme,String year) {
         this.title = title;
         this.journal = journal;
         this.paperType = paperType;
