@@ -29,6 +29,7 @@ public class ExternalPaperVO {
     }
     private String path;
     private String hash;
+    private String theme;
     private String fileName;
     private String fileId;
 }
