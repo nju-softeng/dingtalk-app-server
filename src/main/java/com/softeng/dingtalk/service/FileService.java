@@ -1,8 +1,8 @@
 package com.softeng.dingtalk.service;
 
+import com.aliyun.dingtalkdrive_1_0.models.AddFileResponseBody;
 import com.aliyun.dingtalkdrive_1_0.models.GetDownloadInfoResponseBody;
 import com.softeng.dingtalk.api.BaseApi;
-import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.vo.PaperFileDownloadInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +27,31 @@ public class FileService {
 
     @Autowired
     UserService userService;
+    private String getFileFolderId(String path, String unionId){
+        try{
+            String spaceId=baseApi.getSpaceId(unionId);
+            String parentId="0";
+            if(path.length()==0) return spaceId;
+            String pathList[]=path.split("/");
+            for(int i=0;i<pathList.length;i++){
+                log.info(spaceId);
+                String folderId=baseApi.getFolderId(pathList[i],unionId,parentId);
+                if(folderId==null){
+                    AddFileResponseBody file=baseApi.addFolder(unionId,spaceId,parentId,pathList[i]);
+                    parentId=file.getFileId();
+                }else{
+                    parentId=folderId;
+                }
+            }
+            return parentId;
+        }catch (Exception e){
+            return null;
+        }
 
-    public String addFile(MultipartFile multipartFile, int uid){
+    }
+
+
+    public String addFile(MultipartFile multipartFile, int uid, String path){
         File file;
         String fileId=null;
         try {
@@ -36,7 +59,7 @@ public class FileService {
             file=File.createTempFile(originalFilename, null);
             multipartFile.transferTo(file);
             String unionId=userService.getUserUnionId(uid);
-            fileId=baseApi.addFile(file,unionId,originalFilename);
+            fileId=baseApi.addFile(file,unionId,originalFilename,this.getFileFolderId(path,unionId));
             log.info("获得fileId "+fileId);
             file.deleteOnExit();
         } catch (IOException e) {

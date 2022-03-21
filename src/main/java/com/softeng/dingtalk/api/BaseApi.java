@@ -6,7 +6,6 @@ import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.auth.CredentialsProvider;
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.aliyun.oss.common.comm.Protocol;
-import com.aliyun.oss.model.Callback;
 import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyun.teautil.models.RuntimeOptions;
@@ -17,27 +16,21 @@ import com.dingtalk.api.request.OapiGetJsapiTicketRequest;
 import com.dingtalk.api.request.OapiGettokenRequest;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.softeng.dingtalk.vo.PaperFileDownloadInfoVO;
 import com.taobao.api.ApiException;
 
 import com.taobao.api.TaobaoRequest;
 import com.taobao.api.TaobaoResponse;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.*;
-import okio.BufferedSink;
-import okio.Okio;
-import okio.Sink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Formatter;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -246,7 +239,35 @@ public class BaseApi {
             log.info("getSpaceId WRONG! "+e.getMessage());
             return null;
         }
+    }
 
+    public List<ListFilesResponseBody.ListFilesResponseBodyFiles> getSpaceInfo(String unionId, String parentId, String spaceId) throws Exception {
+        com.aliyun.dingtalkdrive_1_0.Client client =this.createClient();
+        ListFilesHeaders listFilesHeaders = new ListFilesHeaders();
+        listFilesHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
+        ListFilesRequest listFilesRequest = new ListFilesRequest()
+                .setUnionId(unionId)
+                .setParentId(parentId)
+                .setNextToken("")
+                .setMaxResults(50)
+                .setOrderType("createTimeDesc");
+        try{
+            ListFilesResponse listFilesResponse=client.listFilesWithOptions(spaceId, listFilesRequest, listFilesHeaders, new RuntimeOptions());
+            return listFilesResponse.getBody().getFiles();
+        }catch (Exception e){
+            log.info(e.getMessage());
+            return null;
+        }
+    }
+
+    public String getFolderId(String name, String unionId, String parentId) throws Exception {
+        List<ListFilesResponseBody.ListFilesResponseBodyFiles> fileList=this.getSpaceInfo(unionId,parentId,this.getSpaceId(unionId));
+        for(ListFilesResponseBody.ListFilesResponseBodyFiles file: fileList){
+            if(file.getFileType().equals("folder") && file.getFileName().equals(name)){
+                return file.getFileId();
+            }
+        }
+        return null;
     }
 
     /**
@@ -305,13 +326,13 @@ public class BaseApi {
      * @param unionId
      * @return
      */
-    public String addFile(File file, String unionId, String fileName){
+    public String addFile(File file, String unionId, String fileName, String parentId){
         GetUploadInfoResponseBody.GetUploadInfoResponseBodyStsUploadInfo uploadInfo=this.getFileUploadInfo(unionId,null,file,fileName);
         this.uploadFile(file,unionId,uploadInfo);
         AddFileHeaders addFileHeaders = new AddFileHeaders();
         addFileHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
         AddFileRequest addFileRequest = new AddFileRequest()
-                .setParentId("0")
+                .setParentId(parentId)
                 .setFileType("file")
                 .setFileName(fileName)
                 .setMediaId(uploadInfo.getMediaId())
@@ -326,7 +347,25 @@ public class BaseApi {
             return null;
         }
     }
+    public AddFileResponseBody addFolder(String unionId,String spaceId,String parentId,String name){
+        try{
+            com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
+            AddFileHeaders addFileHeaders = new AddFileHeaders();
+            addFileHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
+            AddFileRequest addFileRequest = new AddFileRequest()
+                    .setParentId(parentId)
+                    .setFileType("folder")
+                    .setFileName(name)
+                    .setAddConflictPolicy("autoRename")
+                    .setUnionId(unionId);
+            AddFileResponse addFileResponse=client.addFileWithOptions(spaceId, addFileRequest, addFileHeaders, new RuntimeOptions());
+            return addFileResponse.getBody();
+        }catch (Exception e){
+            log.info(e.getMessage());
+            return null;
+        }
 
+    }
     /**
      * 删除文件
      * @param fileId
