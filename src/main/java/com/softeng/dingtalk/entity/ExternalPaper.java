@@ -48,7 +48,7 @@ public class ExternalPaper implements Paper {
     /**
      * 主题
      */
-    private String subject;
+    private String theme;
 
     /**
      * 路径

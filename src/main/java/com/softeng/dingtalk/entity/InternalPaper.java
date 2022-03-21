@@ -92,7 +92,7 @@ public class InternalPaper implements Paper {
     /**
      * 主题
      */
-    private String subject;
+    private String theme;
     /**
      * 年份
      */
