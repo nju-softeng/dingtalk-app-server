@@ -236,7 +236,8 @@ public class BaseApi {
             try{
                 com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
                 ListSpacesResponse listSpacesResponse=client.listSpacesWithOptions(listSpacesRequest, listSpacesHeaders, new RuntimeOptions());
-                return listSpacesResponse.getBody().getSpaces().get(0).getSpaceId();
+                res=listSpacesResponse.getBody().getSpaces().get(0).getSpaceId();
+                cache.put("SpaceId", res);
             }catch (Exception e){
                 log.info("getSpaceId WRONG! "+e.getMessage());
                 return null;
