@@ -40,8 +40,4 @@ public class DingtalkApplicationTests {
         Paper paper = new InternalPaper("标题11111", "journal", PaperType.JOURNAL_A, LocalDate.now(), true, null,null,null,null);
         log.debug(paper.getTitle());
     }
-
-
-
-
 }
