@@ -93,7 +93,7 @@ public class PaperService {
      */
     public void addInternalPaper(InternalPaperVO vo) {
         InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(),
-                vo.getIsStudentFirstAuthor(), vo.getFirstAuthor(),vo.getTheme(),vo.getYear());
+                vo.getIsStudentFirstAuthor(), vo.getFirstAuthor(),vo.getPath(),vo.getTheme(),vo.getYear());
         if (!internalPaper.getIsStudentFirstAuthor()) {
             internalPaper.setResult(2);
             internalPaper.setSubmissionFileName(vo.getFileName());
@@ -118,6 +118,7 @@ public class PaperService {
         externalPaper.setReviewFileName(vo.getFileName());
         externalPaper.setReviewFileId(vo.getFileId());
         externalPaper.setTheme(vo.getTheme());
+        externalPaper.setPath(vo.getPath());
         externalPaperRepository.save(externalPaper);
         // 创建外部论文对应的投票
         Vote vote = new Vote(vo.getStartTime(), vo.getEndTime(), true, externalPaper.getId());
