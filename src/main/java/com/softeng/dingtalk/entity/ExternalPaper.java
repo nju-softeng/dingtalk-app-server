@@ -45,6 +45,10 @@ public class ExternalPaper implements Paper {
      */
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;
+    /**
+     * 主题
+     */
+    private String subject;
 
     /**
      * 路径
