@@ -224,21 +224,25 @@ public class BaseApi {
      * @return java.lang.String
      */
     public String getSpaceId(String unionId) throws Exception {
-        ListSpacesHeaders listSpacesHeaders = new ListSpacesHeaders();
-        listSpacesHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
-        ListSpacesRequest listSpacesRequest = new ListSpacesRequest()
-                .setUnionId(unionId)
-                .setSpaceType("org")
-                .setNextToken("")
-                .setMaxResults(50);
-        try{
-            com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
-            ListSpacesResponse listSpacesResponse=client.listSpacesWithOptions(listSpacesRequest, listSpacesHeaders, new RuntimeOptions());
-            return listSpacesResponse.getBody().getSpaces().get(0).getSpaceId();
-        }catch (Exception e){
-            log.info("getSpaceId WRONG! "+e.getMessage());
-            return null;
+        String res=cache.asMap().get("SpaceId");
+        if(res == null) {
+            ListSpacesHeaders listSpacesHeaders = new ListSpacesHeaders();
+            listSpacesHeaders.xAcsDingtalkAccessToken = this.getAccessToken();
+            ListSpacesRequest listSpacesRequest = new ListSpacesRequest()
+                    .setUnionId(unionId)
+                    .setSpaceType("org")
+                    .setNextToken("")
+                    .setMaxResults(50);
+            try{
+                com.aliyun.dingtalkdrive_1_0.Client client = this.createClient();
+                ListSpacesResponse listSpacesResponse=client.listSpacesWithOptions(listSpacesRequest, listSpacesHeaders, new RuntimeOptions());
+                return listSpacesResponse.getBody().getSpaces().get(0).getSpaceId();
+            }catch (Exception e){
+                log.info("getSpaceId WRONG! "+e.getMessage());
+                return null;
+            }
         }
+        return res;
     }
 
     public List<ListFilesResponseBody.ListFilesResponseBodyFiles> getSpaceInfo(String unionId, String parentId, String spaceId) throws Exception {
