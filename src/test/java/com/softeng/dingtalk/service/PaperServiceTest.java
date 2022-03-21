@@ -39,7 +39,7 @@ public class PaperServiceTest {
 
     @Test
     public void testAddInternalPaper() {
-        InternalPaperVO vo = new InternalPaperVO(null, "internal_paper1", "test", PaperType.JOURNAL_A, null, generateAuthorVOs(), true, null, 1, null, null, -1,null,null);
+        InternalPaperVO vo = new InternalPaperVO(null, "internal_paper1", "test", PaperType.JOURNAL_A, null, generateAuthorVOs(), true, null, 1, null, null, -1,null,null,null,null);
         paperService.addInternalPaper(vo);
     }
 
@@ -51,7 +51,7 @@ public class PaperServiceTest {
 
     @Test
     public void testUpdateInternalPaper() {
-        InternalPaperVO vo = new InternalPaperVO(51, "internal_xxxx", "xxxxx", PaperType.JOURNAL_B, null, generateAuthorVOs(), true, null, 1, null, null, -1,null ,null);
+        InternalPaperVO vo = new InternalPaperVO(51, "internal_xxxx", "xxxxx", PaperType.JOURNAL_B, null, generateAuthorVOs(), true, null, 1, null, null, -1,null ,null,null,null);
         paperService.updateInternalPaper(vo);
     }
 
