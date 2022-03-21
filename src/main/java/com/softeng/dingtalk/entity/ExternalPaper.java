@@ -47,6 +47,16 @@ public class ExternalPaper implements Paper {
     private LocalDateTime insertTime;
 
     /**
+     * 路径
+     */
+    private String path;
+
+    /**
+     * 哈希
+     */
+    private String hash;
+
+    /**
      *评审版本文件名称
      */
     private String reviewFileName;

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -60,7 +59,12 @@ public class PaperController {
         InternalPaperVO vo= JSONObject.parseObject(paperFormJsonStr,InternalPaperVO.class);
         if (vo.getId() == null) {
             vo.setFileName(file.getOriginalFilename());
-            String fileId=fileService.addFile(file,uid);
+            String fileId=null;
+            if(vo.getIsStudentFirstAuthor()){
+                fileId=fileService.addFile(file,uid,vo.getPath()+"/Review");
+            }else{
+                fileId=fileService.addFile(file,uid,vo.getPath()+"/Submission");
+            }
             vo.setFileId(fileId);
             paperService.addInternalPaper(vo);
         } else {
@@ -78,7 +82,7 @@ public class PaperController {
     public void addExternalPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "externalPaperFormJsonStr") String externalPaperFormJsonStr, @RequestAttribute int uid) {
         ExternalPaperVO vo=JSONObject.parseObject(externalPaperFormJsonStr,ExternalPaperVO.class);
         vo.setFileName(file.getOriginalFilename());
-        String fileId=fileService.addFile(file,uid);
+        String fileId=fileService.addFile(file,uid,vo.getPath()+"/Review");
         vo.setFileId(fileId);
         if (vo.getId() == null) {
             paperService.addExternalPaper(vo);

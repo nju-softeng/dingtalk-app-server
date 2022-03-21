@@ -27,7 +27,8 @@ public class ExternalPaperVO {
         this.startTime = startTime;
         this.endTime = endTime;
     }
-
+    private String path;
+    private String hash;
     private String fileName;
     private String fileId;
 }
