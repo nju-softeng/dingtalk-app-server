@@ -8,6 +8,8 @@ import com.softeng.dingtalk.repository.impl.EventFileRepository;
 import com.softeng.dingtalk.vo.EventPropertyInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,8 +31,9 @@ public class EventPropertyService {
     @Autowired
     UserService userService;
 
-    public List<EventPropertyInfoVO> getEventInfoList(){
-        return eventPropertyRepository.findAll().stream().map(eventProperty -> new EventPropertyInfoVO(eventProperty.getId(),
+    public List<EventPropertyInfoVO> getEventInfoList(int page, int size){
+        Pageable pageable = PageRequest.of(page,size);
+        return eventPropertyRepository.findEventByPage(pageable).stream().map(eventProperty -> new EventPropertyInfoVO(eventProperty.getId(),
                 eventProperty.getName(),eventProperty.getYear(),eventProperty.getType())).collect(Collectors.toList());
     }
 

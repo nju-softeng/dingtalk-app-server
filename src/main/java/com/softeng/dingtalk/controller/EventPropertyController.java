@@ -19,9 +19,9 @@ public class EventPropertyController {
     EventPropertyService eventPropertyService;
 
 
-    @GetMapping("/event")
-    public List<EventPropertyInfoVO> getEventInfoList(){
-        return eventPropertyService.getEventInfoList();
+    @GetMapping("/event/page/{page}/{size}")
+    public List<EventPropertyInfoVO> getEventInfoList(@PathVariable int page, @PathVariable int size){
+        return eventPropertyService.getEventInfoList(page,size);
     }
 
     @PostMapping("/event")
