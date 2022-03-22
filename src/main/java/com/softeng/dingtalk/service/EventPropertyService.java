@@ -35,7 +35,7 @@ public class EventPropertyService {
     UserService userService;
 
     public Map<String, Object> getEventInfoList(int page, int size){
-        Pageable pageable = PageRequest.of(page-1,size, Sort.by("insertTime").descending());
+        Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
         Page<EventProperty> eventProperties=eventPropertyRepository.findAll(pageable);
         List<EventPropertyInfoVO> infoList=eventProperties.stream().map(eventProperty -> new EventPropertyInfoVO(eventProperty.getId(),
                 eventProperty.getName(),eventProperty.getYear(),eventProperty.getType())).collect(Collectors.toList());
