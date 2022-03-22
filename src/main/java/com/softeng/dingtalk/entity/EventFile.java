@@ -21,7 +21,7 @@ public class EventFile {
     private String fileId;
 
     @JsonIgnoreProperties({"pictureFileList","videoFileList","docFileList"})
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     EventProperty eventProperty;
 
     public EventFile(String fileName, String fileId){

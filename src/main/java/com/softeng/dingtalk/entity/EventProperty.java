@@ -22,13 +22,13 @@ public class EventProperty {
     String type;
     String path;
     @JsonIgnoreProperties("EventProperty")
-    @OneToMany
+    @OneToMany(mappedBy = "eventProperty")
     List<EventFile> pictureFileList;
     @JsonIgnoreProperties("EventProperty")
-    @OneToMany
+    @OneToMany(mappedBy = "eventProperty")
     List<EventFile> videoFileList;
     @JsonIgnoreProperties("EventProperty")
-    @OneToMany
+    @OneToMany(mappedBy = "eventProperty")
     List<EventFile> docFileList;
 
     public void update(String name, String year, String type) {
