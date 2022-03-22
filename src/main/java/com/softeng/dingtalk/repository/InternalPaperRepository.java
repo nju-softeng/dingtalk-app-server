@@ -87,7 +87,8 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
     void updatePaperResult(int id, int result);
 
     @Query("select new com.softeng.dingtalk.vo.PaperFileInfoVO(p.id, p.reviewFileName, p.reviewFileId,p.submissionFileName," +
-            "p.submissionFileId,p.publishedFileName,p.publishedFileId,p.publishedLatexFileName,p.publishedLatexFileId) " +
+            "p.submissionFileId,p.publishedFileName,p.publishedFileId,p.publishedLatexFileName,p.publishedLatexFileId," +
+            "p.publicFileName,p.publicFileId,p.sourceFileName,p.sourceFileId,p.commentFileName,p.commentFileId) " +
             "from InternalPaper  p where p.id= :id")
     PaperFileInfoVO getPaperFileInfo(@Param("id") int id);
 

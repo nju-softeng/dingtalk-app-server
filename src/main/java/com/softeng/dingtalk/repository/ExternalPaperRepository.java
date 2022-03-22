@@ -34,7 +34,8 @@ public interface ExternalPaperRepository extends CustomizedRepository<ExternalPa
      * @return
      */
     @Query("select new com.softeng.dingtalk.vo.PaperFileInfoVO(p.id, p.reviewFileName, p.reviewFileId,p.submissionFileName," +
-            "p.submissionFileId,p.publishedFileName,p.publishedFileId,p.publishedLatexFileName,p.publishedLatexFileId) " +
+            "p.submissionFileId,p.publishedFileName,p.publishedFileId,p.publishedLatexFileName,p.publishedLatexFileId," +
+            "p.publicFileName,p.publicFileId,p.sourceFileName,p.sourceFileId,p.commentFileName,p.commentFileId) " +
             "from ExternalPaper  p where p.id= :id")
     PaperFileInfoVO getExternalPaperFileInfo(@Param("id") int id);
 }
