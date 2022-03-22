@@ -8,7 +8,7 @@ public class EventPropertyInfoVO {
     String eventName;
     String year;
     String type;
-
+    String path;
     public EventPropertyInfoVO(int id, String eventName, String year, String type) {
         this.id = id;
         this.eventName = eventName;

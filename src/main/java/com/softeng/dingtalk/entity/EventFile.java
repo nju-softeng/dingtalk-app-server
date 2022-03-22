@@ -16,8 +16,6 @@ public class EventFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private int eventId;
-
     private String fileName;
 
     private String fileId;
@@ -25,5 +23,10 @@ public class EventFile {
     @JsonIgnoreProperties({"pictureFileList","videoFileList","docFileList"})
     @ManyToOne
     EventProperty eventProperty;
+
+    public EventFile(String fileName, String fileId){
+        this.fileName=fileName;
+        this.fileId=fileId;
+    }
 
 }
