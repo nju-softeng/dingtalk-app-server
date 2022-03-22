@@ -44,7 +44,7 @@ public class EventPropertyService {
         if(fileList!=null)eventProperty.setPictureFileList(fileList);
         fileList=saveFileList(videoFileList,eventProperty.getPath()+"Video",uid);
         if(fileList!=null)eventProperty.setVideoFileList(fileList);
-        fileList=saveFileList(videoFileList,eventProperty.getPath()+"Doc",uid);
+        fileList=saveFileList(docFileList,eventProperty.getPath()+"Doc",uid);
         if(fileList!=null)eventProperty.setDocFileList(fileList);
         eventPropertyRepository.save(eventProperty);
     }
