@@ -27,7 +27,7 @@ public class FileService {
 
     @Autowired
     UserService userService;
-    private String getFileFolderId(String path, String unionId){
+    public String getFileFolderId(String path, String unionId){
         try{
             String spaceId=baseApi.getSpaceId(unionId);
             String parentId="0";
@@ -51,7 +51,7 @@ public class FileService {
     }
 
 
-    public String addFile(MultipartFile multipartFile, int uid, String path){
+    public String addFileByPath(MultipartFile multipartFile, int uid, String path){
         File file;
         String fileId=null;
         try {
@@ -60,6 +60,24 @@ public class FileService {
             multipartFile.transferTo(file);
             String unionId=userService.getUserUnionId(uid);
             fileId=baseApi.addFile(file,unionId,originalFilename,this.getFileFolderId(path,unionId));
+            log.info("获得fileId "+fileId);
+            file.deleteOnExit();
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.info("存储服务出现问题！");
+        }
+        return fileId;
+    }
+
+    public String addFileByFolderId(MultipartFile multipartFile, int uid, String folderId){
+        File file;
+        String fileId=null;
+        try {
+            String originalFilename = multipartFile.getOriginalFilename();
+            file=File.createTempFile(originalFilename, null);
+            multipartFile.transferTo(file);
+            String unionId=userService.getUserUnionId(uid);
+            fileId=baseApi.addFile(file,unionId,originalFilename,folderId);
             log.info("获得fileId "+fileId);
             file.deleteOnExit();
         } catch (IOException e) {

@@ -45,8 +45,7 @@ public class PaperFileService {
      */
     public void addPaperFile(int paperId, int uid, MultipartFile file, String fileType) {
         InternalPaper paper=paperService.getInternalPaper(paperId);
-        String fileId=fileService.addFile(file,uid,paper.getPath()+"/"+fileType);
-//        String fileId=fileService.addFile(file,uid);
+        String fileId=fileService.addFileByPath(file,uid,paper.getPath()+"/"+getFileTypeFolderName(fileType));
         String fileName=file.getOriginalFilename();
         setPaperFileIdAndName(paper,fileType,fileId,fileName);
         internalPaperRepository.save(paper);
@@ -61,10 +60,15 @@ public class PaperFileService {
      */
     public void addExternalPaperFile(int paperId, int uid, MultipartFile file, String fileType) {
         ExternalPaper paper=externalPaperRepository.findById(paperId).get();
-        String fileId=fileService.addFile(file,uid,paper.getPath()+"/"+fileType);
+        String fileId=fileService.addFileByPath(file,uid,paper.getPath()+"/"+getFileTypeFolderName(fileType));
         String fileName=file.getOriginalFilename();
         setExternalPaperFileIdAndName(paper,fileType,fileId,fileName);
         externalPaperRepository.save(paper);
+    }
+
+    private String getFileTypeFolderName(String fileType){
+        String res=fileType.substring(0,1).toUpperCase()+fileType.substring(1,fileType.length()-4);
+        return res;
     }
 
     /**

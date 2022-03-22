@@ -61,9 +61,9 @@ public class PaperController {
             vo.setFileName(file.getOriginalFilename());
             String fileId=null;
             if(vo.getIsStudentFirstAuthor()){
-                fileId=fileService.addFile(file,uid,vo.getPath()+"/Review");
+                fileId=fileService.addFileByPath(file,uid,vo.getPath()+"/Review");
             }else{
-                fileId=fileService.addFile(file,uid,vo.getPath()+"/Submission");
+                fileId=fileService.addFileByPath(file,uid,vo.getPath()+"/Submission");
             }
             vo.setFileId(fileId);
             paperService.addInternalPaper(vo);
@@ -82,7 +82,7 @@ public class PaperController {
     public void addExternalPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "externalPaperFormJsonStr") String externalPaperFormJsonStr, @RequestAttribute int uid) {
         ExternalPaperVO vo=JSONObject.parseObject(externalPaperFormJsonStr,ExternalPaperVO.class);
         vo.setFileName(file.getOriginalFilename());
-        String fileId=fileService.addFile(file,uid,vo.getPath()+"/Review");
+        String fileId=fileService.addFileByPath(file,uid,vo.getPath()+"/Review");
         vo.setFileId(fileId);
         if (vo.getId() == null) {
             paperService.addExternalPaper(vo);

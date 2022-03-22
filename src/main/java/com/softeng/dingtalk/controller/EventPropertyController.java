@@ -27,9 +27,10 @@ public class EventPropertyController {
     @PostMapping("/event")
     public void addEventProperty(@RequestParam List<MultipartFile> pictureFileList, @RequestParam List<MultipartFile> videoFileList,
                                  @RequestParam List<MultipartFile> docFileList,
-                                 @RequestParam String eventPropertyJsonStr){
+                                 @RequestParam String eventPropertyJsonStr,
+                                 @RequestAttribute int uid){
         EventProperty eventProperty= JSONObject.parseObject(eventPropertyJsonStr,EventProperty.class);
-
+        eventPropertyService.addEventProperty(eventProperty,pictureFileList,videoFileList,docFileList,uid);
     }
 
     @DeleteMapping("/event/{id}")

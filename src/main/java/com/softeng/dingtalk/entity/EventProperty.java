@@ -20,7 +20,7 @@ public class EventProperty {
     String name;
     String year;
     String type;
-
+    String path;
     @JsonIgnoreProperties("EventProperty")
     @OneToMany
     List<EventFile> pictureFileList;
