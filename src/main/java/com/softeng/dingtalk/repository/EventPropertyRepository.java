@@ -11,7 +11,4 @@ import java.util.List;
 
 @Repository
 public interface EventPropertyRepository extends CustomizedRepository<EventProperty, Integer>{
-
-    @Query("select e from EventProperty e")
-    List<EventProperty> findEventByPage(Pageable pageable);
 }

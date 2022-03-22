@@ -8,14 +8,17 @@ import com.softeng.dingtalk.repository.impl.EventFileRepository;
 import com.softeng.dingtalk.vo.EventPropertyInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,10 +34,12 @@ public class EventPropertyService {
     @Autowired
     UserService userService;
 
-    public List<EventPropertyInfoVO> getEventInfoList(int page, int size){
-        Pageable pageable = PageRequest.of(page,size);
-        return eventPropertyRepository.findEventByPage(pageable).stream().map(eventProperty -> new EventPropertyInfoVO(eventProperty.getId(),
+    public Map<String, Object> getEventInfoList(int page, int size){
+        Pageable pageable = PageRequest.of(page-1,size, Sort.by("insertTime").descending());
+        Page<EventProperty> eventProperties=eventPropertyRepository.findAll(pageable);
+        List<EventPropertyInfoVO> infoList=eventProperties.stream().map(eventProperty -> new EventPropertyInfoVO(eventProperty.getId(),
                 eventProperty.getName(),eventProperty.getYear(),eventProperty.getType())).collect(Collectors.toList());
+        return Map.of("list",infoList,"total",eventProperties.getTotalElements());
     }
 
     public void addEventProperty(EventProperty eventProperty, List<MultipartFile> pictureFileList, List<MultipartFile> videoFileList,
@@ -64,6 +69,7 @@ public class EventPropertyService {
           return null;
         }
     }
+//    private void deleteEventFileList(List<>)
 
     public void updateEventProperty(EventProperty eventProperty){
         EventProperty eventPropertyRec=eventPropertyRepository.findById(eventProperty.getId()).get();
@@ -72,6 +78,8 @@ public class EventPropertyService {
     }
 
     public void deleteEventProperty(int id){
+        List<EventProperty> eventPropertyList=eventPropertyRepository.findAll();
+
         eventPropertyRepository.deleteById(id);
     }
 }

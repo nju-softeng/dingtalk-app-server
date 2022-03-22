@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -20,7 +21,7 @@ public class EventPropertyController {
 
 
     @GetMapping("/event/page/{page}/{size}")
-    public List<EventPropertyInfoVO> getEventInfoList(@PathVariable int page, @PathVariable int size){
+    public Map<String, Object> getEventInfoList(@PathVariable int page, @PathVariable int size){
         return eventPropertyService.getEventInfoList(page,size);
     }
 
