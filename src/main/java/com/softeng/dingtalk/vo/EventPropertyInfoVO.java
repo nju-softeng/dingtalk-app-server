@@ -5,13 +5,13 @@ import lombok.Data;
 @Data
 public class EventPropertyInfoVO {
     int id;
-    String eventName;
+    String name;
     String year;
     String type;
     String path;
-    public EventPropertyInfoVO(int id, String eventName, String year, String type) {
+    public EventPropertyInfoVO(int id, String name, String year, String type) {
         this.id = id;
-        this.eventName = eventName;
+        this.name = name;
         this.year = year;
         this.type = type;
     }
