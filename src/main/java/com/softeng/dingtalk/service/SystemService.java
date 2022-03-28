@@ -2,14 +2,13 @@ package com.softeng.dingtalk.service;
 
 import com.dingtalk.api.response.OapiUserGetResponse;
 import com.softeng.dingtalk.api.ContactsApi;
+import com.softeng.dingtalk.component.AcAlgorithm;
+import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.PaperLevel;
 import com.softeng.dingtalk.entity.SubsidyLevel;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.DcSummaryRepository;
-import com.softeng.dingtalk.repository.PaperLevelRepository;
-import com.softeng.dingtalk.repository.SubsidyLevelRepository;
-import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -26,7 +25,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -54,6 +56,11 @@ public class SystemService {
 
     @Autowired
     ContactsApi contactsApi;
+
+    @Autowired
+    WeeklyReportService weeklyReportService;
+    @Autowired
+    AcRecordRepository acRecordRepository;
 
 
     /**
@@ -263,6 +270,30 @@ public class SystemService {
             auditService.updateDcSummary(id, yearmonth, 4);
             auditService.updateDcSummary(id, yearmonth, 5);
         }
+    }
+
+    /**
+     * 手动指定某天，当天未交周报的硕士博士扣除相应的分数
+     */
+    public void manulDeductedPointsUnsubmittedWeeklyReport(LocalDate localDate) {
+        var start = localDate.atTime(0, 0, 0);
+        var end = start.plusDays(1);
+        var users = weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end);
+        log.info(start.toString() + "未提交周报扣分" + Arrays.toString(users.stream().map(User::getName).toArray()));
+        acRecordRepository.saveAll(
+                users.stream()
+                        .map(user -> AcRecord.builder()
+                                .user(user)
+                                .ac(AcAlgorithm.getPointOfUnsubmittedWeekReport(user))
+                                .classify(AcRecord.NORMAL)
+                                .reason(String.format(
+                                        "%s 未按时提交周报",
+                                        start.toLocalDate().toString()
+                                ))
+                                .createTime(end)
+                                .build())
+                        .collect(Collectors.toList())
+        );
     }
 
 }

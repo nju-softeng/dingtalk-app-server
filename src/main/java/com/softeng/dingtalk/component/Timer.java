@@ -9,6 +9,7 @@ import com.softeng.dingtalk.repository.ExternalPaperRepository;
 import com.softeng.dingtalk.repository.InternalPaperRepository;
 import com.softeng.dingtalk.repository.VoteRepository;
 import com.softeng.dingtalk.service.InitService;
+import com.softeng.dingtalk.service.SystemService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.service.WeeklyReportService;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,8 @@ public class Timer {
 
     @Autowired
     MessageApi messageApi;
+    @Autowired
+    SystemService systemService;
 
     /**
      * 每周周日23点扫描一次，给当天还未提交周报的博士、硕士发送提醒消息
@@ -75,23 +78,7 @@ public class Timer {
     @Scheduled(cron = "0 0 2 ? * MON")
     public void deductedPointsUnsubmittedWeeklyReport() {
         log.info(LocalDate.now() + " 定时扫描扣分");
-        var end = LocalDate.now().atTime(0, 0, 0);
-        var start = end.minusDays(1);
-        var users = weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end);
-        acRecordRepository.saveAll(
-                users.stream()
-                        .map(user -> AcRecord.builder()
-                                .user(user)
-                                .ac(AcAlgorithm.getPointOfUnsubmittedWeekReport(user))
-                                .classify(AcRecord.NORMAL)
-                                .reason(String.format(
-                                        "%s 未按时提交周报",
-                                        end.minusDays(1).toLocalDate().toString()
-                                ))
-                                .createTime(end)
-                                .build())
-                        .collect(Collectors.toList())
-        );
+        systemService.manulDeductedPointsUnsubmittedWeeklyReport(LocalDate.now());
     }
 
     /**
