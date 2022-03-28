@@ -8,8 +8,12 @@ import com.softeng.dingtalk.vo.QueryUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -136,4 +140,14 @@ public class SystemController {
     public void manulUpdatePerformance(@PathVariable int yearmonth) {
         systemService.manulUpdatePerformance(yearmonth);
     }
+
+    /**
+     * 手动指定某天，扣除当天未提交周报的博士 硕士分数
+     */
+    @PostMapping("/system/weekreport/acrecord")
+    public void manulDeductedPointsUnsubmittedWeeklyReport(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startTime) {
+        systemService.manulDeductedPointsUnsubmittedWeeklyReport(startTime);
+    }
+
 }
