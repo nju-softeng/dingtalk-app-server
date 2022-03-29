@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -146,7 +147,7 @@ public class UserService {
        userRepository.save(user);
     }
 
-    public void downloadContractFile(int uid, HttpServletResponse httpServletResponse){
+    public void downloadContractFile(int uid, HttpServletResponse httpServletResponse) throws IOException {
         User user=userRepository.findById(uid).get();
         String fileName=user.getLeaseContractFileName();
         String filePath=user.getLeaseContractFilePath();
