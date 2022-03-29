@@ -124,7 +124,7 @@ public class FileService {
     }
 
     public void downloadFile(String fileName, String filePath, HttpServletResponse response){
-        File file = new File(filePath+"/"+fileName);
+        File file = new File(rootPath+filePath+"/"+fileName);
         response.setContentType("application/force-download");
         response.addHeader("Content-Disposition", "attachment;fileName=" + fileName);
         byte[] buffer = new byte[1024];
