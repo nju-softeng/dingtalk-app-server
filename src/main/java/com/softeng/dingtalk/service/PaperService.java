@@ -69,6 +69,8 @@ public class PaperService {
     private double rank3Rate;
     @Value("${paper.rankDefaultRate}")
     private double rankDefaultRate;
+    @Value("${paper.suspendACPunishment}")
+    private double suspendACPunishment;
     @Autowired
     BaseApi baseApi;
 
@@ -231,6 +233,7 @@ public class PaperService {
      * 计算论文结果对应的 AC
      */
     public void calculateInternalPaperAc(InternalPaper internalPaper) {
+
         double weight = (internalPaper.getResult() == 6 ? acDeductionRate : 1); // 如果平票则只计算50%AC
         // 1. 获取 paperDetails
         var paperDetails = internalPaper.getPaperDetails();
@@ -275,6 +278,21 @@ public class PaperService {
         paperDetailRepository.saveAll(paperDetails);
     }
 
+    //非平票时的中止情况
+    public void calculateSuspendPaperAC(InternalPaper internalPaper){
+        var paperDetails = internalPaper.getPaperDetails();
+        String reason=internalPaper.getTitle() + " Suspend";;
+        paperDetails.forEach(paperDetail -> {
+            paperDetail.setAcRecord(new AcRecord(
+                    paperDetail.getUser(),
+                    null,
+                    0-this.suspendACPunishment,
+                    reason,
+                    AcRecord.PAPER,
+                    internalPaper.getUpdateDate().atTime(8, 0)
+            ));
+        });
+    }
 
     /**
      * todo 需要重构
@@ -297,13 +315,17 @@ public class PaperService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "作者未决定投稿或已中止投稿！");
         }
 
+
         // 3. 更新指定论文的投稿结果和更新时间
-        internalPaper.setResult(result == 1 ? InternalPaper.ACCEPT : InternalPaper.REJECT);
+        internalPaper.setResult(this.getPaperResult(true,result));
         internalPaper.setUpdateDate(updateDate);
         internalPaperRepository.save(internalPaper);
-
         // 4. 更新论文 ac
-        paperService.calculateInternalPaperAc(internalPaper);
+        if(result==2){
+            paperService.calculateSuspendPaperAC(internalPaper);
+        }else{
+            paperService.calculateInternalPaperAc(internalPaper);
+        }
 
         // 5. 插入相关消息
         notifyService.paperAcMessage(internalPaper);
@@ -325,11 +347,27 @@ public class PaperService {
         }
 
         //更新论文的结果
-        externalPaper.setResult(result);
+        externalPaper.setResult(getPaperResult(false,result));
         externalPaper.setUpdateDate(updateDate);
         externalPaperRepository.save(externalPaper);
     }
 
+    private int getPaperResult(boolean isPaper,int result){
+        if(isPaper){
+            switch (result){
+                case 0:
+                    return 3;
+                case 1:
+                    return 4;
+                case 2:
+                    return 6;
+                default:
+                    return result;
+            }
+        } else {
+            return result;
+        }
+    }
 
     /**
      * @param page

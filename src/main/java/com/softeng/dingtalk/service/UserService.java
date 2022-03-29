@@ -8,9 +8,12 @@ import com.softeng.dingtalk.vo.UserInfoVO;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -26,10 +29,13 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private AcRecordRepository acRecordRepository;
-
+    @Autowired
+    private FileService fileService;
     @Autowired
     BaseApi baseApi;
 
+    @Value("${file.userLeaseContractFilePath}")
+    private String userLeaseContractFilePath;
     /**
      * 判断用户权限是否为审核人
      * @param uid 用户id
@@ -112,7 +118,7 @@ public class UserService {
      */
     public UserInfoVO getUserDetail(int uid) {
         User u = userRepository.findById(uid).get();
-        return new UserInfoVO(u.getName(), u.getAvatar(), u.getPosition(), u.getStuNum(), u.getUndergraduateCollege(), u.getMasterCollege(), u.getIdCardNo(), u.getCreditCard(), u.getRentingStart(), u.getRentingEnd(), u.getAddress(), u.getWorkState(), u.getRemark());
+        return new UserInfoVO(u.getName(), u.getAvatar(), u.getPosition(), u.getStuNum(), u.getUndergraduateCollege(), u.getMasterCollege(), u.getIdCardNo(), u.getCreditCard(), u.getBankName(),u.getRentingStart(), u.getRentingEnd(), u.getAddress(), u.getWorkState(), u.getRemark());
     }
 
 
@@ -122,6 +128,7 @@ public class UserService {
         u.setName(userInfoVO.getName());
         u.setCreditCard(userInfoVO.getCreditCard());
         u.setIdCardNo(userInfoVO.getIdCardNo());
+        u.setBankName(userInfoVO.getBankName());
         u.setMasterCollege(userInfoVO.getMasterCollege());
         u.setUndergraduateCollege(userInfoVO.getUndergraduateCollege());
         u.setWorkState(userInfoVO.getWorkState());
@@ -130,6 +137,20 @@ public class UserService {
         u.setRentingEnd(userInfoVO.getRentingEnd());
         u.setRentingStart(userInfoVO.getRentingStart());
         userRepository.save(u);
+    }
+
+    public void saveLeaseContractFile(MultipartFile file, int uid){
+       User user=userRepository.findById(uid).get();
+       user.setLeaseContractFileName(file.getOriginalFilename());
+       user.setLeaseContractFilePath(fileService.addFileByPath(file,userLeaseContractFilePath+user.getStuNum()));
+       userRepository.save(user);
+    }
+
+    public void downloadContractFile(int uid, HttpServletResponse httpServletResponse){
+        User user=userRepository.findById(uid).get();
+        String fileName=user.getLeaseContractFileName();
+        String filePath=user.getLeaseContractFilePath();
+        fileService.downloadFile(fileName,filePath,httpServletResponse);
     }
 
 }

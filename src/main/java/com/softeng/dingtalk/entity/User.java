@@ -115,6 +115,13 @@ public class User {
     private String creditCard;
 
     /**
+     * 开户行
+     */
+    private String bankName;
+
+    private String leaseContractFileName;
+    private String leaseContractFilePath;
+    /**
      * 租房开始时间
      */
     @Deprecated

@@ -45,7 +45,7 @@ public class PaperFileService {
      */
     public void addPaperFile(int paperId, int uid, MultipartFile file, String fileType) {
         InternalPaper paper=paperService.getInternalPaper(paperId);
-        String fileId=fileService.addFileByPath(file,uid,paper.getPath()+"/"+getFileTypeFolderName(fileType));
+        String fileId=fileService.addFileByPath(file,paper.getPath()+"/"+getFileTypeFolderName(fileType));
         String fileName=file.getOriginalFilename();
         setPaperFileIdAndName(paper,fileType,fileId,fileName);
         internalPaperRepository.save(paper);
@@ -60,7 +60,7 @@ public class PaperFileService {
      */
     public void addExternalPaperFile(int paperId, int uid, MultipartFile file, String fileType) {
         ExternalPaper paper=externalPaperRepository.findById(paperId).get();
-        String fileId=fileService.addFileByPath(file,uid,paper.getPath()+"/"+getFileTypeFolderName(fileType));
+        String fileId=fileService.addFileByPath(file,paper.getPath()+"/"+getFileTypeFolderName(fileType));
         String fileName=file.getOriginalFilename();
         setExternalPaperFileIdAndName(paper,fileType,fileId,fileName);
         externalPaperRepository.save(paper);
@@ -73,33 +73,36 @@ public class PaperFileService {
 
     /**
      * 删除论文文件
-     * @param uid
+     * @param fileName
      * @param fileId
      * @param paperId
      * @param fileType
      */
-    public void deletePaperFile(int uid, String fileId,int paperId,String fileType) {
-        String unionId=userService.getUserUnionId(uid);
+    public void deletePaperFile(String fileName, String fileId,int paperId,String fileType) {
+//        String unionId=userService.getUserUnionId(uid);
         InternalPaper paper=paperService.getInternalPaper(paperId);
         setPaperFileIdAndName(paper,fileType,null,null);
         internalPaperRepository.save(paper);
-        baseApi.deleteFile(fileId,unionId);
+        //钉盘删除方式
+//        baseApi.deleteFile(fileId,unionId);
+        fileService.deleteFileByPath(fileName,fileId);
 
     }
 
     /**
      * 删除外部评审论文文件
-     * @param uid
+     * @param fileName
      * @param fileId
      * @param paperId
      * @param fileType
      */
-    public void deleteExternalPaperFile(int uid, String fileId,int paperId,String fileType) {
-        String unionId=userService.getUserUnionId(uid);
+    public void deleteExternalPaperFile(String fileName, String fileId,int paperId,String fileType) {
+//        String unionId=userService.getUserUnionId(uid);
         ExternalPaper paper=externalPaperRepository.findById(paperId).get();
         setExternalPaperFileIdAndName(paper,fileType,null,null);
         externalPaperRepository.save(paper);
-        baseApi.deleteFile(fileId,unionId);
+//        baseApi.deleteFile(fileId,unionId);
+        fileService.deleteFileByPath(fileName,fileId);
     }
 
     /**

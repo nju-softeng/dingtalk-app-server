@@ -6,12 +6,17 @@ import com.softeng.dingtalk.api.BaseApi;
 import com.softeng.dingtalk.vo.PaperFileDownloadInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 /**
  * @author RickyWu
@@ -27,6 +32,9 @@ public class FileService {
 
     @Autowired
     UserService userService;
+
+    @Value("${file.rootPath}")
+    private String rootPath;
     public String getFileFolderId(String path, String unionId){
         try{
             String spaceId=baseApi.getSpaceId(unionId);
@@ -51,6 +59,7 @@ public class FileService {
     }
 
 
+    /*
     public String addFileByPath(MultipartFile multipartFile, int uid, String path){
         File file;
         String fileId=null;
@@ -67,6 +76,33 @@ public class FileService {
             log.info("存储服务出现问题！");
         }
         return fileId;
+
+    }
+    */
+
+    public String addFileByPath(MultipartFile multipartFile, String path){
+        String parentDirPath=(this.rootPath+path);
+        log.info("文件夹地址"+parentDirPath);
+        File dir = new File(parentDirPath);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        String fileName=multipartFile.getOriginalFilename();
+        String filePath=parentDirPath+'/'+fileName;
+        try{
+            FileOutputStream out=new FileOutputStream(filePath);
+            out.write(multipartFile.getBytes());
+            out.flush();
+            out.close();
+        }catch (Exception e){
+            log.info(e.getMessage());
+        }
+        return path;
+
+    }
+    public void deleteFileByPath(String fileName,String path){
+        File file=new File(rootPath+path+'/'+fileName);
+        if(file.exists())file.delete();
     }
 
     public String addFileByFolderId(MultipartFile multipartFile, int uid, String folderId){
@@ -87,6 +123,24 @@ public class FileService {
         return fileId;
     }
 
+    public void downloadFile(String fileName, String filePath, HttpServletResponse response){
+        File file = new File(filePath+"/"+fileName);
+        response.setContentType("application/force-download");
+        response.addHeader("Content-Disposition", "attachment;fileName=" + fileName);
+        byte[] buffer = new byte[1024];
+        try (FileInputStream fis = new FileInputStream(file);
+             BufferedInputStream bis = new BufferedInputStream(fis)) {
+            OutputStream os = response.getOutputStream();
+            int i = bis.read(buffer);
+            while (i != -1) {
+                os.write(buffer, 0, i);
+                i = bis.read(buffer);
+            }
+        }catch (Exception e){
+            log.info(e.getMessage());
+        }
+
+    }
     public PaperFileDownloadInfoVO getPaperFileDownloadInfoVO(String fileId, int uid){
         String unionId=userService.getUserUnionId(uid);
         GetDownloadInfoResponseBody.GetDownloadInfoResponseBodyDownloadInfo fileDownloadInfo=baseApi.getFileDownloadInfo(unionId,fileId);

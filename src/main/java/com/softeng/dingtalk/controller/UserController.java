@@ -8,9 +8,13 @@ import com.softeng.dingtalk.vo.UserInfoVO;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -114,6 +118,16 @@ public class UserController {
     @PostMapping("/user/update")
     public void updateUserInfo(@RequestBody UserInfoVO userInfoVO, @RequestAttribute int uid) {
         userService.updateUserInfo(userInfoVO, uid);
+    }
+
+    @PostMapping("/user/leaseContract")
+    public void saveLeaseContract(@RequestParam MultipartFile file, @RequestAttribute int uid) {
+        userService.saveLeaseContractFile(file,uid);
+    }
+
+    @GetMapping("/user/leaseContract")
+    public void downloadLeaseContract(@RequestAttribute int uid, HttpServletResponse response){
+        userService.downloadContractFile(uid,response);
     }
 
 

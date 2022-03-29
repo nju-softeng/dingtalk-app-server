@@ -85,8 +85,8 @@ public class PaperFileController {
      * @param paperId
      */
     @DeleteMapping("{uid}/paper/{paperId}/paperFile/{fileId}")
-    public void deletePaperFile(@PathVariable int uid, @PathVariable String fileId, @RequestParam String fileType, @PathVariable int paperId){
-        paperFileService.deletePaperFile(uid,fileId,paperId,fileType);
+    public void deletePaperFile(@PathVariable int uid, @PathVariable String fileId, @RequestParam String fileType,@RequestParam String fileName, @PathVariable int paperId){
+        paperFileService.deletePaperFile(fileName,fileId,paperId,fileType);
     }
 
     /**
@@ -97,8 +97,8 @@ public class PaperFileController {
      * @param paperId
      */
     @DeleteMapping("{uid}/ex-paper/{paperId}/ex-paperFile/{fileId}")
-    public void deleteExternalPaperFile(@PathVariable int uid, @PathVariable String fileId, @RequestParam String fileType, @PathVariable int paperId){
-        paperFileService.deleteExternalPaperFile(uid,fileId,paperId,fileType);
+    public void deleteExternalPaperFile(@PathVariable int uid, @PathVariable String fileId, @RequestParam String fileType,@RequestParam String fileName, @PathVariable int paperId){
+        paperFileService.deleteExternalPaperFile(fileName,fileId,paperId,fileType);
     }
 
 }
