@@ -123,13 +123,16 @@ public class FileService {
         return fileId;
     }
 
-    public void downloadFile(String fileName, String filePath, HttpServletResponse response){
+    public void downloadFile(String fileName, String filePath, HttpServletResponse response)throws IOException{
         File file = new File(rootPath+filePath+"/"+fileName);
         response.setContentType("application/force-download");
         response.addHeader("Content-Disposition", "attachment;fileName=" + fileName);
         byte[] buffer = new byte[1024];
-        try (FileInputStream fis = new FileInputStream(file);
-             BufferedInputStream bis = new BufferedInputStream(fis)) {
+        FileInputStream fis=null;
+        BufferedInputStream bis=null;
+        try {
+            fis = new FileInputStream(file);
+            bis = new BufferedInputStream(fis);
             OutputStream os = response.getOutputStream();
             int i = bis.read(buffer);
             while (i != -1) {
@@ -138,6 +141,9 @@ public class FileService {
             }
         }catch (Exception e){
             log.info(e.getMessage());
+        } finally {
+            if(bis!= null) bis.close();
+            if(fis!= null) fis.close();
         }
 
     }
