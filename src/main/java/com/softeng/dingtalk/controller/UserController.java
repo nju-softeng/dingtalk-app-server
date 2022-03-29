@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -126,7 +127,7 @@ public class UserController {
     }
 
     @GetMapping("/user/leaseContract")
-    public void downloadLeaseContract(@RequestAttribute int uid, HttpServletResponse response){
+    public void downloadLeaseContract(@RequestAttribute int uid, HttpServletResponse response) throws IOException {
         userService.downloadContractFile(uid,response);
     }
 
