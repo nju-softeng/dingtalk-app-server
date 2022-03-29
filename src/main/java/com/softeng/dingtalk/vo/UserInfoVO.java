@@ -24,6 +24,7 @@ public class UserInfoVO {
     private String masterCollege;
     private String idCardNo;
     private String creditCard;
+    private String bankName;
     private LocalDate rentingStart;
     private LocalDate rentingEnd;
     private String address;

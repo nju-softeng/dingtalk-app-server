@@ -15,6 +15,7 @@ import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +49,8 @@ public class PaperController {
     @Autowired
     FileService fileService;
 
+
+
     /**
      * 添加或更新实验室内部及非学生一作论文记录
      * @param file
@@ -61,9 +64,9 @@ public class PaperController {
             vo.setFileName(file.getOriginalFilename());
             String fileId=null;
             if(vo.getIsStudentFirstAuthor()){
-                fileId=fileService.addFileByPath(file,uid,vo.getPath()+"/Review");
+                fileId=fileService.addFileByPath(file,vo.getPath()+"/Review");
             }else{
-                fileId=fileService.addFileByPath(file,uid,vo.getPath()+"/Submission");
+                fileId=fileService.addFileByPath(file,vo.getPath()+"/Submission");
             }
             vo.setFileId(fileId);
             paperService.addInternalPaper(vo);
@@ -82,7 +85,7 @@ public class PaperController {
     public void addExternalPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "externalPaperFormJsonStr") String externalPaperFormJsonStr, @RequestAttribute int uid) {
         ExternalPaperVO vo=JSONObject.parseObject(externalPaperFormJsonStr,ExternalPaperVO.class);
         vo.setFileName(file.getOriginalFilename());
-        String fileId=fileService.addFileByPath(file,uid,vo.getPath()+"/Review");
+        String fileId=fileService.addFileByPath(file,vo.getPath()+"/Review");
         vo.setFileId(fileId);
         if (vo.getId() == null) {
             paperService.addExternalPaper(vo);
@@ -276,6 +279,7 @@ public class PaperController {
     public void decideFlat(@RequestBody FlatDecisionVO flatDecisionVO){
         paperService.decideFlat(flatDecisionVO);
     }
+
 
     /**
      * 分页获取非学生一作
