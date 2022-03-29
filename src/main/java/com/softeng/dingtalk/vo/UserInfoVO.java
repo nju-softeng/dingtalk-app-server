@@ -30,4 +30,6 @@ public class UserInfoVO {
     private String address;
     private Boolean workState;
     private String remark;
+    private String leaseContractFileName;
+    private String leaseContractFilePath;
 }

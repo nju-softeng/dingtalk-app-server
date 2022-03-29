@@ -118,7 +118,7 @@ public class UserService {
      */
     public UserInfoVO getUserDetail(int uid) {
         User u = userRepository.findById(uid).get();
-        return new UserInfoVO(u.getName(), u.getAvatar(), u.getPosition(), u.getStuNum(), u.getUndergraduateCollege(), u.getMasterCollege(), u.getIdCardNo(), u.getCreditCard(), u.getBankName(),u.getRentingStart(), u.getRentingEnd(), u.getAddress(), u.getWorkState(), u.getRemark());
+        return new UserInfoVO(u.getName(), u.getAvatar(), u.getPosition(), u.getStuNum(), u.getUndergraduateCollege(), u.getMasterCollege(), u.getIdCardNo(), u.getCreditCard(), u.getBankName(),u.getRentingStart(), u.getRentingEnd(), u.getAddress(), u.getWorkState(), u.getRemark(),u.getLeaseContractFileName(),u.getLeaseContractFilePath());
     }
 
 
