@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 
+import com.softeng.dingtalk.service.FileService;
 import com.softeng.dingtalk.service.PaperFileService;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.vo.PaperFileDownloadInfoVO;
@@ -9,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
 /**
@@ -24,6 +28,8 @@ public class PaperFileController {
     PaperService paperService;
     @Autowired
     PaperFileService paperFileService;
+    @Autowired
+    FileService fileService;
 
     /**
      * 上传论文文件
@@ -99,6 +105,19 @@ public class PaperFileController {
     @DeleteMapping("{uid}/ex-paper/{paperId}/ex-paperFile/{fileId}")
     public void deleteExternalPaperFile(@PathVariable int uid, @PathVariable String fileId, @RequestParam String fileType,@RequestParam String fileName, @PathVariable int paperId){
         paperFileService.deleteExternalPaperFile(fileName,fileId,paperId,fileType);
+    }
+
+
+    /**
+     * 论文文件下载
+     * @param fileName
+     * @param filePath
+     * @param httpServletResponse
+     * @throws IOException
+     */
+    @GetMapping("/paper/paperFileDownload")
+    public void downloadPaperFile(@RequestParam String fileName,@RequestParam String filePath, HttpServletResponse httpServletResponse) throws IOException {
+        fileService.downloadFile(fileName, filePath,httpServletResponse);
     }
 
 }
