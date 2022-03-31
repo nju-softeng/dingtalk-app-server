@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @HeadStyle(verticalAlignment = VerticalAlignment.CENTER, horizontalAlignment = HorizontalAlignment.CENTER,
         fillForegroundColor = 42, bottomBorderColor = 42, leftBorderColor = 42, rightBorderColor = 42)
 @HeadFontStyle(fontHeightInPoints = 11)
-public class UserProperty {
+public class UserPropertyData {
     @ColumnWidth(15)
     @ExcelProperty("学号")
     private String stuNum;

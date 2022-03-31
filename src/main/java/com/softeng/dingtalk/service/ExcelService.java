@@ -1,14 +1,14 @@
 package com.softeng.dingtalk.service;
 
 import com.alibaba.excel.EasyExcel;
-import com.softeng.dingtalk.entity.DcSummary;
+import com.softeng.dingtalk.entity.Prize;
 import com.softeng.dingtalk.excel.AcData;
 import com.softeng.dingtalk.excel.DcSummaryData;
-import com.softeng.dingtalk.excel.UserPrize;
-import com.softeng.dingtalk.excel.UserProperty;
+import com.softeng.dingtalk.excel.UserPrizeData;
+import com.softeng.dingtalk.excel.UserPropertyData;
 import com.softeng.dingtalk.mapper.AcRecordMapper;
 import com.softeng.dingtalk.mapper.DcSummaryMapper;
-import com.softeng.dingtalk.repository.DcSummaryRepository;
+import com.softeng.dingtalk.repository.PrizeRepository;
 import com.softeng.dingtalk.repository.PropertyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.OutputStream;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -33,6 +31,8 @@ public class ExcelService {
     DcSummaryMapper dcSummaryMapper;
     @Autowired
     PropertyRepository propertyRepository;
+    @Autowired
+    PrizeRepository prizeRepository;
 
     /**
      * 根据日期，下载指定月份所有同学AC变化的情况
@@ -59,15 +59,19 @@ public class ExcelService {
     }
 
     public void writeUserPropertyDataByDate(OutputStream outputStream){
-        EasyExcel.write(outputStream, UserProperty.class)
+        EasyExcel.write(outputStream, UserPropertyData.class)
                 .sheet("用户固定资产")
                 .doWrite(propertyRepository.findAll().stream()
-                        .map(property -> new UserProperty(property.getUser().getStuNum(),property.getPreserver(),
+                        .map(property -> new UserPropertyData(property.getUser().getStuNum(),property.getPreserver(),
                                 property.getName(),property.getType(),property.getStartTime().toString())).collect(Collectors.toList()));
     }
 
     public void writeUserPrizeDataByDate(OutputStream outputStream){
-
+        EasyExcel.write(outputStream, UserPrizeData.class)
+                .sheet("用户奖项列表")
+                .doWrite(prizeRepository.findAll().stream()
+                        .map(prize -> new UserPrizeData(prize.getUser().getStuNum(),prize.getUser().getName(),prize.getPrizeTime().toString(),
+                                prize.getPrizeName(), Prize.getPrizeLevelName(prize.getLevel()),prize.getRemark())).collect(Collectors.toList()));
     }
 
 

@@ -72,7 +72,7 @@ public class Prize {
         this.remark = remark;
     }
 
-    public String getPrizeLevelName(int level){
+    public static String getPrizeLevelName(int level){
         switch (level){
             case 0:
                 return "校级";
