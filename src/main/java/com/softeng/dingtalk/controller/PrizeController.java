@@ -28,8 +28,8 @@ public class PrizeController {
      * @param uid
      * @return
      */
-    @GetMapping("/{uid}/prizes")
-    public List<Prize> findByUserId(@RequestAttribute int uid) {
+    @GetMapping("{uid}/prizes")
+    public List<Prize> findByUserId(@PathVariable int uid) {
         return prizeService.findByUser(uid);
     }
 
@@ -39,7 +39,7 @@ public class PrizeController {
      * @param prizeVO
      */
     @PostMapping("/{uid}/prizes")
-    public void addNewPrize(@RequestAttribute int uid, @RequestBody PrizeVO prizeVO){
+    public void addNewPrize(@PathVariable int uid, @RequestBody PrizeVO prizeVO){
         prizeService.addNewPrize(uid,prizeVO);
     }
 
