@@ -281,7 +281,7 @@ public class PaperService {
     //非平票时的中止情况
     public void calculateSuspendPaperAC(InternalPaper internalPaper){
         var paperDetails = internalPaper.getPaperDetails();
-        String reason=internalPaper.getTitle() + " Suspend";;
+        String reason="审稿中止："+internalPaper.getTitle();;
         paperDetails.forEach(paperDetail -> {
             paperDetail.setAcRecord(new AcRecord(
                     paperDetail.getUser(),
