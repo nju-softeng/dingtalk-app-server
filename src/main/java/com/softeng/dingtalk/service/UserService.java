@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.api.BaseApi;
+import com.softeng.dingtalk.encryption.Encryption;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.repository.AcRecordRepository;
 import com.softeng.dingtalk.repository.UserRepository;
@@ -34,6 +35,8 @@ public class UserService {
     private FileService fileService;
     @Autowired
     BaseApi baseApi;
+    @Autowired
+    Encryption encryption;
 
     @Value("${file.userLeaseContractFilePath}")
     private String userLeaseContractFilePath;
@@ -119,7 +122,7 @@ public class UserService {
      */
     public UserInfoVO getUserDetail(int uid) {
         User u = userRepository.findById(uid).get();
-        return new UserInfoVO(u.getName(), u.getAvatar(), u.getPosition(), u.getStuNum(), u.getUndergraduateCollege(), u.getMasterCollege(), u.getIdCardNo(), u.getCreditCard(), u.getBankName(),u.getRentingStart(), u.getRentingEnd(), u.getAddress(), u.getWorkState(), u.getRemark(),u.getLeaseContractFileName(),u.getLeaseContractFilePath());
+        return new UserInfoVO(u.getName(), u.getAvatar(), u.getPosition(), u.getStuNum(), u.getUndergraduateCollege(), u.getMasterCollege(), encryption.doDecrypt(u.getIdCardNo()), encryption.doDecrypt(u.getCreditCard()), u.getBankName(),u.getRentingStart(), u.getRentingEnd(), u.getAddress(), u.getWorkState(), u.getRemark(),u.getLeaseContractFileName(),u.getLeaseContractFilePath());
     }
 
 
@@ -127,8 +130,8 @@ public class UserService {
         User u = userRepository.findById(uid).get();
         u.setStuNum(userInfoVO.getStuNum());
         u.setName(userInfoVO.getName());
-        u.setCreditCard(userInfoVO.getCreditCard());
-        u.setIdCardNo(userInfoVO.getIdCardNo());
+        u.setCreditCard(encryption.doEncrypt(userInfoVO.getCreditCard()));
+        u.setIdCardNo(encryption.doEncrypt(userInfoVO.getIdCardNo()));
         u.setBankName(userInfoVO.getBankName());
         u.setMasterCollege(userInfoVO.getMasterCollege());
         u.setUndergraduateCollege(userInfoVO.getUndergraduateCollege());
