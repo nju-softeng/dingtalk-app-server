@@ -292,6 +292,12 @@ public class PaperService {
                     internalPaper.getUpdateDate().atTime(8, 0)
             ));
         });
+        acRecordRepository.saveAll(
+                paperDetails.stream()
+                        .map(PaperDetail::getAcRecord)
+                        .collect(Collectors.toList())
+        );
+        paperDetailRepository.saveAll(paperDetails);
     }
 
     /**

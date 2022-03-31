@@ -115,8 +115,8 @@ public class PaperFileController {
      * @param httpServletResponse
      * @throws IOException
      */
-    @GetMapping("/paper/paperFileDownload")
-    public void downloadPaperFile(@RequestParam String fileName,@RequestParam String filePath, HttpServletResponse httpServletResponse) throws IOException {
+    @GetMapping("/paper/fileName/{fileName}/filePath/{filePath}/paperFileDownload")
+    public void downloadPaperFile(@PathVariable String fileName,@PathVariable String filePath, HttpServletResponse httpServletResponse) throws IOException {
         fileService.downloadFile(fileName, filePath,httpServletResponse);
     }
 
