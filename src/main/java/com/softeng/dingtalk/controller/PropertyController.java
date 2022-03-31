@@ -38,7 +38,7 @@ public class PropertyController {
      * @param uid
      * @param propertyVO
      */
-    @PutMapping("user/{uid}/property")
+    @PostMapping("user/{uid}/property")
     public void addNewProperty(@PathVariable int uid, @RequestBody PropertyVO propertyVO){
         propertyService.addNewProperty(uid,propertyVO);
     }
@@ -47,7 +47,7 @@ public class PropertyController {
      * 更新资产信息
      * @param propertyVO
      */
-    @PostMapping("/property/update")
+    @PutMapping("/property/update")
     public void updateProperty(@RequestBody PropertyVO propertyVO){
         propertyService.updateProperty(propertyVO);
     }
