@@ -40,7 +40,7 @@ public class PropertyService {
      * @return
      */
     public Property addNewProperty(int userId, PropertyVO propertyVO){
-        Property property=new Property(new User(userId),propertyVO.getName(),propertyVO.getType(),propertyVO.getPreserver(),propertyVO.getStartTime());
+        Property property=new Property(new User(userId),propertyVO.getName(),propertyVO.getType(),propertyVO.getPreserver(),propertyVO.getRemark(),propertyVO.getStartTime());
         return propertyRepository.save(property);
     }
 
@@ -54,6 +54,7 @@ public class PropertyService {
         p.setType(propertyVO.getType());
         p.setPreserver(propertyVO.getPreserver());
         p.setStartTime(propertyVO.getStartTime());
+        p.setRemark(propertyVO.getRemark());
         propertyRepository.save(p);
     }
 
