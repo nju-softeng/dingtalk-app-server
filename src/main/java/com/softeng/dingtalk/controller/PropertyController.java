@@ -28,8 +28,8 @@ public class PropertyController {
      * @param uid
      * @return
      */
-    @GetMapping("/propertyList")
-    public List<Property> findByUserId(@RequestAttribute int uid) {
+    @GetMapping("user/{uid}/propertyList")
+    public List<Property> findByUserId(@PathVariable int uid) {
         return propertyService.findByUser(uid);
     }
 
@@ -38,8 +38,8 @@ public class PropertyController {
      * @param uid
      * @param propertyVO
      */
-    @PutMapping("/property")
-    public void addNewProperty(@RequestAttribute int uid, @RequestBody PropertyVO propertyVO){
+    @PutMapping("user/{uid}/property")
+    public void addNewProperty(@PathVariable int uid, @RequestBody PropertyVO propertyVO){
         propertyService.addNewProperty(uid,propertyVO);
     }
 
