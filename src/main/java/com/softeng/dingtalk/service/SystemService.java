@@ -128,6 +128,24 @@ public class SystemService {
         user.setAvatar(response.getAvatar());
         user.setName(response.getName());
         user.setUnionid(response.getUnionid());
+        if(user.getPosition() == Position.OTHER) {
+            switch (Optional.ofNullable(user.getStuNum()).orElse("--").substring(0, 2)) {
+                case "MF":
+                case "mf":
+                    user.setPosition(Position.PROFESSIONAL);
+                    break;
+                case "mg":
+                case "MG":
+                    user.setPosition(Position.ACADEMIC);
+                    break;
+                case "DG":
+                case "dg":
+                    user.setPosition(Position.DOCTOR);
+                    break;
+                default:
+                    break;
+            }
+        }
         return userRepository.save(user);
     }
 
