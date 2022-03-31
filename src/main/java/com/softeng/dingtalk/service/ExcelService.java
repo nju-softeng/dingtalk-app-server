@@ -4,9 +4,12 @@ import com.alibaba.excel.EasyExcel;
 import com.softeng.dingtalk.entity.DcSummary;
 import com.softeng.dingtalk.excel.AcData;
 import com.softeng.dingtalk.excel.DcSummaryData;
+import com.softeng.dingtalk.excel.UserPrize;
+import com.softeng.dingtalk.excel.UserProperty;
 import com.softeng.dingtalk.mapper.AcRecordMapper;
 import com.softeng.dingtalk.mapper.DcSummaryMapper;
 import com.softeng.dingtalk.repository.DcSummaryRepository;
+import com.softeng.dingtalk.repository.PropertyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,8 @@ public class ExcelService {
     AcRecordMapper acRecordMapper;
     @Autowired
     DcSummaryMapper dcSummaryMapper;
+    @Autowired
+    PropertyRepository propertyRepository;
 
     /**
      * 根据日期，下载指定月份所有同学AC变化的情况
@@ -51,6 +56,18 @@ public class ExcelService {
         EasyExcel.write(outputStream, DcSummaryData.class)
                 .sheet(date.toString().substring(0, 7))
                 .doWrite(dcSummaryMapper.listDcSummaryDataByYearMonth(yearmonth));
+    }
+
+    public void writeUserPropertyDataByDate(OutputStream outputStream){
+        EasyExcel.write(outputStream, UserProperty.class)
+                .sheet("用户固定资产")
+                .doWrite(propertyRepository.findAll().stream()
+                        .map(property -> new UserProperty(property.getUser().getStuNum(),property.getPreserver(),
+                                property.getName(),property.getType(),property.getStartTime())).collect(Collectors.toList()));
+    }
+
+    public void writeUserPrizeDataByDate(OutputStream outputStream){
+
     }
 
 
