@@ -71,4 +71,19 @@ public class Prize {
         this.level = level;
         this.remark = remark;
     }
+
+    public String getPrizeLevelName(int level){
+        switch (level){
+            case 0:
+                return "校级";
+            case 1:
+                return "省级";
+            case 2:
+                return "国家级";
+            case 3:
+                return "国际级";
+            default:
+                return "暂无级别";
+        }
+    }
 }

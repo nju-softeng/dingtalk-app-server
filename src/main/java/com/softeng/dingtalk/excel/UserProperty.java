@@ -31,6 +31,6 @@ public class UserProperty {
     @ExcelProperty("物品型号")
     private String type;
     @ExcelProperty("保管开始时间")
-    private LocalDate startTime;
+    private String startTime;
 
 }

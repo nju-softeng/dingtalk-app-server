@@ -63,7 +63,7 @@ public class ExcelService {
                 .sheet("用户固定资产")
                 .doWrite(propertyRepository.findAll().stream()
                         .map(property -> new UserProperty(property.getUser().getStuNum(),property.getPreserver(),
-                                property.getName(),property.getType(),property.getStartTime())).collect(Collectors.toList()));
+                                property.getName(),property.getType(),property.getStartTime().toString())).collect(Collectors.toList()));
     }
 
     public void writeUserPrizeDataByDate(OutputStream outputStream){
