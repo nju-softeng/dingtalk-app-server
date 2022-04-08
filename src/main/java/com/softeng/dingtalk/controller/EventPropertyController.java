@@ -26,13 +26,27 @@ public class EventPropertyController {
     }
 
     @PostMapping("/event")
-    public void addEventProperty(@RequestParam List<MultipartFile> pictureFileList, @RequestParam List<MultipartFile> videoFileList,
-                                 @RequestParam List<MultipartFile> docFileList,
-                                 @RequestParam String eventPropertyJsonStr,
-                                 @RequestAttribute int uid){
+    public void addEventProperty(@RequestParam String eventPropertyJsonStr){
         EventProperty eventProperty= JSONObject.parseObject(eventPropertyJsonStr,EventProperty.class);
-        eventPropertyService.addEventProperty(eventProperty,pictureFileList,videoFileList,docFileList,uid);
+        if(eventProperty.getId()==null){
+            eventPropertyService.addEventProperty(eventProperty);
+        }else{
+            eventPropertyService.updateEventProperty(eventProperty);
+        }
+
     }
+
+    @PostMapping("/event/{eventId}/eventFile")
+    public void addEventPropertyFileList(@RequestParam List<MultipartFile> fileList, @RequestParam String fileType,
+                                         @PathVariable int eventId){
+        eventPropertyService.addEventPropertyFileList(fileList,fileType,eventId);
+    }
+
+    @DeleteMapping("/event/{eventId}/eventType/{type}/eventFile/{eventFileId}")
+    public void deleteEventPropertyFile(@PathVariable int eventId, @PathVariable int eventFileId, @PathVariable String type){
+        eventPropertyService.deleteEventPropertyFile(eventId,eventFileId, type);
+    }
+
 
     @DeleteMapping("/event/{id}")
     public void deleteEventProperty(@PathVariable int id){
