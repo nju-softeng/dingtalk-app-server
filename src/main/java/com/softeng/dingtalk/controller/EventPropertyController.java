@@ -33,7 +33,6 @@ public class EventPropertyController {
         }else{
             eventPropertyService.updateEventProperty(eventProperty);
         }
-
     }
 
     @PostMapping("/event/{eventId}/eventFile")
