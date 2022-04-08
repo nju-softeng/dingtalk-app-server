@@ -48,6 +48,11 @@ public class EventPropertyService {
         return Map.of("list",infoList,"total",eventProperties.getTotalElements());
     }
 
+    public EventPropertyInfoVO getEventInfo(int eventId){
+        EventProperty ep=eventPropertyRepository.findById(eventId).get();
+        return new EventPropertyInfoVO(ep.getId(),ep.getName(),ep.getYear(),ep.getType());
+    }
+
     /**
      * 添加新的event资产
      * @param eventProperty

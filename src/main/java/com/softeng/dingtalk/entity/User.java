@@ -86,6 +86,8 @@ public class User {
     @Column(nullable = false, name = "is_deleted")
     private boolean deleted;
 
+
+
     /**
      * @Author Jerrian Zhao
      * @Data 01/22/2022
@@ -155,6 +157,7 @@ public class User {
     @JsonIgnoreProperties("user")
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Prize> allPrizes;
+
 
     public User(String userid, String unionid, String name, String avatar, int authority, Position position) {
         this.userid = userid;

@@ -25,6 +25,11 @@ public class EventPropertyController {
         return eventPropertyService.getEventInfoList(page,size);
     }
 
+    @GetMapping("/event/{eventId}")
+    public EventPropertyInfoVO getEventInfo(@PathVariable int eventId){
+        return eventPropertyService.getEventInfo(eventId);
+    }
+
     @PostMapping("/event")
     public void addEventProperty(@RequestParam String eventPropertyJsonStr){
         EventProperty eventProperty= JSONObject.parseObject(eventPropertyJsonStr,EventProperty.class);
