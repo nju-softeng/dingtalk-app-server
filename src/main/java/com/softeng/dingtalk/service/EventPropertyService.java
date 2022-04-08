@@ -1,5 +1,4 @@
 package com.softeng.dingtalk.service;
-
 import com.graphbuilder.math.func.EFunction;
 import com.softeng.dingtalk.entity.EventFile;
 import com.softeng.dingtalk.entity.EventProperty;
@@ -34,6 +33,13 @@ public class EventPropertyService {
     @Autowired
     UserService userService;
 
+
+    /**
+     * 获取资产列表
+     * @param page
+     * @param size
+     * @return
+     */
     public Map<String, Object> getEventInfoList(int page, int size){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
         Page<EventProperty> eventProperties=eventPropertyRepository.findAll(pageable);
@@ -42,27 +48,57 @@ public class EventPropertyService {
         return Map.of("list",infoList,"total",eventProperties.getTotalElements());
     }
 
+    /**
+     * 添加新的event资产
+     * @param eventProperty
+     */
     public void addEventProperty(EventProperty eventProperty){
         eventPropertyRepository.save(eventProperty);
     }
 
+    /**
+     * 更新event资产
+     * @param eventProperty
+     */
+    public void updateEventProperty(EventProperty eventProperty){
+        EventProperty eventPropertyRec=eventPropertyRepository.findById(eventProperty.getId()).get();
+        eventPropertyRec.update(eventProperty.getName(),eventProperty.getYear(),eventProperty.getType());
+        eventPropertyRepository.save(eventPropertyRec);
+    }
+
+
+    /**
+     * 为资产添加文件列表（既可以添加全新文件列表，也可以附加新的文件）
+     * @param fileList
+     * @param type
+     * @param eventId
+     */
     public void addEventPropertyFileList(List<MultipartFile> fileList, String type, int eventId){
         EventProperty eventProperty=eventPropertyRepository.findById(eventId).get();
         List<EventFile> eventFileList=saveFileList(fileList,eventProperty.getPath()+"/"+type,type);
         switch (type){
             case "Picture":
+                eventFileList.addAll(eventProperty.getPictureFileList());
                 eventProperty.setPictureFileList(eventFileList);
                 break;
             case "Video":
+                eventFileList.addAll(eventProperty.getVideoFileList());
                 eventProperty.setVideoFileList(eventFileList);
                 break;
             case "Doc":
+                eventFileList.addAll(eventProperty.getDocFileList());
                 eventProperty.setDocFileList(eventFileList);
                 break;
         }
         eventPropertyRepository.save(eventProperty);
     }
 
+    /**
+     * 删除单个资产文件
+     * @param eventId
+     * @param eventFileId
+     * @param type
+     */
     public void deleteEventPropertyFile(int eventId, int eventFileId, String type){
         EventProperty eventProperty=eventPropertyRepository.findById(eventId).get();
         EventFile eventFile=eventFileRepository.findById(eventFileId).get();
@@ -82,6 +118,13 @@ public class EventPropertyService {
 //        eventPropertyRepository.save(eventProperty);
     }
 
+    /**
+     * 调用文件保存接口，保存文件列表
+     * @param fileList
+     * @param path
+     * @param type
+     * @return
+     */
     private List<EventFile> saveFileList(List<MultipartFile> fileList,String path,String type){
         if(fileList!=null && fileList.size()!=0){
             List<EventFile> eventFileList=new ArrayList<>();
@@ -97,15 +140,28 @@ public class EventPropertyService {
         }
     }
 
-    public void updateEventProperty(EventProperty eventProperty){
-        EventProperty eventPropertyRec=eventPropertyRepository.findById(eventProperty.getId()).get();
-        eventPropertyRec.update(eventProperty.getName(),eventProperty.getYear(),eventProperty.getType());
-        eventPropertyRepository.save(eventPropertyRec);
+    /**
+     * 删除资产
+     * @param id
+     */
+    public void deleteEventProperty(int id){
+        EventProperty eventProperty=eventPropertyRepository.findById(id).get();
+        List<EventFile> eventFileList=eventProperty.getDocFileList();
+        if(eventFileList!=null)this.simpleDeleteFileList(eventFileList);
+        eventFileList=eventProperty.getVideoFileList();
+        if(eventFileList!=null)this.simpleDeleteFileList(eventFileList);
+        eventFileList=eventProperty.getPictureFileList();
+        if(eventFileList!=null)this.simpleDeleteFileList(eventFileList);
+        eventPropertyRepository.deleteById(id);
     }
 
-    public void deleteEventProperty(int id){
-        List<EventProperty> eventPropertyList=eventPropertyRepository.findAll();
-
-        eventPropertyRepository.deleteById(id);
+    /**
+     * 简单删除文件，不修改数据库
+     * @param eventFileList
+     */
+    private void simpleDeleteFileList(List<EventFile> eventFileList){
+        for(EventFile eventFile: eventFileList){
+            fileService.deleteFileByPath(eventFile.getFileName(),eventFile.getFileId());
+        }
     }
 }
