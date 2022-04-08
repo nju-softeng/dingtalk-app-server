@@ -15,20 +15,20 @@ import java.util.List;
 public class EventProperty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     String name;
     String year;
     String type;
     String path;
     @JsonIgnoreProperties("EventProperty")
-    @OneToMany(mappedBy = "eventProperty")
+    @OneToMany(mappedBy = "eventProperty", cascade = CascadeType.REMOVE)
     List<EventFile> pictureFileList;
     @JsonIgnoreProperties("EventProperty")
-    @OneToMany(mappedBy = "eventProperty")
+    @OneToMany(mappedBy = "eventProperty", cascade = CascadeType.REMOVE)
     List<EventFile> videoFileList;
     @JsonIgnoreProperties("EventProperty")
-    @OneToMany(mappedBy = "eventProperty")
+    @OneToMany(mappedBy = "eventProperty", cascade = CascadeType.REMOVE)
     List<EventFile> docFileList;
 
     public void update(String name, String year, String type) {

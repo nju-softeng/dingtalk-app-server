@@ -14,9 +14,11 @@ import javax.persistence.*;
 public class EventFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     private String fileName;
+
+    private String fileType;
 
     private String fileId;
 
@@ -27,6 +29,12 @@ public class EventFile {
     public EventFile(String fileName, String fileId){
         this.fileName=fileName;
         this.fileId=fileId;
+    }
+
+    public EventFile(String fileName, String fileId, String fileType){
+        this.fileName=fileName;
+        this.fileId=fileId;
+        this.fileType=fileType;
     }
 
 }
