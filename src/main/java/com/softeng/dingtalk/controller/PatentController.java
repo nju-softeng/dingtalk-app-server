@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 public class PatentController {
     @PutMapping("/patent")
     public  void addPatent(){
-        
+
     }
 
     @DeleteMapping("/patent/{id}")
