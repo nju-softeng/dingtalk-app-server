@@ -54,7 +54,7 @@ public class EventPropertyController {
 
     @GetMapping("/eventFile/{eventFileId}")
     public void downloadEventFile(@PathVariable int eventFileId, HttpServletResponse response){
-
+        eventPropertyService.downloadEventFile(eventFileId,response);
     }
 
 
