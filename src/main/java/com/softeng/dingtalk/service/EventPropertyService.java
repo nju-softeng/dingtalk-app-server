@@ -11,10 +11,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -121,6 +124,16 @@ public class EventPropertyService {
         }
         eventFileRepository.delete(eventFile);
 //        eventPropertyRepository.save(eventProperty);
+    }
+
+    public void downloadEventFile(int eventFileId, HttpServletResponse response){
+        EventFile eventFile=eventFileRepository.findById(eventFileId).get();
+        try{
+            fileService.downloadFile(eventFile.getFileName(),eventFile.getFileId(),response);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
     }
 
     /**
