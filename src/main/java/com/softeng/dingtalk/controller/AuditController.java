@@ -109,15 +109,16 @@ public class AuditController {
 
     /**
      * 根据uid和时间获取周报
+     * 获取指定日期当天的一条周报
      * @param uid, date
      * @return java.util.Map
-     * @Date 9:12 PM 2/4/2020
      **/
     @PostMapping("/audit/report/{uid}")
     public Map getReport(@PathVariable int uid, @RequestBody LocalDate date) {
-        String userid = userService.getUserid(uid);
-        LocalDateTime startTime = date.atTime(8, 0);
-        return reportApi.getReport(userid, startTime, startTime.plusDays(5));
+        LocalDateTime startTime = date.atTime(0, 0);
+        return reportApi.getReport(userService.getUserid(uid),
+                startTime,
+                startTime.plusDays(1));
     }
 
 }
