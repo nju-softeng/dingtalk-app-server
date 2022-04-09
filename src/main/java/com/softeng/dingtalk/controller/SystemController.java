@@ -150,4 +150,13 @@ public class SystemController {
         systemService.manulDeductedPointsUnsubmittedWeeklyReport(startTime);
     }
 
+    /**
+     * 手动指定某天，向当天未提交周报的博士 硕士发送提醒消息
+     */
+    @PostMapping("/system/weekreport/reminder")
+    public void manualReminderToSubmitWeeklyReport(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startTime) {
+        systemService.manualReminderToSubmitWeeklyReport(startTime);
+    }
+
 }

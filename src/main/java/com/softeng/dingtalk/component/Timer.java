@@ -60,16 +60,7 @@ public class Timer {
     @Scheduled(cron = "0 0 23 ? * SUN")
     public void weeklyReportAndPerformanceFillingReminder() {
         log.info(LocalDate.now() + "定时扫描提醒周报和绩效填写");
-        var end = LocalDate.now().atTime(0, 0, 0).plusDays(1);
-        var start = end.minusDays(1);
-        messageApi.sendLinkMessage(
-                "周报、绩效填写提醒",
-                LocalUrlConstant.FRONTEND_PERFORMANCE_URL,
-                "您还未提交本周周报，请在周日24点前提交周报并随后申请绩效",
-                weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end).stream()
-                        .map(User::getUserid)
-                        .collect(Collectors.toList())
-        );
+        systemService.manualReminderToSubmitWeeklyReport(LocalDate.now());
     }
 
     /**

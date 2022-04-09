@@ -48,21 +48,14 @@ public class WeeklyReportService {
     }
 
     public List<User> queryUnSubmittedWeeklyReportUser(LocalDateTime startTime, LocalDateTime endTime) {
-        return Optional.ofNullable(userRepository.listAllStudent()).orElse(new ArrayList<>()).stream()
-                .filter(user -> !hasSubmittedWeeklyReport(user.getUserid(), startTime, endTime))
+        // 获取指定日期一百条简报，做个初筛，避免一个人一下调用接口，导致服务被钉钉禁止
+        var userids = reportApi.getSimpleReport(startTime, endTime, 100);
+        log.info(startTime.toString() + "已经提交周报的userid: " + userids);
+        return userRepository.listAllStudent().stream()
+                .filter(user -> !userids.contains(user.getUserid())
+                        // 实验室不会有超过一百个人的活跃度，只有没有提交日报的人，不会短路执行，api调用次数小
+                        && !hasSubmittedWeeklyReport(user.getUserid(), startTime, endTime))
                 .collect(Collectors.toList());
     }
-
-//    public void queryUnsubmittedWeeklyReportUser(YearMonth yearMonth) {
-//        // 所有可用用户
-//        List<UserVO> userVOS = userRepository.listUserVOS();
-//        for (int i = 0; i < 5; i++) {
-//            List<UserVO> tmpUserList = new ArrayList<>(userVOS);
-//            LocalDate[] during = dateUtils.getWeekBeginAndStart(yearMonth, i);
-//            if (during == null) continue;
-//            for (UserVO user : userVOS) {
-//            }
-//        }
-//    }
 
 }

@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -89,9 +90,10 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     List<String> listAllUserid();
 
     /**
-     * 查询所有在读的学生的userId
+     * 查询所有在读的学生（博士、硕士）的userid（钉钉中的user的id）
      */
-    @Query("select u.userid from User u where u.deleted = false and u.position <> '待定'")
+    @Query("select u.userid from User u where u.deleted = false" +
+            "and (u.position = '专硕' or u.position = '学硕' or u.position = '博士生')")
     List<String> listAllStudentUserId();
 
     /**
