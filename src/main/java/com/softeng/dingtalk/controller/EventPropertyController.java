@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +47,14 @@ public class EventPropertyController {
         eventPropertyService.addEventPropertyFileList(fileList,fileType,eventId);
     }
 
-    @DeleteMapping("/event/{eventId}/eventType/{type}/eventFile/{eventFileId}")
+    @DeleteMapping("/event/{eventId}/eventFile/{eventFileId}/eventFileType/{type}")
     public void deleteEventPropertyFile(@PathVariable int eventId, @PathVariable int eventFileId, @PathVariable String type){
         eventPropertyService.deleteEventPropertyFile(eventId,eventFileId, type);
+    }
+
+    @GetMapping("/eventFile/{eventFileId}")
+    public void downloadEventFile(@PathVariable int eventFileId, HttpServletResponse response){
+
     }
 
 
