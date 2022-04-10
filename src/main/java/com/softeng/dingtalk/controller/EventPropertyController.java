@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.softeng.dingtalk.entity.EventFile;
 import com.softeng.dingtalk.entity.EventProperty;
 import com.softeng.dingtalk.service.EventPropertyService;
 import com.softeng.dingtalk.vo.EventPropertyInfoVO;
@@ -10,8 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -42,8 +42,10 @@ public class EventPropertyController {
     }
 
     @PostMapping("/event/{eventId}/eventFile")
-    public void addEventPropertyFileList(@RequestParam List<MultipartFile> fileList, @RequestParam String fileType,
+    public void addEventPropertyFileList(@RequestParam MultipartFile eventPropertyFile, @RequestParam String fileType,
                                          @PathVariable int eventId){
+        List<MultipartFile> fileList=new LinkedList<>();
+        fileList.add(eventPropertyFile);
         eventPropertyService.addEventPropertyFileList(fileList,fileType,eventId);
     }
 
