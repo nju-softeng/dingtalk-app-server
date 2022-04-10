@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ public class EventFile {
 
     private String fileId;
 
-    @JsonIgnoreProperties({"pictureFileList","videoFileList","docFileList"})
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     EventProperty eventProperty;
 
