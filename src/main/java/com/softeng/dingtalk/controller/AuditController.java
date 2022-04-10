@@ -111,7 +111,7 @@ public class AuditController {
      **/
     @PostMapping("/audit/report/{uid}")
     public Map getReport(@PathVariable int uid, @RequestBody LocalDate date) {
-        LocalDateTime startTime = date.atTime(0, 0);
+        LocalDateTime startTime = date.plusDays(3).atTime(0, 0);
         return reportApi.getReport(userService.getUserid(uid),
                 startTime,
                 startTime.plusDays(1));
