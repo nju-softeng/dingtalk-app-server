@@ -31,10 +31,11 @@ public class EventFile {
         this.fileId=fileId;
     }
 
-    public EventFile(String fileName, String fileId, String fileType){
+    public EventFile(String fileName, String fileId, String fileType, EventProperty eventProperty){
         this.fileName=fileName;
         this.fileId=fileId;
         this.fileType=fileType;
+        this.eventProperty=eventProperty;
     }
 
 }

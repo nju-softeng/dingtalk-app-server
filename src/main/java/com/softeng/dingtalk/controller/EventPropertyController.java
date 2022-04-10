@@ -27,7 +27,7 @@ public class EventPropertyController {
     }
 
     @GetMapping("/event/{eventId}")
-    public EventPropertyInfoVO getEventInfo(@PathVariable int eventId){
+    public EventProperty getEventInfo(@PathVariable int eventId){
         return eventPropertyService.getEventInfo(eventId);
     }
 
