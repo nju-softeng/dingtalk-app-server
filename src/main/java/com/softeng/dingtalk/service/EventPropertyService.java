@@ -51,9 +51,12 @@ public class EventPropertyService {
         return Map.of("list",infoList,"total",eventProperties.getTotalElements());
     }
 
-    public EventPropertyInfoVO getEventInfo(int eventId){
-        EventProperty ep=eventPropertyRepository.findById(eventId).get();
-        return new EventPropertyInfoVO(ep.getId(),ep.getName(),ep.getYear(),ep.getType());
+    public EventProperty getEventInfo(int eventId){
+        EventProperty ep = eventPropertyRepository.findById(eventId).get();
+        log.info(String.valueOf(ep.getPictureFileList().size()));
+        return ep;
+//        EventProperty ep=eventPropertyRepository.findById(eventId).get();
+//        return new EventPropertyInfoVO(ep.getId(),ep.getName(),ep.getYear(),ep.getType());
     }
 
     /**
@@ -83,7 +86,7 @@ public class EventPropertyService {
      */
     public void addEventPropertyFileList(List<MultipartFile> fileList, String type, int eventId){
         EventProperty eventProperty=eventPropertyRepository.findById(eventId).get();
-        List<EventFile> eventFileList=saveFileList(fileList,eventProperty.getPath()+"/"+type,type);
+        List<EventFile> eventFileList=saveFileList(fileList,eventProperty,eventProperty.getPath()+"/"+type,type);
         switch (type){
             case "Picture":
                 eventFileList=this.appendList(eventProperty.getPictureFileList(),eventFileList);
@@ -151,12 +154,12 @@ public class EventPropertyService {
      * @param type
      * @return
      */
-    private List<EventFile> saveFileList(List<MultipartFile> fileList,String path,String type){
+    private List<EventFile> saveFileList(List<MultipartFile> fileList,EventProperty eventProperty, String path,String type){
         if(fileList!=null && fileList.size()!=0){
             List<EventFile> eventFileList=new ArrayList<>();
             for(MultipartFile file:fileList){
                 String fileId=fileService.addFileByPath(file,path);
-                EventFile eventFile=new EventFile(file.getOriginalFilename(),fileId,type);
+                EventFile eventFile=new EventFile(file.getOriginalFilename(),fileId,type, eventProperty);
                 eventFileList.add(eventFile);
             }
             eventFileRepository.saveBatch(eventFileList);
