@@ -86,19 +86,27 @@ public class EventPropertyService {
         List<EventFile> eventFileList=saveFileList(fileList,eventProperty.getPath()+"/"+type,type);
         switch (type){
             case "Picture":
-                eventFileList.addAll(eventProperty.getPictureFileList());
+                eventFileList=this.appendList(eventProperty.getPictureFileList(),eventFileList);
                 eventProperty.setPictureFileList(eventFileList);
                 break;
             case "Video":
-                eventFileList.addAll(eventProperty.getVideoFileList());
+                eventFileList=this.appendList(eventProperty.getVideoFileList(),eventFileList);
                 eventProperty.setVideoFileList(eventFileList);
                 break;
             case "Doc":
-                eventFileList.addAll(eventProperty.getDocFileList());
+                eventFileList=this.appendList(eventProperty.getDocFileList(),eventFileList);
                 eventProperty.setDocFileList(eventFileList);
                 break;
         }
         eventPropertyRepository.save(eventProperty);
+    }
+
+    private List<EventFile> appendList(List<EventFile> headList, List<EventFile> appendList){
+        if(headList!=null){
+            headList.addAll(appendList);
+            return headList;
+        }else
+            return appendList;
     }
 
     /**
@@ -154,6 +162,7 @@ public class EventPropertyService {
             eventFileRepository.saveBatch(eventFileList);
             return eventFileList;
         } else {
+            log.info("寄");
           return null;
         }
     }
