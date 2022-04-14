@@ -2,7 +2,10 @@ package com.softeng.dingtalk.service;
 
 import com.dingtalk.api.response.OapiUserGetResponse;
 import com.softeng.dingtalk.api.ContactsApi;
+import com.softeng.dingtalk.api.MessageApi;
+import com.softeng.dingtalk.api.ReportApi;
 import com.softeng.dingtalk.component.AcAlgorithm;
+import com.softeng.dingtalk.constant.LocalUrlConstant;
 import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.entity.PaperLevel;
 import com.softeng.dingtalk.entity.SubsidyLevel;
@@ -56,6 +59,10 @@ public class SystemService {
 
     @Autowired
     ContactsApi contactsApi;
+    @Autowired
+    ReportApi reportApi;
+    @Autowired
+    MessageApi messageApi;
 
     @Autowired
     WeeklyReportService weeklyReportService;
@@ -297,10 +304,14 @@ public class SystemService {
     public void manulDeductedPointsUnsubmittedWeeklyReport(LocalDate localDate) {
         var start = localDate.atTime(0, 0, 0);
         var end = start.plusDays(1);
-        var users = weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end);
-        log.info(start.toString() + "未提交周报扣分" + Arrays.toString(users.stream().map(User::getName).toArray()));
+        var poorGuys = weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end);
+        if(poorGuys.size() == 0) {
+            log.info(start.toString() + "没有未提交周报的poor guy");
+            return;
+        }
+        log.info(start.toString() + "未提交周报扣分" + Arrays.toString(poorGuys.stream().map(User::getName).toArray()));
         acRecordRepository.saveAll(
-                users.stream()
+                poorGuys.stream()
                         .map(user -> AcRecord.builder()
                                 .user(user)
                                 .ac(AcAlgorithm.getPointOfUnsubmittedWeekReport(user))
@@ -311,6 +322,23 @@ public class SystemService {
                                 ))
                                 .createTime(end)
                                 .build())
+                        .collect(Collectors.toList())
+        );
+    }
+
+    /**
+     * 手动指定某一天，向当天未提交周报的博士硕士发送提醒消息
+     * @param localDate
+     */
+    public void manualReminderToSubmitWeeklyReport(LocalDate localDate) {
+        var start = localDate.atTime(0, 0, 0);
+        var end = start.plusDays(1);
+        messageApi.sendLinkMessage(
+                "周报、绩效填写提醒",
+                LocalUrlConstant.FRONTEND_PERFORMANCE_URL,
+                "您还未提交本周周报，请在周日24点前提交周报并随后申请绩效",
+                weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end).stream()
+                        .map(User::getUserid)
                         .collect(Collectors.toList())
         );
     }

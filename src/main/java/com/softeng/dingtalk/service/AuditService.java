@@ -69,7 +69,7 @@ public class AuditService {
 
 
     /**
-     * 更新审核结果
+     * 更新审核结果, 更新dcsummary, 插入应用通知
      * @param checkVO 审核人提交的审核结果
      * @return
      */
@@ -82,6 +82,10 @@ public class AuditService {
         // 更新 cvalue, dc, ac
         dc.update(checkVO.getCvalue(), checkVO.getDc(), checkVO.getAc());
         auditService.saveCheckedAcRecord(checkVO.getAcItems(), dc);
+        // 更新dcsummary
+        auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
+        // 发送消息
+        notifyService.updateDcMessage(dc);
         return dc;
     }
 
