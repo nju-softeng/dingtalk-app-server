@@ -3,6 +3,8 @@ package com.softeng.dingtalk.service;
 import com.softeng.dingtalk.entity.Dissertation;
 import com.softeng.dingtalk.entity.EventProperty;
 import com.softeng.dingtalk.repository.DissertationPropertyRepository;
+import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.vo.DissertationVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,14 +29,21 @@ public class DissertationPropertyService {
     DissertationPropertyRepository dissertationPropertyRepository;
     @Autowired
     FileService fileService;
+    @Autowired
+    UserRepository userRepository;
 
-    public void addDissertation(MultipartFile file, Dissertation dissertation){
-
+    public void addDissertation(MultipartFile file, DissertationVO dissertationVO){
+        String fileId=fileService.addFileByPath(file,dissertationVO.getFilePath());
+        Dissertation dissertation=new Dissertation(dissertationVO.getState(),dissertationVO.getGraduateYear());
+        dissertation.setUser(userRepository.findById(dissertation.getId()).get());
+        dissertation.setPreRejoinFileName(file.getOriginalFilename());
+        dissertation.setPreRejoinFileId(fileId);
+        dissertationPropertyRepository.save(dissertation);
     }
 
-    public void updateDissertation(Dissertation dissertation){
-        Dissertation dissertationRec=dissertationPropertyRepository.findById(dissertation.getId()).get();
-        dissertationRec.update(dissertation.getState(),dissertation.getGraduateYear());
+    public void updateDissertation(DissertationVO dissertationVO){
+        Dissertation dissertationRec=dissertationPropertyRepository.findById(dissertationVO.getId()).get();
+        dissertationRec.update(dissertationVO.getState(),dissertationVO.getGraduateYear());
         dissertationPropertyRepository.save(dissertationRec);
     }
 

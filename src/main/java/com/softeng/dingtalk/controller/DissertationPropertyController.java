@@ -3,6 +3,7 @@ package com.softeng.dingtalk.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.softeng.dingtalk.entity.Dissertation;
 import com.softeng.dingtalk.service.DissertationPropertyService;
+import com.softeng.dingtalk.vo.DissertationVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +20,13 @@ public class DissertationPropertyController {
 
     @PostMapping("/dissertation")
     public void addDissertation(@RequestParam(value = "file") MultipartFile file,
-                                @RequestParam(value = "dissertationJsonStr") String dissertationJsonStr,
+                                @RequestParam(value = "dissertationVOJsonStr") String dissertationVOJsonStr,
                                 @RequestAttribute int uid){
-        Dissertation dissertation= JSONObject.parseObject(dissertationJsonStr, Dissertation.class);
-        if(dissertation.getId()==null){
-            dissertationPropertyService.addDissertation(file,dissertation);
+        DissertationVO dissertationVO= JSONObject.parseObject(dissertationVOJsonStr, DissertationVO.class);
+        if(dissertationVO.getId()==null){
+            dissertationPropertyService.addDissertation(file,dissertationVO);
         }else{
-            dissertationPropertyService.updateDissertation(dissertation);
+            dissertationPropertyService.updateDissertation(dissertationVO);
         }
     }
 

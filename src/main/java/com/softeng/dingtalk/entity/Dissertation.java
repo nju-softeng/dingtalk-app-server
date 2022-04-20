@@ -42,4 +42,9 @@ public class Dissertation {
         this.state=state;
         this.graduateYear=graduateYear;
     }
+
+    public Dissertation(int state,String graduateYear){
+        this.state=state;
+        this.graduateYear=graduateYear;
+    }
 }
