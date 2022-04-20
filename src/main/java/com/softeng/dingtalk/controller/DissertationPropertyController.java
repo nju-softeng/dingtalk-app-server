@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Slf4j
@@ -45,13 +46,13 @@ public class DissertationPropertyController {
         dissertationPropertyService.addDissertationFile(file,fileType,id);
     }
 
-    @DeleteMapping("/dissertation/{id}/file/{fileType}")
-    public void deleteDissertationFile(@RequestParam(value = "file") MultipartFile file){
-
+    @DeleteMapping("/dissertation/{id}/file/{type}")
+    public void deleteDissertationFile(@PathVariable int id,@PathVariable String type){
+        dissertationPropertyService.deleteDissertationFile(id,type);
     }
 
-    @PostMapping("/dissertation/{id}/downloadDissertation")
-    public void downloadDissertationFile(@PathVariable int id){
-
+    @PostMapping("/dissertation/{id}/fileType/{type}")
+    public void downloadDissertationFile(@PathVariable int id, @PathVariable String type, HttpServletResponse response){
+        dissertationPropertyService.downLoadDissertationFile(id,type,response);
     }
 }
