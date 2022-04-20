@@ -45,13 +45,13 @@ public class DissertationPropertyController {
 
     }
 
-    @PostMapping("/dissertation/{id}/file/{fileType}")
+    @DeleteMapping("/dissertation/{id}/file/{fileType}")
     public void deleteDissertationFile(@RequestParam(value = "file") MultipartFile file){
 
     }
 
-    @PostMapping("/dissertation/")
-    public void downloadDissertationFile(@RequestParam(value = "file") MultipartFile file){
+    @PostMapping("/dissertation/{id}/downloadDissertation")
+    public void downloadDissertationFile(@PathVariable int id){
 
     }
 }
