@@ -35,7 +35,7 @@ public class MessageApi extends BaseApi {
      * @param title
      * @param singleTitle
      * @param markdown
-     * @param url
+     * @param singleUrl
      * @return
      */
     private OapiChatSendRequest.ActionCard createActionCard(String title, String markdown, String singleTitle, String singleUrl) {
@@ -59,7 +59,6 @@ public class MessageApi extends BaseApi {
         request.setChatid(CHAT_ID);
         request.setActionCard(createActionCard(title, markdown, singleTitle, createLinkRedirectToApp(url)));
         request.setMsgtype("action_card");
-
         executeRequest(request, "https://oapi.dingtalk.com/chat/send");
     }
 
