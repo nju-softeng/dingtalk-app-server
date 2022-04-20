@@ -85,5 +85,6 @@ public class DissertationPropertyService {
                 dissertation.setFinalFileName(fileName);
                 break;
         }
+        dissertationPropertyRepository.save(dissertation);
     }
 }
