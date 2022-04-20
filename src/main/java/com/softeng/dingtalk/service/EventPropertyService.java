@@ -53,7 +53,10 @@ public class EventPropertyService {
 
     public EventProperty getEventInfo(int eventId){
         EventProperty ep = eventPropertyRepository.findById(eventId).get();
+        //以下三行代码非常关键，不能删除
         log.info(String.valueOf(ep.getPictureFileList().size()));
+        log.info(String.valueOf(ep.getVideoFileList().size()));
+        log.info(String.valueOf(ep.getDocFileList().size()));
         return ep;
 //        EventProperty ep=eventPropertyRepository.findById(eventId).get();
 //        return new EventPropertyInfoVO(ep.getId(),ep.getName(),ep.getYear(),ep.getType());

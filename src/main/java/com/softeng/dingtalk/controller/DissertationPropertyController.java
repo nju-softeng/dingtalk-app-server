@@ -40,8 +40,8 @@ public class DissertationPropertyController {
         dissertationPropertyService.deleteDissertation(id);
     }
 
-    @PostMapping("/dissertation/{id}/file/{fileType}")
-    public void addDissertationFile(@RequestParam(value = "file") MultipartFile file){
+    @PostMapping("/dissertation/{id}")
+    public void addDissertationFile(@RequestParam(value = "file") MultipartFile file,@RequestParam String fileType,@PathVariable int id){
 
     }
 

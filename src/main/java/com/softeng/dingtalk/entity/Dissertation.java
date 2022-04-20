@@ -23,7 +23,7 @@ public class Dissertation {
 
     //论文状态，0 预答辩，1 送审，2 最终答辩，3 最终版本
     int state=0;
-
+    String filePath;
     String graduateYear;
     //预答辩
     String preRejoinFileName;
@@ -43,8 +43,9 @@ public class Dissertation {
         this.graduateYear=graduateYear;
     }
 
-    public Dissertation(int state,String graduateYear){
+    public Dissertation(int state,String graduateYear,String filePath){
         this.state=state;
         this.graduateYear=graduateYear;
+        this.filePath=filePath;
     }
 }

@@ -33,8 +33,8 @@ public class DissertationPropertyService {
     UserRepository userRepository;
 
     public void addDissertation(MultipartFile file, DissertationVO dissertationVO){
-        String fileId=fileService.addFileByPath(file,dissertationVO.getFilePath());
-        Dissertation dissertation=new Dissertation(dissertationVO.getState(),dissertationVO.getGraduateYear());
+        String fileId=fileService.addFileByPath(file,dissertationVO.getFilePath()+"/PreRejoin");
+        Dissertation dissertation=new Dissertation(dissertationVO.getState(),dissertationVO.getGraduateYear(),dissertationVO.getFilePath());
         dissertation.setUser(userRepository.findById(dissertation.getId()).get());
         dissertation.setPreRejoinFileName(file.getOriginalFilename());
         dissertation.setPreRejoinFileId(fileId);
@@ -61,5 +61,29 @@ public class DissertationPropertyService {
         if(dissertation.getRejoinFileId()!=null)fileService.deleteFileByPath(dissertation.getRejoinFileName(),dissertation.getRejoinFileId());
         if(dissertation.getFinalFileId()!=null)fileService.deleteFileByPath(dissertation.getFinalFileName(),dissertation.getFinalFileId());
         dissertationPropertyRepository.deleteById(id);
+    }
+
+    public void addDissertationFile(MultipartFile file, String type, int id){
+        Dissertation dissertation=dissertationPropertyRepository.findById(id).get();
+        String fileId=this.fileService.addFileByPath(file,dissertation.getFilePath()+"/"+type);
+        String fileName=file.getOriginalFilename();
+        switch (type){
+            case "PreRejoin":
+                dissertation.setPreRejoinFileId(fileId);
+                dissertation.setPreRejoinFileName(fileName);
+                break;
+            case "Review":
+                dissertation.setReviewFileId(fileId);
+                dissertation.setReviewFileName(fileName);
+                break;
+            case "Rejoin":
+                dissertation.setRejoinFileId(fileId);
+                dissertation.setRejoinFileName(fileName);
+                break;
+            case "Final":
+                dissertation.setFinalFileId(fileId);
+                dissertation.setFinalFileName(fileName);
+                break;
+        }
     }
 }
