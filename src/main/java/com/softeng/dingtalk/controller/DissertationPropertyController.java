@@ -36,6 +36,11 @@ public class DissertationPropertyController {
         return dissertationPropertyService.getDissertation(page,size);
     }
 
+    @GetMapping("/{uid}/dissertation")
+    public Dissertation getDissertationDetail(@PathVariable int uid){
+        return dissertationPropertyService.getDissertationDetail(uid);
+    }
+
     @DeleteMapping("/dissertation/{id}")
     public void deleteDissertation(@PathVariable int id){
         dissertationPropertyService.deleteDissertation(id);
