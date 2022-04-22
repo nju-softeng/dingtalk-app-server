@@ -39,7 +39,7 @@ public class DissertationPropertyService {
     public void addDissertation(MultipartFile file, DissertationVO dissertationVO){
         String fileId=fileService.addFileByPath(file,dissertationVO.getFilePath()+"/PreRejoin");
         Dissertation dissertation=new Dissertation(dissertationVO.getState(),dissertationVO.getGraduateYear(),dissertationVO.getFilePath());
-        dissertation.setUser(userRepository.findById(dissertation.getId()).get());
+        dissertation.setUser(userRepository.findById(dissertationVO.getUserId()).get());
         dissertation.setPreRejoinFileName(file.getOriginalFilename());
         dissertation.setPreRejoinFileId(fileId);
         dissertationPropertyRepository.save(dissertation);
@@ -56,6 +56,11 @@ public class DissertationPropertyService {
         Page<Dissertation> dissertations=dissertationPropertyRepository.findAll(pageable);
         List<Dissertation> dissertationList=dissertations.stream().collect(Collectors.toList());
         return Map.of("list",dissertationList,"total",dissertations.getTotalElements());
+    }
+
+    public Dissertation getDissertationDetail(@PathVariable int uid){
+        Dissertation dissertationRec=dissertationPropertyRepository.findByUserId(uid);
+        return dissertationRec;
     }
 
     public void deleteDissertation(int id){
