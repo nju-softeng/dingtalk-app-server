@@ -19,6 +19,9 @@ public class ProcessFile {
 
     private String fileName;
 
+    /*
+    文件类型： Invitation,PPT,PersonalPhoto,ConferencePhoto
+     */
     private String fileType;
 
     private String fileId;
@@ -26,4 +29,10 @@ public class ProcessFile {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     ProcessProperty processProperty;
+
+    public ProcessFile(String fileName, String fileType, String fileId) {
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.fileId = fileId;
+    }
 }
