@@ -1,9 +1,8 @@
 package com.softeng.dingtalk.service;
-import com.graphbuilder.math.func.EFunction;
 import com.softeng.dingtalk.entity.EventFile;
 import com.softeng.dingtalk.entity.EventProperty;
 import com.softeng.dingtalk.repository.EventPropertyRepository;
-import com.softeng.dingtalk.repository.impl.EventFileRepository;
+import com.softeng.dingtalk.repository.EventFileRepository;
 import com.softeng.dingtalk.vo.EventPropertyInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
