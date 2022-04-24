@@ -42,8 +42,12 @@ public class ProcessPropertyService {
     FileService fileService;
     public void addProcessProperty(MultipartFile file, ProcessPropertyVO processPropertyVO,int uid){
         //1.保存文件
-        String fileId=fileService.addFileByPath(file,processPropertyVO.getFilePath()+"/PPT");
-        ProcessFile processFile=new ProcessFile(file.getOriginalFilename(),"PPT",fileId);
+        String fileId=null;
+        ProcessFile processFile=null;
+        if(file!=null){
+            fileId=fileService.addFileByPath(file,processPropertyVO.getFilePath()+"/PPT");
+            processFile=new ProcessFile(file.getOriginalFilename(),"PPT",fileId);
+        }
         //2.保存记录信息
         ProcessProperty processProperty=new ProcessProperty(processPropertyVO.getConferenceName(),processPropertyVO.getYear(),
                 processPropertyVO.getFilePath(),userRepository.findById(uid).get());
