@@ -81,17 +81,17 @@ public class ProcessPropertyService {
     public void addProcessFile(MultipartFile file,String fileType,int id){
         ProcessProperty pp=processPropertyRepository.findById(id).get();
         String fileName=file.getOriginalFilename();
-        String fileId=fileService.addFileByPath(file,pp.getFilePath()+"/"+fileType);
+        String fileId=fileService.addFileByPath(file,pp.getFilePath()+"/"+getFileTypeFolderName(fileType));
         ProcessFile processFile=new ProcessFile(fileName,fileType,fileId);
         List<ProcessFile> processFileList=null;
         switch (fileType){
-            case"Invitation":
+            case"invitationFile":
                 pp.setInvitationFile(processFile);
                 break;
-            case"PPT":
+            case"PPTFile":
                 pp.setPPTFile(processFile);
                 break;
-            case "PersonalPhoto":
+            case "personalPhotoFile":
                 processFileList=pp.getPersonalPhotoFileList();
                 if(pp.getPersonalPhotoFileList()==null){
                     processFileList=new LinkedList<ProcessFile>();
@@ -99,7 +99,7 @@ public class ProcessPropertyService {
                 processFileList.add(processFile);
                 pp.setPersonalPhotoFileList(processFileList);
                 break;
-            case "ConferencePhoto":
+            case "conferencePhotoFile":
                 processFileList=pp.getConferencePhotoFileList();
                 if(pp.getConferencePhotoFileList()==null){
                     processFileList=new LinkedList<ProcessFile>();
@@ -116,16 +116,16 @@ public class ProcessPropertyService {
         ProcessFile pf=processFileRepository.findById(fileId).get();
         fileService.deleteFileByPath(pf.getFileName(),pf.getFileId());
         switch (type){
-            case"Invitation":
+            case"invitationFile":
                 pp.setInvitationFile(null);
                 break;
-            case"PPT":
+            case"PPTFile":
                 pp.setPPTFile(null);
                 break;
-            case "PersonalPhoto":
+            case "personalPhotoFile":
                 pp.getPersonalPhotoFileList().remove(pf);
                 break;
-            case "ConferencePhoto":
+            case "conferencePhotoFile":
                 pp.getConferencePhotoFileList().remove(pf);
                 break;
         }
@@ -151,5 +151,10 @@ public class ProcessPropertyService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
+    }
+
+    private String getFileTypeFolderName(String fileType){
+        String res=fileType.substring(0,1).toUpperCase()+fileType.substring(1,fileType.length()-4);
+        return res;
     }
 }

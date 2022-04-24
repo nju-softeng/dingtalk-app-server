@@ -74,22 +74,22 @@ public class DissertationPropertyService {
 
     public void addDissertationFile(MultipartFile file, String type, int id){
         Dissertation dissertation=dissertationPropertyRepository.findById(id).get();
-        String fileId=this.fileService.addFileByPath(file,dissertation.getFilePath()+"/"+type);
+        String fileId=this.fileService.addFileByPath(file,dissertation.getFilePath()+"/"+getFileTypeFolderName(type));
         String fileName=file.getOriginalFilename();
         switch (type){
-            case "PreRejoin":
+            case "preRejoinFile":
                 dissertation.setPreRejoinFileId(fileId);
                 dissertation.setPreRejoinFileName(fileName);
                 break;
-            case "Review":
+            case "reviewFile":
                 dissertation.setReviewFileId(fileId);
                 dissertation.setReviewFileName(fileName);
                 break;
-            case "Rejoin":
+            case "rejoinFile":
                 dissertation.setRejoinFileId(fileId);
                 dissertation.setRejoinFileName(fileName);
                 break;
-            case "Final":
+            case "finalFile":
                 dissertation.setFinalFileId(fileId);
                 dissertation.setFinalFileName(fileName);
                 break;
@@ -147,5 +147,10 @@ public class DissertationPropertyService {
             this.name=name;
             this.id=id;
         }
+    }
+
+    private String getFileTypeFolderName(String fileType){
+        String res=fileType.substring(0,1).toUpperCase()+fileType.substring(1,fileType.length()-4);
+        return res;
     }
 }
