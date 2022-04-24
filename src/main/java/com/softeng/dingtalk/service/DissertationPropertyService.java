@@ -119,19 +119,19 @@ public class DissertationPropertyService {
         String fileName=null;
         String fileId=null;
         switch (type){
-            case "PreRejoin":
+            case "preRejoinFile":
                 fileId=dissertation.getPreRejoinFileId();
                 fileName=dissertation.getPreRejoinFileName();
                 break;
-            case "Review":
+            case "reviewFile":
                 fileId=dissertation.getReviewFileId();
                 fileName=dissertation.getReviewFileName();
                 break;
-            case "Rejoin":
+            case "rejoinFile":
                 fileId=dissertation.getRejoinFileId();
                 fileName=dissertation.getRejoinFileName();
                 break;
-            case "Final":
+            case "finalFile":
                 fileId=dissertation.getFinalFileId();
                 fileName=dissertation.getFinalFileName();
                 break;
