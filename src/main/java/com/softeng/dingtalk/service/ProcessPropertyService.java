@@ -42,7 +42,7 @@ public class ProcessPropertyService {
     FileService fileService;
     public void addProcessProperty(MultipartFile file, ProcessPropertyVO processPropertyVO,int uid){
         //1.保存文件
-        String fileId=null;
+        String fileId;
         ProcessFile processFile=null;
         if(file!=null){
             fileId=fileService.addFileByPath(file,processPropertyVO.getFilePath()+"/PPT");
