@@ -98,8 +98,37 @@ public class DissertationPropertyService {
     }
 
     public void deleteDissertationFile(int id,String type){
-        DissertationFileInfo dissertationFileInfo=this.getDissertationFileInfo(id,type);
-        fileService.deleteFileByPath(dissertationFileInfo.name,dissertationFileInfo.id);
+        Dissertation dissertation=dissertationPropertyRepository.findById(id).get();
+        String fileId=null;
+        String fileName=null;
+        switch (type){
+            case "preRejoinFile":
+                fileId=dissertation.getPreRejoinFileId();
+                fileName=dissertation.getPreRejoinFileName();
+                dissertation.setPreRejoinFileName(null);
+                dissertation.setPreRejoinFileId(null);
+                break;
+            case "reviewFile":
+                fileId=dissertation.getReviewFileId();
+                fileName=dissertation.getReviewFileName();
+                dissertation.setReviewFileName(null);
+                dissertation.setReviewFileId(null);
+                break;
+            case "rejoinFile":
+                fileId=dissertation.getRejoinFileId();
+                fileName=dissertation.getRejoinFileName();
+                dissertation.setRejoinFileName(null);
+                dissertation.setRejoinFileId(null);
+                break;
+            case "finalFile":
+                fileId=dissertation.getFinalFileId();
+                fileName=dissertation.getFinalFileName();
+                dissertation.setFinalFileName(null);
+                dissertation.setFinalFileId(null);
+                break;
+        }
+        fileService.deleteFileByPath(fileName,fileId);
+        dissertationPropertyRepository.save(dissertation);
     }
 
     public void downLoadDissertationFile(int id,String type,HttpServletResponse response)  {
