@@ -53,8 +53,7 @@ public class ProcessPropertyService {
     public Map<String, Object> getProcessProperty(int page, int size){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
         Page<ProcessProperty> processProperties=processPropertyRepository.findAll(pageable);
-        List<ProcessPropertyVO> infoList=processProperties.stream().map(processProperty -> new ProcessPropertyVO(processProperty.getId(),
-                processProperty.getConferenceName(),processProperty.getYear(),null)).collect(Collectors.toList());
+        List<ProcessProperty> infoList=processProperties.toList();
         return Map.of("list",infoList,"total",processProperties.getTotalElements());
     }
     public void updateProcessProperty(ProcessPropertyVO processPropertyVO){
