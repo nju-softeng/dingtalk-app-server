@@ -21,14 +21,14 @@ public class EventProperty {
     String year;
     String type;
     String path;
-    @JsonIgnoreProperties("EventProperty")
-    @OneToMany(mappedBy = "eventProperty", cascade = CascadeType.REMOVE)
+    @JoinColumn(name="picture_event_id")
+    @OneToMany(cascade = CascadeType.REMOVE)
     List<EventFile> pictureFileList;
-    @JsonIgnoreProperties("EventProperty")
-    @OneToMany(mappedBy = "eventProperty", cascade = CascadeType.REMOVE)
+    @JoinColumn(name="video_event_id")
+    @OneToMany(cascade = CascadeType.REMOVE)
     List<EventFile> videoFileList;
-    @JsonIgnoreProperties("EventProperty")
-    @OneToMany(mappedBy = "eventProperty", cascade = CascadeType.REMOVE)
+    @JoinColumn(name="doc_event_id")
+    @OneToMany(cascade = CascadeType.REMOVE)
     List<EventFile> docFileList;
 
     public void update(String name, String year, String type) {

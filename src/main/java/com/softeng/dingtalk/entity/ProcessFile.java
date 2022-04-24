@@ -1,7 +1,6 @@
 package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,31 +11,28 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
-public class EventFile {
+public class ProcessFile {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String fileName;
 
+    /*
+    文件类型： Invitation,PPT,PersonalPhoto,ConferencePhoto
+     */
     private String fileType;
 
     private String fileId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    EventProperty eventProperty;
+    ProcessProperty processProperty;
 
-    public EventFile(String fileName, String fileId){
-        this.fileName=fileName;
-        this.fileId=fileId;
+    public ProcessFile(String fileName, String fileType, String fileId) {
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.fileId = fileId;
     }
-
-    public EventFile(String fileName, String fileId, String fileType, EventProperty eventProperty){
-        this.fileName=fileName;
-        this.fileId=fileId;
-        this.fileType=fileType;
-        this.eventProperty=eventProperty;
-    }
-
 }

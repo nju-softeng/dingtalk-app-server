@@ -1,15 +1,11 @@
 package com.softeng.dingtalk.controller;
-
 import com.alibaba.fastjson.JSONObject;
-import com.softeng.dingtalk.entity.EventFile;
 import com.softeng.dingtalk.entity.EventProperty;
 import com.softeng.dingtalk.service.EventPropertyService;
-import com.softeng.dingtalk.vo.EventPropertyInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 

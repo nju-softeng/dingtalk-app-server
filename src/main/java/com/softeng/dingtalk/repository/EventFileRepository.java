@@ -1,4 +1,4 @@
-package com.softeng.dingtalk.repository.impl;
+package com.softeng.dingtalk.repository;
 
 import com.softeng.dingtalk.entity.EventFile;
 import com.softeng.dingtalk.entity.EventProperty;

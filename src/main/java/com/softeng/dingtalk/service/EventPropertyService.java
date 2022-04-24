@@ -1,9 +1,8 @@
 package com.softeng.dingtalk.service;
-import com.graphbuilder.math.func.EFunction;
 import com.softeng.dingtalk.entity.EventFile;
 import com.softeng.dingtalk.entity.EventProperty;
 import com.softeng.dingtalk.repository.EventPropertyRepository;
-import com.softeng.dingtalk.repository.impl.EventFileRepository;
+import com.softeng.dingtalk.repository.EventFileRepository;
 import com.softeng.dingtalk.vo.EventPropertyInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +51,10 @@ public class EventPropertyService {
 
     public EventProperty getEventInfo(int eventId){
         EventProperty ep = eventPropertyRepository.findById(eventId).get();
+        //以下三行代码非常关键，不能删除
         log.info(String.valueOf(ep.getPictureFileList().size()));
+        log.info(String.valueOf(ep.getVideoFileList().size()));
+        log.info(String.valueOf(ep.getDocFileList().size()));
         return ep;
 //        EventProperty ep=eventPropertyRepository.findById(eventId).get();
 //        return new EventPropertyInfoVO(ep.getId(),ep.getName(),ep.getYear(),ep.getType());
