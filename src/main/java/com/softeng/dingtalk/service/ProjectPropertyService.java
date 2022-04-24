@@ -40,4 +40,6 @@ public class ProjectPropertyService {
                 projectProperty.getName(),projectProperty.getPath())).collect(Collectors.toList());
         return Map.of("list",projectPropertyList,"total",projectProperties.getTotalElements());
     }
+
+
 }

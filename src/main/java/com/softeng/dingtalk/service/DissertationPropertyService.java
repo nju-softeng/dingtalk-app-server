@@ -94,9 +94,19 @@ public class DissertationPropertyService {
                 dissertation.setFinalFileName(fileName);
                 break;
         }
+        dissertation.setState(getDissertationState(dissertation));
         dissertationPropertyRepository.save(dissertation);
     }
 
+    private int getDissertationState(Dissertation dissertation){
+        int state=3;
+        if(dissertation.getFinalFileId()!=null) return state;
+        state--;
+        if(dissertation.getRejoinFileId()!=null) return state;
+        state--;
+        if(dissertation.getReviewFileId()!=null) return state;
+        return 0;
+    }
     public void deleteDissertationFile(int id,String type){
         Dissertation dissertation=dissertationPropertyRepository.findById(id).get();
         String fileId=null;
@@ -107,24 +117,28 @@ public class DissertationPropertyService {
                 fileName=dissertation.getPreRejoinFileName();
                 dissertation.setPreRejoinFileName(null);
                 dissertation.setPreRejoinFileId(null);
+                dissertation.setState(0);
                 break;
             case "reviewFile":
                 fileId=dissertation.getReviewFileId();
                 fileName=dissertation.getReviewFileName();
                 dissertation.setReviewFileName(null);
                 dissertation.setReviewFileId(null);
+                dissertation.setState(0);
                 break;
             case "rejoinFile":
                 fileId=dissertation.getRejoinFileId();
                 fileName=dissertation.getRejoinFileName();
                 dissertation.setRejoinFileName(null);
                 dissertation.setRejoinFileId(null);
+                dissertation.setState(1);
                 break;
             case "finalFile":
                 fileId=dissertation.getFinalFileId();
                 fileName=dissertation.getFinalFileName();
                 dissertation.setFinalFileName(null);
                 dissertation.setFinalFileId(null);
+                dissertation.setState(2);
                 break;
         }
         fileService.deleteFileByPath(fileName,fileId);
