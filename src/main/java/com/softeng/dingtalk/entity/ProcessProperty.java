@@ -3,6 +3,7 @@ package com.softeng.dingtalk.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@Proxy(lazy = false)
 public class ProcessProperty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
