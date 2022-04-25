@@ -10,12 +10,19 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PatentVO {
-    private Integer id;
-    private String name;
-    private Integer obligeeId;
-    private List<Integer> inventorsId;
-    String handlingFilePath;
-    String authorizationFilePath;
-    int status=0;
+    Integer id;
+    String name;
+    String obligee;
+    Integer applicantId;
+    List<Integer> inventorsIdList;
+    String version;
+    String filePath;
+    String patentFileName;
+    String patentFileId;
+    String handlingFileName;
+    String handlingFileId;
+    String authorizationFileName;
+    String authorizationFileId;
+    int state=0;
 
 }

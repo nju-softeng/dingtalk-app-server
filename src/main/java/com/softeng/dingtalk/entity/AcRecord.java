@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,6 +38,9 @@ public class AcRecord {
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Patent patent;
 
     public AcRecord(User user, User auditor, double ac, String reason, int classify, LocalDateTime createTime) {
         this.user = user;

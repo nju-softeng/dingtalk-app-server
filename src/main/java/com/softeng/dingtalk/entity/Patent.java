@@ -3,6 +3,7 @@ package com.softeng.dingtalk.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@Proxy(lazy = false)
 public class Patent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +22,13 @@ public class Patent {
     String name;
 
     //权利人
+    String obligee;
+
     @OneToOne
-    User obligee;
+    User applicant;
+
+    @OneToMany(cascade = {CascadeType.REMOVE})
+    List<AcRecord> acRecordList;
 
     //发明人
     @ManyToMany(fetch = FetchType.EAGER)
@@ -34,6 +41,12 @@ public class Patent {
 
     //文件目录
     String filePath;
+
+    //专利文件名字
+    String patentFileName;
+
+    //专利文件id
+    String patentFileId;
 
     //受理文件名
     String handlingFileName;
@@ -48,7 +61,12 @@ public class Patent {
     String authorizationFileId;
 
     //状态： 0待内审，1内审不通过，2内审通过，3专利授权，4专利驳回
-    int status=0;
+    int state=0;
 
-
+    public Patent(String name, String version, String obligee, String filePath) {
+        this.name = name;
+        this.version = version;
+        this.obligee=obligee;
+        this.filePath = filePath;
+    }
 }
