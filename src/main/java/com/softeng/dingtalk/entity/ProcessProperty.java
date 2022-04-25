@@ -3,6 +3,8 @@ package com.softeng.dingtalk.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
@@ -12,7 +14,6 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
-@Proxy(lazy = false)
 public class ProcessProperty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,12 +41,14 @@ public class ProcessProperty {
     @JoinColumn(name = "ppt_file_id")
     ProcessFile PPTFile;
 
-    @OneToMany(cascade={CascadeType.REMOVE,CascadeType.PERSIST})
+    @OneToMany(cascade={CascadeType.REMOVE,CascadeType.PERSIST},fetch = FetchType.EAGER)
     @JoinColumn(name = "personal_photo_id")
+    @Fetch(FetchMode.SELECT)
     List<ProcessFile> personalPhotoFileList;
 
-    @OneToMany(cascade={CascadeType.REMOVE,CascadeType.PERSIST})
+    @OneToMany(cascade={CascadeType.REMOVE,CascadeType.PERSIST},fetch = FetchType.EAGER)
     @JoinColumn(name = "conference_photo_id")
+    @Fetch(FetchMode.SELECT)
     List<ProcessFile> conferencePhotoFileList;
 
     public ProcessProperty(String conferenceName,String year,String filePath,User user){
