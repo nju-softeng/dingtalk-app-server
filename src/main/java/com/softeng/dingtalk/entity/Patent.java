@@ -24,23 +24,27 @@ public class Patent {
     User obligee;
 
     //发明人
-    @OneToMany
-    @JoinColumn(name = "patent_id")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "patent_inventor",joinColumns = {@JoinColumn(name = "patent_id")},inverseJoinColumns = {@JoinColumn(name = "user_id")})
     List<User> inventors;
+
 
     //版本
     String version;
 
-    //受理文件路径
-    String handlingFilePath;
+    //文件目录
+    String filePath;
+
+    //受理文件名
+    String handlingFileName;
 
     //受理文件id
     String handlingFileId;
 
-    //受理文件路径
-    String authorizationFilePath;
+    //授权文件名
+    String authorizationFileName;
 
-    //受理文件id
+    //授权文件id
     String authorizationFileId;
 
     //状态： 0待内审，1内审不通过，2内审通过，3专利授权，4专利驳回

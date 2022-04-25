@@ -151,6 +151,10 @@ public class User {
      */
     private String remark;
 
+    @ManyToMany(mappedBy = "inventors")
+    @JsonIgnore
+    private List<Patent> patentList;
+
     /**
      * 获奖情况
      */
