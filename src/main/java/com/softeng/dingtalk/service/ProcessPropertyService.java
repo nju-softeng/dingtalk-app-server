@@ -103,6 +103,7 @@ public class ProcessPropertyService {
                     processFileList=new LinkedList<ProcessFile>();
                 }
                 processFileList.add(processFile);
+                processFileRepository.save(processFile);
                 pp.setPersonalPhotoFileList(processFileList);
                 break;
             case "conferencePhotoFile":
@@ -111,6 +112,7 @@ public class ProcessPropertyService {
                     processFileList=new LinkedList<ProcessFile>();
                 }
                 processFileList.add(processFile);
+                processFileRepository.save(processFile);
                 pp.setConferencePhotoFileList(processFileList);
                 break;
         }
