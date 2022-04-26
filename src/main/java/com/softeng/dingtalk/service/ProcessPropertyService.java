@@ -86,6 +86,7 @@ public class ProcessPropertyService {
         String fileName=file.getOriginalFilename();
         String fileId=fileService.addFileByPath(file,pp.getFilePath()+"/"+getFileTypeFolderName(fileType));
         ProcessFile processFile=new ProcessFile(fileName,fileType,fileId);
+        processFile.setProcessProperty(pp);
         List<ProcessFile> processFileList=null;
         switch (fileType){
             case"invitationFile":
