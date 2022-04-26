@@ -6,6 +6,7 @@ import lombok.Data;
 public class ReimbursementVO {
     private Integer id;
     int state=-1;
+    String name;
     String type;
     String path;
 }
