@@ -68,6 +68,8 @@ public class ProcessPropertyService {
 
     public ProcessPropertyDetailVO getProcessPropertyDetail(int id){
         ProcessProperty pp=processPropertyRepository.findById(id).get();
+        log.info(String.valueOf(pp.getConferencePhotoFileList().size()));
+        log.info(String.valueOf(pp.getPersonalPhotoFileList()));
         return new ProcessPropertyDetailVO(pp.getId(),pp.getConferenceName(),pp.getYear(),pp.getFilePath(),pp.getUser(),
                 pp.getInvitationFile(),pp.getPPTFile(),pp.getPersonalPhotoFileList(),pp.getConferencePhotoFileList());
     }

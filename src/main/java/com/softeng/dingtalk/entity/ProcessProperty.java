@@ -41,14 +41,12 @@ public class ProcessProperty {
     @JoinColumn(name = "ppt_file_id")
     ProcessFile PPTFile;
 
-    @OneToMany(cascade={CascadeType.REMOVE,CascadeType.PERSIST},fetch = FetchType.EAGER)
+    @OneToMany(cascade={CascadeType.REMOVE},fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_photo_id")
-    @Fetch(FetchMode.SELECT)
     List<ProcessFile> personalPhotoFileList;
 
-    @OneToMany(cascade={CascadeType.REMOVE,CascadeType.PERSIST},fetch = FetchType.EAGER)
+    @OneToMany(cascade={CascadeType.REMOVE},fetch = FetchType.LAZY)
     @JoinColumn(name = "conference_photo_id")
-    @Fetch(FetchMode.SELECT)
     List<ProcessFile> conferencePhotoFileList;
 
     public ProcessProperty(String conferenceName,String year,String filePath,User user){
