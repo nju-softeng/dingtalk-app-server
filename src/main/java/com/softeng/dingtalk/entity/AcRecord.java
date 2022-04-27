@@ -24,6 +24,7 @@ public class AcRecord {
     public static final int PAPER = 2;
     public static final int VOTE = 3;
     public static final int BUG = 4;
+    public static final int Patent = 5;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,9 +39,6 @@ public class AcRecord {
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     private User auditor;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Patent patent;
 
     public AcRecord(User user, User auditor, double ac, String reason, int classify, LocalDateTime createTime) {
         this.user = user;

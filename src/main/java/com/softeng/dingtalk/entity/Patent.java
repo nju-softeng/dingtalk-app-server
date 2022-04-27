@@ -27,13 +27,10 @@ public class Patent {
     @OneToOne
     User applicant;
 
-    @OneToMany(cascade = {CascadeType.REMOVE})
-    List<AcRecord> acRecordList;
 
     //发明人
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "patent_inventor",joinColumns = {@JoinColumn(name = "patent_id")},inverseJoinColumns = {@JoinColumn(name = "user_id")})
-    List<User> inventors;
+    @OneToMany(mappedBy = "patent",cascade = CascadeType.REMOVE)
+    List<PatentDetail> patentDetailList;
 
 
     //版本

@@ -20,7 +20,7 @@ public class ProjectProperty {
 
     String path;
 
-    @OneToMany(mappedBy = "projectProperty")
+    @OneToMany(mappedBy = "projectProperty", fetch = FetchType.EAGER)
     List<ProjectPropertyFile> projectPropertyFileList;
 
     public ProjectProperty(String name,String path){
