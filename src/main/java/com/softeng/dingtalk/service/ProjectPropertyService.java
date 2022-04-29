@@ -70,7 +70,7 @@ public class ProjectPropertyService {
     public ProjectProperty getProjectPropertyDetail(int id){
         return projectPropertyRepository.findById(id).get();
     }
-    public void addProjectPropertyFile(MultipartFile file,int id,String type){
+    public String addProjectPropertyFile(MultipartFile file,int id,String type){
         ProjectPropertyFile projectPropertyFile=projectPropertyFileRepository.findById(id).get();
         String fileId=fileService.addFileByPath(file,projectPropertyFile.getProjectProperty().getPath()+"/"+
                 projectPropertyFile.getVersion()+"/"+getFileTypeFolderName(type));
@@ -91,6 +91,7 @@ public class ProjectPropertyService {
                 break;
         }
         projectPropertyFileRepository.save(projectPropertyFile);
+        return fileId;
     }
 
     public void deleteProjectPropertyFile(int id,String type){
