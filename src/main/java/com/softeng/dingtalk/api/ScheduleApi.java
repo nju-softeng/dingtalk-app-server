@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -75,8 +76,8 @@ public class ScheduleApi extends BaseApi{
                 .setIsAllDay(false)
                 .setLocation(location)
                 .setExtra(extra)
-                .setAttendees(dingTalkSchedule.getAttendees().stream().map(user -> new CreateEventRequest.CreateEventRequestAttendees()
-                        .setId(userService.getUserUnionId(user.getId()))).collect(Collectors.toList()));
+                .setAttendees(dingTalkSchedule.getDingTalkScheduleDetailList().stream().map(detail -> new CreateEventRequest.CreateEventRequestAttendees()
+                        .setId(userService.getUserUnionId(detail.getUser().getId()))).collect(Collectors.toList()));
         if(dingTalkSchedule.isOnline()){
             createEventRequest.setOnlineMeetingInfo(onlineMeetingInfo);
         }
@@ -113,8 +114,8 @@ public class ScheduleApi extends BaseApi{
                 .setIsAllDay(false)
                 .setLocation(location)
                 .setExtra(extra)
-                .setAttendees(dingTalkSchedule.getAttendees().stream().map(user -> new PatchEventRequest.PatchEventRequestAttendees()
-                        .setId(userService.getUserUnionId(user.getId()))).collect(Collectors.toList()));
+                .setAttendees(dingTalkSchedule.getDingTalkScheduleDetailList().stream().map(detail -> new PatchEventRequest.PatchEventRequestAttendees()
+                        .setId(userService.getUserUnionId(detail.getUser().getId()))).collect(Collectors.toList()));
         try {
             client.patchEventWithOptions(userService.getUserUnionId(dingTalkSchedule.getOrganizer().getId()),
                     "primary",
@@ -126,16 +127,39 @@ public class ScheduleApi extends BaseApi{
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-    public void deleteSchedule(DingTalkSchedule dingTalkSchedule) throws Exception {
-        com.aliyun.dingtalkcalendar_1_0.Client client = ScheduleApi.createCalenderClient();
-        DeleteEventHeaders deleteEventHeaders = new DeleteEventHeaders();
-        deleteEventHeaders.xAcsDingtalkAccessToken = getAccessToken();
-        client.deleteEventWithOptions(userService.getUserUnionId(dingTalkSchedule.getOrganizer().getId()),
-                "primary",
-                dingTalkSchedule.getScheduleId(),
-                deleteEventHeaders,
-                new RuntimeOptions());
-    }
+    public void deleteSchedule(DingTalkSchedule dingTalkSchedule) {
+        try {
+            com.aliyun.dingtalkcalendar_1_0.Client client = ScheduleApi.createCalenderClient();
+            DeleteEventHeaders deleteEventHeaders = new DeleteEventHeaders();
+            deleteEventHeaders.xAcsDingtalkAccessToken = getAccessToken();
+            client.deleteEventWithOptions(userService.getUserUnionId(dingTalkSchedule.getOrganizer().getId()),
+                    "primary",
+                    dingTalkSchedule.getScheduleId(),
+                    deleteEventHeaders,
+                    new RuntimeOptions());
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
 
+    }
+    public List<String> getAbsentList(DingTalkSchedule dingTalkSchedule)  {
+        try {
+            com.aliyun.dingtalkcalendar_1_0.Client client = createCalenderClient();
+            GetSignInListHeaders getSignInListHeaders = new GetSignInListHeaders();
+            getSignInListHeaders.xAcsDingtalkAccessToken = "<your access token>";
+            GetSignInListRequest getSignInListRequest = new GetSignInListRequest()
+                    .setMaxResults(500L)
+                    .setType("not_yet_sign_in");
+            GetSignInListResponse getSignInListResponse=client.getSignInListWithOptions(userService.getUserUnionId(dingTalkSchedule.getOrganizer().getId()),
+                    "primary",
+                    dingTalkSchedule.getScheduleId(),
+                    getSignInListRequest,
+                    getSignInListHeaders,
+                    new RuntimeOptions());
+            return getSignInListResponse.getBody().getUsers().stream().map(GetSignInListResponseBody.GetSignInListResponseBodyUsers::getUserId).collect(Collectors.toList());
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
 
 }

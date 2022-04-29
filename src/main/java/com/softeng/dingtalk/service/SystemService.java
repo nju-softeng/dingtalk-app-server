@@ -1,9 +1,7 @@
 package com.softeng.dingtalk.service;
 
 import com.dingtalk.api.response.OapiUserGetResponse;
-import com.softeng.dingtalk.api.ContactsApi;
-import com.softeng.dingtalk.api.MessageApi;
-import com.softeng.dingtalk.api.ReportApi;
+import com.softeng.dingtalk.api.*;
 import com.softeng.dingtalk.component.AcAlgorithm;
 import com.softeng.dingtalk.constant.LocalUrlConstant;
 import com.softeng.dingtalk.entity.*;
@@ -11,6 +9,7 @@ import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -21,10 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -50,6 +46,8 @@ public class SystemService {
     @Autowired
     DcSummaryRepository dcSummaryRepository;
     @Autowired
+    DingTalkScheduleRepository dingTalkScheduleRepository;
+    @Autowired
     PerformanceService performanceService;
     @Autowired
     AuditService auditService;
@@ -60,6 +58,10 @@ public class SystemService {
     ReportApi reportApi;
     @Autowired
     MessageApi messageApi;
+    @Autowired
+    ScheduleApi scheduleApi;
+    @Autowired
+    OAApi oaApi;
 
     @Autowired
     WeeklyReportService weeklyReportService;
@@ -68,6 +70,8 @@ public class SystemService {
     @Autowired
     PatentLevelRepository patentLevelRepository;
 
+    @Value("${DingTalkSchedule.absentACPunishment}")
+    double absentACPunishment;
 
     /**
      * 根据钉钉 userId 获取系统 uid，前端JSAPI选人
@@ -358,6 +362,42 @@ public class SystemService {
                         .map(User::getUserid)
                         .collect(Collectors.toList())
         );
+    }
+
+    public void calculateScheduleAC() {
+        List<DingTalkSchedule> dingTalkScheduleList=dingTalkScheduleRepository.getDingTalkSchedulesByIsAcCalculatedFalse();
+        for(DingTalkSchedule dingTalkSchedule:dingTalkScheduleList){
+            LocalDate now=LocalDate.now();
+            if(now.compareTo(dingTalkSchedule.getEnd())>=0){
+                //获取改日程请假列表，并获取oa通过的同学的列表
+                List<String> osNotPassUserIdList=new LinkedList<>();
+                dingTalkSchedule.getAbsentOAList().forEach(absentOA -> {
+                    absentOA.setPass(oaApi.getOAOutCome(absentOA.getProcessInstanceId()));
+                    if(!absentOA.isPass()) osNotPassUserIdList.add(absentOA.getUser().getUserid());
+                });
+                //获取需要扣分的userId
+                List<String> absentUserIdList=scheduleApi.getAbsentList(dingTalkSchedule);
+                absentUserIdList.removeAll(osNotPassUserIdList);
+                //进行扣分
+                if(absentUserIdList.size()!=0){
+                    List<DingTalkScheduleDetail> detailList=dingTalkSchedule.getDingTalkScheduleDetailList();
+                    detailList.forEach(detail -> {
+                        boolean isContain = absentUserIdList .stream().anyMatch(x-> x.equals(detail.getUser().getUserid()));
+                        if(isContain) {
+                            AcRecord acRecord=new AcRecord(detail.getUser(),
+                                    null,
+                                    -1*absentACPunishment,
+                                    detail.getDingTalkSchedule().getStart().toString()+"会议缺席",
+                                    6,LocalDateTime.now());
+                            acRecordRepository.save(acRecord);
+                            detail.setAcRecord(acRecord);
+                        }
+                    });
+                }
+                dingTalkSchedule.setAcCalculated(true);
+                dingTalkScheduleRepository.save(dingTalkSchedule);
+            }
+        }
     }
 
 }

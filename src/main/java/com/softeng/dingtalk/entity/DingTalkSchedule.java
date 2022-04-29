@@ -17,12 +17,15 @@ public class DingTalkSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     User organizer;
 
-    @ManyToMany
-    List<User> attendees;
+    @OneToMany(mappedBy = "dingTalkSchedule",cascade = {CascadeType.REMOVE})
+    List<AbsentOA> absentOAList;
+
+    @OneToMany(mappedBy = "dingTalkSchedule",cascade = CascadeType.ALL)
+    List<DingTalkScheduleDetail> dingTalkScheduleDetailList;
     //标题
     String summary;
     LocalDate start;
@@ -30,4 +33,22 @@ public class DingTalkSchedule {
     boolean isOnline;
     String location;
     String scheduleId;
+
+    @Column(name = "isAcCalculated")
+    boolean isAcCalculated =false;
+
+    public DingTalkSchedule(String summary, LocalDate start, LocalDate end, boolean isOnline, String location) {
+        this.summary = summary;
+        this.start = start;
+        this.end = end;
+        this.isOnline = isOnline;
+        this.location = location;
+    }
+    public void update(String summary, LocalDate start, LocalDate end, boolean isOnline, String location) {
+        this.summary = summary;
+        this.start = start;
+        this.end = end;
+        this.isOnline = isOnline;
+        this.location = location;
+    }
 }
