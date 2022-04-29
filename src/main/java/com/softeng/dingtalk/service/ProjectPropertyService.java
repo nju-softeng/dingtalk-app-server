@@ -52,9 +52,7 @@ public class ProjectPropertyService {
     public Map<String, Object> getProjectPropertyList(int page, int size){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
         Page<ProjectProperty> projectProperties=projectPropertyRepository.findAll(pageable);
-        List<ProjectPropertyVO> projectPropertyList=projectProperties.stream().map(projectProperty -> new ProjectPropertyVO(projectProperty.getId(),
-                projectProperty.getName(),projectProperty.getPath())).collect(Collectors.toList());
-        return Map.of("list",projectPropertyList,"total",projectProperties.getTotalElements());
+        return Map.of("list",projectProperties.toList(),"total",projectProperties.getTotalElements());
     }
 
     public void addProjectPropertyVersion(MultipartFile codeFile, MultipartFile reportFile,

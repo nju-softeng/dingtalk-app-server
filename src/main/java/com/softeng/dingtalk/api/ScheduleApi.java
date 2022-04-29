@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -74,12 +75,14 @@ public class ScheduleApi extends BaseApi{
                 .setStart(start)
                 .setEnd(end)
                 .setIsAllDay(false)
-                .setLocation(location);
+                .setLocation(location)
+                .setAttendees(dingTalkSchedule.getAttendees().stream().map(user -> new CreateEventRequest.CreateEventRequestAttendees()
+                        .setId(userService.getUserUnionId(user.getId()))).collect(Collectors.toList()));
         if(dingTalkSchedule.isOnline()){
             createEventRequest.setOnlineMeetingInfo(onlineMeetingInfo);
         }
         try {
-            CreateEventResponse createEventResponse=client.createEventWithOptions(userService.getUserUnionId(dingTalkSchedule.getUser().getId()), "primary", createEventRequest, createEventHeaders, new RuntimeOptions());
+            CreateEventResponse createEventResponse=client.createEventWithOptions(userService.getUserUnionId(dingTalkSchedule.getOrganizer().getId()), "primary", createEventRequest, createEventHeaders, new RuntimeOptions());
             return createEventResponse.getBody().getId();
         } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

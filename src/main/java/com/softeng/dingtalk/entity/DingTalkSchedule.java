@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,7 +19,10 @@ public class DingTalkSchedule {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    User user;
+    User organizer;
+
+    @ManyToMany
+    List<User> attendees;
     //标题
     String summary;
     LocalDate start;
