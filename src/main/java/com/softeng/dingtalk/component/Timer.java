@@ -72,6 +72,13 @@ public class Timer {
         systemService.manulDeductedPointsUnsubmittedWeeklyReport(LocalDate.now());
     }
 
+    //每天凌晨扫描一次,会议的AC结算
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void calculateScheduleAC(){
+        log.info(LocalDate.now() + " 定时扫描会议未参加者的扣分");
+        systemService.calculateScheduleAC();
+    }
+
     /**
      * 每20s扫描一次，看是否有待启动的投票
      */

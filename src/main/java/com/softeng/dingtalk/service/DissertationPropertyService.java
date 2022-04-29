@@ -1,7 +1,6 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.Dissertation;
-import com.softeng.dingtalk.entity.EventProperty;
 import com.softeng.dingtalk.repository.DissertationPropertyRepository;
 import com.softeng.dingtalk.repository.UserRepository;
 import com.softeng.dingtalk.vo.DissertationVO;
