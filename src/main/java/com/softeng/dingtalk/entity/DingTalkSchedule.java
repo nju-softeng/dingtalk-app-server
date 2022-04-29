@@ -17,7 +17,7 @@ public class DingTalkSchedule {
     private Integer id;
 
     @OneToOne
-    @JoinColumn("user_id")
+    @JoinColumn(name = "user_id")
     User user;
     //标题
     String summary;
