@@ -51,7 +51,7 @@ public class PatentService {
     //将增加专利和修改合并
     public void addPatent(MultipartFile file, PatentVO patentVO){
         Patent patent=null;
-        if(patentVO.getId()!=null){
+        if(patentVO.getId()==null){
             patent=new Patent(patentVO.getName(),patentVO.getVersion(),patentVO.getObligee(),patentVO.getFilePath());
         }else{
             patent=patentRepository.findById(patentVO.getId()).get();
