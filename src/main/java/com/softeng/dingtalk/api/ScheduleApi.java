@@ -1,8 +1,6 @@
 package com.softeng.dingtalk.api;
 
-import com.aliyun.dingtalkcalendar_1_0.models.CreateEventHeaders;
-import com.aliyun.dingtalkcalendar_1_0.models.CreateEventRequest;
-import com.aliyun.dingtalkcalendar_1_0.models.CreateEventResponse;
+import com.aliyun.dingtalkcalendar_1_0.models.*;
 import com.aliyun.tea.TeaConverter;
 import com.aliyun.tea.TeaPair;
 import com.aliyun.teaopenapi.models.Config;
@@ -76,6 +74,7 @@ public class ScheduleApi extends BaseApi{
                 .setEnd(end)
                 .setIsAllDay(false)
                 .setLocation(location)
+                .setExtra(extra)
                 .setAttendees(dingTalkSchedule.getAttendees().stream().map(user -> new CreateEventRequest.CreateEventRequestAttendees()
                         .setId(userService.getUserUnionId(user.getId()))).collect(Collectors.toList()));
         if(dingTalkSchedule.isOnline()){
@@ -87,6 +86,55 @@ public class ScheduleApi extends BaseApi{
         } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
+    }
+    public void updateSchedule(DingTalkSchedule dingTalkSchedule) throws Exception {
+        com.aliyun.dingtalkcalendar_1_0.Client client = ScheduleApi.createCalenderClient();
+        PatchEventHeaders patchEventHeaders = new PatchEventHeaders();
+        patchEventHeaders.xAcsDingtalkAccessToken = getAccessToken();
+        java.util.Map<String, String> extra = TeaConverter.buildMap(
+                new TeaPair("key", "{\"noChatNotification\": \"false\", \"noPushNotification\": \"false\"   }")
+        );
+        PatchEventRequest.PatchEventRequestLocation location = new PatchEventRequest.PatchEventRequestLocation()
+                .setDisplayName(dingTalkSchedule.getLocation());
+        PatchEventRequest.PatchEventRequestReminders reminder = new PatchEventRequest.PatchEventRequestReminders()
+                .setMethod("dingtalk")
+                .setMinutes(60);
+        PatchEventRequest.PatchEventRequestEnd end = new PatchEventRequest.PatchEventRequestEnd()
+                .setDateTime(get_ISO0861_Time(dingTalkSchedule.getEnd()))
+                .setTimeZone("Asia/Shanghai");
+        PatchEventRequest.PatchEventRequestStart start = new PatchEventRequest.PatchEventRequestStart()
+                .setDateTime(get_ISO0861_Time(dingTalkSchedule.getStart()))
+                .setTimeZone("Asia/Shanghai");
+        PatchEventRequest patchEventRequest = new PatchEventRequest()
+                .setSummary("test event")
+                .setDescription("something about this event")
+                .setStart(start)
+                .setEnd(end)
+                .setIsAllDay(false)
+                .setLocation(location)
+                .setExtra(extra)
+                .setAttendees(dingTalkSchedule.getAttendees().stream().map(user -> new PatchEventRequest.PatchEventRequestAttendees()
+                        .setId(userService.getUserUnionId(user.getId()))).collect(Collectors.toList()));
+        try {
+            client.patchEventWithOptions(userService.getUserUnionId(dingTalkSchedule.getOrganizer().getId()),
+                    "primary",
+                    dingTalkSchedule.getScheduleId(),
+                    patchEventRequest,
+                    patchEventHeaders,
+                    new RuntimeOptions());
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+    public void deleteSchedule(DingTalkSchedule dingTalkSchedule) throws Exception {
+        com.aliyun.dingtalkcalendar_1_0.Client client = ScheduleApi.createCalenderClient();
+        DeleteEventHeaders deleteEventHeaders = new DeleteEventHeaders();
+        deleteEventHeaders.xAcsDingtalkAccessToken = getAccessToken();
+        client.deleteEventWithOptions(userService.getUserUnionId(dingTalkSchedule.getOrganizer().getId()),
+                "primary",
+                dingTalkSchedule.getScheduleId(),
+                deleteEventHeaders,
+                new RuntimeOptions());
     }
 
 
