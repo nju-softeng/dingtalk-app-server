@@ -64,7 +64,7 @@ public class PatentService {
             if(patent.getReviewFileId()!=null){
                 fileService.deleteFileByPath(patent.getReviewFileName(),patent.getReviewFileId());
             }
-            String fileId=fileService.addFileByPath(file,patent.getFilePath()+"/Patent");
+            String fileId=fileService.addFileByPath(file,patent.getFilePath()+"/Review");
             patent.setReviewFileName(file.getOriginalFilename());
             patent.setReviewFileId(fileId);
         }
