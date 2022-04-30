@@ -29,7 +29,7 @@ public class Patent {
 
 
     //发明人
-    @OneToMany(mappedBy = "patent",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "patent",cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     List<PatentDetail> patentDetailList;
 
     //年份
