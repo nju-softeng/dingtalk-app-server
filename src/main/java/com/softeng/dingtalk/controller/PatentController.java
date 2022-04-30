@@ -43,13 +43,13 @@ public class PatentController {
     }
 
     @PutMapping("/patent/{id}/auditState/{isPass}")
-    public void decideAudit(@PathVariable int id,@PathVariable boolean isPass,@RequestAttribute int auditId){
-        patentService.decideAudit(id,isPass,auditId);
+    public void decideAudit(@PathVariable int id,@PathVariable boolean isPass,@RequestAttribute int uid){
+        patentService.decideAudit(id,isPass,uid);
     }
 
     @PutMapping("/patent/{id}/authorizationState/{isPass}")
-    public void decideAuthorization(@PathVariable int id,@PathVariable boolean isPass,@RequestAttribute int auditId){
-        patentService.decideAuthorization(id,isPass,auditId);
+    public void decideAuthorization(@PathVariable int id,@PathVariable boolean isPass,@RequestAttribute int uid){
+        patentService.decideAuthorization(id,isPass,uid);
     }
 
     @PostMapping("/patent/{id}/patentFile/fileType/{type}")
