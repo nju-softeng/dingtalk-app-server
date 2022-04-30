@@ -12,6 +12,8 @@ import java.util.List;
 public class PatentVO {
     Integer id;
     String name;
+    String type;
+    String year;
     String obligee;
     Integer applicantId;
     List<Integer> inventorsIdList;

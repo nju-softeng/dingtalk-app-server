@@ -2,13 +2,16 @@ package com.softeng.dingtalk.api;
 
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
+import com.dingtalk.api.request.OapiProcessInstanceTerminateRequest;
 import com.dingtalk.api.request.OapiProcessWorkrecordCreateRequest;
 import com.dingtalk.api.request.OapiProcessinstanceCreateRequest;
 import com.dingtalk.api.request.OapiProcessinstanceGetRequest;
+import com.dingtalk.api.response.OapiProcessInstanceTerminateResponse;
 import com.dingtalk.api.response.OapiProcessWorkrecordCreateResponse;
 import com.dingtalk.api.response.OapiProcessinstanceCreateResponse;
 import com.dingtalk.api.response.OapiProcessinstanceGetResponse;
 import com.softeng.dingtalk.entity.AbsentOA;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.service.UserService;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
@@ -85,5 +88,21 @@ public class OAApi extends BaseApi{
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
         }
 
+    }
+    public boolean deleteAbsentOA(String processInstanceId, User user){
+        try {
+            DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/process/instance/terminate");
+            OapiProcessInstanceTerminateRequest req = new OapiProcessInstanceTerminateRequest();
+            OapiProcessInstanceTerminateRequest.TerminateProcessInstanceRequestV2 processInstanceRequestV2 = new OapiProcessInstanceTerminateRequest.TerminateProcessInstanceRequestV2();
+            processInstanceRequestV2.setProcessInstanceId(processInstanceId);
+            processInstanceRequestV2.setIsSystem(false);
+            processInstanceRequestV2.setRemark("取消请假");
+            processInstanceRequestV2.setOperatingUserid(user.getUserid());
+            req.setRequest(processInstanceRequestV2);
+            OapiProcessInstanceTerminateResponse rsp = client.execute(req,getAccessToken());
+            return rsp.getResult();
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
+        }
     }
 }

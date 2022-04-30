@@ -36,8 +36,15 @@ public class AbsentOA {
     //请假缘由
     String reason;
     //是否通过
-    boolean isPass;
+    boolean isPass=false;
     //请求Id
     String processInstanceId;
 
+    public AbsentOA(String type, LocalDate start, LocalDate end, Double dayNum, String reason) {
+        this.type = type;
+        this.start = start;
+        this.end = end;
+        this.dayNum = dayNum;
+        this.reason = reason;
+    }
 }

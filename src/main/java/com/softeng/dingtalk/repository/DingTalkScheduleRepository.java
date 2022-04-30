@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface DingTalkScheduleRepository extends CustomizedRepository<DingTalkSchedule,Integer>{
     List<DingTalkSchedule> getDingTalkSchedulesByIsAcCalculatedFalse();
+    List<DingTalkSchedule> getDingTalkSchedulesByDingTalkScheduleDetailListContains(DingTalkScheduleDetail dingTalkScheduleDetail);
 }

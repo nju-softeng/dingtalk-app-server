@@ -32,6 +32,10 @@ public class Patent {
     @OneToMany(mappedBy = "patent",cascade = CascadeType.REMOVE)
     List<PatentDetail> patentDetailList;
 
+    //年份
+    String year;
+    //类型
+    String type;
 
     //版本
     String version;
@@ -72,7 +76,18 @@ public class Patent {
     //状态： 0待内审，1内审不通过，2内审通过，3专利授权，4专利驳回
     int state=0;
 
-    public Patent(String name, String version, String obligee, String filePath) {
+    public Patent(String name, String year,String type,String version, String obligee, String filePath) {
+        this.year=year;
+        this.type=type;
+        this.name = name;
+        this.version = version;
+        this.obligee=obligee;
+        this.filePath = filePath;
+    }
+
+    public void update(String name, String year,String type,String version, String obligee, String filePath){
+        this.year=year;
+        this.type=type;
         this.name = name;
         this.version = version;
         this.obligee=obligee;

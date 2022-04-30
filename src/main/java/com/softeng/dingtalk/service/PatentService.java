@@ -52,9 +52,12 @@ public class PatentService {
     public void addPatent(MultipartFile file, PatentVO patentVO){
         Patent patent=null;
         if(patentVO.getId()==null){
-            patent=new Patent(patentVO.getName(),patentVO.getVersion(),patentVO.getObligee(),patentVO.getFilePath());
+            patent=new Patent(patentVO.getName(),patentVO.getYear(),patentVO.getType(),
+                    patentVO.getVersion(),patentVO.getObligee(),patentVO.getFilePath());
         }else{
             patent=patentRepository.findById(patentVO.getId()).get();
+            patent.update(patentVO.getName(),patentVO.getYear(),patentVO.getType(),
+                    patentVO.getVersion(),patentVO.getObligee(),patentVO.getFilePath());
         }
         patent.setApplicant(userRepository.findById(patentVO.getApplicantId()).get());
         if(file!=null){
