@@ -58,12 +58,12 @@ public class PatentService {
         }
         patent.setApplicant(userRepository.findById(patentVO.getApplicantId()).get());
         if(file!=null){
-            if(patent.getPatentFileId()!=null){
-                fileService.deleteFileByPath(patent.getPatentFileName(),patent.getPatentFileId());
+            if(patent.getReviewFileId()!=null){
+                fileService.deleteFileByPath(patent.getReviewFileName(),patent.getReviewFileId());
             }
             String fileId=fileService.addFileByPath(file,patent.getFilePath()+"/Patent");
-            patent.setPatentFileName(file.getOriginalFilename());
-            patent.setPatentFileId(fileId);
+            patent.setReviewFileName(file.getOriginalFilename());
+            patent.setReviewFileId(fileId);
         }
         patentRepository.save(patent);
         //经过内审状态后，不可以再修改发明者名单
@@ -187,9 +187,17 @@ public class PatentService {
 
     private void setPatentFileAttribute(Patent patent,String type,String fileName,String fileId){
         switch(type){
-            case "patentFile":
-                patent.setPatentFileName(fileName);
-                patent.setPatentFileId(fileId);
+            case "reviewFile":
+                patent.setReviewFileName(fileName);
+                patent.setReviewFileId(fileId);
+                break;
+            case "submissionFile":
+                patent.setSubmissionFileName(fileName);
+                patent.setSubmissionFileId(fileId);
+                break;
+            case "commentFile":
+                patent.setCommentFileName(fileName);
+                patent.setCommentFileId(fileId);
                 break;
             case "handlingFile":
                 patent.setHandlingFileName(fileName);
@@ -207,9 +215,17 @@ public class PatentService {
     private PatentFileInfo getPatentFileInfo(Patent patent,String type){
         PatentFileInfo patentFileInfo=new PatentFileInfo();
         switch(type){
-            case "patentFile":
-                patentFileInfo.name=patent.getPatentFileName();
-                patentFileInfo.id=patent.getPatentFileId();
+            case "reviewFile":
+                patentFileInfo.name=patent.getReviewFileName();
+                patentFileInfo.id=patent.getReviewFileId();
+                break;
+            case "submissionFile":
+                patentFileInfo.name=patent.getSubmissionFileName();
+                patentFileInfo.id=patent.getSubmissionFileId();
+                break;
+            case "commentFile":
+                patentFileInfo.name=patent.getCommentFileName();
+                patentFileInfo.id=patent.getCommentFileId();
                 break;
             case "handlingFile":
                 patentFileInfo.name=patent.getHandlingFileName();

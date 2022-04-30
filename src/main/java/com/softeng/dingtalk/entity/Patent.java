@@ -39,11 +39,23 @@ public class Patent {
     //文件目录
     String filePath;
 
-    //专利文件名字
-    String patentFileName;
+    //专利内审文件名字
+    String reviewFileName;
 
-    //专利文件id
-    String patentFileId;
+    //专利内审文件id
+    String reviewFileId;
+
+    //专利提交文件名字
+    String submissionFileName;
+
+    //专利提交文件id
+    String submissionFileId;
+
+    //专利评论文件名字
+    String commentFileName;
+
+    //专利评论文件id
+    String commentFileId;
 
     //受理文件名
     String handlingFileName;

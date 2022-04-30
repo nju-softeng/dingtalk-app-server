@@ -22,7 +22,7 @@ public class PatentController {
     @Autowired
     FileService fileService;
     @PostMapping("/patent")
-    public  void addPatent(@RequestParam MultipartFile file,@RequestParam String patentVOJsonStr, @RequestAttribute int uid){
+    public  void addPatent(@RequestParam(required = false) MultipartFile file,@RequestParam String patentVOJsonStr, @RequestAttribute int uid){
         PatentVO patentVO= JSON.parseObject(patentVOJsonStr,PatentVO.class);
         patentVO.setApplicantId(uid);
         patentService.addPatent(file,patentVO);
