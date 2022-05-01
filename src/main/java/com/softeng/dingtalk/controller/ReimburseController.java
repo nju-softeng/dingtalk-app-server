@@ -17,11 +17,11 @@ public class ReimburseController {
     @Autowired
     ReimburseService reimburseService;
     @PostMapping("/reimburse")
-    public void addReimbursement(@RequestBody ReimbursementVO reimbursementVO){
+    public void addReimbursement(@RequestBody ReimbursementVO reimbursementVO,@RequestAttribute int id){
         if(reimbursementVO.getId()==null){
-            reimburseService.addReimbursement(reimbursementVO);
+            reimburseService.addReimbursement(reimbursementVO,id);
         } else {
-            reimburseService.updateReimbursement(reimbursementVO);
+            reimburseService.updateReimbursement(reimbursementVO,id);
         }
     }
 

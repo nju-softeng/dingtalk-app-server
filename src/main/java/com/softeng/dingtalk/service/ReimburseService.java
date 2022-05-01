@@ -4,6 +4,7 @@ import com.softeng.dingtalk.entity.Reimbursement;
 import com.softeng.dingtalk.entity.ReimbursementFile;
 import com.softeng.dingtalk.repository.ReimbursementFileRepository;
 import com.softeng.dingtalk.repository.ReimbursementRepository;
+import com.softeng.dingtalk.repository.UserRepository;
 import com.softeng.dingtalk.vo.ReimbursementVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +31,18 @@ public class ReimburseService {
     @Autowired
     ReimbursementFileRepository reimbursementFileRepository;
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     FileService fileService;
-    public void addReimbursement(ReimbursementVO reimbursementVO){
+    public void addReimbursement(ReimbursementVO reimbursementVO,int id){
         Reimbursement reimbursement=new Reimbursement(reimbursementVO.getName(),reimbursementVO.getType(),reimbursementVO.getPath());
+        reimbursement.setUser(userRepository.findById(id).get());
         reimbursementRepository.save(reimbursement);
     }
 
-    public void updateReimbursement(ReimbursementVO reimbursementVO){
+    public void updateReimbursement(ReimbursementVO reimbursementVO,int id){
         Reimbursement reimbursement=reimbursementRepository.findById(reimbursementVO.getId()).get();
+        reimbursement.setUser(userRepository.findById(id).get());
         reimbursement.update(reimbursementVO.getName(),reimbursementVO.getType(),reimbursement.getPath());
         reimbursementRepository.save(reimbursement);
     }

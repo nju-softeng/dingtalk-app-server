@@ -139,11 +139,11 @@ public class PatentService {
         String reason;
         if(isPass){
             signal=1;
-            reason="专利授权被驳回";
+            reason="专利授权成功";
             patent.setState(3);
         } else {
             signal=-1;
-            reason="专利授权成功";
+            reason="专利授权被驳回";
             patent.setState(4);
         }
         double sum=patentLevelRepository.getValue("patent");
