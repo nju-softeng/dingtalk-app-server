@@ -12,13 +12,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -84,5 +87,15 @@ public class ReimburseService {
             }
         }
         reimbursementRepository.delete(reimbursement);
+    }
+
+    public void downloadReimbursementFile(@PathVariable int id, HttpServletResponse response){
+        ReimbursementFile reimbursementFile=reimbursementFileRepository.findById(id).get();
+        try {
+            fileService.downloadFile(reimbursementFile.getFileName(),reimbursementFile.getFileId(),response);
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
+        }
+
     }
 }

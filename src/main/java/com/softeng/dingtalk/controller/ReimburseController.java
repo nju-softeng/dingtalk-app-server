@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Slf4j
@@ -53,6 +54,11 @@ public class ReimburseController {
     @DeleteMapping("/reimbursementFile/{id}")
     public void deleteReimbursementFile(@PathVariable int id){
         reimburseService.deleteReimbursementFile(id);
+    }
+
+    @GetMapping("/reimbursementFile/{id}")
+    public void downloadReimbursementFile(@PathVariable int id, HttpServletResponse response){
+        reimburseService.downloadReimbursementFile(id,response);
     }
 
 }
