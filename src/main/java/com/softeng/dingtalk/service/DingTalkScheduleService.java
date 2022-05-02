@@ -112,8 +112,11 @@ public class DingTalkScheduleService {
     public AbsentOA getAbsentOADetail(int id, int uid){
         DingTalkSchedule dingTalkSchedule=dingTalkScheduleRepository.findById(id).get();
         AbsentOA absentOA = absentOARepository.getAbsentOAByUserAndDingTalkSchedule(userRepository.findById(uid).get(),dingTalkSchedule);
-        absentOA.setState(oaApi.getOAOutCome(absentOA.getProcessInstanceId()));
-        absentOARepository.save(absentOA);
+        if(absentOA==null) return null;
+        if(absentOA.getProcessInstanceId()!=null){
+            absentOA.setState(oaApi.getOAOutCome(absentOA.getProcessInstanceId()));
+            absentOARepository.save(absentOA);
+        }
         return absentOA;
     }
 

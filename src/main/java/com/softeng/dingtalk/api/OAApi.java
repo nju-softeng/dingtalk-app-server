@@ -62,8 +62,8 @@ public class OAApi extends BaseApi{
 //            dayNum.setValue(absentOA.getDayNum().toString());
             OapiProcessinstanceCreateRequest.FormComponentValueVo reason = new OapiProcessinstanceCreateRequest.FormComponentValueVo();
             form.add(reason);
-            type.setName("请假缘由");
-            type.setValue(absentOA.getReason());
+            reason.setName("请假缘由");
+            reason.setValue(absentOA.getReason());
             request.setFormComponentValues(form);
             //设置审批人
             List<OapiProcessinstanceCreateRequest.ProcessInstanceApproverVo> processInstanceApproverVoList = new ArrayList<>();
