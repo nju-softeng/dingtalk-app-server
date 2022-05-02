@@ -25,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -79,10 +80,8 @@ public class DingTalkScheduleService {
 
     public List<DingTalkSchedule> getScheduleList(int uid){
         User user=userRepository.findById(uid).get();
-        DingTalkScheduleDetail dingTalkScheduleDetail=dingTalkScheduleDetailRepository.getDingTalkScheduleDetailByUserEquals(user);
-        return dingTalkScheduleRepository.getDingTalkSchedulesByDingTalkScheduleDetailListContains(
-                dingTalkScheduleDetail
-        );
+        List<DingTalkScheduleDetail> dingTalkScheduleDetailList=dingTalkScheduleDetailRepository.getDingTalkScheduleDetailsByUserEquals(user);
+        return dingTalkScheduleDetailList.stream().map(DingTalkScheduleDetail::getDingTalkSchedule).collect(Collectors.toList());
     }
 
     public void deleteSchedule(int id, int uid){
