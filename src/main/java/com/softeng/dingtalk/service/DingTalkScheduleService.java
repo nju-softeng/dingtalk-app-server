@@ -43,10 +43,10 @@ public class DingTalkScheduleService {
     DingTalkScheduleDetailRepository dingTalkScheduleDetailRepository;
     @Autowired
     AbsentOARepository absentOARepository;
-    public void addSchedule(DingTalkScheduleVO dingTalkScheduleVO){
+    public void addSchedule(DingTalkScheduleVO dingTalkScheduleVO,int uid){
         DingTalkSchedule dingTalkSchedule=new DingTalkSchedule(dingTalkScheduleVO.getSummary(),dingTalkScheduleVO.getStart(),dingTalkScheduleVO.getEnd(),
                 dingTalkScheduleVO.isOnline(),dingTalkScheduleVO.getLocation());
-        dingTalkSchedule.setOrganizer(userRepository.findById(dingTalkScheduleVO.getOrganizerId()).get());
+        dingTalkSchedule.setOrganizer(userRepository.findById(uid).get());
         dingTalkSchedule.setDingTalkScheduleDetailList(new LinkedList<>());
         for(int id:dingTalkScheduleVO.getAttendeesIdList()){
             dingTalkSchedule.getDingTalkScheduleDetailList().add(new DingTalkScheduleDetail(userRepository.findById(id).get(),dingTalkSchedule));
@@ -64,7 +64,7 @@ public class DingTalkScheduleService {
         DingTalkSchedule dingTalkSchedule=dingTalkScheduleRepository.findById(dingTalkScheduleVO.getId()).get();
         dingTalkSchedule.update(dingTalkScheduleVO.getSummary(),dingTalkScheduleVO.getStart(),dingTalkScheduleVO.getEnd(),
                 dingTalkScheduleVO.isOnline(),dingTalkScheduleVO.getLocation());
-        dingTalkSchedule.setOrganizer(userRepository.findById(dingTalkScheduleVO.getOrganizerId()).get());
+//        dingTalkSchedule.setOrganizer(userRepository.findById(dingTalkScheduleVO.getOrganizerId()).get());
         dingTalkSchedule.setDingTalkScheduleDetailList(new LinkedList<>());
         dingTalkScheduleDetailRepository.deleteAll(dingTalkSchedule.getDingTalkScheduleDetailList());
         for(int id:dingTalkScheduleVO.getAttendeesIdList()){
