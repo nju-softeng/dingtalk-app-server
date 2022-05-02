@@ -18,7 +18,7 @@ public class DingTalkScheduleController {
     @Autowired
     DingTalkScheduleService dingTalkScheduleService;
     @PostMapping("/schedule")
-    public void addSchedule(DingTalkScheduleVO dingTalkScheduleVO,@RequestAttribute int uid){
+    public void addSchedule(@RequestBody DingTalkScheduleVO dingTalkScheduleVO,@RequestAttribute int uid){
         if(dingTalkScheduleVO.getId()==null) {
             dingTalkScheduleService.addSchedule(dingTalkScheduleVO,uid);
         } else {
