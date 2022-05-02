@@ -66,8 +66,8 @@ public class ScheduleApi extends BaseApi{
                 .setDateTime(get_ISO0861_Time(dingTalkSchedule.getStart()))
                 .setTimeZone("Asia/Shanghai");
         CreateEventRequest createEventRequest = new CreateEventRequest()
-                .setSummary("test event")
-                .setDescription("something about this event")
+                .setSummary(dingTalkSchedule.getSummary())
+                .setDescription("请准时参与（由系统创建，未签到者会被扣除AC）")
                 .setStart(start)
                 .setEnd(end)
                 .setIsAllDay(false)
@@ -104,8 +104,8 @@ public class ScheduleApi extends BaseApi{
                 .setDateTime(get_ISO0861_Time(dingTalkSchedule.getStart()))
                 .setTimeZone("Asia/Shanghai");
         PatchEventRequest patchEventRequest = new PatchEventRequest()
-                .setSummary("test event")
-                .setDescription("something about this event")
+                .setSummary(dingTalkSchedule.getSummary())
+                .setDescription("请准时参与（由系统创建，未签到者会被扣除AC）")
                 .setStart(start)
                 .setEnd(end)
                 .setIsAllDay(false)
