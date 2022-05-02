@@ -122,7 +122,7 @@ public class DingTalkScheduleService {
 
     public void deleteAbsentOA(int id,int uid){
         AbsentOA absentOA=absentOARepository.findById(id).get();
-        User user=userRepository.findById(id).get();
+        User user=userRepository.findById(uid).get();
         boolean isSuccess=oaApi.deleteAbsentOA(absentOA.getProcessInstanceId(),user);
         if(!isSuccess) throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"删除失败");
         else absentOARepository.delete(absentOA);
