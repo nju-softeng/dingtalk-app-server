@@ -42,7 +42,6 @@ public class ScheduleApi extends BaseApi{
         String pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.add(Calendar.HOUR, -8);
         return DateFormatUtils.format(calendar.getTime(), pattern);
     }
 
