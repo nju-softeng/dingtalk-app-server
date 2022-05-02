@@ -37,8 +37,13 @@ public class ScheduleApi extends BaseApi{
 
     private String get_ISO0861_Time(LocalDateTime localDateTime){
         ZoneId zone = ZoneId.systemDefault();
-        ZonedDateTime zdt = localDateTime.atZone(zone); //you might use a different zone
-        return zdt.toString();
+        Instant instant = localDateTime.atZone(zone).toInstant();
+        java.util.Date date = Date.from(instant);
+        String pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.HOUR, -8);
+        return DateFormatUtils.format(calendar.getTime(), pattern);
     }
 
     public String creatSchedule(DingTalkSchedule dingTalkSchedule) throws Exception {
