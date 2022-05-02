@@ -365,7 +365,7 @@ public class SystemService {
     }
 
     public void calculateScheduleAC() {
-        List<DingTalkSchedule> dingTalkScheduleList=dingTalkScheduleRepository.getDingTalkSchedulesByIsAcCalculatedFalse();
+        List<DingTalkSchedule> dingTalkScheduleList=dingTalkScheduleRepository.getDingTalkSchedulesByAcCalculatedFalse();
         for(DingTalkSchedule dingTalkSchedule:dingTalkScheduleList){
             LocalDateTime now=LocalDateTime.now();
             if(now.compareTo(dingTalkSchedule.getEnd())>=0){

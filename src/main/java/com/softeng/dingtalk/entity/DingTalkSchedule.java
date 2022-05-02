@@ -34,8 +34,8 @@ public class DingTalkSchedule {
     String location;
     String scheduleId;
 
-    @Column(name = "isAcCalculated")
-    boolean isAcCalculated =false;
+    @Column(name = "acCalculated")
+    boolean acCalculated =false;
 
     public DingTalkSchedule(String summary, LocalDateTime start, LocalDateTime end, boolean online, String location) {
         this.summary = summary;
