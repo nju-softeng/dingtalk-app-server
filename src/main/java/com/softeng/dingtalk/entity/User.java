@@ -151,6 +151,7 @@ public class User {
      */
     private String remark;
 
+
     /**
      * 获奖情况
      */

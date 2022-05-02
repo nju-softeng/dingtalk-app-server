@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,10 +12,11 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProjectPropertyFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     String version;
     @ManyToOne
@@ -25,4 +27,8 @@ public class ProjectPropertyFile {
     String codeFileId;
     String reportFileName;
     String reportFileId;
+
+    public void update(String version){
+        this.version=version;
+    }
 }

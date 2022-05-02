@@ -3,6 +3,9 @@ package com.softeng.dingtalk.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.util.List;
@@ -38,11 +41,11 @@ public class ProcessProperty {
     @JoinColumn(name = "ppt_file_id")
     ProcessFile PPTFile;
 
-    @OneToMany(cascade={CascadeType.REMOVE,CascadeType.PERSIST})
+    @OneToMany(cascade={CascadeType.REMOVE},fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_photo_id")
     List<ProcessFile> personalPhotoFileList;
 
-    @OneToMany(cascade={CascadeType.REMOVE,CascadeType.PERSIST})
+    @OneToMany(cascade={CascadeType.REMOVE},fetch = FetchType.LAZY)
     @JoinColumn(name = "conference_photo_id")
     List<ProcessFile> conferencePhotoFileList;
 

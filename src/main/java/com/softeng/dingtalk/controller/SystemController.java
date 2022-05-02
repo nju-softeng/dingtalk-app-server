@@ -1,6 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.entity.PaperLevel;
+import com.softeng.dingtalk.entity.PatentLevel;
 import com.softeng.dingtalk.entity.SubsidyLevel;
 import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.service.SystemService;
@@ -81,7 +82,23 @@ public class SystemController {
         return systemService.listPaperLevel();
     }
 
+    /**
+     * 查询所有的专利AC标准
+     * @return List<PatentLevel>
+     */
+    @GetMapping("/system/patentLevel")
+    public List<PatentLevel> listPatentLevel() {
+        return systemService.listPatentLevel();
+    }
 
+    /**
+     * 更新专利AC标准
+     * @param patentLevels
+     */
+    @PostMapping("/system/patentLevel")
+    public void updatePatentLevel(@RequestBody List<PatentLevel> patentLevels) {
+        systemService.updatePatentLevel(patentLevels);
+    }
     /**
      * 更新论文绩效标准
      * @param paperLevels

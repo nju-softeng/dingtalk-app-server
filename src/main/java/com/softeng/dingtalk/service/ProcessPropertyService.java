@@ -42,8 +42,12 @@ public class ProcessPropertyService {
     FileService fileService;
     public void addProcessProperty(MultipartFile file, ProcessPropertyVO processPropertyVO,int uid){
         //1.保存文件
-        String fileId=fileService.addFileByPath(file,processPropertyVO.getFilePath()+"/PPT");
-        ProcessFile processFile=new ProcessFile(file.getOriginalFilename(),"PPT",fileId);
+        String fileId;
+        ProcessFile processFile=null;
+        if(file!=null){
+            fileId=fileService.addFileByPath(file,processPropertyVO.getFilePath()+"/PPT");
+            processFile=new ProcessFile(file.getOriginalFilename(),"PPT",fileId);
+        }
         //2.保存记录信息
         ProcessProperty processProperty=new ProcessProperty(processPropertyVO.getConferenceName(),processPropertyVO.getYear(),
                 processPropertyVO.getFilePath(),userRepository.findById(uid).get());
@@ -53,8 +57,7 @@ public class ProcessPropertyService {
     public Map<String, Object> getProcessProperty(int page, int size){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
         Page<ProcessProperty> processProperties=processPropertyRepository.findAll(pageable);
-        List<ProcessPropertyVO> infoList=processProperties.stream().map(processProperty -> new ProcessPropertyVO(processProperty.getId(),
-                processProperty.getConferenceName(),processProperty.getYear(),null)).collect(Collectors.toList());
+        List<ProcessProperty> infoList=processProperties.toList();
         return Map.of("list",infoList,"total",processProperties.getTotalElements());
     }
     public void updateProcessProperty(ProcessPropertyVO processPropertyVO){
@@ -65,6 +68,8 @@ public class ProcessPropertyService {
 
     public ProcessPropertyDetailVO getProcessPropertyDetail(int id){
         ProcessProperty pp=processPropertyRepository.findById(id).get();
+        log.info(String.valueOf(pp.getConferencePhotoFileList().size()));
+        log.info(String.valueOf(pp.getPersonalPhotoFileList()));
         return new ProcessPropertyDetailVO(pp.getId(),pp.getConferenceName(),pp.getYear(),pp.getFilePath(),pp.getUser(),
                 pp.getInvitationFile(),pp.getPPTFile(),pp.getPersonalPhotoFileList(),pp.getConferencePhotoFileList());
     }
@@ -83,6 +88,7 @@ public class ProcessPropertyService {
         String fileName=file.getOriginalFilename();
         String fileId=fileService.addFileByPath(file,pp.getFilePath()+"/"+getFileTypeFolderName(fileType));
         ProcessFile processFile=new ProcessFile(fileName,fileType,fileId);
+        processFile.setProcessProperty(pp);
         List<ProcessFile> processFileList=null;
         switch (fileType){
             case"invitationFile":
@@ -97,6 +103,7 @@ public class ProcessPropertyService {
                     processFileList=new LinkedList<ProcessFile>();
                 }
                 processFileList.add(processFile);
+                processFileRepository.save(processFile);
                 pp.setPersonalPhotoFileList(processFileList);
                 break;
             case "conferencePhotoFile":
@@ -105,6 +112,7 @@ public class ProcessPropertyService {
                     processFileList=new LinkedList<ProcessFile>();
                 }
                 processFileList.add(processFile);
+                processFileRepository.save(processFile);
                 pp.setConferencePhotoFileList(processFileList);
                 break;
         }

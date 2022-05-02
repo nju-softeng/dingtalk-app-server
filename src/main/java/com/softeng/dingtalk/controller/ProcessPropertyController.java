@@ -19,8 +19,8 @@ public class ProcessPropertyController {
     @Autowired
     ProcessPropertyService processPropertyService;
     @PostMapping("/process")
-    public void addProcessProperty(@RequestParam(value = "file") MultipartFile file,
-                                   @RequestParam(value = "dissertationVOJsonStr") String ProcessPropertyVOJsonStr,
+    public void addProcessProperty(@RequestParam(value = "file", required = false) MultipartFile file,
+                                   @RequestParam(value = "processPropertyVOJsonStr") String ProcessPropertyVOJsonStr,
                                     @RequestAttribute int uid){
         ProcessPropertyVO processPropertyVO= JSONObject.parseObject(ProcessPropertyVOJsonStr,ProcessPropertyVO.class);
         if(processPropertyVO.getId()==null){

@@ -1,5 +1,8 @@
 package com.softeng.dingtalk.vo;
 
-public class ProjectPropertyFileVO {
+import lombok.Data;
 
+@Data
+public class ProjectPropertyFileVO {
+    String version;
 }

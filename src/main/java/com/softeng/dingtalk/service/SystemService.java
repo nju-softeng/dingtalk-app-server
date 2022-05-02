@@ -6,10 +6,7 @@ import com.softeng.dingtalk.api.MessageApi;
 import com.softeng.dingtalk.api.ReportApi;
 import com.softeng.dingtalk.component.AcAlgorithm;
 import com.softeng.dingtalk.constant.LocalUrlConstant;
-import com.softeng.dingtalk.entity.AcRecord;
-import com.softeng.dingtalk.entity.PaperLevel;
-import com.softeng.dingtalk.entity.SubsidyLevel;
-import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +65,8 @@ public class SystemService {
     WeeklyReportService weeklyReportService;
     @Autowired
     AcRecordRepository acRecordRepository;
+    @Autowired
+    PatentLevelRepository patentLevelRepository;
 
 
     /**
@@ -232,6 +231,14 @@ public class SystemService {
         return paperLevelRepository.findAll();
     }
 
+    /**
+     * 查询专利AC标准
+     * @return
+     */
+    public List<PatentLevel> listPatentLevel() {
+        return patentLevelRepository.findAll();
+    }
+
 
     /**
      * 更新论文AC标准
@@ -240,6 +247,16 @@ public class SystemService {
     public void updatePaperLevel(List <PaperLevel> paperLevels) {
         for (PaperLevel pl : paperLevels) {
             paperLevelRepository.updatePaperLevel(pl.getPaperType(), pl.getTotal());
+        }
+    }
+
+    /**
+     * 更新专利AC标准
+     * @param patentLevels
+     */
+    public void updatePatentLevel(List <PatentLevel> patentLevels) {
+        for (PatentLevel pl : patentLevels) {
+            patentLevelRepository.updatePatentLevel(pl.getTitle(), pl.getTotal());
         }
     }
 
