@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -32,8 +33,8 @@ public class DingTalkScheduleController {
     }
 
     @GetMapping("/schedule/page/{page}/{size}")
-    public List<DingTalkSchedule> getScheduleList(@PathVariable int page, @PathVariable int size, @RequestAttribute int uid){
-        return dingTalkScheduleService.getScheduleList(uid);
+    public Map<String, Object> getScheduleList(@PathVariable int page, @PathVariable int size, @RequestAttribute int uid){
+        return dingTalkScheduleService.getScheduleList(page,size,uid);
     }
 
     @PostMapping("/schedule/{id}/absentOA")

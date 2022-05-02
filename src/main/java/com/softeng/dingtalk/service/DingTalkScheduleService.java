@@ -2,10 +2,7 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.api.OAApi;
 import com.softeng.dingtalk.api.ScheduleApi;
-import com.softeng.dingtalk.entity.AbsentOA;
-import com.softeng.dingtalk.entity.DingTalkSchedule;
-import com.softeng.dingtalk.entity.DingTalkScheduleDetail;
-import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.repository.AbsentOARepository;
 import com.softeng.dingtalk.repository.DingTalkScheduleDetailRepository;
 import com.softeng.dingtalk.repository.DingTalkScheduleRepository;
@@ -14,6 +11,10 @@ import com.softeng.dingtalk.vo.AbsentOAVO;
 import com.softeng.dingtalk.vo.DingTalkScheduleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,10 +80,12 @@ public class DingTalkScheduleService {
         }
     }
 
-    public List<DingTalkSchedule> getScheduleList(int uid){
+    public Map<String,Object> getScheduleList(int page, int size, int uid){
+        Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
         User user=userRepository.findById(uid).get();
-        List<DingTalkScheduleDetail> dingTalkScheduleDetailList=dingTalkScheduleDetailRepository.getDingTalkScheduleDetailsByUserEquals(user);
-        return dingTalkScheduleDetailList.stream().map(DingTalkScheduleDetail::getDingTalkSchedule).collect(Collectors.toList());
+        Page<DingTalkScheduleDetail> dingTalkScheduleDetails=dingTalkScheduleDetailRepository.getDingTalkScheduleDetailsByUserEquals(user,pageable);
+        List<DingTalkSchedule> dingTalkScheduleList=dingTalkScheduleDetails.toList().stream().map(DingTalkScheduleDetail::getDingTalkSchedule).collect(Collectors.toList());
+        return Map.of("list",dingTalkScheduleList,"total",dingTalkScheduleDetails.getTotalElements());
     }
 
     public void deleteSchedule(int id, int uid){
