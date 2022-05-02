@@ -14,6 +14,6 @@ public class DingTalkScheduleVO {
     String summary;
     LocalDateTime start;
     LocalDateTime end;
-    boolean isOnline;
+    boolean online;
     String location;
 }

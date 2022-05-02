@@ -6,7 +6,6 @@ import com.aliyun.tea.TeaPair;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyun.teautil.models.RuntimeOptions;
 import com.softeng.dingtalk.entity.DingTalkSchedule;
-import com.softeng.dingtalk.repository.UserRepository;
 import com.softeng.dingtalk.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;

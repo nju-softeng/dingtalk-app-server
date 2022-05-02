@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,25 +30,25 @@ public class DingTalkSchedule {
     String summary;
     LocalDateTime start;
     LocalDateTime end;
-    boolean isOnline;
+    boolean online;
     String location;
     String scheduleId;
 
     @Column(name = "isAcCalculated")
     boolean isAcCalculated =false;
 
-    public DingTalkSchedule(String summary, LocalDateTime start, LocalDateTime end, boolean isOnline, String location) {
+    public DingTalkSchedule(String summary, LocalDateTime start, LocalDateTime end, boolean online, String location) {
         this.summary = summary;
         this.start = start;
         this.end = end;
-        this.isOnline = isOnline;
+        this.online = online;
         this.location = location;
     }
-    public void update(String summary, LocalDateTime start, LocalDateTime end, boolean isOnline, String location) {
+    public void update(String summary, LocalDateTime start, LocalDateTime end, boolean online, String location) {
         this.summary = summary;
         this.start = start;
         this.end = end;
-        this.isOnline = isOnline;
+        this.online = online;
         this.location = location;
     }
 }
