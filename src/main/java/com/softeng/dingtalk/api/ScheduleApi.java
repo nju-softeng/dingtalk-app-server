@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.*;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,7 +72,8 @@ public class ScheduleApi extends BaseApi{
                 .setLocation(location)
                 .setExtra(extra)
                 .setAttendees(dingTalkSchedule.getDingTalkScheduleDetailList().stream().map(detail -> new CreateEventRequest.CreateEventRequestAttendees()
-                        .setId(userService.getUserUnionId(detail.getUser().getId()))).collect(Collectors.toList()));
+                        .setId(userService.getUserUnionId(detail.getUser().getId()))).collect(Collectors.toList()))
+                .setReminders(Collections.singletonList(reminder));
         if(dingTalkSchedule.isOnline()){
             createEventRequest.setOnlineMeetingInfo(onlineMeetingInfo);
         }
@@ -103,13 +105,15 @@ public class ScheduleApi extends BaseApi{
         PatchEventRequest patchEventRequest = new PatchEventRequest()
                 .setSummary(dingTalkSchedule.getSummary())
                 .setDescription("请准时参与（由系统创建，未签到者会被扣除AC）")
+                .setId(dingTalkSchedule.getScheduleId())
                 .setStart(start)
                 .setEnd(end)
                 .setIsAllDay(false)
                 .setLocation(location)
                 .setExtra(extra)
                 .setAttendees(dingTalkSchedule.getDingTalkScheduleDetailList().stream().map(detail -> new PatchEventRequest.PatchEventRequestAttendees()
-                        .setId(userService.getUserUnionId(detail.getUser().getId()))).collect(Collectors.toList()));
+                        .setId(userService.getUserUnionId(detail.getUser().getId()))).collect(Collectors.toList()))
+                .setReminders(Collections.singletonList(reminder));
         try {
             client.patchEventWithOptions(userService.getUserUnionId(dingTalkSchedule.getOrganizer().getId()),
                     "primary",

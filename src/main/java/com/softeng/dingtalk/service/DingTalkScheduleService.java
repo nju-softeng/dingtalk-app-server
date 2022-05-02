@@ -63,8 +63,8 @@ public class DingTalkScheduleService {
         dingTalkSchedule.update(dingTalkScheduleVO.getSummary(),dingTalkScheduleVO.getStart(),dingTalkScheduleVO.getEnd(),
                 dingTalkScheduleVO.isOnline(),dingTalkScheduleVO.getLocation());
 //        dingTalkSchedule.setOrganizer(userRepository.findById(dingTalkScheduleVO.getOrganizerId()).get());
-        dingTalkSchedule.setDingTalkScheduleDetailList(new LinkedList<>());
         dingTalkScheduleDetailRepository.deleteAll(dingTalkSchedule.getDingTalkScheduleDetailList());
+        dingTalkSchedule.setDingTalkScheduleDetailList(new LinkedList<>());
         for(int id:dingTalkScheduleVO.getAttendeesIdList()){
             dingTalkSchedule.getDingTalkScheduleDetailList().add(new DingTalkScheduleDetail(userRepository.findById(id).get(),dingTalkSchedule));
         }
