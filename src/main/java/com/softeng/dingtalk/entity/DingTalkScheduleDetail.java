@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class DingTalkScheduleDetail {
     AcRecord acRecord;
 
     @ManyToOne
+    @JsonIgnore
     DingTalkSchedule dingTalkSchedule;
 
     public DingTalkScheduleDetail(User user, DingTalkSchedule dingTalkSchedule) {
