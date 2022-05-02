@@ -15,9 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Calendar;
@@ -37,15 +35,10 @@ public class ScheduleApi extends BaseApi{
         return new com.aliyun.dingtalkcalendar_1_0.Client(config);
     }
 
-    private String get_ISO0861_Time(LocalDate localDate){
+    private String get_ISO0861_Time(LocalDateTime localDateTime){
         ZoneId zone = ZoneId.systemDefault();
-        Instant instant = localDate.atStartOfDay().atZone(zone).toInstant();
-        java.util.Date date = Date.from(instant);
-        String pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.HOUR, -8);
-        return DateFormatUtils.format(calendar.getTime(), pattern);
+        ZonedDateTime zdt = localDateTime.atZone(zone); //you might use a different zone
+        return zdt.toString();
     }
 
     public String creatSchedule(DingTalkSchedule dingTalkSchedule) throws Exception {

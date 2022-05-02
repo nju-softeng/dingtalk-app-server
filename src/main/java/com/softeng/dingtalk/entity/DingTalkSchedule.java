@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -24,12 +25,12 @@ public class DingTalkSchedule {
     @OneToMany(mappedBy = "dingTalkSchedule",cascade = {CascadeType.REMOVE})
     List<AbsentOA> absentOAList;
 
-    @OneToMany(mappedBy = "dingTalkSchedule",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "dingTalkSchedule",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<DingTalkScheduleDetail> dingTalkScheduleDetailList;
     //标题
     String summary;
-    LocalDate start;
-    LocalDate end;
+    LocalDateTime start;
+    LocalDateTime end;
     boolean isOnline;
     String location;
     String scheduleId;
@@ -37,14 +38,14 @@ public class DingTalkSchedule {
     @Column(name = "isAcCalculated")
     boolean isAcCalculated =false;
 
-    public DingTalkSchedule(String summary, LocalDate start, LocalDate end, boolean isOnline, String location) {
+    public DingTalkSchedule(String summary, LocalDateTime start, LocalDateTime end, boolean isOnline, String location) {
         this.summary = summary;
         this.start = start;
         this.end = end;
         this.isOnline = isOnline;
         this.location = location;
     }
-    public void update(String summary, LocalDate start, LocalDate end, boolean isOnline, String location) {
+    public void update(String summary, LocalDateTime start, LocalDateTime end, boolean isOnline, String location) {
         this.summary = summary;
         this.start = start;
         this.end = end;

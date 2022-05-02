@@ -367,7 +367,7 @@ public class SystemService {
     public void calculateScheduleAC() {
         List<DingTalkSchedule> dingTalkScheduleList=dingTalkScheduleRepository.getDingTalkSchedulesByIsAcCalculatedFalse();
         for(DingTalkSchedule dingTalkSchedule:dingTalkScheduleList){
-            LocalDate now=LocalDate.now();
+            LocalDateTime now=LocalDateTime.now();
             if(now.compareTo(dingTalkSchedule.getEnd())>=0){
                 //获取改日程请假列表，并获取oa通过的同学的列表
                 List<String> osNotPassUserIdList=new LinkedList<>();
