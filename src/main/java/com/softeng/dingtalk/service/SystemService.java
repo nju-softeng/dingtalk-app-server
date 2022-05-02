@@ -372,7 +372,7 @@ public class SystemService {
                 //获取改日程请假列表，并获取oa通过的同学的列表
                 List<String> osNotPassUserIdList=new LinkedList<>();
                 dingTalkSchedule.getAbsentOAList().forEach(absentOA -> {
-                    absentOA.setPass(oaApi.getOAOutCome(absentOA.getProcessInstanceId()));
+                    absentOA.setPass(oaApi.getOAOutCome(absentOA.getProcessInstanceId())==1);
                     if(!absentOA.isPass()) osNotPassUserIdList.add(absentOA.getUser().getUserid());
                 });
                 //获取需要扣分的userId

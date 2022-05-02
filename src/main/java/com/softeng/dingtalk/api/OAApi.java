@@ -50,16 +50,16 @@ public class OAApi extends BaseApi{
             type.setValue(absentOA.getType());
             OapiProcessinstanceCreateRequest.FormComponentValueVo start = new OapiProcessinstanceCreateRequest.FormComponentValueVo();
             form.add(start);
-            type.setName("开始时间");
-            type.setValue(absentOA.getStart().toString());
+            start.setName("开始时间");
+            start.setValue(absentOA.getDingTalkSchedule().getStart().toString());
             OapiProcessinstanceCreateRequest.FormComponentValueVo end = new OapiProcessinstanceCreateRequest.FormComponentValueVo();
             form.add(end);
-            type.setName("结束时间");
-            type.setValue(absentOA.getEnd().toString());
-            OapiProcessinstanceCreateRequest.FormComponentValueVo dayNum = new OapiProcessinstanceCreateRequest.FormComponentValueVo();
-            form.add(dayNum);
-            type.setName("结束时间");
-            type.setValue(absentOA.getDayNum().toString());
+            end.setName("结束时间");
+            end.setValue(absentOA.getDingTalkSchedule().getEnd().toString());
+//            OapiProcessinstanceCreateRequest.FormComponentValueVo dayNum = new OapiProcessinstanceCreateRequest.FormComponentValueVo();
+//            form.add(dayNum);
+//            dayNum.setName("结束时间");
+//            dayNum.setValue(absentOA.getDayNum().toString());
             OapiProcessinstanceCreateRequest.FormComponentValueVo reason = new OapiProcessinstanceCreateRequest.FormComponentValueVo();
             form.add(reason);
             type.setName("请假缘由");
@@ -76,14 +76,16 @@ public class OAApi extends BaseApi{
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
         }
     }
-    public boolean getOAOutCome(String processInstanceId) {
+    public int getOAOutCome(String processInstanceId) {
         try {
             DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/processinstance/get");
             OapiProcessinstanceGetRequest req = new OapiProcessinstanceGetRequest();
             req.setProcessInstanceId(processInstanceId);
             OapiProcessinstanceGetResponse rsp = client.execute(req, getAccessToken());
-            if(rsp.getProcessInstance().getStatus()=="COMPLETED" && rsp.getProcessInstance().getResult()=="agree") return true;
-            return false;
+            if(rsp.getProcessInstance().getStatus()=="COMPLETED"){
+                if(rsp.getProcessInstance().getResult()=="agree")return 1;
+                else return 0;
+            } else return -1;
         } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
         }

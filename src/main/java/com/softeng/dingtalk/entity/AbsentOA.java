@@ -35,6 +35,8 @@ public class AbsentOA {
     Double dayNum;
     //请假缘由
     String reason;
+    // -1待定,0拒绝,1通过
+    int state=-1;
     //是否通过
     boolean isPass=false;
     //请求Id
