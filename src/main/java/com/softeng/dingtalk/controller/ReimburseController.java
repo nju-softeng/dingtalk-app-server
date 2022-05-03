@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.Map;
 
 @Slf4j
@@ -18,11 +20,13 @@ public class ReimburseController {
     @Autowired
     ReimburseService reimburseService;
     @PostMapping("/reimburse")
+
     public void addReimbursement(@RequestBody ReimbursementVO reimbursementVO,@RequestAttribute int uid){
         if(reimbursementVO.getId()==null){
             reimburseService.addReimbursement(reimbursementVO,uid);
         } else {
             reimburseService.updateReimbursement(reimbursementVO,uid);
+
         }
     }
 

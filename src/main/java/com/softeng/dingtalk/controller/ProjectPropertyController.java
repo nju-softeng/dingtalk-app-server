@@ -59,8 +59,10 @@ public class ProjectPropertyController {
     }
 
     @PostMapping("/projectPropertyFile/{id}/fileType/{type}")
+
     public String addProjectPropertyFile(@RequestParam MultipartFile file,@PathVariable int id,@PathVariable String type){
         return projectPropertyService.addProjectPropertyFile(file,id,type);
+
     }
 
     @DeleteMapping("/projectPropertyFile/{id}/fileType/{type}")

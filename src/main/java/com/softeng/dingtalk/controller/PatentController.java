@@ -22,6 +22,7 @@ public class PatentController {
     @Autowired
     FileService fileService;
     @PostMapping("/patent")
+
     public  void addPatent(@RequestParam(required = false) MultipartFile file,@RequestParam String patentVOJsonStr, @RequestAttribute int uid){
         PatentVO patentVO= JSON.parseObject(patentVOJsonStr,PatentVO.class);
         patentVO.setApplicantId(uid);
@@ -50,6 +51,7 @@ public class PatentController {
     @PutMapping("/patent/{id}/authorizationState/{isPass}")
     public void decideAuthorization(@PathVariable int id,@PathVariable boolean isPass,@RequestAttribute int uid){
         patentService.decideAuthorization(id,isPass,uid);
+
     }
 
     @PostMapping("/patent/{id}/patentFile/fileType/{type}")

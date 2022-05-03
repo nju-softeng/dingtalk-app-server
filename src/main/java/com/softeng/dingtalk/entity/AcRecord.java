@@ -27,6 +27,7 @@ public class AcRecord {
     public static final int Patent = 5;
     public static final int DingTalkSchedule = 6;
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

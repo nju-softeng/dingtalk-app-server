@@ -29,6 +29,7 @@ public class Patent {
 
 
     //发明人
+
     @OneToMany(mappedBy = "patent",cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     List<PatentDetail> patentDetailList;
 
@@ -37,11 +38,13 @@ public class Patent {
     //类型
     String type;
 
+
     //版本
     String version;
 
     //文件目录
     String filePath;
+
 
     //专利内审文件名字
     String reviewFileName;
@@ -75,6 +78,7 @@ public class Patent {
 
     //状态： 0待内审，1内审不通过，2内审通过，3专利授权，4专利驳回
     int state=0;
+
 
     public Patent(String name, String year,String type,String version, String obligee, String filePath) {
         this.year=year;
