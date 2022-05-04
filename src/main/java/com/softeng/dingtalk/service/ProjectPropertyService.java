@@ -52,9 +52,7 @@ public class ProjectPropertyService {
     public Map<String, Object> getProjectPropertyList(int page, int size){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
         Page<ProjectProperty> projectProperties=projectPropertyRepository.findAll(pageable);
-        List<ProjectPropertyVO> projectPropertyList=projectProperties.stream().map(projectProperty -> new ProjectPropertyVO(projectProperty.getId(),
-                projectProperty.getName(),projectProperty.getPath())).collect(Collectors.toList());
-        return Map.of("list",projectPropertyList,"total",projectProperties.getTotalElements());
+        return Map.of("list",projectProperties.toList(),"total",projectProperties.getTotalElements());
     }
 
     public void addProjectPropertyVersion(MultipartFile codeFile, MultipartFile reportFile,
@@ -70,7 +68,7 @@ public class ProjectPropertyService {
     public ProjectProperty getProjectPropertyDetail(int id){
         return projectPropertyRepository.findById(id).get();
     }
-    public void addProjectPropertyFile(MultipartFile file,int id,String type){
+    public String addProjectPropertyFile(MultipartFile file,int id,String type){
         ProjectPropertyFile projectPropertyFile=projectPropertyFileRepository.findById(id).get();
         String fileId=fileService.addFileByPath(file,projectPropertyFile.getProjectProperty().getPath()+"/"+
                 projectPropertyFile.getVersion()+"/"+getFileTypeFolderName(type));
@@ -91,6 +89,7 @@ public class ProjectPropertyService {
                 break;
         }
         projectPropertyFileRepository.save(projectPropertyFile);
+        return fileId;
     }
 
     public void deleteProjectPropertyFile(int id,String type){
@@ -133,6 +132,7 @@ public class ProjectPropertyService {
         projectPropertyFileRepository.save(projectPropertyFile);
     }
 
+  
     public void deleteProjectPropertyVersion(int id){
         ProjectPropertyFile projectPropertyFile=projectPropertyFileRepository.findById(id).get();
         if(projectPropertyFile.getCodeFileId()!=null) fileService.deleteFileByPath(projectPropertyFile.getCodeFileName(),

@@ -4,6 +4,7 @@ import com.softeng.dingtalk.entity.Reimbursement;
 import com.softeng.dingtalk.entity.ReimbursementFile;
 import com.softeng.dingtalk.repository.ReimbursementFileRepository;
 import com.softeng.dingtalk.repository.ReimbursementRepository;
+import com.softeng.dingtalk.repository.UserRepository;
 import com.softeng.dingtalk.vo.ReimbursementVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.web.server.ResponseStatusException;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -30,14 +33,18 @@ public class ReimburseService {
     @Autowired
     ReimbursementFileRepository reimbursementFileRepository;
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     FileService fileService;
-    public void addReimbursement(ReimbursementVO reimbursementVO){
+    public void addReimbursement(ReimbursementVO reimbursementVO,int id){
         Reimbursement reimbursement=new Reimbursement(reimbursementVO.getName(),reimbursementVO.getType(),reimbursementVO.getPath());
+        reimbursement.setUser(userRepository.findById(id).get());
         reimbursementRepository.save(reimbursement);
     }
 
-    public void updateReimbursement(ReimbursementVO reimbursementVO){
+    public void updateReimbursement(ReimbursementVO reimbursementVO,int id){
         Reimbursement reimbursement=reimbursementRepository.findById(reimbursementVO.getId()).get();
+        reimbursement.setUser(userRepository.findById(id).get());
         reimbursement.update(reimbursementVO.getName(),reimbursementVO.getType(),reimbursement.getPath());
         reimbursementRepository.save(reimbursement);
     }
@@ -79,5 +86,15 @@ public class ReimburseService {
             }
         }
         reimbursementRepository.delete(reimbursement);
+    }
+
+    public void downloadReimbursementFile(@PathVariable int id, HttpServletResponse response){
+        ReimbursementFile reimbursementFile=reimbursementFileRepository.findById(id).get();
+        try {
+            fileService.downloadFile(reimbursementFile.getFileName(),reimbursementFile.getFileId(),response);
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
+        }
+
     }
 }

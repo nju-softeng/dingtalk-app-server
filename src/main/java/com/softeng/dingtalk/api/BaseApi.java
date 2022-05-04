@@ -90,7 +90,7 @@ public class BaseApi {
      * @return Client
      * @throws Exception
      */
-    private com.aliyun.dingtalkdrive_1_0.Client createClient() throws Exception {
+    public com.aliyun.dingtalkdrive_1_0.Client createClient() throws Exception {
         Config config = new Config();
         config.protocol = "https";
         config.regionId = "central";

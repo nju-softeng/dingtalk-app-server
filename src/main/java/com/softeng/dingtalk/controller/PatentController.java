@@ -22,9 +22,10 @@ public class PatentController {
     @Autowired
     FileService fileService;
     @PostMapping("/patent")
-    public  void addPatent(@RequestParam MultipartFile file,@RequestParam String patentVOJsonStr, @RequestAttribute int id){
+
+    public  void addPatent(@RequestParam(required = false) MultipartFile file,@RequestParam String patentVOJsonStr, @RequestAttribute int uid){
         PatentVO patentVO= JSON.parseObject(patentVOJsonStr,PatentVO.class);
-        patentVO.setApplicantId(id);
+        patentVO.setApplicantId(uid);
         patentService.addPatent(file,patentVO);
     }
     @GetMapping("/patent/page/{page}/{size}")
@@ -43,13 +44,14 @@ public class PatentController {
     }
 
     @PutMapping("/patent/{id}/auditState/{isPass}")
-    public void decideAudit(@PathVariable int id,@PathVariable boolean isPass,@RequestAttribute int auditId){
-        patentService.decideAudit(id,isPass,auditId);
+    public void decideAudit(@PathVariable int id,@PathVariable boolean isPass,@RequestAttribute int uid){
+        patentService.decideAudit(id,isPass,uid);
     }
 
     @PutMapping("/patent/{id}/authorizationState/{isPass}")
-    public void decideAuthorization(@PathVariable int id,@PathVariable boolean isPass,@RequestAttribute int auditId){
-        patentService.decideAuthorization(id,isPass,auditId);
+    public void decideAuthorization(@PathVariable int id,@PathVariable boolean isPass,@RequestAttribute int uid){
+        patentService.decideAuthorization(id,isPass,uid);
+
     }
 
     @PostMapping("/patent/{id}/patentFile/fileType/{type}")
