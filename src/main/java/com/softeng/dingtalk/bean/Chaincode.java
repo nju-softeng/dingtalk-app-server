@@ -6,7 +6,7 @@ package com.softeng.dingtalk.bean;
  * @Data 03/03/2022
  */
 public class Chaincode {
-    private String channelName; //当前智能合约所述频道名
+    private String channelName; //当前智能合约所属频道名
     private String chaincodeName; //智能合约名
     private String chaincodePath; //智能合约安装路径
     private String chaincodeVersion; //版本号
@@ -45,11 +45,11 @@ public class Chaincode {
         this.chaincodeVersion = chaincodeVersion;
     }
 
-    public int getInvokeWatiTime() {
+    public int getInvokeWaitTime() {
         return invokeWaitTime;
     }
 
-    public void setInvokeWatiTime(int invokeWatiTime) {
+    public void setInvokeWaitTime(int invokeWatiTime) {
         this.invokeWaitTime = invokeWatiTime;
     }
 
