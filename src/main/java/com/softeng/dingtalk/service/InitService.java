@@ -2,13 +2,11 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.DcSummary;
 import com.softeng.dingtalk.entity.PaperLevel;
+import com.softeng.dingtalk.entity.PatentLevel;
 import com.softeng.dingtalk.entity.SubsidyLevel;
 import com.softeng.dingtalk.enums.PaperType;
 import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.DcSummaryRepository;
-import com.softeng.dingtalk.repository.PaperLevelRepository;
-import com.softeng.dingtalk.repository.SubsidyLevelRepository;
-import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +37,8 @@ public class InitService {
     DcSummaryRepository dcSummaryRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    PatentLevelRepository patentLevelRepository;
 
     /**
      * 初始化论文级别信息
@@ -94,6 +94,15 @@ public class InitService {
                 .map(id -> new DcSummary(id, yearmonth))
                 .collect(Collectors.toList())
         );
+    }
+
+    public void initPatentLevel(){
+        if(patentLevelRepository.count()==0){
+            PatentLevel patentLevel=new PatentLevel();
+            patentLevel.setTitle("patent");
+            patentLevel.setTotal(40);
+            patentLevelRepository.save(patentLevel);
+        }
     }
 
 

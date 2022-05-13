@@ -1,5 +1,4 @@
 package com.softeng.dingtalk.vo;
-
 import com.softeng.dingtalk.entity.User;
 import lombok.Data;
 
