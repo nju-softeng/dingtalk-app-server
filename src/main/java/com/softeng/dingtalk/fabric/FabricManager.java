@@ -17,6 +17,8 @@ import com.softeng.dingtalk.bean.Chaincode;
 import com.softeng.dingtalk.bean.Orderers;
 import com.softeng.dingtalk.bean.Peers;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 public class FabricManager {
@@ -25,16 +27,20 @@ public class FabricManager {
 
     private static FabricManager instance = null;
 
-    public static FabricManager obtain()
-            throws CryptoException, InvalidArgumentException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, TransactionException, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-        if (null == instance) {
-            synchronized (FabricManager.class) {
-                if (null == instance) {
-                    instance = new FabricManager();
+    public static FabricManager obtain(){
+        try{
+            if (null == instance) {
+                synchronized (FabricManager.class) {
+                    if (null == instance) {
+                        instance = new FabricManager();
+                    }
                 }
             }
+            return instance;
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
         }
-        return instance;
+
     }
 
     private FabricManager()
