@@ -33,6 +33,8 @@ public class ACBlockchainAspect {
     @Autowired
     AcRecordRepository acRecordRepository;
     boolean isCreate=false;
+    //FabricManager manager=FabricManager.obtain();
+    public static List timeCostList=new ArrayList<>();
     @Pointcut("execution(* com.softeng.dingtalk.repository.AcRecordRepository.save(..))")
     public void saveRecord(){
     }
@@ -41,8 +43,7 @@ public class ACBlockchainAspect {
     public void deleteRecord(){
     }
 
-    FabricManager manager=FabricManager.obtain();
-    public static List timeCostList=new ArrayList<>();
+
     @Before("saveRecord()")
     public void beforeAction(JoinPoint point){
         AcRecord param=(AcRecord) point.getArgs()[0];
