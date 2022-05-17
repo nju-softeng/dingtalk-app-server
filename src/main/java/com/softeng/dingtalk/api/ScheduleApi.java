@@ -144,7 +144,7 @@ public class ScheduleApi extends BaseApi{
         try {
             com.aliyun.dingtalkcalendar_1_0.Client client = createCalenderClient();
             GetSignInListHeaders getSignInListHeaders = new GetSignInListHeaders();
-            getSignInListHeaders.xAcsDingtalkAccessToken = "<your access token>";
+            getSignInListHeaders.xAcsDingtalkAccessToken = getAccessToken();
             GetSignInListRequest getSignInListRequest = new GetSignInListRequest()
                     .setMaxResults(500L)
                     .setType("not_yet_sign_in");
