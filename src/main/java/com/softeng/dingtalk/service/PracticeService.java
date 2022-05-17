@@ -43,6 +43,7 @@ public class PracticeService {
         }
         Practice practice=practiceRepository.findById(practiceVO.getId()).get();
         practice.update(practiceVO.getCompanyName(),practiceVO.getDepartment(),practiceVO.getStart(),practiceVO.getEnd(),practiceVO.getState());
+        practiceRepository.save(practice);
     }
 
 //    public void audit(int id, int uid, boolean isPass){
