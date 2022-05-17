@@ -1,10 +1,13 @@
 package com.softeng.dingtalk.controller;
 
+import com.softeng.dingtalk.entity.Practice;
 import com.softeng.dingtalk.service.PracticeService;
 import com.softeng.dingtalk.vo.PracticeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -21,8 +24,8 @@ public class PracticeController {
         }
     }
     @GetMapping("/practice")
-    public void getPracticeList(@RequestAttribute int uid){
-        practiceService.getPracticeList(uid);
+    public List<Practice> getPracticeList(@RequestAttribute int uid){
+        return practiceService.getPracticeList(uid);
     }
 
 
