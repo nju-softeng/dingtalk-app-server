@@ -1,17 +1,15 @@
 package com.softeng.dingtalk.service;
 
 import com.dingtalk.api.response.OapiUserGetResponse;
-import com.softeng.dingtalk.api.ContactsApi;
-import com.softeng.dingtalk.entity.PaperLevel;
-import com.softeng.dingtalk.entity.SubsidyLevel;
-import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.api.*;
+import com.softeng.dingtalk.component.AcAlgorithm;
+import com.softeng.dingtalk.constant.LocalUrlConstant;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.DcSummaryRepository;
-import com.softeng.dingtalk.repository.PaperLevelRepository;
-import com.softeng.dingtalk.repository.SubsidyLevelRepository;
-import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -22,11 +20,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -48,13 +46,32 @@ public class SystemService {
     @Autowired
     DcSummaryRepository dcSummaryRepository;
     @Autowired
+    DingTalkScheduleRepository dingTalkScheduleRepository;
+    @Autowired
     PerformanceService performanceService;
     @Autowired
     AuditService auditService;
 
     @Autowired
     ContactsApi contactsApi;
+    @Autowired
+    ReportApi reportApi;
+    @Autowired
+    MessageApi messageApi;
+    @Autowired
+    ScheduleApi scheduleApi;
+    @Autowired
+    OAApi oaApi;
 
+    @Autowired
+    WeeklyReportService weeklyReportService;
+    @Autowired
+    AcRecordRepository acRecordRepository;
+    @Autowired
+    PatentLevelRepository patentLevelRepository;
+
+    @Value("${DingTalkSchedule.absentACPunishment}")
+    double absentACPunishment;
 
     /**
      * 根据钉钉 userId 获取系统 uid，前端JSAPI选人
@@ -121,6 +138,24 @@ public class SystemService {
         user.setAvatar(response.getAvatar());
         user.setName(response.getName());
         user.setUnionid(response.getUnionid());
+        if(user.getPosition() == Position.OTHER) {
+            switch (Optional.ofNullable(user.getStuNum()).orElse("--").substring(0, 2)) {
+                case "MF":
+                case "mf":
+                    user.setPosition(Position.PROFESSIONAL);
+                    break;
+                case "mg":
+                case "MG":
+                    user.setPosition(Position.ACADEMIC);
+                    break;
+                case "DG":
+                case "dg":
+                    user.setPosition(Position.DOCTOR);
+                    break;
+                default:
+                    break;
+            }
+        }
         return userRepository.save(user);
     }
 
@@ -200,6 +235,14 @@ public class SystemService {
         return paperLevelRepository.findAll();
     }
 
+    /**
+     * 查询专利AC标准
+     * @return
+     */
+    public List<PatentLevel> listPatentLevel() {
+        return patentLevelRepository.findAll();
+    }
+
 
     /**
      * 更新论文AC标准
@@ -208,6 +251,16 @@ public class SystemService {
     public void updatePaperLevel(List <PaperLevel> paperLevels) {
         for (PaperLevel pl : paperLevels) {
             paperLevelRepository.updatePaperLevel(pl.getPaperType(), pl.getTotal());
+        }
+    }
+
+    /**
+     * 更新专利AC标准
+     * @param patentLevels
+     */
+    public void updatePatentLevel(List <PatentLevel> patentLevels) {
+        for (PatentLevel pl : patentLevels) {
+            patentLevelRepository.updatePatentLevel(pl.getTitle(), pl.getTotal());
         }
     }
 
@@ -263,6 +316,87 @@ public class SystemService {
             auditService.updateDcSummary(id, yearmonth, 3);
             auditService.updateDcSummary(id, yearmonth, 4);
             auditService.updateDcSummary(id, yearmonth, 5);
+        }
+    }
+
+    /**
+     * 手动指定某天，当天未交周报的硕士博士扣除相应的分数
+     */
+    public void manulDeductedPointsUnsubmittedWeeklyReport(LocalDate localDate) {
+        var start = localDate.atTime(0, 0, 0);
+        var end = start.plusDays(1);
+        var poorGuys = weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end);
+        if(poorGuys.size() == 0) {
+            log.info(start.toString() + "没有未提交周报的poor guy");
+            return;
+        }
+        log.info(start.toString() + "未提交周报扣分" + Arrays.toString(poorGuys.stream().map(User::getName).toArray()));
+        acRecordRepository.saveAll(
+                poorGuys.stream()
+                        .map(user -> AcRecord.builder()
+                                .user(user)
+                                .ac(AcAlgorithm.getPointOfUnsubmittedWeekReport(user))
+                                .classify(AcRecord.NORMAL)
+                                .reason(String.format(
+                                        "%s 未按时提交周报",
+                                        start.toLocalDate().toString()
+                                ))
+                                .createTime(end)
+                                .build())
+                        .collect(Collectors.toList())
+        );
+    }
+
+    /**
+     * 手动指定某一天，向当天未提交周报的博士硕士发送提醒消息
+     * @param localDate
+     */
+    public void manualReminderToSubmitWeeklyReport(LocalDate localDate) {
+        var start = localDate.atTime(0, 0, 0);
+        var end = start.plusDays(1);
+        messageApi.sendLinkMessage(
+                "周报、绩效填写提醒",
+                LocalUrlConstant.FRONTEND_PERFORMANCE_URL,
+                "您还未提交本周周报，请在周日24点前提交周报并随后申请绩效",
+                weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end).stream()
+                        .map(User::getUserid)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    public void calculateScheduleAC() {
+        List<DingTalkSchedule> dingTalkScheduleList=dingTalkScheduleRepository.getDingTalkSchedulesByAcCalculatedFalse();
+        for(DingTalkSchedule dingTalkSchedule:dingTalkScheduleList){
+            LocalDateTime now=LocalDateTime.now();
+            if(now.compareTo(dingTalkSchedule.getEnd())>=0){
+                //获取改日程请假列表，并获取oa通过的同学的列表
+                List<String> osNotPassUserIdList=new LinkedList<>();
+                dingTalkSchedule.getAbsentOAList().forEach(absentOA -> {
+                    absentOA.setPass(oaApi.getOAOutCome(absentOA.getProcessInstanceId())==1);
+                    if(!absentOA.isPass()) osNotPassUserIdList.add(absentOA.getUser().getUserid());
+                });
+                //获取需要扣分的userId
+                List<String> absentUserIdList=scheduleApi.getAbsentList(dingTalkSchedule);
+                absentUserIdList.removeAll(osNotPassUserIdList);
+                //进行扣分
+                if(absentUserIdList.size()!=0){
+                    List<DingTalkScheduleDetail> detailList=dingTalkSchedule.getDingTalkScheduleDetailList();
+                    detailList.forEach(detail -> {
+                        boolean isContain = absentUserIdList .stream().anyMatch(x-> x.equals(detail.getUser().getUserid()));
+                        if(isContain) {
+                            AcRecord acRecord=new AcRecord(detail.getUser(),
+                                    null,
+                                    -1*absentACPunishment,
+                                    detail.getDingTalkSchedule().getStart().toString()+"会议缺席",
+                                    6,LocalDateTime.now());
+                            acRecordRepository.save(acRecord);
+                            detail.setAcRecord(acRecord);
+                        }
+                    });
+                }
+                dingTalkSchedule.setAcCalculated(true);
+                dingTalkScheduleRepository.save(dingTalkSchedule);
+            }
         }
     }
 

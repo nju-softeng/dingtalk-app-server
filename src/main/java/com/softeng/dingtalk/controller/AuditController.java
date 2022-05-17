@@ -11,6 +11,7 @@ import com.softeng.dingtalk.vo.CheckVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -42,19 +43,14 @@ public class AuditController {
     ReportApi reportApi;
 
     /**
-     * 审核员提交审核结果
+     * 审核员提交审核结果, 刷新dcsummary, 应用内发送消息
      * @param  checkVO 审核结果信息
      * @return void
      * @date 9:35 AM 12/27/2019
      **/
     @PostMapping("/audit")
     public void submitAuditResult(@Valid @RequestBody CheckVO checkVO) {
-        // 持久化审核结果
-        DcRecord dc = auditService.updateAuditResult(checkVO);
-        // 更新dcsummary
-        auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
-        // 发送消息
-        notifyService.updateDcMessage(dc);
+        auditService.updateAuditResult(checkVO);
     }
 
 
@@ -109,15 +105,16 @@ public class AuditController {
 
     /**
      * 根据uid和时间获取周报
+     * 获取指定日期当天的一条周报
      * @param uid, date
      * @return java.util.Map
-     * @Date 9:12 PM 2/4/2020
      **/
     @PostMapping("/audit/report/{uid}")
     public Map getReport(@PathVariable int uid, @RequestBody LocalDate date) {
-        String userid = userService.getUserid(uid);
-        LocalDateTime startTime = date.atTime(8, 0);
-        return reportApi.getReport(userid, startTime, startTime.plusDays(5));
+        LocalDateTime startTime = date.plusDays(3).atTime(0, 0);
+        return reportApi.getReport(userService.getUserid(uid),
+                startTime,
+                startTime.plusDays(1));
     }
 
 }

@@ -21,5 +21,6 @@ public class PropertyVO {
     private String type;
     private String preserver;
     private LocalDate startTime;
+    private String remark;
     private boolean deleted;
 }

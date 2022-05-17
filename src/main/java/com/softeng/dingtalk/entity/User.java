@@ -86,6 +86,8 @@ public class User {
     @Column(nullable = false, name = "is_deleted")
     private boolean deleted;
 
+
+
     /**
      * @Author Jerrian Zhao
      * @Data 01/22/2022
@@ -115,6 +117,13 @@ public class User {
     private String creditCard;
 
     /**
+     * 开户行
+     */
+    private String bankName;
+
+    private String leaseContractFileName;
+    private String leaseContractFilePath;
+    /**
      * 租房开始时间
      */
     @Deprecated
@@ -142,12 +151,14 @@ public class User {
      */
     private String remark;
 
+
     /**
      * 获奖情况
      */
     @JsonIgnoreProperties("user")
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Prize> allPrizes;
+
 
     public User(String userid, String unionid, String name, String avatar, int authority, Position position) {
         this.userid = userid;

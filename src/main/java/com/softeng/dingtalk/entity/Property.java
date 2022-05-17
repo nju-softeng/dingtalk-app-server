@@ -50,18 +50,22 @@ public class Property {
      * 保管人
      */
     private String preserver;
-
+    /**
+     * 备注
+     */
+    private String remark;
     /**
      * 软删除标识
      */
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public Property(User user, String name, String type, String preserver, LocalDate startTime) {
+    public Property(User user, String name, String type, String preserver, String remark,LocalDate startTime) {
         this.user = user;
         this.name = name;
         this.type = type;
         this.preserver = preserver;
+        this.remark = remark;
         this.startTime = startTime;
     }
 }

@@ -20,4 +20,16 @@ public class ExternalPaperVO {
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+
+    public ExternalPaperVO(Integer id, String title, LocalDateTime startTime, LocalDateTime endTime) {
+        this.id = id;
+        this.title = title;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+    private String path;
+    private String hash;
+    private String theme;
+    private String fileName;
+    private String fileId;
 }

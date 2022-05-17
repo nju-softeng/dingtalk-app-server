@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,6 +24,9 @@ public class AcRecord {
     public static final int PAPER = 2;
     public static final int VOTE = 3;
     public static final int BUG = 4;
+    public static final int Patent = 5;
+    public static final int DingTalkSchedule = 6;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

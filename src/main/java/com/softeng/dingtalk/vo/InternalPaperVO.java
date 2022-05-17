@@ -30,4 +30,6 @@ public class InternalPaperVO {
     private int flatDecision;
     private String fileName;
     private String fileId;
+    private String theme;
+    private String year;
 }

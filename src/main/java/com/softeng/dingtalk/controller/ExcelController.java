@@ -28,4 +28,15 @@ public class ExcelController {
     public void downloadDcSummaryData(@RequestBody LocalDate date, HttpServletResponse response) throws IOException {
         excelService.writeDcSummaryByDate(date, response.getOutputStream());
     }
+
+    @PostMapping("/excel/userProperty_data")
+    public void downloadUserPropertyData(HttpServletResponse response) throws IOException {
+        excelService.writeUserPropertyDataByDate(response.getOutputStream());
+    }
+
+    @PostMapping("/excel/userPrize_data")
+    public void downloadUserPrizeData(HttpServletResponse response) throws IOException {
+        excelService.writeUserPrizeDataByDate(response.getOutputStream());
+    }
+
 }

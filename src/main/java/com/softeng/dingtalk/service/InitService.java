@@ -72,8 +72,8 @@ public class InitService {
         if (subsidyLevelRepository.count() == 0) {
             List<SubsidyLevel> subsidyLevels = new ArrayList<>();
             subsidyLevels.add(new SubsidyLevel(Position.DOCTOR, 250));
-            subsidyLevels.add(new SubsidyLevel(Position.ACADEMIC, 150));
-            subsidyLevels.add(new SubsidyLevel(Position.PROFESSIONAL, 150));
+            subsidyLevels.add(new SubsidyLevel(Position.ACADEMIC, 200));
+            subsidyLevels.add(new SubsidyLevel(Position.PROFESSIONAL, 200));
             subsidyLevels.add(new SubsidyLevel(Position.UNDERGRADUATE, 0));
             subsidyLevels.add(new SubsidyLevel(Position.OTHER, 0));
             subsidyLevelRepository.saveBatch(subsidyLevels);

@@ -1,0 +1,6 @@
+POST http://localhost:8080/api/system/weekreport/reminder?startTime=2022-04-09
+token: 796378d18d8d5709fbaf5e33838f4ddc556be16090f7538dba61ca8a5235d5c1823fe1d253d90c93a102370b3b53d52a
+
+###
+POST http://localhost:8080/api/system/weekreport/acrecord?startTime=2022-04-09
+token: 796378d18d8d5709fbaf5e33838f4ddc556be16090f7538dba61ca8a5235d5c1823fe1d253d90c93a102370b3b53d52a

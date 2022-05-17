@@ -45,6 +45,84 @@ public class ExternalPaper implements Paper {
      */
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime insertTime;
+    /**
+     * 主题
+     */
+    private String theme;
+
+    /**
+     * 路径
+     */
+    private String path;
+
+    /**
+     * 哈希
+     */
+    private String hash;
+
+    /**
+     *评审版本文件名称
+     */
+    private String reviewFileName;
+
+    /**
+     *评审版本文件Id
+     */
+    String reviewFileId;
+
+    /**
+     *提交版本文件名称
+     */
+    String submissionFileName;
+
+    /**
+     *提交版本文件Id
+     */
+    String submissionFileId;
+
+    /**
+     *发表版本文件名称
+     */
+    String publishedFileName;
+
+    /**
+     *发表版本文件Id
+     */
+    String publishedFileId;
+
+    /**
+     *发表版本Latex文件名称
+     */
+    String publishedLatexFileName;
+
+    /**
+     *发表版本Latex文件Id
+     */
+    String publishedLatexFileId;
+    /**
+     *对外版本文件名称
+     */
+    String publicFileName;
+    /**
+     *对外版本文件Id
+     */
+    String publicFileId;
+    /**
+     *源文件名称
+     */
+    String sourceFileName;
+    /**
+     *源文件Id
+     */
+    String sourceFileId;
+    /**
+     *评审文件名称
+     */
+    String commentFileName;
+    /**
+     *评审文件Id
+     */
+    String commentFileId;
 
     public ExternalPaper(String title) {
         this.title = title;

@@ -15,13 +15,13 @@ import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -49,6 +49,8 @@ public class PaperController {
     @Autowired
     FileService fileService;
 
+
+
     /**
      * 添加或更新实验室内部及非学生一作论文记录
      * @param file
@@ -60,7 +62,12 @@ public class PaperController {
         InternalPaperVO vo= JSONObject.parseObject(paperFormJsonStr,InternalPaperVO.class);
         if (vo.getId() == null) {
             vo.setFileName(file.getOriginalFilename());
-            String fileId=fileService.addFile(file,uid);
+            String fileId=null;
+            if(vo.getIsStudentFirstAuthor()){
+                fileId=fileService.addFileByPath(file,vo.getPath()+"/Review");
+            }else{
+                fileId=fileService.addFileByPath(file,vo.getPath()+"/Submission");
+            }
             vo.setFileId(fileId);
             paperService.addInternalPaper(vo);
         } else {
@@ -69,11 +76,17 @@ public class PaperController {
     }
 
     /**
-     * 创建、更新一个外部论文记录及投票
-     * @param vo
+     * 添加外部评审论文记录
+     * @param file
+     * @param externalPaperFormJsonStr
+     * @param uid
      */
     @PostMapping("/ex-paper")
-    public void addExternalPaper(@RequestBody ExternalPaperVO vo) {
+    public void addExternalPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "externalPaperFormJsonStr") String externalPaperFormJsonStr, @RequestAttribute int uid) {
+        ExternalPaperVO vo=JSONObject.parseObject(externalPaperFormJsonStr,ExternalPaperVO.class);
+        vo.setFileName(file.getOriginalFilename());
+        String fileId=fileService.addFileByPath(file,vo.getPath()+"/Review");
+        vo.setFileId(fileId);
         if (vo.getId() == null) {
             paperService.addExternalPaper(vo);
         } else {
@@ -266,6 +279,7 @@ public class PaperController {
     public void decideFlat(@RequestBody FlatDecisionVO flatDecisionVO){
         paperService.decideFlat(flatDecisionVO);
     }
+
 
     /**
      * 分页获取非学生一作

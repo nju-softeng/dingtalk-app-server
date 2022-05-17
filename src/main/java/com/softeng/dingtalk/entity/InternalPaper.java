@@ -89,6 +89,14 @@ public class InternalPaper implements Paper {
      * 版本
      */
     private int version;
+    /**
+     * 主题
+     */
+    private String theme;
+    /**
+     * 年份
+     */
+    private String year;
 
     /**
      * 路径
@@ -146,18 +154,46 @@ public class InternalPaper implements Paper {
      *发表版本Latex文件Id
      */
     String publishedLatexFileId;
+    /**
+     *对外版本文件名称
+     */
+    String publicFileName;
+    /**
+     *对外版本文件Id
+     */
+    String publicFileId;
+    /**
+     *源文件名称
+     */
+    String sourceFileName;
+    /**
+     *源文件Id
+     */
+    String sourceFileId;
+    /**
+     *评审文件名称
+     */
+    String commentFileName;
+    /**
+     *评审文件Id
+     */
+    String commentFileId;
 
     public InternalPaper(int id) {
         this.id = id;
     }
 
-    public InternalPaper(String title, String journal, PaperType paperType, LocalDate updateDate, Boolean isStudentFirstAuthor, String firstAuthor) {
+    public InternalPaper(String title, String journal, PaperType paperType, LocalDate updateDate,
+                         Boolean isStudentFirstAuthor,  String firstAuthor,String path,String theme,String year) {
         this.title = title;
         this.journal = journal;
         this.paperType = paperType;
         this.updateDate = updateDate;
         this.isStudentFirstAuthor = isStudentFirstAuthor;
         this.firstAuthor = firstAuthor;
+        this.path=path;
+        this.theme=theme;
+        this.year=year;
     }
 
     public void update(String title, String journal, PaperType paperType, LocalDate issueDate, String firstAuthor) {
