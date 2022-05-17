@@ -2,8 +2,6 @@ package com.softeng.dingtalk.vo;
 
 import com.softeng.dingtalk.entity.User;
 import lombok.Data;
-
-import javax.persistence.*;
 import java.time.LocalDate;
 @Data
 public class PracticeVO {

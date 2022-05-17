@@ -38,7 +38,7 @@ public class PracticeService {
     }
 
     public void modifyPractice(PracticeVO practiceVO){
-        if(practiceVO.getState()==1){
+        if(practiceRepository.findById(practiceVO.getId()).get().getState()==1){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"审核已通过，无需修改！");
         }
         Practice practice=practiceRepository.findById(practiceVO.getId()).get();
