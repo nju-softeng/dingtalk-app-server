@@ -1,23 +1,15 @@
-package com.softeng.dingtalk.entity;
+package com.softeng.dingtalk.vo;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import javax.persistence.*;
+import com.softeng.dingtalk.entity.User;
+import lombok.Data;
 import java.time.LocalDate;
 
-@Getter
-@Setter
-@Entity
-@NoArgsConstructor
-public class VirtualMachine {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+@Data
+public class VMApplyVO {
+
+    Integer id;
     User user;
+    int state;
     //项目组
     String projectTeam;
     //课题
@@ -39,5 +31,5 @@ public class VirtualMachine {
     //操作系统
     String operationSystem;
     //申请日期
-    LocalDate applyDate;
+    LocalDate applyDate=LocalDate.now();
 }
