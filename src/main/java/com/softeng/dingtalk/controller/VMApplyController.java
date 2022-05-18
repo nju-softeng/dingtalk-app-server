@@ -72,8 +72,8 @@ public class VMApplyController {
      * @param isPass
      * @param uid
      */
-    @PatchMapping("/vmApply/{id}")
-    public void setVMApplyResult(@PathVariable int id,@RequestBody boolean isPass,@RequestAttribute int uid){
+    @PatchMapping("/vmApply/{id}/{isPass}")
+    public void setVMApplyResult(@PathVariable int id,@PathVariable boolean isPass,@RequestAttribute int uid){
         vmApplyService.setVMApplyState(id,isPass,uid);
     }
 

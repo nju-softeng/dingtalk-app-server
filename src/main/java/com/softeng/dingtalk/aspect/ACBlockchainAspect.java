@@ -40,28 +40,29 @@ public class ACBlockchainAspect {
     }
 
     @Pointcut("execution(* com.softeng.dingtalk.repository.AcRecordRepository.deleteAll(..))")
-    public void deleteRecord(){
+    public void deleteRecordList(){
     }
 
-
-    @Before("saveRecord()")
-    public void beforeAction(JoinPoint point){
-        AcRecord param=(AcRecord) point.getArgs()[0];
-        if(param.getId()==null){
-            isCreate=true;
-            //AcRecord acRecord=acRecordRepository.findById(acRecordId).get();
-            log.info("before:"+param.toString());
-        }else{
-            String value=param.toString();
-        }
+    @Pointcut("execution(* com.softeng.dingtalk.repository.AcRecordRepository.saveAll(..)) ||" +
+            "execution(* com.softeng.dingtalk.repository.AcRecordRepository.saveBatch(..))")
+    public void saveRecordList(){
     }
 
-    @After("saveRecord()")
-    public void afterAction(JoinPoint point){
+    @AfterReturning("saveRecord()")
+    public void afterSaveRecord(JoinPoint point){
         AcRecord param=(AcRecord) point.getArgs()[0];
 //        String key=param.getId().toString();
 //        String value=JSON.toJSONString(param);
         log.info("after:"+param.toString());
     }
+
+    @AfterReturning("deleteRecordList()")
+    public void afterDeleteRecordList(JoinPoint point){
+        AcRecord param=(AcRecord) point.getArgs()[0];
+//        String key=param.getId().toString();
+//        String value=JSON.toJSONString(param);
+        log.info("after:"+param.toString());
+    }
+
 
 }
