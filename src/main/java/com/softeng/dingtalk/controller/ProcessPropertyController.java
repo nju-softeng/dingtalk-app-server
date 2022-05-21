@@ -56,7 +56,7 @@ public class ProcessPropertyController {
         processPropertyService.deleteProcessFile(processId,fileId,type);
     }
 
-    @GetMapping("/processFile/{id}")
+        @GetMapping("/processFile/{id}")
     public void downloadProcessFile(@PathVariable int id, HttpServletResponse response) {
         processPropertyService.downloadProcessFile(id,response);
     }

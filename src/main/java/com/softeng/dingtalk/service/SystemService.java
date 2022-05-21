@@ -382,7 +382,7 @@ public class SystemService {
                 if(absentUserIdList.size()!=0){
                     List<DingTalkScheduleDetail> detailList=dingTalkSchedule.getDingTalkScheduleDetailList();
                     detailList.forEach(detail -> {
-                        boolean isContain = absentUserIdList .stream().anyMatch(x-> x.equals(detail.getUser().getUserid()));
+                        boolean isContain = absentUserIdList .stream().anyMatch(x-> x.equals(detail.getUser().getUnionid()));
                         if(isContain) {
                             AcRecord acRecord=new AcRecord(detail.getUser(),
                                     null,

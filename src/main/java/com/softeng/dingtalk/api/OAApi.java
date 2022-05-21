@@ -40,7 +40,7 @@ public class OAApi extends BaseApi{
             request.setAgentId(BaseApi.AGENTID);
             //设置process code
             request.setProcessCode(absentOAProcessCode);
-            request.setOriginatorUserId(userService.getUserid(absentOA.getDingTalkSchedule().getOrganizer().getId()));
+            request.setOriginatorUserId(userService.getUserid(absentOA.getUser().getId()));
             request.setDeptId(-1L);
             //设置表单内容
             List<OapiProcessinstanceCreateRequest.FormComponentValueVo> form = new ArrayList<>();
@@ -82,8 +82,8 @@ public class OAApi extends BaseApi{
             OapiProcessinstanceGetRequest req = new OapiProcessinstanceGetRequest();
             req.setProcessInstanceId(processInstanceId);
             OapiProcessinstanceGetResponse rsp = client.execute(req, getAccessToken());
-            if(rsp.getProcessInstance().getStatus()=="COMPLETED"){
-                if(rsp.getProcessInstance().getResult()=="agree")return 1;
+            if(rsp.getProcessInstance().getStatus().equals("COMPLETED")){
+                if(rsp.getProcessInstance().getResult().equals("agree"))return 1;
                 else return 0;
             } else return -1;
         } catch (Exception e){

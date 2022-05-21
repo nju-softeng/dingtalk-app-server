@@ -138,7 +138,6 @@ public class PaperController {
         Vote vote = externalPaperRepository.findVoteById(pid);
         // 更具投票结果计算，投票人的ac值
         voteService.computeVoteAc(vote, vo.getResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8,0)));
-        // todo 发送论文消息
     }
 
 

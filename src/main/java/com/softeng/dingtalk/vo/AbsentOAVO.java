@@ -1,10 +1,12 @@
 package com.softeng.dingtalk.vo;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 public class AbsentOAVO {
     Integer id;
     //请假类型 事假 病假 其它
@@ -21,4 +23,9 @@ public class AbsentOAVO {
     boolean isPass=false;
     //请求Id
     String processInstanceId;
+
+    public AbsentOAVO(String type, String reason) {
+        this.type = type;
+        this.reason = reason;
+    }
 }

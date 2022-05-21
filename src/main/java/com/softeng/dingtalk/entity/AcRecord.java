@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class AcRecord {
 
     public static final int NORMAL = 0;
@@ -30,7 +31,7 @@ public class AcRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @Column(columnDefinition="DECIMAL(10,3)")
     private double ac;
     private String reason;
