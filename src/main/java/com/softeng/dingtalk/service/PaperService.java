@@ -97,7 +97,7 @@ public class PaperService {
         InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(),
                 vo.getIsStudentFirstAuthor(), vo.getFirstAuthor(),vo.getPath(),vo.getTheme(),vo.getYear());
         if (!internalPaper.getIsStudentFirstAuthor()) {
-            internalPaper.setResult(2);
+            internalPaper.setResult(InternalPaper.REVIEWING);
             internalPaper.setSubmissionFileName(vo.getFileName());
             internalPaper.setSubmissionFileId(vo.getFileId());
         }else {
@@ -144,9 +144,7 @@ public class PaperService {
         // 3. 插入新的paperDetail
         internalPaper.setPaperDetails(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
         // 4. 重新计算ac
-        if (internalPaper.hasAccepted() || internalPaper.hasRejected()) {
-            paperService.calculateInternalPaperAc(internalPaper);
-        }
+        paperService.calculateInternalPaperAc(internalPaper);
         // 5. 重新添加paperDetail
         paperDetailRepository.saveBatch(internalPaper.getPaperDetails());
         internalPaperRepository.save(internalPaper);
@@ -218,23 +216,51 @@ public class PaperService {
     }
 
     /**
+     * 按照论文投票投稿结果计算ac权重
+     * 投稿接受正常算，平票中止和投稿被拒扣一半分
+     * @param internalPaper
+     * @return
+     */
+    public double calculateWeightOfAc(InternalPaper internalPaper) {
+        switch (internalPaper.getResult()) {
+            case InternalPaper.ACCEPT:
+                return 1.0;
+            case InternalPaper.SUSPEND:
+            case InternalPaper.NOTPASS:
+                return -acDeductionRate;
+            default:
+                return 0.0;
+        }
+    }
+
+    /**
      * 计算某个作者的 AC 加减分, 根据论文投稿情况、该论文类型对应的 AC 奖池、作者排名
+     * 论文接受加正分，拒绝或者中止扣一半分
      *
-     * @param isAccept 论文投稿情况
+     * @param internalPaper 论文投稿情况
      * @param sum      AC 奖池
      * @param rank     作者排名
      * @return AC值
      */
-    public double calculateAc(boolean isAccept, double sum, int rank) {
-        return (isAccept ? 1.0 : -0.5) * sum * calculateRatioOfAc(rank);
+    public double calculateAc(InternalPaper internalPaper, double sum, int rank) {
+        return calculateWeightOfAc(internalPaper) * calculateRatioOfAc(rank) * sum;
     }
 
     /**
      * 计算论文结果对应的 AC
      */
     public void calculateInternalPaperAc(InternalPaper internalPaper) {
-
-        double weight = (internalPaper.getResult() == 6 ? acDeductionRate : 1); // 如果平票则只计算50%AC
+        int result = internalPaper.getResult();
+        if(result != InternalPaper.ACCEPT
+            && result != InternalPaper.REJECT
+            && result != InternalPaper.SUSPEND) {
+            log.info("论文没有处在计算ac的状态");
+            return;
+        }
+        if(internalPaper.hasAccepted() && !internalPaper.hasCompleteFile()) {
+            log.info("论文文件不完整，无法生成ac");
+            return;
+        }
         // 1. 获取 paperDetails
         var paperDetails = internalPaper.getPaperDetails();
 
@@ -249,49 +275,19 @@ public class PaperService {
         // 3. 查询该类型论文对应的总 AC
         double sum = paperLevelRepository.getValue(internalPaper.getPaperType());
 
-        // 4. 生成 AC 变更原因
-        String reason;
-        if (weight == acDeductionRate) {
-            reason = internalPaper.getTitle() + " Suspend";
-        } else {
-            reason = internalPaper.getTitle() + (internalPaper.hasAccepted() ? " Accept" : " Reject");
-        }
-
-        // 5. 更新 paperDetail 对应的 AcRecord
+        // 4. 更新 paperDetail 对应的 AcRecord
         paperDetails.forEach(paperDetail -> {
             paperDetail.setAcRecord(new AcRecord(
                     paperDetail.getUser(),
                     null,
-                    weight * calculateAc(internalPaper.hasAccepted(), sum, paperDetail.getNum()), // weight等于0.5时表示中止的AC
-                    reason,
+                    calculateAc(internalPaper, sum, paperDetail.getNum()),
+                    internalPaper.getReason(),
                     AcRecord.PAPER,
                     internalPaper.getUpdateDate().atTime(8, 0)
             ));
         });
 
         // 6. 更新paperDetails表和acRecord表
-        acRecordRepository.saveAll(
-                paperDetails.stream()
-                        .map(PaperDetail::getAcRecord)
-                        .collect(Collectors.toList())
-        );
-        paperDetailRepository.saveAll(paperDetails);
-    }
-
-    //非平票时的中止情况
-    public void calculateSuspendPaperAC(InternalPaper internalPaper){
-        var paperDetails = internalPaper.getPaperDetails();
-        String reason="审稿中止："+internalPaper.getTitle();
-        paperDetails.forEach(paperDetail -> {
-            paperDetail.setAcRecord(new AcRecord(
-                    paperDetail.getUser(),
-                    null,
-                    0-this.suspendACPunishment,
-                    reason,
-                    AcRecord.PAPER,
-                    internalPaper.getUpdateDate().atTime(8, 0)
-            ));
-        });
         acRecordRepository.saveAll(
                 paperDetails.stream()
                         .map(PaperDetail::getAcRecord)
@@ -317,21 +313,17 @@ public class PaperService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
         }
 
-        if (internalPaper.getResult() == 5 || internalPaper.getResult() == 6) {
+        if(internalPaper.getResult() == InternalPaper.FLAT
+            || internalPaper.getResult() == InternalPaper.SUSPEND) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "作者未决定投稿或已中止投稿！");
         }
-
 
         // 3. 更新指定论文的投稿结果和更新时间
         internalPaper.setResult(this.getPaperResult(true,result));
         internalPaper.setUpdateDate(updateDate);
         internalPaperRepository.save(internalPaper);
         // 4. 更新论文 ac
-        if(result==2){
-            paperService.calculateSuspendPaperAC(internalPaper);
-        }else{
-            paperService.calculateInternalPaperAc(internalPaper);
-        }
+        paperService.calculateInternalPaperAc(internalPaper);
 
         // 5. 插入相关消息
         notifyService.paperAcMessage(internalPaper);

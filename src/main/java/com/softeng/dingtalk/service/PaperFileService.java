@@ -48,6 +48,10 @@ public class PaperFileService {
         String fileId=fileService.addFileByPath(file,paper.getPath()+"/"+getFileTypeFolderName(fileType));
         String fileName=file.getOriginalFilename();
         setPaperFileIdAndName(paper,fileType,fileId,fileName);
+        // 论文相关文件上传齐全后，触发论文作者加分
+        if(paper.hasAccepted() && paper.hasCompleteFile()) {
+            paperService.calculateInternalPaperAc(paper);
+        }
         internalPaperRepository.save(paper);
     }
 
