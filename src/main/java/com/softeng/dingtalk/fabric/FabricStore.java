@@ -80,8 +80,7 @@ public class FabricStore {
     }
 
     static final class StoreEnrollement implements Enrollment, Serializable {
-        private static final long serialVersionUID = 1L; //TODO
-
+        private static final long serialVersionUID = -7460795537417557178L;
         private final PrivateKey privateKey; //私钥
         private final String certificate; //证书
 

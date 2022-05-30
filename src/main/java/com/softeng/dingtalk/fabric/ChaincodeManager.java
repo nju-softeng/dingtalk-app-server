@@ -107,7 +107,6 @@ public class ChaincodeManager {
             channel.registerBlockListener(new BlockListener() {
                 @Override
                 public void received(BlockEvent event) {
-                    // TODO
                     logger.debug("========================Event事件监听开始========================");
                     try {
                         logger.debug("event.getChannelId() = " + event.getChannelId());
@@ -121,7 +120,6 @@ public class ChaincodeManager {
                         String rr = r1[2];
                         logger.debug("rr = " + rr);
                     } catch (InvalidProtocolBufferException e) {
-                        // TODO
                         e.printStackTrace();
                     }
                     logger.debug("========================Event事件监听结束========================");
