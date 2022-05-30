@@ -11,9 +11,9 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.hyperledger.fabric.sdk.exception.CryptoException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
+import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.hyperledger.fabric.sdk.exception.TransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -21,11 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-@ConditionalOnExpression("${blockchain.service.enable:true}")
 @Aspect
 @Component
 @Slf4j
@@ -34,37 +31,61 @@ public class ACBlockchainAspect {
     SystemService systemService;
     @Autowired
     AcRecordRepository acRecordRepository;
-    boolean isCreate=false;
-    //FabricManager manager=FabricManager.obtain();
-    public static List timeCostList=new ArrayList<>();
+
+    FabricManager manager=FabricManager.obtain();
+
     @Pointcut("execution(* com.softeng.dingtalk.repository.AcRecordRepository.save(..))")
     public void saveRecord(){
     }
 
-    @Pointcut("execution(* com.softeng.dingtalk.repository.AcRecordRepository.deleteAll(..))")
-    public void deleteRecordList(){
+    @Pointcut("execution(* com.softeng.dingtalk.repository.AcRecordRepository.saveAll(..))")
+    public void saveAllRecord(){
     }
 
-    @Pointcut("execution(* com.softeng.dingtalk.repository.AcRecordRepository.saveAll(..)) ||" +
-            "execution(* com.softeng.dingtalk.repository.AcRecordRepository.saveBatch(..))")
-    public void saveRecordList(){
+    @Pointcut("execution(* com.softeng.dingtalk.repository.AcRecordRepository.delete(..))")
+    public void deleteRecord(){
+    }
+
+    @Pointcut("execution(* com.softeng.dingtalk.repository.AcRecordRepository.deleteAll(..))")
+    public void deleteAllRecord(){
     }
 
     @AfterReturning("saveRecord()")
-    public void afterSaveRecord(JoinPoint point){
+    public void afterSaveRecord(JoinPoint point) throws ProposalException, InvalidArgumentException {
         AcRecord param=(AcRecord) point.getArgs()[0];
-//        String key=param.getId().toString();
-//        String value=JSON.toJSONString(param);
+        String key=param.getId().toString();
+        String value=JSON.toJSONString(param);
+        manager.getManager().invoke("create", new String[]{key, value});
         log.info("after:"+param.toString());
     }
 
-    @AfterReturning("deleteRecordList()")
-    public void afterDeleteRecordList(JoinPoint point){
+    @AfterReturning("saveRecord()")
+    public void afterSaveAllRecord(JoinPoint point) throws ProposalException, InvalidArgumentException {
+        AcRecord[] param=(AcRecord[]) point.getArgs()[0];
+        for (AcRecord acRecord : param) {
+            String key = acRecord.getId().toString();
+            String value = JSON.toJSONString(acRecord);
+            manager.getManager().invoke("create", new String[]{key, value});
+        }
+        log.info("after:"+ Arrays.toString(param));
+    }
+
+    @AfterReturning("deleteRecord()")
+    public void afterDeleteRecord(JoinPoint point) throws ProposalException, InvalidArgumentException {
         AcRecord param=(AcRecord) point.getArgs()[0];
-//        String key=param.getId().toString();
-//        String value=JSON.toJSONString(param);
+        String key=param.getId().toString();
+        manager.getManager().invoke("delete", new String[]{key});
         log.info("after:"+param.toString());
     }
 
+    @AfterReturning("deleteRecord()")
+    public void afterDeleteAllRecord(JoinPoint point) throws ProposalException, InvalidArgumentException {
+        AcRecord[] param=(AcRecord[]) point.getArgs()[0];
+        for (AcRecord acRecord : param) {
+            String key = acRecord.getId().toString();
+            manager.getManager().invoke("delete", new String[]{key});
+        }
+        log.info("after:"+ Arrays.toString(param));
+    }
 
 }

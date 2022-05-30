@@ -14,9 +14,7 @@ import java.util.Set;
  * @Data 03/03/2022
  */
 public class FabricUser implements User, Serializable {
-
-    private static final long serialVersionUID = 1L; //TODO
-
+    private static final long serialVersionUID = -2490138626124133924L;
     private String name; //名字
     private Set<String> roles; // 角色
     private String account; //账号
