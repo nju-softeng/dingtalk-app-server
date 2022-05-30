@@ -60,4 +60,7 @@ public interface AcRecordRepository extends CustomizedRepository<AcRecord, Integ
     @Query(value = "select ac, reason, classify, create_time, u1.name as username, u2.name as auditorname from user u1 right join ac_record a on u1.id = a.user_id left join user u2 on a.auditor_id = u2.id order by a.id desc limit 10", nativeQuery = true)
     List<Map<String, Object>> listLastAc();
 
+    @Query("SELECT max(acRecord.id) FROM AcRecord acRecord")
+    int getMaxId();
+
 }

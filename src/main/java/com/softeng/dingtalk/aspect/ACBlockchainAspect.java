@@ -2,6 +2,7 @@ package com.softeng.dingtalk.aspect;
 
 
 import com.alibaba.fastjson.JSON;
+import com.softeng.dingtalk.api.BlockChainApi;
 import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.fabric.FabricManager;
 import com.softeng.dingtalk.repository.AcRecordRepository;
@@ -32,7 +33,8 @@ public class ACBlockchainAspect {
     @Autowired
     AcRecordRepository acRecordRepository;
 
-    FabricManager manager=FabricManager.obtain();
+    @Autowired
+    BlockChainApi blockChainApi;
 
     @Pointcut("execution(* com.softeng.dingtalk.repository.AcRecordRepository.save(..))")
     public void saveRecord(){
@@ -53,39 +55,31 @@ public class ACBlockchainAspect {
     @AfterReturning("saveRecord()")
     public void afterSaveRecord(JoinPoint point) throws ProposalException, InvalidArgumentException {
         AcRecord param=(AcRecord) point.getArgs()[0];
-        String key=param.getId().toString();
-        String value=JSON.toJSONString(param);
-        manager.getManager().invoke("create", new String[]{key, value});
+        blockChainApi.create(param);
         log.info("after:"+param.toString());
     }
 
-    @AfterReturning("saveRecord()")
+    @AfterReturning("saveAllRecord()")
     public void afterSaveAllRecord(JoinPoint point) throws ProposalException, InvalidArgumentException {
-        AcRecord[] param=(AcRecord[]) point.getArgs()[0];
+       List<AcRecord> param=(List<AcRecord>) point.getArgs()[0];
         for (AcRecord acRecord : param) {
-            String key = acRecord.getId().toString();
-            String value = JSON.toJSONString(acRecord);
-            manager.getManager().invoke("create", new String[]{key, value});
+            blockChainApi.create(acRecord);
         }
-        log.info("after:"+ Arrays.toString(param));
     }
 
     @AfterReturning("deleteRecord()")
     public void afterDeleteRecord(JoinPoint point) throws ProposalException, InvalidArgumentException {
         AcRecord param=(AcRecord) point.getArgs()[0];
-        String key=param.getId().toString();
-        manager.getManager().invoke("delete", new String[]{key});
+        blockChainApi.delete(param);
         log.info("after:"+param.toString());
     }
 
-    @AfterReturning("deleteRecord()")
+    @AfterReturning("deleteAllRecord()")
     public void afterDeleteAllRecord(JoinPoint point) throws ProposalException, InvalidArgumentException {
-        AcRecord[] param=(AcRecord[]) point.getArgs()[0];
+        List<AcRecord> param=(List<AcRecord>) point.getArgs()[0];
         for (AcRecord acRecord : param) {
-            String key = acRecord.getId().toString();
-            manager.getManager().invoke("delete", new String[]{key});
+            blockChainApi.delete(acRecord);
         }
-        log.info("after:"+ Arrays.toString(param));
     }
 
 }
