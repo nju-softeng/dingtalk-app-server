@@ -13,6 +13,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhanyeye
@@ -216,6 +217,26 @@ public class InternalPaper implements Paper {
     public boolean hasRejected() {
         return result == REJECT;
     }
+
+    public boolean hasCompleteFile() {
+        return commentFileName != null
+                && publicFileName != null
+                && publishedFileName != null
+                && reviewFileName != null
+                && sourceFileName != null
+                && submissionFileName != null
+                && publishedLatexFileName != null;
+    }
+
+    public String getReason() {
+        return title +
+                Map.of(SUSPEND, " Suspend",
+                        ACCEPT, " Accept",
+                        REJECT, " Reject")
+                .getOrDefault(result, " no reason");
+    }
+
+
 
     public void increaseVersion() {
         this.version += 1;

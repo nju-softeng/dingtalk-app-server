@@ -58,16 +58,11 @@ public class PaperController {
      */
     @PostMapping("/paper")
     public void addPaper(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "paperFormJsonStr") String paperFormJsonStr, @RequestAttribute int uid) {
-        log.info("uid: "+String.valueOf(uid));
+        log.info("uid: "+ uid);
         InternalPaperVO vo= JSONObject.parseObject(paperFormJsonStr,InternalPaperVO.class);
         if (vo.getId() == null) {
             vo.setFileName(file.getOriginalFilename());
-            String fileId=null;
-            if(vo.getIsStudentFirstAuthor()){
-                fileId=fileService.addFileByPath(file,vo.getPath()+"/Review");
-            }else{
-                fileId=fileService.addFileByPath(file,vo.getPath()+"/Submission");
-            }
+            String fileId = fileService.addFileByPath(file, vo.getPath() + (vo.getIsStudentFirstAuthor() ? "/Review" : "/Submission"));
             vo.setFileId(fileId);
             paperService.addInternalPaper(vo);
         } else {
