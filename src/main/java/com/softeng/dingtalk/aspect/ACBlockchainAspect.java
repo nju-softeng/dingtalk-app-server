@@ -34,7 +34,7 @@ public class ACBlockchainAspect {
 
     FabricManager manager=FabricManager.obtain();
 
-    @Pointcut("execution(* com.softeng.dingtalk.controller.PaperController.getPaper(..))")
+    @Pointcut("execution(* com.softeng.dingtalk.repository.AcRecordRepository.save(..))")
     public void saveRecord(){
     }
 
