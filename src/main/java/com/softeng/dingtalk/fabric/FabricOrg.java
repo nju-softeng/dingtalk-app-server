@@ -55,9 +55,9 @@ public class FabricOrg {
         // setCAClient(HFCAClient.createNewInstance(peers.getCaLocation(), getCAProperties()));
 
         setAdmin(fabricStore.getMember("admin", peers.getOrgName())); // 设置组织管理员
-        File skFile = Paths.get(cryptoConfigPath, "/peerOrganizations/", peers.getOrgDomainName(), String.format("/users/Admin@%s/msp/keystore", peers.getOrgDomainName())).toFile();
+        File skFile = Paths.get(cryptoConfigPath, "/peerOrganizations/", peers.getOrgDomainName(), String.format("/users/Admin@org1.example.com/msp/keystore", peers.getOrgDomainName())).toFile();
         File certificateFile = Paths.get(cryptoConfigPath, "/peerOrganizations/", peers.getOrgDomainName(),
-                String.format("/users/Admin@%s/msp/signcerts/Admin@%s-cert.pem", peers.getOrgDomainName(), peers.getOrgDomainName())).toFile();
+                String.format("/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem", peers.getOrgDomainName(), peers.getOrgDomainName())).toFile();
         logger.debug("skFile = " + skFile.getAbsolutePath());
         logger.debug("certificateFile = " + certificateFile.getAbsolutePath());
         setPeerAdmin(fabricStore.getMember(peers.getOrgName() + "Admin", peers.getOrgName(), peers.getOrgMSPID(), findSk(skFile), certificateFile)); //节点管理员可以创建通道，连接对等点，并安装链码
