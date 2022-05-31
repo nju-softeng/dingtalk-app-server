@@ -46,7 +46,7 @@ public class BlockChainService {
                 conflictVOList.add(new ConflictVO(acRecord,blockData,null));
             }
         }
-        return conflictVOList.subList(0,6);
+        return conflictVOList;
     }
 
     private boolean isSame(AcRecord a,AcRecord b){
