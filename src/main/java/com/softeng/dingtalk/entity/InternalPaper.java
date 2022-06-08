@@ -222,7 +222,7 @@ public class InternalPaper implements Paper {
         return commentFileName != null
                 && publicFileName != null
                 && publishedFileName != null
-                && reviewFileName != null
+                && (reviewFileName != null || !isStudentFirstAuthor)
                 && sourceFileName != null
                 && submissionFileName != null
                 && publishedLatexFileName != null;
