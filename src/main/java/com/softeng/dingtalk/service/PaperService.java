@@ -309,8 +309,10 @@ public class PaperService {
         InternalPaper internalPaper = internalPaperRepository.findById(id).get();
 
         // 2. 校验论文投票和投稿情况
-        if (internalPaper.getVote().getResult() == -1 || internalPaper.getVote().getResult() == 0) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
+        if(internalPaper.getIsStudentFirstAuthor()) {
+            if (internalPaper.getVote().getResult() == -1 || internalPaper.getVote().getResult() == 0) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
+            }
         }
 
         if(internalPaper.getResult() == InternalPaper.FLAT

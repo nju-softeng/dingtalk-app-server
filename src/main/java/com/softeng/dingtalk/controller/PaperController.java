@@ -117,7 +117,9 @@ public class PaperController {
     public void updateResult(@PathVariable int pid, @RequestBody PaperResultVO vo) {
         paperService.updateInternalPaperResult(pid, vo.getResult(), vo.getUpdateDate());
         Vote vote = internalPaperRepository.findVoteById(pid);
-        voteService.computeVoteAc(vote, vo.getResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8, 0)));
+        if(vote != null) {
+            voteService.computeVoteAc(vote, vo.getResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8, 0)));
+        }
     }
 
 
