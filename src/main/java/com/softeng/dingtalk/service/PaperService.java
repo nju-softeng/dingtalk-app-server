@@ -262,9 +262,11 @@ public class PaperService {
             return;
         }
         // 1. 获取 paperDetails
+        log.info("获取 paperDetails");
         var paperDetails = internalPaper.getPaperDetails();
 
         // 2. 删除 paperDetail 对应的旧的 AcRecord. 防止admin后续修改作者信息导致混乱
+        log.info("删除 paperDetail 对应的旧的 AcRecord");
         acRecordRepository.deleteAll(
                 paperDetails.stream()
                         .map(PaperDetail::getAcRecord)
@@ -273,9 +275,11 @@ public class PaperService {
         );
 
         // 3. 查询该类型论文对应的总 AC
+        log.info("查询该类型论文对应的总 AC");
         double sum = paperLevelRepository.getValue(internalPaper.getPaperType());
 
         // 4. 更新 paperDetail 对应的 AcRecord
+        log.info("更新 paperDetail 对应的 AcRecord");
         paperDetails.forEach(paperDetail -> {
             paperDetail.setAcRecord(new AcRecord(
                     paperDetail.getUser(),
@@ -288,6 +292,7 @@ public class PaperService {
         });
 
         // 6. 更新paperDetails表和acRecord表
+        log.info("更新paperDetails表和acRecord表");
         acRecordRepository.saveAll(
                 paperDetails.stream()
                         .map(PaperDetail::getAcRecord)
@@ -306,9 +311,11 @@ public class PaperService {
      */
     public void updateInternalPaperResult(int id, int result, LocalDate updateDate) {
         // 1. 获取对应的内部论文
+        log.info("获取对应的内部论文");
         InternalPaper internalPaper = internalPaperRepository.findById(id).get();
 
         // 2. 校验论文投票和投稿情况
+        log.info("校验论文投票和投稿情况");
         if(internalPaper.getIsStudentFirstAuthor()) {
             if (internalPaper.getVote().getResult() == -1 || internalPaper.getVote().getResult() == 0) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
@@ -321,10 +328,12 @@ public class PaperService {
         }
 
         // 3. 更新指定论文的投稿结果和更新时间
+        log.info("更新指定论文的投稿结果和更新时间");
         internalPaper.setResult(this.getPaperResult(true,result));
         internalPaper.setUpdateDate(updateDate);
         internalPaperRepository.save(internalPaper);
         // 4. 更新论文 ac
+        log.info("更新论文 ac");
         paperService.calculateInternalPaperAc(internalPaper);
 
         // 5. 插入相关消息
