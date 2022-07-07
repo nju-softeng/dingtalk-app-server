@@ -320,7 +320,10 @@ public class VoteService {
      */
     private AcRecord generateAcRecord(String title, User user, boolean voteDetail, int finalResult, LocalDateTime dateTime) {
         int coefficient = 0;
-        if (finalResult != 2) {
+        if (finalResult == InternalPaper.SUSPEND) {
+            // 中止外投不扣分
+            coefficient = 0;
+        } else if (finalResult != 2) {
             if ((voteDetail && finalResult == 1) || (!voteDetail && finalResult == 0)) {
                 coefficient = 1;
             } else {

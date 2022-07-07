@@ -226,7 +226,7 @@ public class PaperService {
             case InternalPaper.ACCEPT:
                 return 1.0;
             case InternalPaper.SUSPEND:
-            case InternalPaper.NOTPASS:
+            case InternalPaper.REJECT:
                 return -acDeductionRate;
             default:
                 return 0.0;
