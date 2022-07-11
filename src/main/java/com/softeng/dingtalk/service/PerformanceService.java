@@ -93,6 +93,7 @@ public class PerformanceService {
      */
     public List<Map<String, Object>> listDcSummaryVO(LocalDate date, boolean isDesc) {
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
+        systemService.manulUpdatePerformance(yearmonth);
         return isDesc ?
                 dcSummaryRepository.listDcSummaryDesc(yearmonth) :
                 dcSummaryRepository.listDcSummaryAsc(yearmonth);
