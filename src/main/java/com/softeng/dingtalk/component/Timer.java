@@ -69,7 +69,7 @@ public class Timer {
     @Scheduled(cron = "0 0 2 ? * MON")
     public void deductedPointsUnsubmittedWeeklyReport() {
         log.info(LocalDate.now() + " 定时扫描扣分");
-        systemService.manulDeductedPointsUnsubmittedWeeklyReport(LocalDate.now());
+        systemService.manulDeductedPointsUnsubmittedWeeklyReport(LocalDate.now().minusDays(1));
     }
 
     //每天凌晨扫描一次,会议的AC结算
