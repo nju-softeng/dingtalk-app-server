@@ -159,6 +159,17 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Prize> allPrizes;
 
+    /**
+     * @author LiXiaoKang
+     * @description todo-用户权限重构
+     * @date 2/3/2023
+     */
+
+    /**
+     * 用户权限id（代替authority）
+     */
+    private int permissionId;
+
 
     public User(String userid, String unionid, String name, String avatar, int authority, Position position) {
         this.userid = userid;
