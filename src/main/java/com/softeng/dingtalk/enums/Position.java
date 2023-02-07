@@ -13,7 +13,14 @@ public enum Position {
     ACADEMIC("学硕"),
     PROFESSIONAL("专硕"),
     UNDERGRADUATE("本科生"),
-    OTHER("待定");
+    OTHER("待定"),
+
+    /**
+     * @author LiXiaoKang
+     * @description todo-新增职位/学位
+     * @create 2/4/2023
+     */
+    TEACHER("教师");
 
     private String title;
 

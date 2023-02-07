@@ -2,12 +2,12 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.api.BaseApi;
 import com.softeng.dingtalk.encryption.Encryption;
-import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.repository.AcRecordRepository;
-import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.entity.*;
+import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.UserInfoVO;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,6 +37,20 @@ public class UserService {
     BaseApi baseApi;
     @Autowired
     Encryption encryption;
+
+    /**
+     * @author LiXiaoKang
+     * @description 新增用用户权限、用户组相关注入
+     * @date 2/5/2023
+     */
+    @Autowired
+    private PermissionRepository permissionRepository;
+    @Autowired
+    private TeamRepository teamRepository;
+    @Autowired
+    private UserPermissionRepository userPermissionRepository;
+    @Autowired
+    private UserTeamRepository userTeamRepository;
 
     @Value("${file.userLeaseContractFilePath}")
     private String userLeaseContractFilePath;
@@ -157,4 +171,39 @@ public class UserService {
         fileService.downloadFile(fileName,filePath,httpServletResponse);
     }
 
+    /**
+     * @author LiXiaoKang
+     * @description 新增用用户权限、用户组相关service层方法
+     * @date 2/5/2023
+     */
+
+    /**
+     * 获得该用户的所有权限名
+     * @param userId
+     * @return 所有权限名
+     */
+    public List<String> getPermissionNames(int userId){
+        List<String> permissionList= new ArrayList<>();
+        List<UserPermission> userPermissionList= userPermissionRepository.findAllByUserId(userId);
+        for (UserPermission userPermission: userPermissionList) {
+            Permission permission = permissionRepository.findById(userPermission.getPermissionId());
+            permissionList.add(permission.getName());
+        }
+        return permissionList;
+    }
+
+    /**
+     * 获得该用户所在的所有用户组名
+     * @param userId
+     * @return
+     */
+    public List<String> getTeams(int userId){
+        List<String> teamList= new ArrayList<>();
+        List<UserTeam> userTeamList= userTeamRepository.findAllByUserId(userId);
+        for (UserTeam userTeam: userTeamList) {
+            Team team = teamRepository.findById(userTeam.getTeamId());
+            teamList.add(team.getName());
+        }
+        return teamList;
+    }
 }

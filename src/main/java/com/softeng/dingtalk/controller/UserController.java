@@ -33,7 +33,6 @@ public class UserController {
     UserService userService;
     @Autowired
     NotifyService notifyService;
-
     @Autowired
     BaseApi baseApi;
 
@@ -131,5 +130,24 @@ public class UserController {
         userService.downloadContractFile(uid,response);
     }
 
+    /**
+     * @author LiXiaoKang
+     * @description 新增获取用户权限与所属组信息
+     * @create 1/10/2020 8:38 PM
+     */
 
+    /**
+     * 获取用户权限信息
+     * @param uid
+     * @return
+     */
+    @GetMapping("/user/permission")
+    public List<String> getPermissions(@RequestAttribute int uid){
+        return userService.getPermissionNames(uid);
+    }
+
+    @GetMapping("/user/team")
+    public List<String> getTeams(@RequestAttribute int uid){
+        return userService.getTeams(uid);
+    }
 }
