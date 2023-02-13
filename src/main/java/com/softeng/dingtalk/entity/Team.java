@@ -1,29 +1,29 @@
 package com.softeng.dingtalk.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.List;
 
 /**
+ *
  * @author LiXiaoKang
- * @description 用户组实体类
- * @date 02/02/2023
+ * @since 2023-01-10
  */
-@Getter
-@Setter
-@Entity
-@NoArgsConstructor
-@ToString
-public class Team {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+@ApiModel(value="Team实体对象", description="用户研究组")
+public class Team implements Serializable {
 
+    @ApiModelProperty(value = "组id")
+    private Integer id;
+
+    @ApiModelProperty(value = "用户研究组名")
     private String name;
+
 }

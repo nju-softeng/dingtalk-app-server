@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.entity.Practice;
+import com.softeng.dingtalk.po.PracticePo;
 import com.softeng.dingtalk.service.PracticeService;
 import com.softeng.dingtalk.vo.PracticeVO;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public class PracticeController {
         }
     }
     @GetMapping("/practice")
-    public List<Practice> getPracticeList(@RequestAttribute int uid){
+    public List<PracticePo> getPracticeList(@RequestAttribute int uid){
         return practiceService.getPracticeList(uid);
     }
 

@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DateUtils;
-import com.softeng.dingtalk.repository.DcSummaryRepository;
+import com.softeng.dingtalk.dao.repository.DcSummaryRepository;
 import com.softeng.dingtalk.service.ApplicationService;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.UserService;
@@ -53,13 +53,14 @@ public class ApplicationController {
      * @param uid 申请人的 id
      * @param vo  申请的绩效内容
      */
+//    todo-评审员权限相关
     @PostMapping("/application")
     public void addApplication(@RequestAttribute int uid, @Valid @RequestBody ApplyVO vo) {
-        if (userService.isAuditor(uid) && uid == vo.getAuditorid()) {
-            applicationService.addApplicationByAuditor(vo, uid);
-        } else {
-            applicationService.addApplication(vo, uid);
-        }
+//        if (userService.isAuditor(uid) && uid == vo.getAuditorid()) {
+//            applicationService.addApplicationByAuditor(vo, uid);
+//        } else {
+//            applicationService.addApplication(vo, uid);
+//        }
     }
 
     /**
@@ -67,9 +68,15 @@ public class ApplicationController {
      * @param uid
      * @param vo
      */
+    //    todo-评审员权限相关
     @PutMapping("/application/{id}")
     public void updateApplication(@RequestAttribute int uid, @Valid @RequestBody ApplyVO vo) {
-        if (userService.isAuditor(uid) && uid == vo.getAuditorid()) {
+//        if (userService.isAuditor(uid) && uid == vo.getAuditorid()) {
+//            applicationService.updateApplicationByAuditor(vo, uid);
+//        } else {
+//            applicationService.updateApplication(vo, uid);
+//        }
+        if (uid == vo.getAuditorid()) {
             applicationService.updateApplicationByAuditor(vo, uid);
         } else {
             applicationService.updateApplication(vo, uid);

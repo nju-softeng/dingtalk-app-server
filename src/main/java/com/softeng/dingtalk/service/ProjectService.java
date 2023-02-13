@@ -1,8 +1,8 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.DateUtils;
-import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.repository.*;
+import com.softeng.dingtalk.dao.repository.*;
+import com.softeng.dingtalk.po.*;
 import com.softeng.dingtalk.vo.ProjectVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,20 +45,20 @@ public class ProjectService {
      * @param projectVO
      */
     public void createProject(ProjectVO projectVO, int uid) {
-        Project project = new Project();
-        project.setAuditor(new User(uid));
-        setSameAttribute(projectVO, project);
-        projectRepository.save(project);
+        ProjectPo projectPo = new ProjectPo();
+        projectPo.setAuditor(new UserPo(uid));
+        setSameAttribute(projectVO, projectPo);
+        projectRepository.save(projectPo);
     }
 
-    private void setSameAttribute(ProjectVO projectVO, Project project) {
-        project.setTitle(projectVO.getName());
-        project.setLeader(new User(projectVO.getLeaderId()));
-        project.setNature(projectVO.isNature());
+    private void setSameAttribute(ProjectVO projectVO, ProjectPo projectPo) {
+        projectPo.setTitle(projectVO.getName());
+        projectPo.setLeader(new UserPo(projectVO.getLeaderId()));
+        projectPo.setNature(projectVO.isNature());
         if (projectVO.getHorizontalLevel()>='A' && projectVO.getHorizontalLevel()<='D') {
-            project.setHorizontalLevel(projectVO.getHorizontalLevel());
+            projectPo.setHorizontalLevel(projectVO.getHorizontalLevel());
         }
-        project.setLongitudinalLevel(projectVO.getLongitudinalLevel());
+        projectPo.setLongitudinalLevel(projectVO.getLongitudinalLevel());
     }
 
 
@@ -86,7 +86,7 @@ public class ProjectService {
      * @param pid
      */
     public void rmProject(int pid) {
-        Project p = projectRepository.findById(pid).get();
+        ProjectPo p = projectRepository.findById(pid).get();
         if (p.getCnt() != 0) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "项目的迭代不为空,无法删除");
         }
@@ -99,9 +99,9 @@ public class ProjectService {
      * @param projectVO
      */
     public void updateProject(ProjectVO projectVO) {
-        Project project = new Project();
-        setSameAttribute(projectVO, project);
-        projectRepository.save(project);
+        ProjectPo projectPo = new ProjectPo();
+        setSameAttribute(projectVO, projectPo);
+        projectRepository.save(projectPo);
     }
 
 

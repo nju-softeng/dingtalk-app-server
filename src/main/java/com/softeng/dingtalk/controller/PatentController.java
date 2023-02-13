@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.softeng.dingtalk.entity.Patent;
+import com.softeng.dingtalk.po.PatentPo;
 import com.softeng.dingtalk.service.FileService;
 import com.softeng.dingtalk.service.PatentService;
 import com.softeng.dingtalk.vo.PatentVO;
@@ -34,7 +34,7 @@ public class PatentController {
     }
 
     @GetMapping("/patent/{id}")
-    public Patent getPatentDetail(@PathVariable int id){
+    public PatentPo getPatentDetail(@PathVariable int id){
         return patentService.getPatentDetail(id);
     }
 

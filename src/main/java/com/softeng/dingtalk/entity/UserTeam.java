@@ -1,32 +1,28 @@
 package com.softeng.dingtalk.entity;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import java.io.Serializable;
 
 /**
- * @author LiXiaoKang
- * @description 用户组实体类
- * @date 02/02/2023
+ *
+ * @author lilingj
+ * @since 2023-01-10
  */
-@Getter
-@Setter
-@Entity
-@NoArgsConstructor
-@ToString
-// 设置联合主键的注解
-@IdClass(UserTeamAssociatePK.class)
-public class UserTeam {
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+@ApiModel(value="UserTeam实体对象", description="用户与研究组关系")
+public class UserTeam implements Serializable {
 
-    @Id
-    private int userId;
 
-    @Id
-    private int teamId;
+    @ApiModelProperty(value = "用户id")
+    private Integer userId;
+
+    @ApiModelProperty(value = "组id")
+    private Integer teamId;
 }

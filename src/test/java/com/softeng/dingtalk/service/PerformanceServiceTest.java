@@ -1,9 +1,9 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.excel.DcSummaryData;
-import com.softeng.dingtalk.mapper.DcSummaryMapper;
-import com.softeng.dingtalk.repository.DcSummaryRepository;
-import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.dao.mapper.DcSummaryMapper;
+import com.softeng.dingtalk.dao.repository.DcSummaryRepository;
+import com.softeng.dingtalk.dao.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author zhanyeye

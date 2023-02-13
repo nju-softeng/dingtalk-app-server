@@ -2,22 +2,15 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.api.ReportApi;
 import com.softeng.dingtalk.component.DateUtils;
-import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.repository.UserRepository;
-import com.softeng.dingtalk.vo.UserVO;
+import com.softeng.dingtalk.po.UserPo;
+import com.softeng.dingtalk.dao.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Year;
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +40,7 @@ public class WeeklyReportService {
         return reportApi.getReport(userid, startTime, endTime).size() != 0;
     }
 
-    public List<User> queryUnSubmittedWeeklyReportUser(LocalDateTime startTime, LocalDateTime endTime) {
+    public List<UserPo> queryUnSubmittedWeeklyReportUser(LocalDateTime startTime, LocalDateTime endTime) {
         // 获取指定日期一百条简报，做个初筛，避免一个人一下调用接口，导致服务被钉钉禁止
         var userids = reportApi.getSimpleReport(startTime, endTime, 100);
         log.info(startTime.toString() + "已经提交周报的userid: " + userids);

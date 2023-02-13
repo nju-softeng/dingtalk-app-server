@@ -1,13 +1,13 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.DateUtils;
-import com.softeng.dingtalk.entity.AcItem;
-import com.softeng.dingtalk.entity.AcRecord;
-import com.softeng.dingtalk.entity.DcRecord;
-import com.softeng.dingtalk.mapper.DcRecordMapper;
-import com.softeng.dingtalk.repository.AcItemRepository;
-import com.softeng.dingtalk.repository.AcRecordRepository;
-import com.softeng.dingtalk.repository.DcRecordRepository;
+import com.softeng.dingtalk.po.AcItemPo;
+import com.softeng.dingtalk.po.AcRecordPo;
+import com.softeng.dingtalk.po.DcRecordPo;
+import com.softeng.dingtalk.dao.mapper.DcRecordMapper;
+import com.softeng.dingtalk.dao.repository.AcItemRepository;
+import com.softeng.dingtalk.dao.repository.AcRecordRepository;
+import com.softeng.dingtalk.dao.repository.DcRecordRepository;
 import com.softeng.dingtalk.vo.ApplyVO;
 import com.softeng.dingtalk.vo.DcRecordVO;
 import com.softeng.dingtalk.vo.UserVO;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -54,13 +53,13 @@ public class ApplicationService {
 
     /**
      * 持久化dc（周绩效申请）, ac（学术学分）申请，并将绩dc作为ac的外键
-     * @param acItems 学术学分申请项
+     * @param acItemPos 学术学分申请项
      * @param dc 周绩效申请
      */
-    public void saveAcItemsAndDcRecord(List<AcItem> acItems, DcRecord dc) {
+    public void saveAcItemsAndDcRecord(List<AcItemPo> acItemPos, DcRecordPo dc) {
         dcRecordRepository.save(dc);
-        acItems.forEach(acItem -> acItem.setDcRecord(dc));
-        acItemRepository.saveAll(acItems);
+        acItemPos.forEach(acItem -> acItem.setDcRecord(dc));
+        acItemRepository.saveAll(acItemPos);
     }
 
 
@@ -74,7 +73,7 @@ public class ApplicationService {
         assertUniqueConstraintException(uid, vo.getAuditorid(), vo.getId(), dateCode);
         assertTimeException(vo.getDate());
 
-        applicationService.saveAcItemsAndDcRecord(vo.getAcItems(), new DcRecord(uid, vo, dateCode));
+        applicationService.saveAcItemsAndDcRecord(vo.getAcItemPos(), new DcRecordPo(uid, vo, dateCode));
     }
 
 
@@ -87,39 +86,39 @@ public class ApplicationService {
         int dateCode = dateUtils.getDateCode(vo.getDate());
         assertUniqueConstraintException(uid, vo.getAuditorid(), vo.getId(), dateCode);
 
-        DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
+        DcRecordPo dc = dcRecordRepository.findById(vo.getId()).get();
         dc.reApply(vo.getAuditorid(), vo.getDvalue(), vo.getDate(), dateCode);
 
         // 删除之前的acItems记录
         acItemRepository.deleteByDcRecord(dc);
-        applicationService.saveAcItemsAndDcRecord(vo.getAcItems(), dc);
+        applicationService.saveAcItemsAndDcRecord(vo.getAcItemPos(), dc);
     }
 
 
     /**
      * 持久化ac申请，并将绩效申请作为外键
-     * @param acItems
+     * @param acItemPos
      * @param dc
      */
-    public void saveAcRecordsWithDcIdAsForeignKey(List<AcItem> acItems, DcRecord dc) {
-        acItems.forEach(acItem -> {
+    public void saveAcRecordsWithDcIdAsForeignKey(List<AcItemPo> acItemPos, DcRecordPo dc) {
+        acItemPos.forEach(acItem -> {
             acItem.setDcRecord(dc);
-            AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem, dc.getInsertTime()));
-            acItem.setAcRecord(acRecord);
+            AcRecordPo acRecordPO = acRecordRepository.save(new AcRecordPo(dc, acItem, dc.getInsertTime()));
+            acItem.setAcRecord(acRecordPO);
         });
-        acItemRepository.saveAll(acItems);
+        acItemRepository.saveAll(acItemPos);
     }
 
 
     /**
      * 审核人更新DcRecord,AcRecords,DcSummary,并发送更新DcMessage结果消息
      * @param dc
-     * @param acItems
+     * @param acItemPos
      */
-    public void auditorUpdateDcRecordAndAcRecords(DcRecord dc, List<AcItem> acItems) {
+    public void auditorUpdateDcRecordAndAcRecords(DcRecordPo dc, List<AcItemPo> acItemPos) {
         dcRecordRepository.save(dc);
         dcRecordRepository.refresh(dc);
-        applicationService.saveAcRecordsWithDcIdAsForeignKey(acItems, dc);
+        applicationService.saveAcRecordsWithDcIdAsForeignKey(acItemPos, dc);
         auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
         notifyService.updateDcMessage(dc);
     }
@@ -135,8 +134,8 @@ public class ApplicationService {
         assertUniqueConstraintException(uid, vo.getAuditorid(), vo.getId(), dateCode);
         assertTimeException(vo.getDate());
 
-        DcRecord dc = new DcRecord().setByAuditor(uid, vo, dateCode);
-        applicationService.auditorUpdateDcRecordAndAcRecords(new DcRecord().setByAuditor(uid, vo, dateCode), vo.getAcItems());
+        DcRecordPo dc = new DcRecordPo().setByAuditor(uid, vo, dateCode);
+        applicationService.auditorUpdateDcRecordAndAcRecords(new DcRecordPo().setByAuditor(uid, vo, dateCode), vo.getAcItemPos());
     }
 
 
@@ -149,12 +148,12 @@ public class ApplicationService {
         int dateCode = dateUtils.getDateCode(vo.getDate());
         assertUniqueConstraintException(uid, vo.getAuditorid(), vo.getId(), dateCode);
 
-        DcRecord dc = dcRecordRepository.findById(vo.getId()).get();
+        DcRecordPo dc = dcRecordRepository.findById(vo.getId()).get();
         dc.setByAuditor(uid, vo, dateCode);
 
         // 删除旧的AcItems，同时级联删除相关AcRecord:见AcItem实体类
         acItemRepository.deleteByDcRecord(dc);
-        applicationService.auditorUpdateDcRecordAndAcRecords(dc, vo.getAcItems());
+        applicationService.auditorUpdateDcRecordAndAcRecords(dc, vo.getAcItemPos());
     }
 
 

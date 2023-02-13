@@ -2,10 +2,9 @@ package com.softeng.dingtalk.service;
 
 
 import com.softeng.dingtalk.api.BaseApi;
-import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.mapper.InternalPaperMapper;
-
-import com.softeng.dingtalk.repository.*;
+import com.softeng.dingtalk.dao.repository.*;
+import com.softeng.dingtalk.po.*;
+import com.softeng.dingtalk.dao.mapper.InternalPaperMapper;
 
 import com.softeng.dingtalk.vo.*;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -81,9 +78,9 @@ public class PaperService {
      * @param authors 论文作者VO list
      * @return
      */
-    public List<PaperDetail> setPaperDetailsByAuthorsAndPaper(InternalPaper paper, List<AuthorVO> authors) {
+    public List<PaperDetailPo> setPaperDetailsByAuthorsAndPaper(InternalPaperPo paper, List<AuthorVO> authors) {
         return authors.stream()
-                .map(author -> new PaperDetail(paper, author.getUid(), author.getNum()))
+                .map(author -> new PaperDetailPo(paper, author.getUid(), author.getNum()))
                 .collect(Collectors.toList());
     }
 
@@ -94,18 +91,18 @@ public class PaperService {
      * @param vo 实验室内部论文VO对象
      */
     public void addInternalPaper(InternalPaperVO vo) {
-        InternalPaper internalPaper = new InternalPaper(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(),
+        InternalPaperPo internalPaperPo = new InternalPaperPo(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(),
                 vo.getIsStudentFirstAuthor(), vo.getFirstAuthor(),vo.getPath(),vo.getTheme(),vo.getYear());
-        if (!internalPaper.getIsStudentFirstAuthor()) {
-            internalPaper.setResult(InternalPaper.REVIEWING);
-            internalPaper.setSubmissionFileName(vo.getFileName());
-            internalPaper.setSubmissionFileId(vo.getFileId());
+        if (!internalPaperPo.getIsStudentFirstAuthor()) {
+            internalPaperPo.setResult(InternalPaperPo.REVIEWING);
+            internalPaperPo.setSubmissionFileName(vo.getFileName());
+            internalPaperPo.setSubmissionFileId(vo.getFileId());
         }else {
-            internalPaper.setReviewFileName(vo.getFileName());
-            internalPaper.setReviewFileId(vo.getFileId());
+            internalPaperPo.setReviewFileName(vo.getFileName());
+            internalPaperPo.setReviewFileId(vo.getFileId());
         }
-        internalPaperRepository.save(internalPaper);
-        paperDetailRepository.saveBatch(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
+        internalPaperRepository.save(internalPaperPo);
+        paperDetailRepository.saveBatch(setPaperDetailsByAuthorsAndPaper(internalPaperPo, vo.getAuthors()));
     }
 
 
@@ -116,17 +113,17 @@ public class PaperService {
      */
     public void addExternalPaper(ExternalPaperVO vo) {
         // 创建对应的外部论文对象
-        ExternalPaper externalPaper = new ExternalPaper(vo.getTitle());
-        externalPaper.setReviewFileName(vo.getFileName());
-        externalPaper.setReviewFileId(vo.getFileId());
-        externalPaper.setTheme(vo.getTheme());
-        externalPaper.setPath(vo.getPath());
-        externalPaperRepository.save(externalPaper);
+        ExternalPaperPo externalPaperPo = new ExternalPaperPo(vo.getTitle());
+        externalPaperPo.setReviewFileName(vo.getFileName());
+        externalPaperPo.setReviewFileId(vo.getFileId());
+        externalPaperPo.setTheme(vo.getTheme());
+        externalPaperPo.setPath(vo.getPath());
+        externalPaperRepository.save(externalPaperPo);
         // 创建外部论文对应的投票
-        Vote vote = new Vote(vo.getStartTime(), vo.getEndTime(), true, externalPaper.getId());
-        externalPaper.setVote(vote);
+        VotePo votePo = new VotePo(vo.getStartTime(), vo.getEndTime(), true, externalPaperPo.getId());
+        externalPaperPo.setVote(votePo);
 
-        voteRepository.save(vote);
+        voteRepository.save(votePo);
     }
 
 
@@ -136,18 +133,18 @@ public class PaperService {
      * @param vo
      */
     public void updateInternalPaper(InternalPaperVO vo) {
-        InternalPaper internalPaper = internalPaperRepository.findById(vo.getId()).get();
+        InternalPaperPo internalPaperPo = internalPaperRepository.findById(vo.getId()).get();
         // 1. 更新 paper 信息
-        internalPaper.update(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getFirstAuthor());
+        internalPaperPo.update(vo.getTitle(), vo.getJournal(), vo.getPaperType(), vo.getIssueDate(), vo.getFirstAuthor());
         // 2. 删除旧的paperDetail
-        paperDetailRepository.deleteByInternalPaper(internalPaper);
+        paperDetailRepository.deleteByInternalPaper(internalPaperPo);
         // 3. 插入新的paperDetail
-        internalPaper.setPaperDetails(setPaperDetailsByAuthorsAndPaper(internalPaper, vo.getAuthors()));
+        internalPaperPo.setPaperDetails(setPaperDetailsByAuthorsAndPaper(internalPaperPo, vo.getAuthors()));
         // 4. 重新计算ac
-        paperService.calculateInternalPaperAc(internalPaper);
+        paperService.calculateInternalPaperAc(internalPaperPo);
         // 5. 重新添加paperDetail
-        paperDetailRepository.saveBatch(internalPaper.getPaperDetails());
-        internalPaperRepository.save(internalPaper);
+        paperDetailRepository.saveBatch(internalPaperPo.getPaperDetails());
+        internalPaperRepository.save(internalPaperPo);
     }
 
 
@@ -179,7 +176,7 @@ public class PaperService {
      * @param id
      */
     public void deleteInternalPaper(int id) {
-        paperDetailRepository.deleteByInternalPaper(new InternalPaper(id));
+        paperDetailRepository.deleteByInternalPaper(new InternalPaperPo(id));
         internalPaperRepository.deleteById(id);
         reviewRepository.deleteByPaperid(id);
     }
@@ -218,15 +215,15 @@ public class PaperService {
     /**
      * 按照论文投票投稿结果计算ac权重
      * 投稿接受正常算，平票中止和投稿被拒扣一半分
-     * @param internalPaper
+     * @param internalPaperPo
      * @return
      */
-    public double calculateWeightOfAc(InternalPaper internalPaper) {
-        switch (internalPaper.getResult()) {
-            case InternalPaper.ACCEPT:
+    public double calculateWeightOfAc(InternalPaperPo internalPaperPo) {
+        switch (internalPaperPo.getResult()) {
+            case InternalPaperPo.ACCEPT:
                 return 1.0;
-            case InternalPaper.SUSPEND:
-            case InternalPaper.REJECT:
+            case InternalPaperPo.SUSPEND:
+            case InternalPaperPo.REJECT:
                 return -acDeductionRate;
             default:
                 return 0.0;
@@ -237,57 +234,57 @@ public class PaperService {
      * 计算某个作者的 AC 加减分, 根据论文投稿情况、该论文类型对应的 AC 奖池、作者排名
      * 论文接受加正分，拒绝或者中止扣一半分
      *
-     * @param internalPaper 论文投稿情况
+     * @param internalPaperPo 论文投稿情况
      * @param sum      AC 奖池
      * @param rank     作者排名
      * @return AC值
      */
-    public double calculateAc(InternalPaper internalPaper, double sum, int rank) {
-        return calculateWeightOfAc(internalPaper) * calculateRatioOfAc(rank) * sum;
+    public double calculateAc(InternalPaperPo internalPaperPo, double sum, int rank) {
+        return calculateWeightOfAc(internalPaperPo) * calculateRatioOfAc(rank) * sum;
     }
 
     /**
      * 计算论文结果对应的 AC
      */
-    public void calculateInternalPaperAc(InternalPaper internalPaper) {
-        int result = internalPaper.getResult();
-        if(result != InternalPaper.ACCEPT
-            && result != InternalPaper.REJECT
-            && result != InternalPaper.SUSPEND) {
+    public void calculateInternalPaperAc(InternalPaperPo internalPaperPo) {
+        int result = internalPaperPo.getResult();
+        if(result != InternalPaperPo.ACCEPT
+            && result != InternalPaperPo.REJECT
+            && result != InternalPaperPo.SUSPEND) {
             log.info("论文没有处在计算ac的状态");
             return;
         }
-        if(internalPaper.hasAccepted() && !internalPaper.hasCompleteFile()) {
+        if(internalPaperPo.hasAccepted() && !internalPaperPo.hasCompleteFile()) {
             log.info("论文文件不完整，无法生成ac");
             return;
         }
         // 1. 获取 paperDetails
         log.info("获取 paperDetails");
-        var paperDetails = internalPaper.getPaperDetails();
+        var paperDetails = internalPaperPo.getPaperDetails();
 
         // 2. 删除 paperDetail 对应的旧的 AcRecord. 防止admin后续修改作者信息导致混乱
         log.info("删除 paperDetail 对应的旧的 AcRecord");
         acRecordRepository.deleteAll(
                 paperDetails.stream()
-                        .map(PaperDetail::getAcRecord)
+                        .map(PaperDetailPo::getAcRecord)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList())
         );
 
         // 3. 查询该类型论文对应的总 AC
         log.info("查询该类型论文对应的总 AC");
-        double sum = paperLevelRepository.getValue(internalPaper.getPaperType());
+        double sum = paperLevelRepository.getValue(internalPaperPo.getPaperType());
 
         // 4. 更新 paperDetail 对应的 AcRecord
         log.info("更新 paperDetail 对应的 AcRecord");
-        paperDetails.forEach(paperDetail -> {
-            paperDetail.setAcRecord(new AcRecord(
-                    paperDetail.getUser(),
+        paperDetails.forEach(paperDetailPo -> {
+            paperDetailPo.setAcRecord(new AcRecordPo(
+                    paperDetailPo.getUser(),
                     null,
-                    calculateAc(internalPaper, sum, paperDetail.getNum()),
-                    internalPaper.getReason(),
-                    AcRecord.PAPER,
-                    internalPaper.getUpdateDate().atTime(8, 0)
+                    calculateAc(internalPaperPo, sum, paperDetailPo.getNum()),
+                    internalPaperPo.getReason(),
+                    AcRecordPo.PAPER,
+                    internalPaperPo.getUpdateDate().atTime(8, 0)
             ));
         });
 
@@ -295,7 +292,7 @@ public class PaperService {
         log.info("更新paperDetails表和acRecord表");
         acRecordRepository.saveAll(
                 paperDetails.stream()
-                        .map(PaperDetail::getAcRecord)
+                        .map(PaperDetailPo::getAcRecord)
                         .collect(Collectors.toList())
         );
         paperDetailRepository.saveAll(paperDetails);
@@ -312,32 +309,32 @@ public class PaperService {
     public void updateInternalPaperResult(int id, int result, LocalDate updateDate) {
         // 1. 获取对应的内部论文
         log.info("获取对应的内部论文");
-        InternalPaper internalPaper = internalPaperRepository.findById(id).get();
+        InternalPaperPo internalPaperPo = internalPaperRepository.findById(id).get();
 
         // 2. 校验论文投票和投稿情况
         log.info("校验论文投票和投稿情况");
-        if(internalPaper.getIsStudentFirstAuthor()) {
-            if (internalPaper.getVote().getResult() == -1 || internalPaper.getVote().getResult() == 0) {
+        if(internalPaperPo.getIsStudentFirstAuthor()) {
+            if (internalPaperPo.getVote().getResult() == -1 || internalPaperPo.getVote().getResult() == 0) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "内审投票未结束或未通过！");
             }
         }
 
-        if(internalPaper.getResult() == InternalPaper.FLAT
-            || internalPaper.getResult() == InternalPaper.SUSPEND) {
+        if(internalPaperPo.getResult() == InternalPaperPo.FLAT
+            || internalPaperPo.getResult() == InternalPaperPo.SUSPEND) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "作者未决定投稿或已中止投稿！");
         }
 
         // 3. 更新指定论文的投稿结果和更新时间
         log.info("更新指定论文的投稿结果和更新时间");
-        internalPaper.setResult(this.getPaperResult(true,result));
-        internalPaper.setUpdateDate(updateDate);
-        internalPaperRepository.save(internalPaper);
+        internalPaperPo.setResult(this.getPaperResult(true,result));
+        internalPaperPo.setUpdateDate(updateDate);
+        internalPaperRepository.save(internalPaperPo);
         // 4. 更新论文 ac
         log.info("更新论文 ac");
-        paperService.calculateInternalPaperAc(internalPaper);
+        paperService.calculateInternalPaperAc(internalPaperPo);
 
         // 5. 插入相关消息
-        notifyService.paperAcMessage(internalPaper);
+        notifyService.paperAcMessage(internalPaperPo);
     }
 
 
@@ -349,16 +346,16 @@ public class PaperService {
      * @param updateDate
      */
     public void updateExPaperResult(int id, int result, LocalDate updateDate) {
-        ExternalPaper externalPaper = externalPaperRepository.findById(id).get();
+        ExternalPaperPo externalPaperPo = externalPaperRepository.findById(id).get();
 
-        if (externalPaper.getVote().getResult() == -1) {
+        if (externalPaperPo.getVote().getResult() == -1) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "投票尚未结束");
         }
 
         //更新论文的结果
-        externalPaper.setResult(getPaperResult(false,result));
-        externalPaper.setUpdateDate(updateDate);
-        externalPaperRepository.save(externalPaper);
+        externalPaperPo.setResult(getPaperResult(false,result));
+        externalPaperPo.setUpdateDate(updateDate);
+        externalPaperRepository.save(externalPaperPo);
     }
 
     private int getPaperResult(boolean isPaper,int result){
@@ -383,7 +380,7 @@ public class PaperService {
      * @param size
      * @return
      */
-    public Page<ExternalPaper> listExternalPaper(int page, int size) {
+    public Page<ExternalPaperPo> listExternalPaper(int page, int size) {
         return externalPaperRepository.findAll(
                 PageRequest.of(
                         page - 1,
@@ -399,10 +396,10 @@ public class PaperService {
      * @param id
      * @return
      */
-    public InternalPaper getInternalPaper(int id) {
-        InternalPaper internalPaper = internalPaperRepository.findById(id).get();
-        internalPaper.setPaperDetails(paperDetailRepository.findByInternalPaper(internalPaper));
-        return internalPaper;
+    public InternalPaperPo getInternalPaper(int id) {
+        InternalPaperPo internalPaperPo = internalPaperRepository.findById(id).get();
+        internalPaperPo.setPaperDetails(paperDetailRepository.findByInternalPaper(internalPaperPo));
+        return internalPaperPo;
     }
 
     /**
@@ -411,7 +408,7 @@ public class PaperService {
      * @param id
      * @return
      */
-    public ExternalPaper getExInternalPaper(int id) {
+    public ExternalPaperPo getExInternalPaper(int id) {
         return externalPaperRepository.findById(id).get();
     }
 
@@ -422,7 +419,7 @@ public class PaperService {
      * @param pid
      * @return
      */
-    public Vote getVoteByPid(int pid) {
+    public VotePo getVoteByPid(int pid) {
         return internalPaperRepository.findVoteById(pid);
     }
 
@@ -430,14 +427,14 @@ public class PaperService {
     /**
      * 提交论文评审建议
      *
-     * @param review
+     * @param reviewPo
      * @param uid
      * @return
      */
-    public void submitReview(Review review, int uid) {
-        User user = new User(uid);
-        review.setUser(user);
-        reviewRepository.save(review);
+    public void submitReview(ReviewPo reviewPo, int uid) {
+        UserPo userPo = new UserPo(uid);
+        reviewPo.setUser(userPo);
+        reviewRepository.save(reviewPo);
     }
 
     /**
@@ -445,7 +442,7 @@ public class PaperService {
      * @param isExternal
      * @return
      */
-    public List<Review> listReview(int paperId, boolean isExternal) {
+    public List<ReviewPo> listReview(int paperId, boolean isExternal) {
         return reviewRepository.findAllByPaperidAndExternal(paperId, isExternal);
     }
 
@@ -453,11 +450,11 @@ public class PaperService {
     /**
      * 更新评审意见
      *
-     * @param review 被更新的评审细节
+     * @param reviewPo 被更新的评审细节
      */
-    public void updateReview(Review review) {
-        reviewRepository.save(review);
-        log.debug(review.getUpdateTime().toString());
+    public void updateReview(ReviewPo reviewPo) {
+        reviewRepository.save(reviewPo);
+        log.debug(reviewPo.getUpdateTime().toString());
     }
 
 
@@ -468,8 +465,8 @@ public class PaperService {
      * @param uid 要删除的用户的id
      */
     public void deleteReview(int id, int uid) {
-        Review review = reviewRepository.findById(id).get();
-        if (uid != review.getUser().getId()) {
+        ReviewPo reviewPo = reviewRepository.findById(id).get();
+        if (uid != reviewPo.getUser().getId()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "无删除权限");
         }
         reviewRepository.deleteById(id);
@@ -493,7 +490,7 @@ public class PaperService {
      * @param id
      * @return
      */
-    public Vote getExPaperVote(int id) {
+    public VotePo getExPaperVote(int id) {
         return externalPaperRepository.findById(id).get().getVote();
     }
 
@@ -504,20 +501,20 @@ public class PaperService {
      */
 
     public void decideFlat(FlatDecisionVO flatDecisionVO) {
-        InternalPaper internalPaper = internalPaperRepository.findById(flatDecisionVO.getId()).get();
+        InternalPaperPo internalPaperPo = internalPaperRepository.findById(flatDecisionVO.getId()).get();
         if (flatDecisionVO.getDecision()) {
-            internalPaper.setFlatDecision(1);
-            internalPaper.setResult(2);
-            internalPaperRepository.save(internalPaper);
+            internalPaperPo.setFlatDecision(1);
+            internalPaperPo.setResult(2);
+            internalPaperRepository.save(internalPaperPo);
         } else {
-            internalPaper.setFlatDecision(0);
-            internalPaper.setResult(6); //投稿中止
-            internalPaper.setUpdateDate(LocalDate.now());
-            internalPaperRepository.save(internalPaper);
+            internalPaperPo.setFlatDecision(0);
+            internalPaperPo.setResult(6); //投稿中止
+            internalPaperPo.setUpdateDate(LocalDate.now());
+            internalPaperRepository.save(internalPaperPo);
             // 更新论文 ac
-            paperService.calculateInternalPaperAc(internalPaper);
+            paperService.calculateInternalPaperAc(internalPaperPo);
             // 插入相关消息
-            notifyService.paperAcMessage(internalPaper);
+            notifyService.paperAcMessage(internalPaperPo);
         }
     }
 

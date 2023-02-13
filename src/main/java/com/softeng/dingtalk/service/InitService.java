@@ -1,12 +1,12 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.entity.DcSummary;
-import com.softeng.dingtalk.entity.PaperLevel;
-import com.softeng.dingtalk.entity.PatentLevel;
-import com.softeng.dingtalk.entity.SubsidyLevel;
+import com.softeng.dingtalk.dao.repository.*;
+import com.softeng.dingtalk.po.DcSummaryPo;
+import com.softeng.dingtalk.po.PaperLevelPo;
+import com.softeng.dingtalk.po.PatentLevelPo;
+import com.softeng.dingtalk.po.SubsidyLevelPo;
 import com.softeng.dingtalk.enums.PaperType;
 import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,14 +45,14 @@ public class InitService {
      */
     public void initPaperLevel() {
         if (paperLevelRepository.count() == 0) {
-            List<PaperLevel> paperLevels = new ArrayList<>();
-            paperLevels.add(new PaperLevel("Journal A", PaperType.JOURNAL_A, 60));
-            paperLevels.add(new PaperLevel("Conference A", PaperType.CONFERENCE_A, 50));
-            paperLevels.add(new PaperLevel("Journal B", PaperType.JOURNAL_B, 36));
-            paperLevels.add(new PaperLevel("Conference B", PaperType.CONFERENCE_B, 30));
-            paperLevels.add(new PaperLevel("Journal C", PaperType.JOURNAL_C, 24));
-            paperLevels.add(new PaperLevel("Conference C", PaperType.CONFERENCE_C, 20));
-            paperLevelRepository.saveAll(paperLevels);
+            List<PaperLevelPo> paperLevelPos = new ArrayList<>();
+            paperLevelPos.add(new PaperLevelPo("Journal A", PaperType.JOURNAL_A, 60));
+            paperLevelPos.add(new PaperLevelPo("Conference A", PaperType.CONFERENCE_A, 50));
+            paperLevelPos.add(new PaperLevelPo("Journal B", PaperType.JOURNAL_B, 36));
+            paperLevelPos.add(new PaperLevelPo("Conference B", PaperType.CONFERENCE_B, 30));
+            paperLevelPos.add(new PaperLevelPo("Journal C", PaperType.JOURNAL_C, 24));
+            paperLevelPos.add(new PaperLevelPo("Conference C", PaperType.CONFERENCE_C, 20));
+            paperLevelRepository.saveAll(paperLevelPos);
         }
     }
 
@@ -70,13 +70,13 @@ public class InitService {
      */
     public void initSubsidyLevel() {
         if (subsidyLevelRepository.count() == 0) {
-            List<SubsidyLevel> subsidyLevels = new ArrayList<>();
-            subsidyLevels.add(new SubsidyLevel(Position.DOCTOR, 250));
-            subsidyLevels.add(new SubsidyLevel(Position.ACADEMIC, 200));
-            subsidyLevels.add(new SubsidyLevel(Position.PROFESSIONAL, 200));
-            subsidyLevels.add(new SubsidyLevel(Position.UNDERGRADUATE, 0));
-            subsidyLevels.add(new SubsidyLevel(Position.OTHER, 0));
-            subsidyLevelRepository.saveBatch(subsidyLevels);
+            List<SubsidyLevelPo> subsidyLevelPos = new ArrayList<>();
+            subsidyLevelPos.add(new SubsidyLevelPo(Position.DOCTOR, 250));
+            subsidyLevelPos.add(new SubsidyLevelPo(Position.ACADEMIC, 200));
+            subsidyLevelPos.add(new SubsidyLevelPo(Position.PROFESSIONAL, 200));
+            subsidyLevelPos.add(new SubsidyLevelPo(Position.UNDERGRADUATE, 0));
+            subsidyLevelPos.add(new SubsidyLevelPo(Position.OTHER, 0));
+            subsidyLevelRepository.saveBatch(subsidyLevelPos);
         }
     }
 
@@ -91,17 +91,17 @@ public class InitService {
         Set<Integer> total = userRepository.listUserids();
         total.removeAll(existed);
         dcSummaryRepository.saveBatch(total.stream()
-                .map(id -> new DcSummary(id, yearmonth))
+                .map(id -> new DcSummaryPo(id, yearmonth))
                 .collect(Collectors.toList())
         );
     }
 
     public void initPatentLevel(){
         if(patentLevelRepository.count()==0){
-            PatentLevel patentLevel=new PatentLevel();
-            patentLevel.setTitle("patent");
-            patentLevel.setTotal(40);
-            patentLevelRepository.save(patentLevel);
+            PatentLevelPo patentLevelPo =new PatentLevelPo();
+            patentLevelPo.setTitle("patent");
+            patentLevelPo.setTotal(40);
+            patentLevelRepository.save(patentLevelPo);
         }
     }
 

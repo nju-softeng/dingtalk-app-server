@@ -1,9 +1,7 @@
 package com.softeng.dingtalk.service;
 
 
-import com.softeng.dingtalk.entity.AcItem;
-import com.softeng.dingtalk.repository.AcItemRepository;
-import com.softeng.dingtalk.repository.DcRecordRepository;
+import com.softeng.dingtalk.po.AcItemPo;
 import com.softeng.dingtalk.vo.CheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -12,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,10 +27,10 @@ public class AuditServiceTest {
 
     @Test
     public void testUpdateAuditResult() {
-        List<AcItem> acItems = new ArrayList<>();
-        acItems.add(new AcItem("申请ac1", 1));
-        acItems.add(new AcItem("申请ac2", 1));
-        CheckVO vo = new CheckVO(1329, 0.5, 0.777, 2, acItems);
+        List<AcItemPo> acItemPos = new ArrayList<>();
+        acItemPos.add(new AcItemPo("申请ac1", 1));
+        acItemPos.add(new AcItemPo("申请ac2", 1));
+        CheckVO vo = new CheckVO(1329, 0.5, 0.777, 2, acItemPos);
         auditService.updateAuditResult(vo);
     }
 

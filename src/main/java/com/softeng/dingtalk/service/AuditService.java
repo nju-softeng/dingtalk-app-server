@@ -1,7 +1,10 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.repository.*;
+import com.softeng.dingtalk.dao.repository.AcItemRepository;
+import com.softeng.dingtalk.dao.repository.AcRecordRepository;
+import com.softeng.dingtalk.dao.repository.DcRecordRepository;
+import com.softeng.dingtalk.dao.repository.DcSummaryRepository;
+import com.softeng.dingtalk.po.*;
 import com.softeng.dingtalk.vo.CheckedVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
 import com.softeng.dingtalk.vo.CheckVO;
@@ -14,7 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -51,20 +53,20 @@ public class AuditService {
 
     /**
      * 持久化被审核通过的 acItems
-     * @param acItems
+     * @param acItemPos
      * @param dc
      */
-    public void saveCheckedAcRecord(List<AcItem> acItems, DcRecord dc) {
-        acItems.forEach(acItem -> {
+    public void saveCheckedAcRecord(List<AcItemPo> acItemPos, DcRecordPo dc) {
+        acItemPos.forEach(acItem -> {
             // 前端传来的没有dcRecord属性, 手动添加
             acItem.setDcRecord(dc);
             if (acItem.isStatus()) {
                 // ac申请被同意
-                AcRecord acRecord = acRecordRepository.save(new AcRecord(dc, acItem, dc.getInsertTime()));
-                acItem.setAcRecord(acRecord);
+                AcRecordPo acRecordPO = acRecordRepository.save(new AcRecordPo(dc, acItem, dc.getInsertTime()));
+                acItem.setAcRecord(acRecordPO);
             }
         });
-        acItemRepository.saveAll(acItems);
+        acItemRepository.saveAll(acItemPos);
     }
 
 
@@ -73,15 +75,15 @@ public class AuditService {
      * @param checkVO 审核人提交的审核结果
      * @return
      */
-    public DcRecord updateAuditResult(CheckVO checkVO) {
-        DcRecord dc = dcRecordRepository.findById(checkVO.getId()).get();
+    public DcRecordPo updateAuditResult(CheckVO checkVO) {
+        DcRecordPo dc = dcRecordRepository.findById(checkVO.getId()).get();
         if (dc.isStatus()) {
             // status为真，表示之前审核过，此次提交为更新, 删除旧的AcItems， 同时级联删除相关AcRecord
             acItemRepository.deleteByDcRecord(dc);
         }
         // 更新 cvalue, dc, ac
         dc.update(checkVO.getCvalue(), checkVO.getDc(), checkVO.getAc());
-        auditService.saveCheckedAcRecord(checkVO.getAcItems(), dc);
+        auditService.saveCheckedAcRecord(checkVO.getAcItemPos(), dc);
         // 更新dcsummary
         auditService.updateDcSummary(dc.getApplicant().getId(), dc.getYearmonth(), dc.getWeek());
         // 发送消息
@@ -97,10 +99,10 @@ public class AuditService {
      * @param week 所在周
      */
     public void updateDcSummary(int uid, int yearmonth, int week) {
-        DcSummary dcSummary = Optional.ofNullable(dcSummaryRepository.getDcSummary(uid, yearmonth))
-                .orElse(new DcSummary(uid, yearmonth));
-        dcSummary.updateWeek(week, dcRecordRepository.getUserWeekTotalDc(uid, yearmonth, week));
-        dcSummaryRepository.save(dcSummary);
+        DcSummaryPo dcSummaryPo = Optional.ofNullable(dcSummaryRepository.getDcSummary(uid, yearmonth))
+                .orElse(new DcSummaryPo(uid, yearmonth));
+        dcSummaryPo.updateWeek(week, dcRecordRepository.getUserWeekTotalDc(uid, yearmonth, week));
+        dcSummaryRepository.save(dcSummaryPo);
         performanceService.computeSalary(uid, yearmonth);
     }
 
@@ -117,7 +119,7 @@ public class AuditService {
         Page<CheckedVO> pages = dcRecordRepository.listChecked(uid, pageable);
         List<CheckedVO> contents = pages.getContent();
         contents.forEach(checked -> {
-            checked.setAcItems(acItemRepository.findAllByDcRecordID(checked.getId()));
+            checked.setAcItemPos(acItemRepository.findAllByDcRecordID(checked.getId()));
         });
         return Map.of(
                 "content", contents,
@@ -136,7 +138,7 @@ public class AuditService {
     public List<CheckedVO> listCheckedByDate(int uid, int yearmonth, int week) {
         List<CheckedVO> checkedVOS = dcRecordRepository.listCheckedByDate(uid, yearmonth, week);
         checkedVOS.forEach(vo -> {
-            vo.setAcItems(acItemRepository.findAllByDcRecordID(vo.getId()));
+            vo.setAcItemPos(acItemRepository.findAllByDcRecordID(vo.getId()));
         });
         return checkedVOS;
     }
@@ -150,7 +152,7 @@ public class AuditService {
     public List<ToCheckVO> listPendingApplication(int uid) {
         List<ToCheckVO> toCheckVOList = dcRecordRepository.listToCheckVO(uid);
         toCheckVOList.forEach(toCheckVO -> {
-            toCheckVO.setAcItems(acItemRepository.findAllByDcRecordID(toCheckVO.getId()));
+            toCheckVO.setAcItemPos(acItemRepository.findAllByDcRecordID(toCheckVO.getId()));
         });
         return toCheckVOList;
     }

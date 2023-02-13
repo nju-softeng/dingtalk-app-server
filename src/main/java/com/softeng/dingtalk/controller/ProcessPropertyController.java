@@ -1,6 +1,5 @@
 package com.softeng.dingtalk.controller;
 import com.alibaba.fastjson.JSONObject;
-import com.softeng.dingtalk.entity.ProcessProperty;
 import com.softeng.dingtalk.service.ProcessPropertyService;
 import com.softeng.dingtalk.vo.ProcessPropertyDetailVO;
 import com.softeng.dingtalk.vo.ProcessPropertyVO;

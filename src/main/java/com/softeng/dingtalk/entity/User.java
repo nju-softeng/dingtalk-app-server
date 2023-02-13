@@ -1,186 +1,82 @@
 package com.softeng.dingtalk.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.softeng.dingtalk.enums.PermissionEnum;
 import com.softeng.dingtalk.enums.Position;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.SQLDelete;
+import com.softeng.dingtalk.po.PrizePo;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
-import javax.persistence.*;
-import java.time.LocalDate;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * @author zhanyeye
- * @description 用户实体类
- * @date 11/13/2019
+ * @author LiXiaoKang
+ * @since 2023-02-08
  */
-@Getter
-@Setter
-@Entity
-@NoArgsConstructor
-@ToString
-@SQLDelete(sql = "update `user` set is_deleted = 1 where id = ?")
-public class User {
-    /**
-     * 表示用户权限的静态常量
-     */
-    public static final int NORMAL_AUTHORITY = 0;
-    public static final int AUDITOR_AUTHORITY = 1;
-    public static final int ADMIN_AUTHORITY = 2;
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+@ApiModel(value="User实体对象", description="用户实体")
+public class User implements Serializable {
+    @ApiModelProperty(value = "用户id")
+    private Integer id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    /**
-     * 钉钉用户userID
-     */
-    @Column(unique = true)
+    @ApiModelProperty(value = "钉钉用户id")
     private String userid;
 
-    /**
-     * 钉钉文档解释：员工在当前开发者企业账号范围内的唯一标识，系统生成，固定值，不会改变
-     */
+    @ApiModelProperty(value = "钉钉文档解释：员工在当前开发者企业账号范围内的唯一标识，系统生成，固定值，不会改变")
     private String unionid;
 
-    /**
-     * 用户姓名
-     */
+    @ApiModelProperty(value = "用户姓名")
     private String name;
 
-    /**
-     * 用户头像
-     */
+    @ApiModelProperty(value = "用户头像")
     private String avatar;
 
-    /**
-     * 学号
-     */
-    private String stuNum;
+    @ApiModelProperty(value = "用户管理权限")
+    private List<Permission> permissionList;
 
-    /**
-     * 用户权限
-     */
-    private int authority = NORMAL_AUTHORITY;
+    @ApiModelProperty(value = "用户所在研究组列表")
+    private List<Permission> teamList;
 
-    /**
-     * 用户职（学）位
-     */
-    private Position position = Position.OTHER;
+    @ApiModelProperty(value = "用户职（学）位")
+    private Position position;
 
-    /**
-     * 插入时间
-     */
-    @JsonIgnore
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    @ApiModelProperty(value = "插入时间")
     private LocalDateTime insertTime;
 
-    /**
-     * 软删除标识
-     */
-    @Column(nullable = false, name = "is_deleted")
+    @ApiModelProperty(value = "软删除标识")
     private boolean deleted;
 
-
-
-    /**
-     * @Author Jerrian Zhao
-     * @Data 01/22/2022
-     */
-
-
-    /**
-     * 本科学校
-     */
-
+    @ApiModelProperty(value = "本科学校")
     private String undergraduateCollege;
 
-    /**
-     * 硕士学校
-     */
-
+    @ApiModelProperty(value = "硕士学校")
     private String masterCollege;
 
-    /**
-     * 身份证号
-     */
+    @ApiModelProperty(value = "身份证号")
     private String idCardNo;
 
-    /**
-     * 银行卡号
-     */
+    @ApiModelProperty(value = "银行卡号")
     private String creditCard;
 
-    /**
-     * 开户行
-     */
+    @ApiModelProperty(value = "开户行")
     private String bankName;
 
-    private String leaseContractFileName;
-    private String leaseContractFilePath;
-    /**
-     * 租房开始时间
-     */
-    @Deprecated
-    private LocalDate rentingStart;
-
-    /**
-     * 租房结束时间
-     */
-    @Deprecated
-    private LocalDate rentingEnd;
-
-    /**
-     * 住址
-     */
+    @ApiModelProperty(value = "住址")
     private String address;
 
-    /**
-     * 状态
-     * true为在实习，false为在校
-     */
+    @ApiModelProperty(value = "状态true为在实习，false为在校")
     private Boolean workState;
 
-    /**
-     * 备注
-     */
+    @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "获奖情况")
+    private List<PrizePo> allPrizes;
 
-    /**
-     * 获奖情况
-     */
-    @JsonIgnoreProperties("user")
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<Prize> allPrizes;
-
-    /**
-     * @author LiXiaoKang
-     * @description todo-用户权限重构
-     * @date 2/3/2023
-     */
-
-    /**
-     * 用户权限id（代替authority）
-     */
-    private int permissionId;
-
-
-    public User(String userid, String unionid, String name, String avatar, int authority, Position position) {
-        this.userid = userid;
-        this.unionid = unionid;
-        this.name = name;
-        this.avatar = avatar;
-        this.authority = authority;
-        this.position = position;
-    }
-
-    public User(int id) {
-        this.id = id;
-    }
 }

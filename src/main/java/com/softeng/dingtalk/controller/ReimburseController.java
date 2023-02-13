@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.entity.Reimbursement;
+import com.softeng.dingtalk.po.ReimbursementPo;
 import com.softeng.dingtalk.service.ReimburseService;
 import com.softeng.dingtalk.vo.ReimbursementVO;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class ReimburseController {
     }
 
     @GetMapping("/reimburse/{id}")
-    public Reimbursement getReimbursementDetail(@PathVariable int id){
+    public ReimbursementPo getReimbursementDetail(@PathVariable int id){
         return reimburseService.getReimbursementDetail(id);
     }
 

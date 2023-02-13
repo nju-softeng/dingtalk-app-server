@@ -1,16 +1,11 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.entity.VMApply;
-import com.softeng.dingtalk.repository.UserRepository;
-import com.softeng.dingtalk.repository.VMApplyRepository;
+import com.softeng.dingtalk.po.VMApplyPo;
 import com.softeng.dingtalk.service.VMApplyService;
 import com.softeng.dingtalk.vo.VMApplyVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -53,7 +48,7 @@ public class VMApplyController {
       * @return
      */
     @GetMapping("/vmApply/auditingList")
-    public List<VMApply> getAuditingVMApplyList(){
+    public List<VMApplyPo> getAuditingVMApplyList(){
         return vmApplyService.getAuditingVMApplyList();
     }
 
@@ -62,7 +57,7 @@ public class VMApplyController {
      * @return
      */
     @GetMapping("/vmApply/user/{uid}")
-    public List<VMApply> getAuditingVMApplyList(@PathVariable int uid){
+    public List<VMApplyPo> getAuditingVMApplyList(@PathVariable int uid){
         return vmApplyService.getUserVMApplyList(uid);
     }
 

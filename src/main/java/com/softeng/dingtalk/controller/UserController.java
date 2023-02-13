@@ -1,19 +1,27 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.api.BaseApi;
-import com.softeng.dingtalk.entity.Message;
+import com.softeng.dingtalk.aspect.AccessPermission;
+import com.softeng.dingtalk.component.UserContextHolder;
+import com.softeng.dingtalk.component.convertor.PermissionConvertor;
+import com.softeng.dingtalk.component.convertor.TeamConvertor;
+import com.softeng.dingtalk.dto.CommonResult;
+import com.softeng.dingtalk.dto.resp.PermissionResp;
+import com.softeng.dingtalk.dto.resp.TeamResp;
+import com.softeng.dingtalk.enums.PermissionEnum;
+import com.softeng.dingtalk.po.MessagePo;
 import com.softeng.dingtalk.service.NotifyService;
 import com.softeng.dingtalk.service.UserService;
+import com.softeng.dingtalk.utils.StreamUtils;
 import com.softeng.dingtalk.vo.UserInfoVO;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -35,6 +43,12 @@ public class UserController {
     NotifyService notifyService;
     @Autowired
     BaseApi baseApi;
+    @Resource
+    UserContextHolder userContextHolder;
+    @Resource
+    TeamConvertor teamConvertor;
+    @Resource
+    PermissionConvertor permissionConvertor;
 
 
     /**
@@ -89,18 +103,19 @@ public class UserController {
      */
     @GetMapping("/message/page/{page}/{size}")
     public Map listUserMessage(@PathVariable int page, @PathVariable int size, @RequestAttribute int uid) {
-        Page<Message> messages = notifyService.listUserMessage(uid, page, size);
+        Page<MessagePo> messages = notifyService.listUserMessage(uid, page, size);
         return Map.of("content", messages.getContent(), "total", messages.getTotalElements());
     }
 
 
     /**
-     * 更新用户权限
+     * todo-更新用户权限
      * @param map
      */
+    @AccessPermission(PermissionEnum.EDIT_ANY_USER_INFO)
     @PostMapping("/updaterole")
     public void updateUserRole(@RequestBody Map<String, Object> map) {
-        userService.updateRole((int) map.get("uid"), (int) map.get("authority"));
+//        userService.updateRole((int) map.get("uid"), (int) map.get("authority"));
     }
 
 
@@ -133,7 +148,7 @@ public class UserController {
     /**
      * @author LiXiaoKang
      * @description 新增获取用户权限与所属组信息
-     * @create 1/10/2020 8:38 PM
+     * @create 1/10/2023 8:38 PM
      */
 
     /**
@@ -141,13 +156,19 @@ public class UserController {
      * @param uid
      * @return
      */
-    @GetMapping("/user/permission")
-    public List<String> getPermissions(@RequestAttribute int uid){
-        return userService.getPermissionNames(uid);
+    @GetMapping("/v2/user/permission")
+    public CommonResult<List<PermissionResp>> getPermissions(@RequestAttribute int uid){
+        return CommonResult.success(StreamUtils.map(
+                userService.getPermissions(userContextHolder.getUserContext().getUid()),
+                permission -> permissionConvertor.entity2Resp(permission)
+        ));
     }
 
-    @GetMapping("/user/team")
-    public List<String> getTeams(@RequestAttribute int uid){
-        return userService.getTeams(uid);
+    @GetMapping("/v2/user/team")
+    public CommonResult<List<TeamResp>> getTeams(@RequestAttribute int uid){
+        return CommonResult.success(StreamUtils.map(
+                userService.getTeams(userContextHolder.getUserContext().getUid()),
+                team -> teamConvertor.entity2Resp(team)
+        ));
     }
 }

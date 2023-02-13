@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.softeng.dingtalk.mapper.DcSummaryMapper">
+<mapper namespace="com.softeng.dingtalk.dao.mapper.DcSummaryMapper">
 
     <select id="listDcSummaryDataByYearMonth" resultType="com.softeng.dingtalk.excel.DcSummaryData">
         SELECT

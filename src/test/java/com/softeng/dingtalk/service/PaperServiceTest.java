@@ -1,6 +1,5 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.entity.ExternalPaper;
 import com.softeng.dingtalk.enums.PaperType;
 import com.softeng.dingtalk.vo.AuthorVO;
 import com.softeng.dingtalk.vo.ExternalPaperVO;

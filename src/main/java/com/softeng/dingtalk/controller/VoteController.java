@@ -1,10 +1,10 @@
 package com.softeng.dingtalk.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.entity.Vote;
-import com.softeng.dingtalk.entity.VoteDetail;
-import com.softeng.dingtalk.repository.VoteRepository;
+import com.softeng.dingtalk.po.UserPo;
+import com.softeng.dingtalk.po.VotePo;
+import com.softeng.dingtalk.po.VoteDetailPo;
+import com.softeng.dingtalk.dao.repository.VoteRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.PollVO;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -41,7 +40,7 @@ public class VoteController {
      * @return
      */
     @PostMapping("/vote")
-    public Vote addVote(@RequestBody VoteVO voteVO) {
+    public VotePo addVote(@RequestBody VoteVO voteVO) {
         log.debug(voteVO.toString());
         return voteService.createVote(voteVO);
     }
@@ -56,8 +55,8 @@ public class VoteController {
      */
     @PostMapping("/vote/{vid}")
     public Map addpoll(@PathVariable int vid, @RequestAttribute int uid, @RequestBody PollVO vo) throws IOException {
-        VoteDetail voteDetail = new VoteDetail(new Vote(vo.getVid()), vo.isResult(), new User(uid));
-        Map map = voteService.poll(vid, uid, voteDetail);
+        VoteDetailPo voteDetailPo = new VoteDetailPo(new VotePo(vo.getVid()), vo.isResult(), new UserPo(uid));
+        Map map = voteService.poll(vid, uid, voteDetailPo);
         WebSocketController.sendInfo(objectMapper.writeValueAsString(map));
         return map;
     }

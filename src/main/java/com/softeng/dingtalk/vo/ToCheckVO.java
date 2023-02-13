@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.entity.AcItem;
+import com.softeng.dingtalk.po.AcItemPo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +34,7 @@ public class ToCheckVO {
      */
     private int week;
     private LocalDateTime insertTime;
-    List<AcItem> acItems;
+    List<AcItemPo> acItemPos;
     private LocalDate weekdate;
 
     public ToCheckVO(int id, int uid, String name, double dvalue, int yearmonth, int week, LocalDateTime insertTime, LocalDate weekdate) {

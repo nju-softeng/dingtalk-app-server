@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.component;
 
-import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.po.UserPo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 public class AcAlgorithm {
     /**
      * 不提交周报的扣分标准
-     * @param user 我猜测以后可能不同用户扣不同的分，预留个user参数
+     * @param userPo 我猜测以后可能不同用户扣不同的分，预留个user参数
      */
-    public static double getPointOfUnsubmittedWeekReport(User user) {
+    public static double getPointOfUnsubmittedWeekReport(UserPo userPo) {
         return -1.0;
     }
 }

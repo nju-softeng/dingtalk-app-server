@@ -1,13 +1,11 @@
 package com.softeng.dingtalk.component;
 
 import com.softeng.dingtalk.api.MessageApi;
-import com.softeng.dingtalk.constant.LocalUrlConstant;
-import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.AcRecordRepository;
-import com.softeng.dingtalk.repository.ExternalPaperRepository;
-import com.softeng.dingtalk.repository.InternalPaperRepository;
-import com.softeng.dingtalk.repository.VoteRepository;
+import com.softeng.dingtalk.po.*;
+import com.softeng.dingtalk.dao.repository.AcRecordRepository;
+import com.softeng.dingtalk.dao.repository.ExternalPaperRepository;
+import com.softeng.dingtalk.dao.repository.InternalPaperRepository;
+import com.softeng.dingtalk.dao.repository.VoteRepository;
 import com.softeng.dingtalk.service.InitService;
 import com.softeng.dingtalk.service.SystemService;
 import com.softeng.dingtalk.service.VoteService;
@@ -21,7 +19,6 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author zhanyeye
@@ -87,17 +84,17 @@ public class Timer {
         LocalDateTime now = LocalDateTime.now();
 
         // (针对外部评审投票) 检查是否有投票需要开始
-        List<Vote> upcomingVotes = voteService.listUpcomingVote(now);
-        upcomingVotes.forEach(v -> {
+        List<VotePo> upcomingVotePos = voteService.listUpcomingVote(now);
+        upcomingVotePos.forEach(v -> {
             // 标注该投票已经开始
             v.setStarted(true);
             voteRepository.save(v);
 
-            ExternalPaper externalPaper = externalPaperRepository.findByVid(v.getId());
-            if (externalPaper != null) {
+            ExternalPaperPo externalPaperPo = externalPaperRepository.findByVid(v.getId());
+            if (externalPaperPo != null) {
                 // 发送投票开始的消息
-                String markdown = startVoteInfo(externalPaper.getTitle(), v.getEndTime());
-                String url = generateVoteDetailUrl(true, externalPaper.getId());
+                String markdown = startVoteInfo(externalPaperPo.getTitle(), v.getEndTime());
+                String url = generateVoteDetailUrl(true, externalPaperPo.getId());
                 messageApi.sendActionCard("外部评审投票", markdown, "前往投票", url);
             }
         });
@@ -111,11 +108,11 @@ public class Timer {
         // 检查是否有需要被结束的投票
         LocalDateTime now = LocalDateTime.now();
 
-        List<Vote> votes = voteService.listUnderwayVote(now);
-        votes.forEach(v -> {
+        List<VotePo> votePos = voteService.listUnderwayVote(now);
+        votePos.forEach(v -> {
             // 更新汇总投票结果
             v = voteService.updateVote(v);
-            Paper paper = v.isExternal() ?
+            PaperPo paper = v.isExternal() ?
                     externalPaperRepository.findByVid(v.getId()) :
                     internalPaperRepository.findByVid(v.getId());
             messageApi.sendActionCard(

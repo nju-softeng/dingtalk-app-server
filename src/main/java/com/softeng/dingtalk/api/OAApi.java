@@ -3,17 +3,14 @@ package com.softeng.dingtalk.api;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiProcessInstanceTerminateRequest;
-import com.dingtalk.api.request.OapiProcessWorkrecordCreateRequest;
 import com.dingtalk.api.request.OapiProcessinstanceCreateRequest;
 import com.dingtalk.api.request.OapiProcessinstanceGetRequest;
 import com.dingtalk.api.response.OapiProcessInstanceTerminateResponse;
-import com.dingtalk.api.response.OapiProcessWorkrecordCreateResponse;
 import com.dingtalk.api.response.OapiProcessinstanceCreateResponse;
 import com.dingtalk.api.response.OapiProcessinstanceGetResponse;
-import com.softeng.dingtalk.entity.AbsentOA;
-import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.po.AbsentOAPo;
+import com.softeng.dingtalk.po.UserPo;
 import com.softeng.dingtalk.service.UserService;
-import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,8 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -33,29 +28,29 @@ public class OAApi extends BaseApi{
     UserService userService;
     @Value("${OA.askForLeaveProcessCode}")
     private String  absentOAProcessCode;
-    public String createAbsentOA(AbsentOA absentOA) {
+    public String createAbsentOA(AbsentOAPo absentOAPO) {
         try {
             DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/processinstance/create");
             OapiProcessinstanceCreateRequest request= new OapiProcessinstanceCreateRequest();
             request.setAgentId(BaseApi.AGENTID);
             //设置process code
             request.setProcessCode(absentOAProcessCode);
-            request.setOriginatorUserId(userService.getUserid(absentOA.getUser().getId()));
+            request.setOriginatorUserId(userService.getUserid(absentOAPO.getUser().getId()));
             request.setDeptId(-1L);
             //设置表单内容
             List<OapiProcessinstanceCreateRequest.FormComponentValueVo> form = new ArrayList<>();
             OapiProcessinstanceCreateRequest.FormComponentValueVo type = new OapiProcessinstanceCreateRequest.FormComponentValueVo();
             form.add(type);
             type.setName("请假类型");
-            type.setValue(absentOA.getType());
+            type.setValue(absentOAPO.getType());
             OapiProcessinstanceCreateRequest.FormComponentValueVo start = new OapiProcessinstanceCreateRequest.FormComponentValueVo();
             form.add(start);
             start.setName("开始时间");
-            start.setValue(absentOA.getDingTalkSchedule().getStart().toString());
+            start.setValue(absentOAPO.getDingTalkSchedule().getStart().toString());
             OapiProcessinstanceCreateRequest.FormComponentValueVo end = new OapiProcessinstanceCreateRequest.FormComponentValueVo();
             form.add(end);
             end.setName("结束时间");
-            end.setValue(absentOA.getDingTalkSchedule().getEnd().toString());
+            end.setValue(absentOAPO.getDingTalkSchedule().getEnd().toString());
 //            OapiProcessinstanceCreateRequest.FormComponentValueVo dayNum = new OapiProcessinstanceCreateRequest.FormComponentValueVo();
 //            form.add(dayNum);
 //            dayNum.setName("结束时间");
@@ -63,13 +58,13 @@ public class OAApi extends BaseApi{
             OapiProcessinstanceCreateRequest.FormComponentValueVo reason = new OapiProcessinstanceCreateRequest.FormComponentValueVo();
             form.add(reason);
             reason.setName("请假缘由");
-            reason.setValue(absentOA.getReason());
+            reason.setValue(absentOAPO.getReason());
             request.setFormComponentValues(form);
             //设置审批人
             List<OapiProcessinstanceCreateRequest.ProcessInstanceApproverVo> processInstanceApproverVoList = new ArrayList<>();
             OapiProcessinstanceCreateRequest.ProcessInstanceApproverVo processInstanceApproverVo = new OapiProcessinstanceCreateRequest.ProcessInstanceApproverVo();
             processInstanceApproverVoList.add(processInstanceApproverVo);
-            request.setApprovers(absentOA.getDingTalkSchedule().getOrganizer().getUserid());
+            request.setApprovers(absentOAPO.getDingTalkSchedule().getOrganizer().getUserid());
             OapiProcessinstanceCreateResponse rsp = client.execute(request, getAccessToken());
             return rsp.getProcessInstanceId();
         } catch (Exception e) {
@@ -91,7 +86,7 @@ public class OAApi extends BaseApi{
         }
 
     }
-    public boolean deleteAbsentOA(String processInstanceId, User user){
+    public boolean deleteAbsentOA(String processInstanceId, UserPo userPo){
         try {
             DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/process/instance/terminate");
             OapiProcessInstanceTerminateRequest req = new OapiProcessInstanceTerminateRequest();
@@ -99,7 +94,7 @@ public class OAApi extends BaseApi{
             processInstanceRequestV2.setProcessInstanceId(processInstanceId);
             processInstanceRequestV2.setIsSystem(false);
             processInstanceRequestV2.setRemark("取消请假");
-            processInstanceRequestV2.setOperatingUserid(user.getUserid());
+            processInstanceRequestV2.setOperatingUserid(userPo.getUserid());
             req.setRequest(processInstanceRequestV2);
             OapiProcessInstanceTerminateResponse rsp = client.execute(req,getAccessToken());
             return rsp.getResult();

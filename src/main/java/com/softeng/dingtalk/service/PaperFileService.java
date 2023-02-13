@@ -2,10 +2,10 @@ package com.softeng.dingtalk.service;
 
 import com.aliyun.dingtalkdrive_1_0.models.GetDownloadInfoResponseBody;
 import com.softeng.dingtalk.api.BaseApi;
-import com.softeng.dingtalk.entity.ExternalPaper;
-import com.softeng.dingtalk.entity.InternalPaper;
-import com.softeng.dingtalk.repository.ExternalPaperRepository;
-import com.softeng.dingtalk.repository.InternalPaperRepository;
+import com.softeng.dingtalk.po.ExternalPaperPo;
+import com.softeng.dingtalk.po.InternalPaperPo;
+import com.softeng.dingtalk.dao.repository.ExternalPaperRepository;
+import com.softeng.dingtalk.dao.repository.InternalPaperRepository;
 import com.softeng.dingtalk.vo.PaperFileDownloadInfoVO;
 import com.softeng.dingtalk.vo.PaperFileInfoVO;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public class PaperFileService {
      * @param fileType
      */
     public void addPaperFile(int paperId, int uid, MultipartFile file, String fileType) {
-        InternalPaper paper=paperService.getInternalPaper(paperId);
+        InternalPaperPo paper=paperService.getInternalPaper(paperId);
         String fileId=fileService.addFileByPath(file,paper.getPath()+"/"+getFileTypeFolderName(fileType));
         String fileName=file.getOriginalFilename();
         setPaperFileIdAndName(paper,fileType,fileId,fileName);
@@ -63,7 +63,7 @@ public class PaperFileService {
      * @param fileType
      */
     public void addExternalPaperFile(int paperId, int uid, MultipartFile file, String fileType) {
-        ExternalPaper paper=externalPaperRepository.findById(paperId).get();
+        ExternalPaperPo paper=externalPaperRepository.findById(paperId).get();
         String fileId=fileService.addFileByPath(file,paper.getPath()+"/"+getFileTypeFolderName(fileType));
         String fileName=file.getOriginalFilename();
         setExternalPaperFileIdAndName(paper,fileType,fileId,fileName);
@@ -84,7 +84,7 @@ public class PaperFileService {
      */
     public void deletePaperFile(String fileName, String fileId,int paperId,String fileType) {
 //        String unionId=userService.getUserUnionId(uid);
-        InternalPaper paper=paperService.getInternalPaper(paperId);
+        InternalPaperPo paper=paperService.getInternalPaper(paperId);
         setPaperFileIdAndName(paper,fileType,null,null);
         internalPaperRepository.save(paper);
         //钉盘删除方式
@@ -102,7 +102,7 @@ public class PaperFileService {
      */
     public void deleteExternalPaperFile(String fileName, String fileId,int paperId,String fileType) {
 //        String unionId=userService.getUserUnionId(uid);
-        ExternalPaper paper=externalPaperRepository.findById(paperId).get();
+        ExternalPaperPo paper=externalPaperRepository.findById(paperId).get();
         setExternalPaperFileIdAndName(paper,fileType,null,null);
         externalPaperRepository.save(paper);
 //        baseApi.deleteFile(fileId,unionId);
@@ -141,7 +141,7 @@ public class PaperFileService {
         return externalPaperRepository.getExternalPaperFileInfo(paperId);
     }
 
-    private void setPaperFileIdAndName(InternalPaper paper, String fileType, String fileId, String fileName){
+    private void setPaperFileIdAndName(InternalPaperPo paper, String fileType, String fileId, String fileName){
         switch (fileType){
             case "reviewFile":
                 paper.setReviewFileId(fileId);
@@ -173,7 +173,7 @@ public class PaperFileService {
                 break;
         }
     }
-    private void setExternalPaperFileIdAndName(ExternalPaper paper, String fileType, String fileId, String fileName){
+    private void setExternalPaperFileIdAndName(ExternalPaperPo paper, String fileType, String fileId, String fileName){
         switch (fileType){
             case "reviewFile":
                 paper.setReviewFileId(fileId);

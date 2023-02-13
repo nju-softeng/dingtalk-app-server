@@ -1,8 +1,8 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.entity.Prize;
-import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.repository.PrizeRepository;
+import com.softeng.dingtalk.po.PrizePo;
+import com.softeng.dingtalk.po.UserPo;
+import com.softeng.dingtalk.dao.repository.PrizeRepository;
 import com.softeng.dingtalk.vo.PrizeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class PrizeService {
      * @param userId
      * @return
      */
-    public List<Prize> findByUser(int userId){
+    public List<PrizePo> findByUser(int userId){
         return prizeRepository.findByUserId(userId);
     }
 
@@ -39,9 +39,9 @@ public class PrizeService {
      * @param prizeVO
      * @return
      */
-    public Prize addNewPrize(int userId,PrizeVO prizeVO){
-        Prize prize=new Prize(new User(userId),prizeVO.getPrizeTime(),prizeVO.getPrizeName(),prizeVO.getLevel(),prizeVO.getRemark());
-        return prizeRepository.save(prize);
+    public PrizePo addNewPrize(int userId, PrizeVO prizeVO){
+        PrizePo prizePo =new PrizePo(new UserPo(userId),prizeVO.getPrizeTime(),prizeVO.getPrizeName(),prizeVO.getLevel(),prizeVO.getRemark());
+        return prizeRepository.save(prizePo);
     }
 
     /**
@@ -49,7 +49,7 @@ public class PrizeService {
      * @param prizeVO
      */
     public void updatePrize(PrizeVO prizeVO){
-        Prize p = prizeRepository.findById(prizeVO.getId()).get();
+        PrizePo p = prizeRepository.findById(prizeVO.getId()).get();
         p.setLevel(prizeVO.getLevel());
         p.setPrizeTime(prizeVO.getPrizeTime());
         p.setPrizeName(prizeVO.getPrizeName());
@@ -62,7 +62,7 @@ public class PrizeService {
      * @param prizeId
      */
     public void deletePrize(int prizeId){
-        Prize p = prizeRepository.findById(prizeId).get();
+        PrizePo p = prizeRepository.findById(prizeId).get();
         p.setDeleted(true);
         prizeRepository.save(p);
     }

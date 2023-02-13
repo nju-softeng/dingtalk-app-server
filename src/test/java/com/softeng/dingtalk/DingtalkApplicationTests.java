@@ -1,11 +1,10 @@
 package com.softeng.dingtalk;
 
 import com.softeng.dingtalk.component.EncryptorComponent;
-import com.softeng.dingtalk.entity.InternalPaper;
-import com.softeng.dingtalk.entity.Paper;
-import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.po.InternalPaperPo;
+import com.softeng.dingtalk.po.PaperPo;
 import com.softeng.dingtalk.enums.PaperType;
-import com.softeng.dingtalk.repository.InternalPaperRepository;
+import com.softeng.dingtalk.dao.repository.InternalPaperRepository;
 import com.softeng.dingtalk.service.VoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -15,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @RunWith(SpringRunner.class)
@@ -37,7 +35,7 @@ public class DingtalkApplicationTests {
 
     @Test
     public void test2() {
-        Paper paper = new InternalPaper("标题11111", "journal", PaperType.JOURNAL_A, LocalDate.now(), true, null,null,null,null);
+        PaperPo paper = new InternalPaperPo("标题11111", "journal", PaperType.JOURNAL_A, LocalDate.now(), true, null,null,null,null);
         log.debug(paper.getTitle());
     }
 }

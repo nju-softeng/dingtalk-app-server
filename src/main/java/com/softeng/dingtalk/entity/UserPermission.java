@@ -1,31 +1,23 @@
 package com.softeng.dingtalk.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * @author LiXiaoKang
- * @description 用户-用户权限实体类
- * @date 02/02/2023
+ * @since 2023-01-09
  */
-@Getter
-@Setter
-@Entity
-@NoArgsConstructor
-@ToString
-// 设置联合主键的注解
-@IdClass(UserPermissionAssociatePK.class)
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+@ApiModel(value="UserPermission实体对象", description="用户与其用户权限的管理")
 public class UserPermission {
+    @ApiModelProperty(value = "用户id")
+    private Integer userId;
 
-    @Id
-    private int userId;
-
-    @Id
-    private int permissionId;
+    @ApiModelProperty(value = "权限id")
+    private Integer permissionId;
 }

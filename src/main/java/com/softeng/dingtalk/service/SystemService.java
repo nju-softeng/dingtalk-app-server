@@ -4,9 +4,9 @@ import com.dingtalk.api.response.OapiUserGetResponse;
 import com.softeng.dingtalk.api.*;
 import com.softeng.dingtalk.component.AcAlgorithm;
 import com.softeng.dingtalk.constant.LocalUrlConstant;
-import com.softeng.dingtalk.entity.*;
+import com.softeng.dingtalk.dao.repository.*;
+import com.softeng.dingtalk.po.*;
 import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -99,19 +99,19 @@ public class SystemService {
      * @param userid
      * @return
      */
-    public User addNewUser(String userid) {
+    public UserPo addNewUser(String userid) {
         OapiUserGetResponse response =  contactsApi.fetchUserDetail(userid);
 
         // 权限
         int authority;
         if (response.getIsBoss()) {
             // 是否为企业的老板
-            authority = User.ADMIN_AUTHORITY;
+            authority = UserPo.ADMIN_AUTHORITY;
         } else if (response.getIsLeaderInDepts().contains("true")) {
             // 是否为管理员
-            authority = User.AUDITOR_AUTHORITY;
+            authority = UserPo.AUDITOR_AUTHORITY;
         } else {
-            authority = User.NORMAL_AUTHORITY;
+            authority = UserPo.NORMAL_AUTHORITY;
         }
 
         // 职位
@@ -124,9 +124,9 @@ public class SystemService {
             default:   position = Position.OTHER;  break;
         }
 
-        User user = Optional.ofNullable(userRepository.findByUserid(userid))
+        UserPo userPo = Optional.ofNullable(userRepository.findByUserid(userid))
                 .orElse(
-                        new User(
+                        new UserPo(
                                 response.getUserid(),
                                 response.getUnionid(),
                                 response.getName(),
@@ -135,28 +135,28 @@ public class SystemService {
                                 position
                         )
                 );
-        user.setAvatar(response.getAvatar());
-        user.setName(response.getName());
-        user.setUnionid(response.getUnionid());
-        if(user.getPosition() == Position.OTHER) {
-            switch (Optional.ofNullable(user.getStuNum()).orElse("--").substring(0, 2)) {
+        userPo.setAvatar(response.getAvatar());
+        userPo.setName(response.getName());
+        userPo.setUnionid(response.getUnionid());
+        if(userPo.getPosition() == Position.OTHER) {
+            switch (Optional.ofNullable(userPo.getStuNum()).orElse("--").substring(0, 2)) {
                 case "MF":
                 case "mf":
-                    user.setPosition(Position.PROFESSIONAL);
+                    userPo.setPosition(Position.PROFESSIONAL);
                     break;
                 case "mg":
                 case "MG":
-                    user.setPosition(Position.ACADEMIC);
+                    userPo.setPosition(Position.ACADEMIC);
                     break;
                 case "DG":
                 case "dg":
-                    user.setPosition(Position.DOCTOR);
+                    userPo.setPosition(Position.DOCTOR);
                     break;
                 default:
                     break;
             }
         }
-        return userRepository.save(user);
+        return userRepository.save(userPo);
     }
 
 
@@ -169,11 +169,11 @@ public class SystemService {
      * @param position
      * @return
      */
-    public Page<User> multiQueryUser(int page, int size, String name, String position) {
-        Specification<User> spec = (root, criteriaQuery, criteriaBuilder) -> {
+    public Page<UserPo> multiQueryUser(int page, int size, String name, String position) {
+        Specification<UserPo> spec = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(criteriaBuilder.equal(root.get("deleted"), false));
-            predicates.add(criteriaBuilder.notEqual(root.get("authority"), User.ADMIN_AUTHORITY));
+            predicates.add(criteriaBuilder.notEqual(root.get("authority"), UserPo.ADMIN_AUTHORITY));
             if (!"".equals(name)) {
                 // 根据姓名模糊查询
                 predicates.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
@@ -208,11 +208,11 @@ public class SystemService {
 
     /**
      * 更新绩效标准
-     * @param subsidyLevelList
+     * @param subsidyLevelPoList
      */
     @CacheEvict(value = "subsidy", allEntries = true)
-    public void setSubsidy(List<SubsidyLevel> subsidyLevelList) {
-        for (SubsidyLevel sl : subsidyLevelList) {
+    public void setSubsidy(List<SubsidyLevelPo> subsidyLevelPoList) {
+        for (SubsidyLevelPo sl : subsidyLevelPoList) {
             subsidyLevelRepository.updateSubsidy(sl.getPosition(), sl.getSubsidy());
         }
     }
@@ -222,7 +222,7 @@ public class SystemService {
      * 获取所有的绩效标准
      * @return List<SubsidyLevel>
      */
-    public List<SubsidyLevel> listSubsidy() {
+    public List<SubsidyLevelPo> listSubsidy() {
         return subsidyLevelRepository.findAll();
     }
 
@@ -231,7 +231,7 @@ public class SystemService {
      * 查询论文AC标准
      * @return
      */
-    public List<PaperLevel> listPaperLevel() {
+    public List<PaperLevelPo> listPaperLevel() {
         return paperLevelRepository.findAll();
     }
 
@@ -239,27 +239,27 @@ public class SystemService {
      * 查询专利AC标准
      * @return
      */
-    public List<PatentLevel> listPatentLevel() {
+    public List<PatentLevelPo> listPatentLevel() {
         return patentLevelRepository.findAll();
     }
 
 
     /**
      * 更新论文AC标准
-     * @param paperLevels
+     * @param paperLevelPos
      */
-    public void updatePaperLevel(List <PaperLevel> paperLevels) {
-        for (PaperLevel pl : paperLevels) {
+    public void updatePaperLevel(List <PaperLevelPo> paperLevelPos) {
+        for (PaperLevelPo pl : paperLevelPos) {
             paperLevelRepository.updatePaperLevel(pl.getPaperType(), pl.getTotal());
         }
     }
 
     /**
      * 更新专利AC标准
-     * @param patentLevels
+     * @param patentLevelPos
      */
-    public void updatePatentLevel(List <PatentLevel> patentLevels) {
-        for (PatentLevel pl : patentLevels) {
+    public void updatePatentLevel(List <PatentLevelPo> patentLevelPos) {
+        for (PatentLevelPo pl : patentLevelPos) {
             patentLevelRepository.updatePatentLevel(pl.getTitle(), pl.getTotal());
         }
     }
@@ -269,9 +269,9 @@ public class SystemService {
      * 更新用户信息
      * @param u
      */
-    public void updateUserInfo(User u) {
+    public void updateUserInfo(UserPo u) {
         log.debug(u.toString());
-        userRepository.updateUserInfo(u.getId(), u.getStuNum(), u.getPosition(), u.getAuthority());
+        userRepository.updateUserInfo(u.getId(), u.getStuNum(), u.getPosition());
     }
 
 
@@ -297,7 +297,7 @@ public class SystemService {
      * 查询停用的用户
      * @return
      */
-    public List<User> queryDisableUser() {
+    public List<UserPo> queryDisableUser() {
         return userRepository.listDisableUser();
     }
 
@@ -330,13 +330,13 @@ public class SystemService {
             log.info(start.toString() + "没有未提交周报的poor guy");
             return;
         }
-        log.info(start.toString() + "未提交周报扣分" + Arrays.toString(poorGuys.stream().map(User::getName).toArray()));
+        log.info(start.toString() + "未提交周报扣分" + Arrays.toString(poorGuys.stream().map(UserPo::getName).toArray()));
         acRecordRepository.saveAll(
                 poorGuys.stream()
-                        .map(user -> AcRecord.builder()
+                        .map(user -> AcRecordPo.builder()
                                 .user(user)
                                 .ac(AcAlgorithm.getPointOfUnsubmittedWeekReport(user))
-                                .classify(AcRecord.NORMAL)
+                                .classify(AcRecordPo.NORMAL)
                                 .reason(String.format(
                                         "%s 未按时提交周报",
                                         start.toLocalDate().toString()
@@ -359,43 +359,43 @@ public class SystemService {
                 LocalUrlConstant.FRONTEND_PERFORMANCE_URL,
                 "您还未提交本周周报，请在周日24点前提交周报并随后申请绩效",
                 weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end).stream()
-                        .map(User::getUserid)
+                        .map(UserPo::getUserid)
                         .collect(Collectors.toList())
         );
     }
 
     public void calculateScheduleAC() {
-        List<DingTalkSchedule> dingTalkScheduleList=dingTalkScheduleRepository.getDingTalkSchedulesByAcCalculatedFalse();
-        for(DingTalkSchedule dingTalkSchedule:dingTalkScheduleList){
+        List<DingTalkSchedulePo> dingTalkSchedulePoList =dingTalkScheduleRepository.getDingTalkSchedulesByAcCalculatedFalse();
+        for(DingTalkSchedulePo dingTalkSchedulePo : dingTalkSchedulePoList){
             LocalDateTime now=LocalDateTime.now();
-            if(now.compareTo(dingTalkSchedule.getEnd())>=0){
+            if(now.compareTo(dingTalkSchedulePo.getEnd())>=0){
                 //获取改日程请假列表，并获取oa通过的同学的列表
                 List<String> osNotPassUserIdList=new LinkedList<>();
-                dingTalkSchedule.getAbsentOAList().forEach(absentOA -> {
+                dingTalkSchedulePo.getAbsentOAList().forEach(absentOA -> {
                     absentOA.setPass(oaApi.getOAOutCome(absentOA.getProcessInstanceId())==1);
                     if(!absentOA.isPass()) osNotPassUserIdList.add(absentOA.getUser().getUserid());
                 });
                 //获取需要扣分的userId
-                List<String> absentUserIdList=scheduleApi.getAbsentList(dingTalkSchedule);
+                List<String> absentUserIdList=scheduleApi.getAbsentList(dingTalkSchedulePo);
                 absentUserIdList.removeAll(osNotPassUserIdList);
                 //进行扣分
                 if(absentUserIdList.size()!=0){
-                    List<DingTalkScheduleDetail> detailList=dingTalkSchedule.getDingTalkScheduleDetailList();
+                    List<DingTalkScheduleDetailPo> detailList= dingTalkSchedulePo.getDingTalkScheduleDetailList();
                     detailList.forEach(detail -> {
                         boolean isContain = absentUserIdList .stream().anyMatch(x-> x.equals(detail.getUser().getUnionid()));
                         if(isContain) {
-                            AcRecord acRecord=new AcRecord(detail.getUser(),
+                            AcRecordPo acRecordPO =new AcRecordPo(detail.getUser(),
                                     null,
                                     -1*absentACPunishment,
                                     detail.getDingTalkSchedule().getStart().toString()+"会议缺席",
                                     6,LocalDateTime.now());
-                            acRecordRepository.save(acRecord);
-                            detail.setAcRecord(acRecord);
+                            acRecordRepository.save(acRecordPO);
+                            detail.setAcRecord(acRecordPO);
                         }
                     });
                 }
-                dingTalkSchedule.setAcCalculated(true);
-                dingTalkScheduleRepository.save(dingTalkSchedule);
+                dingTalkSchedulePo.setAcCalculated(true);
+                dingTalkScheduleRepository.save(dingTalkSchedulePo);
             }
         }
     }

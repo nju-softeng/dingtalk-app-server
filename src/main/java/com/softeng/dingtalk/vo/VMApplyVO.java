@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.po.UserPo;
 import lombok.Data;
 import java.time.LocalDate;
 
@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class VMApplyVO {
 
     Integer id;
-    User user;
+    UserPo userPo;
     int state;
     //项目组
     String projectTeam;

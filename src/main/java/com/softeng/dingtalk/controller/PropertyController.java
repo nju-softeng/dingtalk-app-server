@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.entity.Property;
+import com.softeng.dingtalk.po.PropertyPo;
 import com.softeng.dingtalk.service.PropertyService;
 import com.softeng.dingtalk.vo.PropertyVO;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class PropertyController {
      * @return
      */
     @GetMapping("user/{uid}/propertyList")
-    public List<Property> findByUserId(@PathVariable int uid) {
+    public List<PropertyPo> findByUserId(@PathVariable int uid) {
         return propertyService.findByUser(uid);
     }
 

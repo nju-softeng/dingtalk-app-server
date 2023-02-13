@@ -1,0 +1,6 @@
+package com.softeng.dingtalk.dto.resp;
+
+import java.io.Serializable;
+
+public class UserTeamResp implements Serializable {
+}

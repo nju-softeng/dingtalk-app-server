@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.entity.*;
+import com.softeng.dingtalk.po.*;
 import com.softeng.dingtalk.service.IterationService;
 import com.softeng.dingtalk.service.ProjectService;
 import com.softeng.dingtalk.vo.IterateAcVO;
@@ -92,7 +92,7 @@ public class ProjectController {
      * @return
      */
     @GetMapping("/project/iteration/{id}")
-    public Iteration getIteration(@PathVariable int id) {
+    public IterationPo getIteration(@PathVariable int id) {
         return iterationService.getIterationById(id);
     }
 
@@ -114,7 +114,7 @@ public class ProjectController {
      * @return
      */
     @GetMapping("project/{pid}/iteration")
-    public List<Iteration> listProjectIterations(@PathVariable int pid) {
+    public List<IterationPo> listProjectIterations(@PathVariable int pid) {
         return iterationService.listProjectIterations(pid);
     }
 
@@ -144,7 +144,7 @@ public class ProjectController {
      */
     @PostMapping("/project/manualsetac/{itid}")
     public void manualSetProjectAc(@PathVariable int itid, @Valid @RequestBody IterateAcVO vo) {
-        iterationService.manualSetIterationAc(itid, vo.getIterationDetails(), vo.getFinishdate());
+        iterationService.manualSetIterationAc(itid, vo.getIterationDetailPos(), vo.getFinishdate());
     }
 
 
@@ -162,7 +162,7 @@ public class ProjectController {
 
 
     @GetMapping("/project/iteration/user")
-    public List<Iteration> listUserIteration(@RequestAttribute int uid) {
+    public List<IterationPo> listUserIteration(@RequestAttribute int uid) {
         return iterationService.listUserIteration(uid);
     }
 

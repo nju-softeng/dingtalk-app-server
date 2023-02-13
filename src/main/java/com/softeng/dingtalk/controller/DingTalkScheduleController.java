@@ -1,7 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.entity.AbsentOA;
-import com.softeng.dingtalk.entity.DingTalkSchedule;
+import com.softeng.dingtalk.po.AbsentOAPo;
 import com.softeng.dingtalk.service.DingTalkScheduleService;
 import com.softeng.dingtalk.vo.AbsentOAVO;
 import com.softeng.dingtalk.vo.DingTalkScheduleVO;
@@ -9,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -43,7 +41,7 @@ public class DingTalkScheduleController {
     }
 
     @GetMapping("/schedule/{id}/absentOA")
-    public AbsentOA getAbsentOADetail(@PathVariable int id, @RequestAttribute int uid){
+    public AbsentOAPo getAbsentOADetail(@PathVariable int id, @RequestAttribute int uid){
         return dingTalkScheduleService.getAbsentOADetail(id,uid);
     }
 

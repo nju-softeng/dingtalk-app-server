@@ -1,15 +1,15 @@
 package com.softeng.dingtalk.service;
 
 import com.alibaba.excel.EasyExcel;
-import com.softeng.dingtalk.entity.Prize;
+import com.softeng.dingtalk.po.PrizePo;
 import com.softeng.dingtalk.excel.AcData;
 import com.softeng.dingtalk.excel.DcSummaryData;
 import com.softeng.dingtalk.excel.UserPrizeData;
 import com.softeng.dingtalk.excel.UserPropertyData;
-import com.softeng.dingtalk.mapper.AcRecordMapper;
-import com.softeng.dingtalk.mapper.DcSummaryMapper;
-import com.softeng.dingtalk.repository.PrizeRepository;
-import com.softeng.dingtalk.repository.PropertyRepository;
+import com.softeng.dingtalk.dao.mapper.AcRecordMapper;
+import com.softeng.dingtalk.dao.mapper.DcSummaryMapper;
+import com.softeng.dingtalk.dao.repository.PrizeRepository;
+import com.softeng.dingtalk.dao.repository.PropertyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,7 +71,7 @@ public class ExcelService {
                 .sheet("用户奖项列表")
                 .doWrite(prizeRepository.findAll().stream()
                         .map(prize -> new UserPrizeData(prize.getUser().getStuNum(),prize.getUser().getName(),prize.getPrizeTime().toString(),
-                                prize.getPrizeName(), Prize.getPrizeLevelName(prize.getLevel()),prize.getRemark())).collect(Collectors.toList()));
+                                prize.getPrizeName(), PrizePo.getPrizeLevelName(prize.getLevel()),prize.getRemark())).collect(Collectors.toList()));
     }
 
 

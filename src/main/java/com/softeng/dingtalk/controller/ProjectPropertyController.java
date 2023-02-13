@@ -1,5 +1,5 @@
 package com.softeng.dingtalk.controller;
-import com.softeng.dingtalk.entity.ProjectProperty;
+import com.softeng.dingtalk.po.ProjectPropertyPo;
 import com.softeng.dingtalk.service.ProjectPropertyService;
 import com.softeng.dingtalk.vo.ProjectPropertyFileVO;
 import com.softeng.dingtalk.vo.ProjectPropertyVO;
@@ -38,7 +38,7 @@ public class ProjectPropertyController {
     }
 
     @GetMapping("/projectProperty/{id}")
-    public ProjectProperty getProjectPropertyDetail(@PathVariable int id){
+    public ProjectPropertyPo getProjectPropertyDetail(@PathVariable int id){
         return projectPropertyService.getProjectPropertyDetail(id);
     }
 
