@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.po.*;
+import com.softeng.dingtalk.po_entity.*;
 import com.softeng.dingtalk.dao.repository.AcRecordRepository;
 import com.softeng.dingtalk.dao.repository.BugDetailRepository;
 import com.softeng.dingtalk.dao.repository.BugRepository;
@@ -44,7 +44,7 @@ public class BugService {
      * 用户提交bug
      * @param bug
      */
-    public void submitBug(BugPo bug) {
+    public void submitBug(Bug bug) {
         bugRepository.save(bug);
     }
 
@@ -54,7 +54,7 @@ public class BugService {
      * @param pid
      * @return
      */
-    public List<BugPo> listProjectBug(int pid) {
+    public List<Bug> listProjectBug(int pid) {
         return bugRepository.findAllByProjectId(pid);
     }
 
@@ -64,7 +64,7 @@ public class BugService {
      * @param id
      */
     public void rmbug(int id) {
-        BugPo bug = bugRepository.findById(id).get();
+        Bug bug = bugRepository.findById(id).get();
         if (bug.getStatus() != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Bug 已处理,无法删除");
         }
@@ -72,7 +72,7 @@ public class BugService {
     }
 
 
-    public List<BugPo> listProjectBugByAuditor(int aid) {
+    public List<Bug> listProjectBugByAuditor(int aid) {
         return bugRepository.listBugByAuditor(aid);
     }
 
@@ -88,21 +88,21 @@ public class BugService {
             bugRepository.updateBugStatus(vo.getId(), false);
         } else {
             // 存在bug
-            BugPo bug = bugRepository.findById(vo.getId()).get();
+            Bug bug = bugRepository.findById(vo.getId()).get();
             bug.setStatus(true);
             // 审核人
-            UserPo auditor = bug.getProject().getAuditor();
+            User auditor = bug.getProject().getAuditor();
             // bug 所属迭代的所有用户
-            List<UserPo> userPos = iterationDetailRepository.listUserByIterationId(vo.getIterationId());
-            List<BugDetailPo> bugDetailPos = new ArrayList<>();
-            List<AcRecordPo> acRecordPos = new ArrayList<>();
+            List<User> users = iterationDetailRepository.listUserByIterationId(vo.getIterationId());
+            List<BugDetail> bugDetails = new ArrayList<>();
+            List<AcRecord> acRecords = new ArrayList<>();
             //迭代参与人数
-            int cnt = userPos.size();
+            int cnt = users.size();
 
             double ac;
-            AcRecordPo acRecordPO;
+            AcRecord acRecord;
             String reason;
-            for (UserPo u : userPos) {
+            for (User u : users) {
                 if (u.getId() != vo.getUid()) {
                     ac = - 0.1 / (cnt -1);
                     reason = "开发任务： " +  bug.getProject().getTitle() + " 存在bug, 非主要负责人";
@@ -110,19 +110,19 @@ public class BugService {
                     ac = - 0.1;
                     reason = "开发任务： " +  bug.getProject().getTitle() + " 存在bug, 为主要负责人";
                 }
-                acRecordPO = new AcRecordPo(u, auditor, ac, reason, AcRecordPo.BUG, bug.getInsertTime());
-                acRecordPos.add(acRecordPO);
-                BugDetailPo bugDetailPo = new BugDetailPo(new BugPo(vo.getId()), u, false, ac, acRecordPO);
-                bugDetailPos.add(bugDetailPo);
+                acRecord = new AcRecord(u, auditor, ac, reason, AcRecord.BUG, bug.getInsertTime());
+                acRecords.add(acRecord);
+                BugDetail bugDetail = new BugDetail(new Bug(vo.getId()), u, false, ac, acRecord);
+                bugDetails.add(bugDetail);
             }
-            acRecordRepository.saveAll(acRecordPos);
-            bugDetailRepository.saveAll(bugDetailPos);
+            acRecordRepository.saveAll(acRecords);
+            bugDetailRepository.saveAll(bugDetails);
 
             // 发送消息
-            notifyService.bugMessage(acRecordPos);
+            notifyService.bugMessage(acRecords);
 
             // 更新绩效
-            acRecordPos.forEach(a -> performanceService.computeSalary(a.getUser().getId(), LocalDate.now()));
+            acRecords.forEach(a -> performanceService.computeSalary(a.getUser().getId(), LocalDate.now()));
 
         }
     }
@@ -133,7 +133,7 @@ public class BugService {
      * @param uid
      * @return
      */
-    public List<BugPo> listUserBug(int uid) {
+    public List<Bug> listUserBug(int uid) {
         List<Integer> ids = bugDetailRepository.listBugidByuid(uid);
         if (ids.size() != 0) {
             return bugRepository.findAllById(ids);

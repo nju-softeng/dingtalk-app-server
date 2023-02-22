@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.softeng.dingtalk.po.DissertationPo;
+import com.softeng.dingtalk.po_entity.Dissertation;
 import com.softeng.dingtalk.service.DissertationPropertyService;
 import com.softeng.dingtalk.vo.DissertationVO;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class DissertationPropertyController {
     }
 
     @GetMapping("/{uid}/dissertation")
-    public DissertationPo getDissertationDetail(@PathVariable int uid){
+    public Dissertation getDissertationDetail(@PathVariable int uid){
         return dissertationPropertyService.getDissertationDetail(uid);
     }
 

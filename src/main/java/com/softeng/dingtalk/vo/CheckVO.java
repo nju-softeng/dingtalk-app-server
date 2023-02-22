@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.po.AcItemPo;
+import com.softeng.dingtalk.po_entity.AcItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,5 +24,5 @@ public class CheckVO {
     @Max(value = 1, message = " DC 值不能大于 1！")
     private double dc;
     private double ac;
-    private List<AcItemPo> acItemPos;
+    private List<AcItem> acItems;
 }

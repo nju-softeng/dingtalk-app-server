@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.BugDetailPo;
+import com.softeng.dingtalk.po_entity.BugDetail;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +13,7 @@ import java.util.List;
  * @date 3/22/2020
  */
 @Repository
-public interface BugDetailRepository extends CustomizedRepository<BugDetailPo, Integer> {
+public interface BugDetailRepository extends CustomizedRepository<BugDetail, Integer> {
 
     void deleteBugDetailByBugId(int id);
 
@@ -22,6 +22,6 @@ public interface BugDetailRepository extends CustomizedRepository<BugDetailPo, I
      * @param uid
      * @return
      */
-    @Query("select bd.bug.id from BugDetailPo bd where bd.user.id = :uid")
+    @Query("select bd.bug.id from BugDetail bd where bd.user.id = :uid")
     List<Integer> listBugidByuid(@Param("uid") int uid);
 }

@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.AcRecordPo;
+import com.softeng.dingtalk.po_entity.AcRecord;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,7 +14,7 @@ import java.util.Map;
  * @date 12/27/2019
  */
 @Repository
-public interface AcRecordRepository extends CustomizedRepository<AcRecordPo, Integer> {
+public interface AcRecordRepository extends CustomizedRepository<AcRecord, Integer> {
 
     /**
      * 获取所有用户的AC日志

@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.UserTeamPo;
-import com.softeng.dingtalk.po.cpk.UserTeamCPK;
+import com.softeng.dingtalk.po_entity.UserTeam;
+import com.softeng.dingtalk.po_entity.cpk.UserTeamCPK;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,12 +13,12 @@ import java.util.List;
  */
 
 @Repository
-public interface UserTeamRepository extends CustomizedRepository<UserTeamPo, UserTeamCPK>{
+public interface UserTeamRepository extends CustomizedRepository<UserTeam, UserTeamCPK>{
 
     /**
      * 获取用户所在的所有用户组
      * @param userId 用户id
      * @return 用户所在的所有用户组
      */
-    List<UserTeamPo> findAllByUserId(int userId);
+    List<UserTeam> findAllByUserId(int userId);
 }

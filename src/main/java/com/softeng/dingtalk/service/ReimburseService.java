@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.po.ReimbursementPo;
-import com.softeng.dingtalk.po.ReimbursementFilePo;
+import com.softeng.dingtalk.po_entity.Reimbursement;
+import com.softeng.dingtalk.po_entity.ReimbursementFile;
 import com.softeng.dingtalk.dao.repository.ReimbursementFileRepository;
 import com.softeng.dingtalk.dao.repository.ReimbursementRepository;
 import com.softeng.dingtalk.dao.repository.UserRepository;
@@ -35,61 +35,61 @@ public class ReimburseService {
     @Autowired
     FileService fileService;
     public void addReimbursement(ReimbursementVO reimbursementVO,int id){
-        ReimbursementPo reimbursementPo =new ReimbursementPo(reimbursementVO.getName(),reimbursementVO.getType(),reimbursementVO.getPath());
-        reimbursementPo.setUser(userRepository.findById(id).get());
-        reimbursementRepository.save(reimbursementPo);
+        Reimbursement reimbursement =new Reimbursement(reimbursementVO.getName(),reimbursementVO.getType(),reimbursementVO.getPath());
+        reimbursement.setUser(userRepository.findById(id).get());
+        reimbursementRepository.save(reimbursement);
     }
 
     public void updateReimbursement(ReimbursementVO reimbursementVO,int id){
-        ReimbursementPo reimbursementPo =reimbursementRepository.findById(reimbursementVO.getId()).get();
-        reimbursementPo.setUser(userRepository.findById(id).get());
-        reimbursementPo.update(reimbursementVO.getName(),reimbursementVO.getType(), reimbursementPo.getPath());
-        reimbursementRepository.save(reimbursementPo);
+        Reimbursement reimbursement =reimbursementRepository.findById(reimbursementVO.getId()).get();
+        reimbursement.setUser(userRepository.findById(id).get());
+        reimbursement.update(reimbursementVO.getName(),reimbursementVO.getType(), reimbursement.getPath());
+        reimbursementRepository.save(reimbursement);
     }
 
     public void setState(int id,int state){
-        ReimbursementPo reimbursementPo =reimbursementRepository.findById(id).get();
-        reimbursementPo.setState(state);
-        reimbursementRepository.save(reimbursementPo);
+        Reimbursement reimbursement =reimbursementRepository.findById(id).get();
+        reimbursement.setState(state);
+        reimbursementRepository.save(reimbursement);
     }
 
     public void addReimbursementFile(int id, MultipartFile file, String description){
-        ReimbursementPo reimbursementPo =reimbursementRepository.findById(id).get();
-        String fileId=fileService.addFileByPath(file, reimbursementPo.getPath());
-        ReimbursementFilePo reimbursementFilePo =new ReimbursementFilePo(description,file.getOriginalFilename(),fileId, reimbursementPo);
-        reimbursementFileRepository.save(reimbursementFilePo);
+        Reimbursement reimbursement =reimbursementRepository.findById(id).get();
+        String fileId=fileService.addFileByPath(file, reimbursement.getPath());
+        ReimbursementFile reimbursementFile =new ReimbursementFile(description,file.getOriginalFilename(),fileId, reimbursement);
+        reimbursementFileRepository.save(reimbursementFile);
     }
 
     public void deleteReimbursementFile(int id){
-        ReimbursementFilePo reimbursementFilePo =reimbursementFileRepository.findById(id).get();
-        reimbursementFileRepository.delete(reimbursementFilePo);
+        ReimbursementFile reimbursementFile =reimbursementFileRepository.findById(id).get();
+        reimbursementFileRepository.delete(reimbursementFile);
     }
 
     public Map<String,Object> getReimbursementList(int page, int size){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
-        Page<ReimbursementPo> reimbursements=reimbursementRepository.findAll(pageable);
-        List<ReimbursementPo> reimbursementPoList =reimbursements.toList();
-        return Map.of("list", reimbursementPoList,"total",reimbursements.getTotalElements());
+        Page<Reimbursement> reimbursements=reimbursementRepository.findAll(pageable);
+        List<Reimbursement> reimbursementList =reimbursements.toList();
+        return Map.of("list", reimbursementList,"total",reimbursements.getTotalElements());
     }
 
-    public ReimbursementPo getReimbursementDetail(int id){
+    public Reimbursement getReimbursementDetail(int id){
         return reimbursementRepository.findById(id).get();
     }
 
     public void deleteReimbursement(int id){
-        ReimbursementPo reimbursementPo =reimbursementRepository.findById(id).get();
-        if(reimbursementPo.getReimbursementFilePoList()!=null){
-            for(ReimbursementFilePo reimbursementFilePo : reimbursementPo.getReimbursementFilePoList()){
-                fileService.deleteFileByPath(reimbursementFilePo.getFileName(), reimbursementPo.getPath());
+        Reimbursement reimbursement =reimbursementRepository.findById(id).get();
+        if(reimbursement.getReimbursementFileList()!=null){
+            for(ReimbursementFile reimbursementFile : reimbursement.getReimbursementFileList()){
+                fileService.deleteFileByPath(reimbursementFile.getFileName(), reimbursement.getPath());
             }
         }
-        reimbursementRepository.delete(reimbursementPo);
+        reimbursementRepository.delete(reimbursement);
     }
 
     public void downloadReimbursementFile(@PathVariable int id, HttpServletResponse response){
-        ReimbursementFilePo reimbursementFilePo =reimbursementFileRepository.findById(id).get();
+        ReimbursementFile reimbursementFile =reimbursementFileRepository.findById(id).get();
         try {
-            fileService.downloadFile(reimbursementFilePo.getFileName(), reimbursementFilePo.getFileId(),response);
+            fileService.downloadFile(reimbursementFile.getFileName(), reimbursementFile.getFileId(),response);
         } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
         }

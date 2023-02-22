@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.dao.repository.*;
-import com.softeng.dingtalk.po.*;
+import com.softeng.dingtalk.po_entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -41,9 +41,9 @@ public class NotifyService {
      * dc 审核消息
      * @param dc
      */
-    public void reviewDcMessage(DcRecordPo dc) {
+    public void reviewDcMessage(DcRecord dc) {
         String month =  String.valueOf(dc.getYearmonth() % 100);
-        messageRepository.save(new MessagePo(
+        messageRepository.save(new Message(
                 month + "月第" + dc.getWeek() + "周绩效",
                 "C值: " + dc.getCvalue() + "DC值: " + dc.getDc() + ",  AC值: " + dc.getAc(),
                 dc.getApplicant().getId()
@@ -55,7 +55,7 @@ public class NotifyService {
      * dc 审核结果更新消息
      * @param dc
      */
-    public void updateDcMessage(DcRecordPo dc) {
+    public void updateDcMessage(DcRecord dc) {
         reviewDcMessage(dc);
     }
 
@@ -67,7 +67,7 @@ public class NotifyService {
      * @param size
      * @return
      */
-    public Page<MessagePo> listUserMessage(int uid, int page, int size) {
+    public Page<Message> listUserMessage(int uid, int page, int size) {
         return messageRepository.findByUid(
                 uid,
                 PageRequest.of(page, size, Sort.by("createTime").descending())
@@ -80,16 +80,16 @@ public class NotifyService {
 
     /**
      * 论文AC消息
-     * @param internalPaperPo 最新的内部论文对象
+     * @param internalPaper 最新的内部论文对象
      */
-    public void paperAcMessage(InternalPaperPo internalPaperPo) {
+    public void paperAcMessage(InternalPaper internalPaper) {
         String title = "论文: " +
-                subString(internalPaperPo.getTitle(), 20) +
-                (internalPaperPo.hasAccepted() ? "... 投稿成功":(internalPaperPo.hasRejected() ? "... 投稿失败":"... 投稿中止"));
+                subString(internalPaper.getTitle(), 20) +
+                (internalPaper.hasAccepted() ? "... 投稿成功":(internalPaper.hasRejected() ? "... 投稿失败":"... 投稿中止"));
 
-        messageRepository.saveAll(internalPaperPo.getPaperDetails().stream()
+        messageRepository.saveAll(internalPaper.getPaperDetails().stream()
                 .filter(paperDetail -> paperDetail.getAcRecord() != null)
-                .map(paperDetail -> new MessagePo(
+                .map(paperDetail -> new Message(
                         title,
                         "AC: " + paperDetail.getAcRecord().getAc(),
                         paperDetail.getUser().getId()))
@@ -120,12 +120,12 @@ public class NotifyService {
      * @param result
      */
     public void voteAcMessage(int vid, int result) {
-        VotePo v = voteRepository.findById(vid).get();
+        Vote v = voteRepository.findById(vid).get();
         String paperTitle = v.isExternal() ?
                 "外部评审：" + subString(externalPaperRepository.findByVid(vid).getTitle(), 20) :
                 "内部评审：" + subString(internalPaperRepository.findByVid(vid).getTitle(), 20);
-        messageRepository.saveAll(v.getVoteDetailPos().stream()
-                .map(voteDetail -> new MessagePo(
+        messageRepository.saveAll(v.getVoteDetails().stream()
+                .map(voteDetail -> new Message(
                         "投票预测结果",
                         generateMessage(voteDetail.isResult(), result, paperTitle),
                         voteDetail.getUser().getId())
@@ -137,11 +137,11 @@ public class NotifyService {
 
     /**
      * 系统计算项目AC消息
-     * @param acRecordPos
+     * @param acRecords
      */
-    public void autoSetProjectAcMessage(List<AcRecordPo> acRecordPos) {
-        messageRepository.saveAll(acRecordPos.stream()
-                .map(acRecord -> new MessagePo(
+    public void autoSetProjectAcMessage(List<AcRecord> acRecords) {
+        messageRepository.saveAll(acRecords.stream()
+                .map(acRecord -> new Message(
                         acRecord.getReason(),
                         "AC: " + acRecord.getAc(),
                         acRecord.getUser().getId()
@@ -153,19 +153,19 @@ public class NotifyService {
 
     /**
      * 手动计算项目AC消息
-     * @param acRecordPos
+     * @param acRecords
      */
-    public void manualSetProjectAcMessage(List<AcRecordPo> acRecordPos) {
-        notifyService.autoSetProjectAcMessage(acRecordPos);
+    public void manualSetProjectAcMessage(List<AcRecord> acRecords) {
+        notifyService.autoSetProjectAcMessage(acRecords);
     }
 
 
     /**
      * 项目bug消息
-     * @param acRecordPos
+     * @param acRecords
      */
-    public void bugMessage(List<AcRecordPo> acRecordPos) {
-        notifyService.autoSetProjectAcMessage(acRecordPos);
+    public void bugMessage(List<AcRecord> acRecords) {
+        notifyService.autoSetProjectAcMessage(acRecords);
     }
 
 

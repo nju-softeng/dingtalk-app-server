@@ -1,9 +1,9 @@
 package com.softeng.dingtalk.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.softeng.dingtalk.po.UserPo;
-import com.softeng.dingtalk.po.VotePo;
-import com.softeng.dingtalk.po.VoteDetailPo;
+import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.po_entity.Vote;
+import com.softeng.dingtalk.po_entity.VoteDetail;
 import com.softeng.dingtalk.dao.repository.VoteRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
@@ -40,7 +40,7 @@ public class VoteController {
      * @return
      */
     @PostMapping("/vote")
-    public VotePo addVote(@RequestBody VoteVO voteVO) {
+    public Vote addVote(@RequestBody VoteVO voteVO) {
         log.debug(voteVO.toString());
         return voteService.createVote(voteVO);
     }
@@ -55,8 +55,8 @@ public class VoteController {
      */
     @PostMapping("/vote/{vid}")
     public Map addpoll(@PathVariable int vid, @RequestAttribute int uid, @RequestBody PollVO vo) throws IOException {
-        VoteDetailPo voteDetailPo = new VoteDetailPo(new VotePo(vo.getVid()), vo.isResult(), new UserPo(uid));
-        Map map = voteService.poll(vid, uid, voteDetailPo);
+        VoteDetail voteDetail = new VoteDetail(new Vote(vo.getVid()), vo.isResult(), new User(uid));
+        Map map = voteService.poll(vid, uid, voteDetail);
         WebSocketController.sendInfo(objectMapper.writeValueAsString(map));
         return map;
     }

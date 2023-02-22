@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.po.AcItemPo;
+import com.softeng.dingtalk.po_entity.AcItem;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,7 +31,7 @@ public class AppliedVO {
     /**
      * ac值申请列表
      */
-    private List<AcItemPo> acItemPos;
+    private List<AcItem> acItems;
 
     public AppliedVO(int id, int auditorid, String auditorName, Boolean status, double dvalue, double dc, double ac, int yearmonth, int week, LocalDate date, LocalDateTime insertTime) {
         this.id = id;

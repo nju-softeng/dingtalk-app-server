@@ -1,8 +1,8 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.api.OAApi;
-import com.softeng.dingtalk.api.ScheduleApi;
-import com.softeng.dingtalk.po.*;
+import com.softeng.dingtalk.component.dingApi.OAApi;
+import com.softeng.dingtalk.component.dingApi.ScheduleApi;
+import com.softeng.dingtalk.po_entity.*;
 import com.softeng.dingtalk.dao.repository.AbsentOARepository;
 import com.softeng.dingtalk.dao.repository.DingTalkScheduleDetailRepository;
 import com.softeng.dingtalk.dao.repository.DingTalkScheduleRepository;
@@ -42,35 +42,35 @@ public class DingTalkScheduleService {
     @Autowired
     AbsentOARepository absentOARepository;
     public void addSchedule(DingTalkScheduleVO dingTalkScheduleVO,int uid){
-        DingTalkSchedulePo dingTalkSchedulePo =new DingTalkSchedulePo(dingTalkScheduleVO.getSummary(),dingTalkScheduleVO.getStart(),dingTalkScheduleVO.getEnd(),
+        DingTalkSchedule dingTalkSchedule =new DingTalkSchedule(dingTalkScheduleVO.getSummary(),dingTalkScheduleVO.getStart(),dingTalkScheduleVO.getEnd(),
                 dingTalkScheduleVO.isOnline(),dingTalkScheduleVO.getLocation());
-        dingTalkSchedulePo.setOrganizer(userRepository.findById(uid).get());
-        dingTalkSchedulePo.setDingTalkScheduleDetailList(new LinkedList<>());
+        dingTalkSchedule.setOrganizer(userRepository.findById(uid).get());
+        dingTalkSchedule.setDingTalkScheduleDetailList(new LinkedList<>());
         for(int id:dingTalkScheduleVO.getAttendeesIdList()){
-            dingTalkSchedulePo.getDingTalkScheduleDetailList().add(new DingTalkScheduleDetailPo(userRepository.findById(id).get(), dingTalkSchedulePo));
+            dingTalkSchedule.getDingTalkScheduleDetailList().add(new DingTalkScheduleDetail(userRepository.findById(id).get(), dingTalkSchedule));
         }
         try {
-            String scheduleId=scheduleApi.creatSchedule(dingTalkSchedulePo);
-            dingTalkSchedulePo.setScheduleId(scheduleId);
-            dingTalkScheduleRepository.save(dingTalkSchedulePo);
+            String scheduleId=scheduleApi.creatSchedule(dingTalkSchedule);
+            dingTalkSchedule.setScheduleId(scheduleId);
+            dingTalkScheduleRepository.save(dingTalkSchedule);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
     public void updateSchedule(DingTalkScheduleVO dingTalkScheduleVO){
-        DingTalkSchedulePo dingTalkSchedulePo =dingTalkScheduleRepository.findById(dingTalkScheduleVO.getId()).get();
-        dingTalkSchedulePo.update(dingTalkScheduleVO.getSummary(),dingTalkScheduleVO.getStart(),dingTalkScheduleVO.getEnd(),
+        DingTalkSchedule dingTalkSchedule =dingTalkScheduleRepository.findById(dingTalkScheduleVO.getId()).get();
+        dingTalkSchedule.update(dingTalkScheduleVO.getSummary(),dingTalkScheduleVO.getStart(),dingTalkScheduleVO.getEnd(),
                 dingTalkScheduleVO.isOnline(),dingTalkScheduleVO.getLocation());
 //        dingTalkSchedule.setOrganizer(userRepository.findById(dingTalkScheduleVO.getOrganizerId()).get());
-        dingTalkScheduleDetailRepository.deleteAll(dingTalkSchedulePo.getDingTalkScheduleDetailList());
-        dingTalkSchedulePo.setDingTalkScheduleDetailList(new LinkedList<>());
+        dingTalkScheduleDetailRepository.deleteAll(dingTalkSchedule.getDingTalkScheduleDetailList());
+        dingTalkSchedule.setDingTalkScheduleDetailList(new LinkedList<>());
         for(int id:dingTalkScheduleVO.getAttendeesIdList()){
-            dingTalkSchedulePo.getDingTalkScheduleDetailList().add(new DingTalkScheduleDetailPo(userRepository.findById(id).get(), dingTalkSchedulePo));
+            dingTalkSchedule.getDingTalkScheduleDetailList().add(new DingTalkScheduleDetail(userRepository.findById(id).get(), dingTalkSchedule));
         }
         try {
-            scheduleApi.updateSchedule(dingTalkSchedulePo);
-            dingTalkScheduleRepository.save(dingTalkSchedulePo);
+            scheduleApi.updateSchedule(dingTalkSchedule);
+            dingTalkScheduleRepository.save(dingTalkSchedule);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -78,40 +78,40 @@ public class DingTalkScheduleService {
 
     public Map<String,Object> getScheduleList(int page, int size, int uid){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
-        UserPo userPo =userRepository.findById(uid).get();
-        Page<DingTalkScheduleDetailPo> dingTalkScheduleDetails=dingTalkScheduleDetailRepository.getDingTalkScheduleDetailsByUserEquals(userPo,pageable);
-        List<DingTalkSchedulePo> dingTalkSchedulePoList =dingTalkScheduleDetails.toList().stream().map(DingTalkScheduleDetailPo::getDingTalkSchedule).collect(Collectors.toList());
-        return Map.of("list", dingTalkSchedulePoList,"total",dingTalkScheduleDetails.getTotalElements());
+        User user =userRepository.findById(uid).get();
+        Page<DingTalkScheduleDetail> dingTalkScheduleDetails=dingTalkScheduleDetailRepository.getDingTalkScheduleDetailsByUserEquals(user,pageable);
+        List<DingTalkSchedule> dingTalkScheduleList =dingTalkScheduleDetails.toList().stream().map(DingTalkScheduleDetail::getDingTalkSchedule).collect(Collectors.toList());
+        return Map.of("list", dingTalkScheduleList,"total",dingTalkScheduleDetails.getTotalElements());
     }
 
     public void deleteSchedule(int id, int uid){
-        DingTalkSchedulePo dingTalkSchedulePo =dingTalkScheduleRepository.findById(id).get();
-        if(dingTalkSchedulePo.getOrganizer().getId()!=uid){
+        DingTalkSchedule dingTalkSchedule =dingTalkScheduleRepository.findById(id).get();
+        if(dingTalkSchedule.getOrganizer().getId()!=uid){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"非日程组织者，无权限删除！");
         }
-        scheduleApi.deleteSchedule(dingTalkSchedulePo);
-        dingTalkScheduleRepository.delete(dingTalkSchedulePo);
+        scheduleApi.deleteSchedule(dingTalkSchedule);
+        dingTalkScheduleRepository.delete(dingTalkSchedule);
     }
 
     public void addAbsentOA(int id, int uid, AbsentOAVO absentOAVO){
-        DingTalkSchedulePo dingTalkSchedulePo =dingTalkScheduleRepository.findById(id).get();
+        DingTalkSchedule dingTalkSchedule =dingTalkScheduleRepository.findById(id).get();
         if(absentOARepository.getAbsentOAByUserAndDingTalkSchedule(
                 userRepository.findById(id).get(),
-                dingTalkSchedulePo)!=null){
+                dingTalkSchedule)!=null){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"已提交请假审核，请删除后添加！");
         }
-        AbsentOAPo absentOAPO =new AbsentOAPo(absentOAVO.getType(),absentOAVO.getStart(),absentOAVO.getEnd(),absentOAVO.getDayNum(),absentOAVO.getReason());
+        AbsentOA absentOAPO =new AbsentOA(absentOAVO.getType(),absentOAVO.getStart(),absentOAVO.getEnd(),absentOAVO.getDayNum(),absentOAVO.getReason());
         absentOAPO.setUser(userRepository.findById(uid).get());
-        absentOAPO.setDingTalkSchedule(dingTalkSchedulePo);
+        absentOAPO.setDingTalkSchedule(dingTalkSchedule);
         absentOAPO.setProcessInstanceId(oaApi.createAbsentOA(absentOAPO));
         absentOARepository.save(absentOAPO);
     }
 
 
 
-    public AbsentOAPo getAbsentOADetail(int id, int uid){
-        DingTalkSchedulePo dingTalkSchedulePo =dingTalkScheduleRepository.findById(id).get();
-        AbsentOAPo absentOAPO = absentOARepository.getAbsentOAByUserAndDingTalkSchedule(userRepository.findById(uid).get(), dingTalkSchedulePo);
+    public AbsentOA getAbsentOADetail(int id, int uid){
+        DingTalkSchedule dingTalkSchedule =dingTalkScheduleRepository.findById(id).get();
+        AbsentOA absentOAPO = absentOARepository.getAbsentOAByUserAndDingTalkSchedule(userRepository.findById(uid).get(), dingTalkSchedule);
         if(absentOAPO ==null) return null;
         if(absentOAPO.getProcessInstanceId()!=null){
             absentOAPO.setState(oaApi.getOAOutCome(absentOAPO.getProcessInstanceId()));
@@ -121,9 +121,9 @@ public class DingTalkScheduleService {
     }
 
     public void deleteAbsentOA(int id,int uid){
-        AbsentOAPo absentOAPO =absentOARepository.findById(id).get();
-        UserPo userPo =userRepository.findById(uid).get();
-        boolean isSuccess=oaApi.deleteAbsentOA(absentOAPO.getProcessInstanceId(), userPo);
+        AbsentOA absentOAPO =absentOARepository.findById(id).get();
+        User user =userRepository.findById(uid).get();
+        boolean isSuccess=oaApi.deleteAbsentOA(absentOAPO.getProcessInstanceId(), user);
         if(!isSuccess) throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"删除失败");
         else absentOARepository.delete(absentOAPO);
     }

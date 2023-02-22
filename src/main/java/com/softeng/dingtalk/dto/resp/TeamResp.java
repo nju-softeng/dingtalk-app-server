@@ -18,7 +18,7 @@ import java.io.Serializable;
 @ApiModel(value="TeamReq对象", description="用户研究组响应对象")
 public class TeamResp implements Serializable {
     @ApiModelProperty(value = "组id")
-    private Integer id;
+    private int id;
 
     @ApiModelProperty(value = "组名")
     private String name;

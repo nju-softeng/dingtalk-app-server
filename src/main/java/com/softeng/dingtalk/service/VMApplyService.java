@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.po.UserPo;
-import com.softeng.dingtalk.po.VMApplyPo;
+import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.po_entity.VMApply;
 import com.softeng.dingtalk.dao.repository.UserRepository;
 import com.softeng.dingtalk.dao.repository.VMApplyRepository;
 import com.softeng.dingtalk.vo.VMApplyVO;
@@ -28,56 +28,56 @@ public class VMApplyService {
     @Autowired
     UserRepository userRepository;
     public void addVMApply(VMApplyVO vmApplyVO,int uid){
-        UserPo userPo =userRepository.findById(uid).get();
-        vmApplyVO.setUserPo(userPo);
-        VMApplyPo vmApplyPo =new VMApplyPo(vmApplyVO.getUserPo(), vmApplyVO.getProjectTeam(), vmApplyVO.getSubject(),
+        User user =userRepository.findById(uid).get();
+        vmApplyVO.setUser(user);
+        VMApply vmApply =new VMApply(vmApplyVO.getUser(), vmApplyVO.getProjectTeam(), vmApplyVO.getSubject(),
                 vmApplyVO.getEmail(), vmApplyVO.getStart(), vmApplyVO.getEnd(), vmApplyVO.getPurpose(), vmApplyVO.getCoreNum(),
                 vmApplyVO.getMemory(), vmApplyVO.getCapacity(), vmApplyVO.getOperationSystem(), vmApplyVO.getApplyDate());
-        vmApplyRepository.save(vmApplyPo);
+        vmApplyRepository.save(vmApply);
     }
     public void updateVMApply(VMApplyVO vmApplyVO,int uid){
-        UserPo userPo =userRepository.findById(uid).get();
-        VMApplyPo vmApplyPo =vmApplyRepository.findById(vmApplyVO.getId()).get();
-        if(!vmApplyPo.getUser().equals(userPo))
+        User user =userRepository.findById(uid).get();
+        VMApply vmApply =vmApplyRepository.findById(vmApplyVO.getId()).get();
+        if(!vmApply.getUser().equals(user))
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"无修改权限！");
-        vmApplyPo.update(vmApplyVO.getProjectTeam(), vmApplyVO.getSubject(),
+        vmApply.update(vmApplyVO.getProjectTeam(), vmApplyVO.getSubject(),
                 vmApplyVO.getEmail(), vmApplyVO.getStart(), vmApplyVO.getEnd(), vmApplyVO.getPurpose(), vmApplyVO.getCoreNum(),
                 vmApplyVO.getMemory(), vmApplyVO.getCapacity(), vmApplyVO.getOperationSystem());
-        vmApplyRepository.save(vmApplyPo);
+        vmApplyRepository.save(vmApply);
     }
 
     public Map<String,Object> getVMApplyList(int page, int size){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
-        Page<VMApplyPo> vmApplies=vmApplyRepository.findAll(pageable);
-        List<VMApplyPo> vmApplyPoList =vmApplies.toList();
-        return Map.of("list", vmApplyPoList,"total",vmApplies.getTotalElements());
+        Page<VMApply> vmApplies=vmApplyRepository.findAll(pageable);
+        List<VMApply> vmApplyList =vmApplies.toList();
+        return Map.of("list", vmApplyList,"total",vmApplies.getTotalElements());
     }
 
-    public List<VMApplyPo> getAuditingVMApplyList(){
+    public List<VMApply> getAuditingVMApplyList(){
         return vmApplyRepository.findAllByStateEquals(0);
     }
 
-    public List<VMApplyPo> getUserVMApplyList(int uid){
-        UserPo userPo =userRepository.findById(uid).get();
-        return vmApplyRepository.findAllByUserEquals(userPo);
+    public List<VMApply> getUserVMApplyList(int uid){
+        User user =userRepository.findById(uid).get();
+        return vmApplyRepository.findAllByUserEquals(user);
     }
 
 //    todo-权限相关
     public void setVMApplyState(int id, boolean isPass,int uid){
-        UserPo userPo =userRepository.findById(uid).get();
+        User user =userRepository.findById(uid).get();
 //        if(userPo.getAuthority()!=2) throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"无审核权限！");
-        VMApplyPo vmApplyPo =vmApplyRepository.findById(id).get();
-        if(isPass) vmApplyPo.setState(1);
-        else vmApplyPo.setState(-1);
+        VMApply vmApply =vmApplyRepository.findById(id).get();
+        if(isPass) vmApply.setState(1);
+        else vmApply.setState(-1);
     }
 
     //    todo-权限相关
     public void deleteVMApply(int id, int uid){
-        UserPo userPo =userRepository.findById(uid).get();
-        VMApplyPo vmApplyPo =vmApplyRepository.findById(id).get();
-//        if(userPo.getAuthority()!=2 && !vmApplyPo.getUser().equals(userPo))
+        User user =userRepository.findById(uid).get();
+        VMApply vmApply =vmApplyRepository.findById(id).get();
+//        if(userPo.getAuthority()!=2 && !vmApply.getUser().equals(userPo))
 //            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"无删除权限！");
-        vmApplyRepository.delete(vmApplyPo);
+        vmApplyRepository.delete(vmApply);
     }
 
 }

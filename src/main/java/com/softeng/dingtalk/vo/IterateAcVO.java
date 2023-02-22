@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.po.IterationDetailPo;
+import com.softeng.dingtalk.po_entity.IterationDetail;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +18,5 @@ import java.util.List;
 @Setter
 public class IterateAcVO {
     private LocalDate finishdate;
-    private List<IterationDetailPo> iterationDetailPos;
+    private List<IterationDetail> iterationDetails;
 }

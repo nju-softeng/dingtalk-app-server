@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.po.BugPo;
+import com.softeng.dingtalk.po_entity.Bug;
 import com.softeng.dingtalk.dao.repository.BugRepository;
 import com.softeng.dingtalk.service.BugService;
 import com.softeng.dingtalk.vo.BugCheckVO;
@@ -25,20 +25,20 @@ public class BugController {
     BugRepository bugRepository;
 
     @PostMapping("/bug")
-    public void submitBug(@RequestAttribute int uid, @RequestBody BugPo bug) {
+    public void submitBug(@RequestAttribute int uid, @RequestBody Bug bug) {
         bug.setReporterid(uid);
         bugService.submitBug(bug);
     }
 
 
     @GetMapping("/bug/project/{pid}")
-    public List<BugPo> listProjectBug(@PathVariable int pid) {
+    public List<Bug> listProjectBug(@PathVariable int pid) {
         return bugService.listProjectBug(pid);
     }
 
 
     @GetMapping("/bug/auditor/{aid}")
-    public List<BugPo> listProjectBugByAuditor(@PathVariable int aid) {
+    public List<Bug> listProjectBugByAuditor(@PathVariable int aid) {
         return bugService.listProjectBugByAuditor(aid);
     }
 

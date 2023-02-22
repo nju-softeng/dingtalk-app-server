@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.po.AcItemPo;
+import com.softeng.dingtalk.po_entity.AcItem;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -51,7 +51,7 @@ public class CheckedVO {
     private int aid;
     private LocalDateTime insertTime;
     private LocalDate weekdate;
-    private List<AcItemPo> acItemPos;
+    private List<AcItem> acItems;
 
 
 

@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.service;
-import com.softeng.dingtalk.po.ProjectPropertyPo;
-import com.softeng.dingtalk.po.ProjectPropertyFilePo;
+import com.softeng.dingtalk.po_entity.ProjectProperty;
+import com.softeng.dingtalk.po_entity.ProjectPropertyFile;
 import com.softeng.dingtalk.dao.repository.ProjectPropertyFileRepository;
 import com.softeng.dingtalk.dao.repository.ProjectPropertyRepository;
 import com.softeng.dingtalk.vo.ProjectPropertyFileVO;
@@ -32,85 +32,85 @@ public class ProjectPropertyService {
     FileService fileService;
 
     public void addProjectProperty(ProjectPropertyVO projectPropertyVO){
-        ProjectPropertyPo projectPropertyPo =new ProjectPropertyPo(projectPropertyVO.getName(),projectPropertyVO.getPath());
-        projectPropertyRepository.save(projectPropertyPo);
+        ProjectProperty projectProperty =new ProjectProperty(projectPropertyVO.getName(),projectPropertyVO.getPath());
+        projectPropertyRepository.save(projectProperty);
     }
 
     public void updateProjectProperty(ProjectPropertyVO projectPropertyVO){
-        ProjectPropertyPo projectPropertyPo =projectPropertyRepository.findById(projectPropertyVO.getId()).get();
-        projectPropertyPo.update(projectPropertyVO.getName(),projectPropertyVO.getPath());
-        projectPropertyRepository.save(projectPropertyPo);
+        ProjectProperty projectProperty =projectPropertyRepository.findById(projectPropertyVO.getId()).get();
+        projectProperty.update(projectPropertyVO.getName(),projectPropertyVO.getPath());
+        projectPropertyRepository.save(projectProperty);
     }
 
     public Map<String, Object> getProjectPropertyList(int page, int size){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
-        Page<ProjectPropertyPo> projectProperties=projectPropertyRepository.findAll(pageable);
+        Page<ProjectProperty> projectProperties=projectPropertyRepository.findAll(pageable);
         return Map.of("list",projectProperties.toList(),"total",projectProperties.getTotalElements());
     }
 
     public void addProjectPropertyVersion(MultipartFile codeFile, MultipartFile reportFile,
                                           String name, int id){
-        ProjectPropertyPo projectPropertyPo =projectPropertyRepository.findById(id).get();
-        String codeFileId=fileService.addFileByPath(codeFile, projectPropertyPo.getPath()+"/"+name+"/Code");
-        String reportFileId=fileService.addFileByPath(reportFile, projectPropertyPo.getPath()+"/"+name+"/Report");
-        ProjectPropertyFilePo projectPropertyFilePo =new ProjectPropertyFilePo(null,name, projectPropertyPo,codeFile.getOriginalFilename(),
+        ProjectProperty projectProperty =projectPropertyRepository.findById(id).get();
+        String codeFileId=fileService.addFileByPath(codeFile, projectProperty.getPath()+"/"+name+"/Code");
+        String reportFileId=fileService.addFileByPath(reportFile, projectProperty.getPath()+"/"+name+"/Report");
+        ProjectPropertyFile projectPropertyFile =new ProjectPropertyFile(null,name, projectProperty,codeFile.getOriginalFilename(),
                 codeFileId,reportFile.getOriginalFilename(),reportFileId);
-        projectPropertyFileRepository.save(projectPropertyFilePo);
+        projectPropertyFileRepository.save(projectPropertyFile);
     }
 
-    public ProjectPropertyPo getProjectPropertyDetail(int id){
+    public ProjectProperty getProjectPropertyDetail(int id){
         return projectPropertyRepository.findById(id).get();
     }
     public String addProjectPropertyFile(MultipartFile file,int id,String type){
-        ProjectPropertyFilePo projectPropertyFilePo =projectPropertyFileRepository.findById(id).get();
-        String fileId=fileService.addFileByPath(file, projectPropertyFilePo.getProjectProperty().getPath()+"/"+
-                projectPropertyFilePo.getVersion()+"/"+getFileTypeFolderName(type));
+        ProjectPropertyFile projectPropertyFile =projectPropertyFileRepository.findById(id).get();
+        String fileId=fileService.addFileByPath(file, projectPropertyFile.getProjectProperty().getPath()+"/"+
+                projectPropertyFile.getVersion()+"/"+getFileTypeFolderName(type));
         switch (type){
             case "codeFile":
-                if(projectPropertyFilePo.getCodeFileId()!=null){
-                    fileService.deleteFileByPath(projectPropertyFilePo.getCodeFileName(), projectPropertyFilePo.getCodeFileId());
+                if(projectPropertyFile.getCodeFileId()!=null){
+                    fileService.deleteFileByPath(projectPropertyFile.getCodeFileName(), projectPropertyFile.getCodeFileId());
                 }
-                projectPropertyFilePo.setCodeFileId(fileId);
-                projectPropertyFilePo.setCodeFileName(file.getOriginalFilename());
+                projectPropertyFile.setCodeFileId(fileId);
+                projectPropertyFile.setCodeFileName(file.getOriginalFilename());
                 break;
             case"reportFile":
-                if(projectPropertyFilePo.getReportFileId()!=null){
-                    fileService.deleteFileByPath(projectPropertyFilePo.getReportFileName(), projectPropertyFilePo.getReportFileId());
+                if(projectPropertyFile.getReportFileId()!=null){
+                    fileService.deleteFileByPath(projectPropertyFile.getReportFileName(), projectPropertyFile.getReportFileId());
                 }
-                projectPropertyFilePo.setReportFileId(fileId);
-                projectPropertyFilePo.setReportFileName(file.getOriginalFilename());
+                projectPropertyFile.setReportFileId(fileId);
+                projectPropertyFile.setReportFileName(file.getOriginalFilename());
                 break;
         }
-        projectPropertyFileRepository.save(projectPropertyFilePo);
+        projectPropertyFileRepository.save(projectPropertyFile);
         return fileId;
     }
 
     public void deleteProjectPropertyFile(int id,String type){
-        ProjectPropertyFilePo projectPropertyFilePo =projectPropertyFileRepository.findById(id).get();
+        ProjectPropertyFile projectPropertyFile =projectPropertyFileRepository.findById(id).get();
         switch (type){
             case "codeFile":
-                fileService.deleteFileByPath(projectPropertyFilePo.getCodeFileName(), projectPropertyFilePo.getCodeFileId());
-                projectPropertyFilePo.setCodeFileId(null);
-                projectPropertyFilePo.setCodeFileName(null);
+                fileService.deleteFileByPath(projectPropertyFile.getCodeFileName(), projectPropertyFile.getCodeFileId());
+                projectPropertyFile.setCodeFileId(null);
+                projectPropertyFile.setCodeFileName(null);
                 break;
             case"reportFile":
-                fileService.deleteFileByPath(projectPropertyFilePo.getReportFileName(), projectPropertyFilePo.getReportFileId());
-                projectPropertyFilePo.setReportFileId(null);
-                projectPropertyFilePo.setReportFileName(null);
+                fileService.deleteFileByPath(projectPropertyFile.getReportFileName(), projectPropertyFile.getReportFileId());
+                projectPropertyFile.setReportFileId(null);
+                projectPropertyFile.setReportFileName(null);
                 break;
         }
-        projectPropertyFileRepository.save(projectPropertyFilePo);
+        projectPropertyFileRepository.save(projectPropertyFile);
     }
 
     public void downloadProjectPropertyFile(int id, String type, HttpServletResponse response){
-        ProjectPropertyFilePo projectPropertyFilePo =projectPropertyFileRepository.findById(id).get();
+        ProjectPropertyFile projectPropertyFile =projectPropertyFileRepository.findById(id).get();
         try{
             switch (type){
                 case "codeFile":
-                    fileService.downloadFile(projectPropertyFilePo.getCodeFileName(), projectPropertyFilePo.getCodeFileId(),response);
+                    fileService.downloadFile(projectPropertyFile.getCodeFileName(), projectPropertyFile.getCodeFileId(),response);
                     break;
                 case"reportFile":
-                    fileService.downloadFile(projectPropertyFilePo.getReportFileName(), projectPropertyFilePo.getReportFileId(),response);
+                    fileService.downloadFile(projectPropertyFile.getReportFileName(), projectPropertyFile.getReportFileId(),response);
                     break;
             }
         }catch (Exception e){
@@ -120,29 +120,29 @@ public class ProjectPropertyService {
     }
 
     public void updateProjectPropertyVersion(int id,ProjectPropertyFileVO projectPropertyFileVO){
-        ProjectPropertyFilePo projectPropertyFilePo =projectPropertyFileRepository.findById(id).get();
-        projectPropertyFilePo.update(projectPropertyFileVO.getVersion());
-        projectPropertyFileRepository.save(projectPropertyFilePo);
+        ProjectPropertyFile projectPropertyFile =projectPropertyFileRepository.findById(id).get();
+        projectPropertyFile.update(projectPropertyFileVO.getVersion());
+        projectPropertyFileRepository.save(projectPropertyFile);
     }
 
   
     public void deleteProjectPropertyVersion(int id){
-        ProjectPropertyFilePo projectPropertyFilePo =projectPropertyFileRepository.findById(id).get();
-        if(projectPropertyFilePo.getCodeFileId()!=null) fileService.deleteFileByPath(projectPropertyFilePo.getCodeFileName(),
-                projectPropertyFilePo.getCodeFileId());
-        if(projectPropertyFilePo.getReportFileId()!=null) fileService.deleteFileByPath(projectPropertyFilePo.getReportFileName(),
-                projectPropertyFilePo.getReportFileName());
-        projectPropertyFileRepository.delete(projectPropertyFilePo);
+        ProjectPropertyFile projectPropertyFile =projectPropertyFileRepository.findById(id).get();
+        if(projectPropertyFile.getCodeFileId()!=null) fileService.deleteFileByPath(projectPropertyFile.getCodeFileName(),
+                projectPropertyFile.getCodeFileId());
+        if(projectPropertyFile.getReportFileId()!=null) fileService.deleteFileByPath(projectPropertyFile.getReportFileName(),
+                projectPropertyFile.getReportFileName());
+        projectPropertyFileRepository.delete(projectPropertyFile);
     }
 
     public void deleteProjectProperty(int id){
-        ProjectPropertyPo projectPropertyPo =projectPropertyRepository.findById(id).get();
-        if(projectPropertyPo.getProjectPropertyFilePoList()!=null){
-            for(ProjectPropertyFilePo projectPropertyFilePo : projectPropertyPo.getProjectPropertyFilePoList()){
-                this.deleteProjectPropertyVersion(projectPropertyFilePo.getId());
+        ProjectProperty projectProperty =projectPropertyRepository.findById(id).get();
+        if(projectProperty.getProjectPropertyFileList()!=null){
+            for(ProjectPropertyFile projectPropertyFile : projectProperty.getProjectPropertyFileList()){
+                this.deleteProjectPropertyVersion(projectPropertyFile.getId());
             }
         }
-        projectPropertyRepository.delete(projectPropertyPo);
+        projectPropertyRepository.delete(projectProperty);
     }
 
     private String getFileTypeFolderName(String fileType){

@@ -5,7 +5,7 @@ import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.alibaba.excel.annotation.write.style.ContentStyle;
 import com.alibaba.excel.annotation.write.style.HeadFontStyle;
 import com.alibaba.excel.annotation.write.style.HeadStyle;
-import com.softeng.dingtalk.po.DcSummaryPo;
+import com.softeng.dingtalk.po_entity.DcSummary;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -44,18 +44,18 @@ public class DcSummaryData {
     @ExcelProperty("Top-Up")
     private double topUp;
 
-    public DcSummaryData(String stuNum, String name, DcSummaryPo dcSummaryPo) {
+    public DcSummaryData(String stuNum, String name, DcSummary dcSummary) {
         this.stuNum = stuNum;
         this.name = name;
-        this.salary = dcSummaryPo.getSalary();
-        this.week1 = dcSummaryPo.getWeek1();
-        this.week2 = dcSummaryPo.getWeek2();
-        this.week3 = dcSummaryPo.getWeek3();
-        this.week4 = dcSummaryPo.getWeek4();
-        this.week5 = dcSummaryPo.getWeek5();
-        this.total = dcSummaryPo.getTotal();
-        this.ac = dcSummaryPo.getAc();
-        this.topUp = dcSummaryPo.getTopup();
+        this.salary = dcSummary.getSalary();
+        this.week1 = dcSummary.getWeek1();
+        this.week2 = dcSummary.getWeek2();
+        this.week3 = dcSummary.getWeek3();
+        this.week4 = dcSummary.getWeek4();
+        this.week5 = dcSummary.getWeek5();
+        this.total = dcSummary.getTotal();
+        this.ac = dcSummary.getAc();
+        this.topUp = dcSummary.getTopup();
     }
 
 }

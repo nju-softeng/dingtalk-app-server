@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.service;
 
 import com.alibaba.excel.EasyExcel;
-import com.softeng.dingtalk.po.PrizePo;
+import com.softeng.dingtalk.po_entity.Prize;
 import com.softeng.dingtalk.excel.AcData;
 import com.softeng.dingtalk.excel.DcSummaryData;
 import com.softeng.dingtalk.excel.UserPrizeData;
@@ -71,7 +71,7 @@ public class ExcelService {
                 .sheet("用户奖项列表")
                 .doWrite(prizeRepository.findAll().stream()
                         .map(prize -> new UserPrizeData(prize.getUser().getStuNum(),prize.getUser().getName(),prize.getPrizeTime().toString(),
-                                prize.getPrizeName(), PrizePo.getPrizeLevelName(prize.getLevel()),prize.getRemark())).collect(Collectors.toList()));
+                                prize.getPrizeName(), Prize.getPrizeLevelName(prize.getLevel()),prize.getRemark())).collect(Collectors.toList()));
     }
 
 

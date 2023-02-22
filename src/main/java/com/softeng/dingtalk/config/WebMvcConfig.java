@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.config;
 
-import com.softeng.dingtalk.interceptor.LoginInterceptor;
+import com.softeng.dingtalk.component.interceptor.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +24,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/login")
                 .excludePathPatterns("/api/login_test/**")
+                .excludePathPatterns("/api/v2/login")
+                .excludePathPatterns("/api/v2/login_test/**")
                 .excludePathPatterns("/wsapi");
     }
 

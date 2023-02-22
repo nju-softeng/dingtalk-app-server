@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.po.PropertyPo;
-import com.softeng.dingtalk.po.UserPo;
+import com.softeng.dingtalk.po_entity.Property;
+import com.softeng.dingtalk.po_entity.User;
 import com.softeng.dingtalk.dao.repository.PropertyRepository;
 import com.softeng.dingtalk.vo.PropertyVO;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class PropertyService {
      * @param userId
      * @return
      */
-    public List<PropertyPo> findByUser(int userId){
+    public List<Property> findByUser(int userId){
         return propertyRepository.findByUserId(userId);
     }
 
@@ -39,9 +39,9 @@ public class PropertyService {
      * @param propertyVO
      * @return
      */
-    public PropertyPo addNewProperty(int userId, PropertyVO propertyVO){
-        PropertyPo propertyPo =new PropertyPo(new UserPo(userId),propertyVO.getName(),propertyVO.getType(),propertyVO.getPreserver(),propertyVO.getRemark(),propertyVO.getStartTime());
-        return propertyRepository.save(propertyPo);
+    public Property addNewProperty(int userId, PropertyVO propertyVO){
+        Property property =new Property(new User(userId),propertyVO.getName(),propertyVO.getType(),propertyVO.getPreserver(),propertyVO.getRemark(),propertyVO.getStartTime());
+        return propertyRepository.save(property);
     }
 
     /**
@@ -49,7 +49,7 @@ public class PropertyService {
      * @param propertyVO
      */
     public void updateProperty(PropertyVO propertyVO){
-        PropertyPo p = propertyRepository.findById(propertyVO.getId()).get();
+        Property p = propertyRepository.findById(propertyVO.getId()).get();
         p.setName(propertyVO.getName());
         p.setType(propertyVO.getType());
         p.setPreserver(propertyVO.getPreserver());
@@ -63,7 +63,7 @@ public class PropertyService {
      * @param propertyId
      */
     public void deleteProperty(int propertyId){
-        PropertyPo p = propertyRepository.findById(propertyId).get();
+        Property p = propertyRepository.findById(propertyId).get();
         p.setDeleted(true);
         propertyRepository.save(p);
     }

@@ -4,7 +4,7 @@ import com.softeng.dingtalk.dao.repository.AcRecordRepository;
 import com.softeng.dingtalk.dao.repository.BugRepository;
 import com.softeng.dingtalk.dao.repository.DcSummaryRepository;
 import com.softeng.dingtalk.dao.repository.UserRepository;
-import com.softeng.dingtalk.po.DcSummaryPo;
+import com.softeng.dingtalk.po_entity.DcSummary;
 import com.softeng.dingtalk.enums.Position;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,10 +69,10 @@ public class PerformanceService {
      * @param topup
      */
     public void updateTopup(int uid, int yearmonth, double topup) {
-        DcSummaryPo dcSummaryPo = Optional.ofNullable(dcSummaryRepository.getDcSummary(uid, yearmonth))
-                .orElse(new DcSummaryPo(uid, yearmonth));
-        dcSummaryPo.setTopup(topup);
-        dcSummaryRepository.save(dcSummaryPo);
+        DcSummary dcSummary = Optional.ofNullable(dcSummaryRepository.getDcSummary(uid, yearmonth))
+                .orElse(new DcSummary(uid, yearmonth));
+        dcSummary.setTopup(topup);
+        dcSummaryRepository.save(dcSummary);
         computeSalary(uid, yearmonth);
     }
 
@@ -128,8 +128,8 @@ public class PerformanceService {
     public Map getUserPerformance(int uid) {
         LocalDate date  = LocalDate.now();
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        DcSummaryPo dc = Optional.ofNullable(dcSummaryRepository.findByUserIdAndYearmonth(uid, yearmonth))
-                .orElse(new DcSummaryPo());
+        DcSummary dc = Optional.ofNullable(dcSummaryRepository.findByUserIdAndYearmonth(uid, yearmonth))
+                .orElse(new DcSummary());
         return Map.of(
                 "acTotal", acRecordRepository.getUserAcSum(uid),
                 "dcTotal", dc.getTotal(),

@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.aspect;
 
 
-import com.softeng.dingtalk.po.AcRecordPo;
+import com.softeng.dingtalk.po_entity.AcRecord;
 import com.softeng.dingtalk.dao.repository.AcRecordRepository;
 import com.softeng.dingtalk.service.SystemService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,7 @@ public class ACBlockchainAspect {
 
     @AfterReturning("saveRecord()")
     public void afterSaveRecord(JoinPoint point){
-        AcRecordPo param=(AcRecordPo) point.getArgs()[0];
+        AcRecord param=(AcRecord) point.getArgs()[0];
 //        String key=param.getId().toString();
 //        String value=JSON.toJSONString(param);
         log.info("after:"+param.toString());
@@ -49,7 +49,7 @@ public class ACBlockchainAspect {
 
     @AfterReturning("deleteRecordList()")
     public void afterDeleteRecordList(JoinPoint point){
-        AcRecordPo param=(AcRecordPo) point.getArgs()[0];
+        AcRecord param=(AcRecord) point.getArgs()[0];
 //        String key=param.getId().toString();
 //        String value=JSON.toJSONString(param);
         log.info("after:"+param.toString());

@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.po.AcItemPo;
+import com.softeng.dingtalk.po_entity.AcItem;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,5 +27,5 @@ public class ApplyVO {
     /**
      * ac值申请列表
      */
-    private List<AcItemPo> acItemPos;
+    private List<AcItem> acItems;
 }

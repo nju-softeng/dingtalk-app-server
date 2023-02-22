@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.api.BaseApi;
+import com.softeng.dingtalk.component.dingApi.BaseApi;
 import com.softeng.dingtalk.aspect.AccessPermission;
 import com.softeng.dingtalk.component.UserContextHolder;
 import com.softeng.dingtalk.component.convertor.PermissionConvertor;
@@ -9,7 +9,7 @@ import com.softeng.dingtalk.dto.CommonResult;
 import com.softeng.dingtalk.dto.resp.PermissionResp;
 import com.softeng.dingtalk.dto.resp.TeamResp;
 import com.softeng.dingtalk.enums.PermissionEnum;
-import com.softeng.dingtalk.po.MessagePo;
+import com.softeng.dingtalk.po_entity.Message;
 import com.softeng.dingtalk.service.NotifyService;
 import com.softeng.dingtalk.service.UserService;
 import com.softeng.dingtalk.utils.StreamUtils;
@@ -103,19 +103,19 @@ public class UserController {
      */
     @GetMapping("/message/page/{page}/{size}")
     public Map listUserMessage(@PathVariable int page, @PathVariable int size, @RequestAttribute int uid) {
-        Page<MessagePo> messages = notifyService.listUserMessage(uid, page, size);
+        Page<Message> messages = notifyService.listUserMessage(uid, page, size);
         return Map.of("content", messages.getContent(), "total", messages.getTotalElements());
     }
 
 
     /**
-     * todo-更新用户权限
+     * 更新用户权限
      * @param map
      */
     @AccessPermission(PermissionEnum.EDIT_ANY_USER_INFO)
     @PostMapping("/updaterole")
     public void updateUserRole(@RequestBody Map<String, Object> map) {
-//        userService.updateRole((int) map.get("uid"), (int) map.get("authority"));
+        userService.updateRole((int) map.get("uid"), (int) map.get("authority"));
     }
 
 
@@ -160,7 +160,7 @@ public class UserController {
     public CommonResult<List<PermissionResp>> getPermissions(@RequestAttribute int uid){
         return CommonResult.success(StreamUtils.map(
                 userService.getPermissions(userContextHolder.getUserContext().getUid()),
-                permission -> permissionConvertor.entity2Resp(permission)
+                permission -> permissionConvertor.entity_PO2Resp(permission)
         ));
     }
 
@@ -168,7 +168,7 @@ public class UserController {
     public CommonResult<List<TeamResp>> getTeams(@RequestAttribute int uid){
         return CommonResult.success(StreamUtils.map(
                 userService.getTeams(userContextHolder.getUserContext().getUid()),
-                team -> teamConvertor.entity2Resp(team)
+                team -> teamConvertor.entity_PO2Resp(team)
         ));
     }
 }

@@ -1,12 +1,12 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.DissertationPo;
+import com.softeng.dingtalk.po_entity.Dissertation;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DissertationPropertyRepository extends CustomizedRepository<DissertationPo, Integer>{
+public interface DissertationPropertyRepository extends CustomizedRepository<Dissertation, Integer>{
 
-    @Query("select diss from DissertationPo diss where diss.user.id =:uid")
-    DissertationPo findByUserId(int uid);
+    @Query("select diss from Dissertation diss where diss.user.id =:uid")
+    Dissertation findByUserId(int uid);
 }

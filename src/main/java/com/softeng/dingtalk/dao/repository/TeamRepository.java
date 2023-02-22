@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.TeamPo;
+import com.softeng.dingtalk.po_entity.Team;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface TeamRepository extends CustomizedRepository<TeamPo, Integer>{
-    TeamPo findById(int id);
+public interface TeamRepository extends CustomizedRepository<Team, Integer>{
+    Team findById(int id);
 }

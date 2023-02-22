@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.PropertyPo;
+import com.softeng.dingtalk.po_entity.Property;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  * @Data 01/26/2022
  */
 
-public interface PropertyRepository extends CustomizedRepository<PropertyPo, Integer> {
+public interface PropertyRepository extends CustomizedRepository<Property, Integer> {
 
     /**
      * 查询用户所有固定资产
@@ -20,5 +20,5 @@ public interface PropertyRepository extends CustomizedRepository<PropertyPo, Int
      * @return
      */
     @Query(value = "select * from property where user_id = :userId and deleted=false", nativeQuery = true)
-    List<PropertyPo> findByUserId(int userId);
+    List<Property> findByUserId(int userId);
 }

@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.DcSummaryPo;
+import com.softeng.dingtalk.po_entity.DcSummary;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,14 +16,14 @@ import java.util.Set;
  * @date 12/29/2019
  */
 @Repository
-public interface DcSummaryRepository extends CustomizedRepository<DcSummaryPo, Integer> {
+public interface DcSummaryRepository extends CustomizedRepository<DcSummary, Integer> {
 
     /**
      * 查询指定月份的 dc_summary
      * @param yearmonth
      * @return
      */
-    List<DcSummaryPo> findAllByYearmonth(int yearmonth);
+    List<DcSummary> findAllByYearmonth(int yearmonth);
 
     /**
      * 获取用户指定月份的 dcSummary
@@ -31,8 +31,8 @@ public interface DcSummaryRepository extends CustomizedRepository<DcSummaryPo, I
      * @param yearmonth
      * @return
      */
-    @Query("select  d from DcSummaryPo d where d.user.id = :uid and d.yearmonth = :yearmonth")
-    DcSummaryPo getDcSummary(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
+    @Query("select  d from DcSummary d where d.user.id = :uid and d.yearmonth = :yearmonth")
+    DcSummary getDcSummary(@Param("uid") int uid, @Param("yearmonth") int yearmonth);
 
     /**
      * 获取指定月份所有用户的绩效汇总(降序)
@@ -82,7 +82,7 @@ public interface DcSummaryRepository extends CustomizedRepository<DcSummaryPo, I
      * @param salary
      */
     @Modifying
-    @Query(value = "update DcSummaryPo d set d.ac = :ac, d.topup = :topup, d.salary = :salary where d.user.id = :uid and d.yearmonth = :yearmonth")
+    @Query(value = "update DcSummary d set d.ac = :ac, d.topup = :topup, d.salary = :salary where d.user.id = :uid and d.yearmonth = :yearmonth")
     void updateSalary(int uid, int yearmonth, double ac, double topup, double salary);
 
     /**
@@ -91,8 +91,8 @@ public interface DcSummaryRepository extends CustomizedRepository<DcSummaryPo, I
      * @param yearmonth
      * @return
      */
-    @Query(value = "select dc from DcSummaryPo dc where dc.user.id = :uid and dc.yearmonth = :yearmonth")
-    DcSummaryPo findByUserIdAndYearmonth(int uid, int yearmonth);
+    @Query(value = "select dc from DcSummary dc where dc.user.id = :uid and dc.yearmonth = :yearmonth")
+    DcSummary findByUserIdAndYearmonth(int uid, int yearmonth);
 
     /**
      * 查询用户指定月份的 topup
@@ -108,7 +108,7 @@ public interface DcSummaryRepository extends CustomizedRepository<DcSummaryPo, I
      * @param yearmonth
      * @return
      */
-    @Query("select dc.user.id from DcSummaryPo dc where dc.yearmonth = :yearmonth")
+    @Query("select dc.user.id from DcSummary dc where dc.yearmonth = :yearmonth")
     Set<Integer> findIdsByDate(int yearmonth);
 
 

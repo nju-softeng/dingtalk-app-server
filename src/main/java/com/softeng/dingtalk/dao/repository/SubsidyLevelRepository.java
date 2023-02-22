@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dao.repository;
 
 
-import com.softeng.dingtalk.po.SubsidyLevelPo;
+import com.softeng.dingtalk.po_entity.SubsidyLevel;
 import com.softeng.dingtalk.enums.Position;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,13 +12,13 @@ import org.springframework.data.repository.query.Param;
  * @description
  * @date 5/28/2020
  */
-public interface SubsidyLevelRepository extends CustomizedRepository<SubsidyLevelPo, Integer> {
+public interface SubsidyLevelRepository extends CustomizedRepository<SubsidyLevel, Integer> {
     /**
      * 查询绩效标准
      * @param position
      * @return double
      */
-    @Query("select s.subsidy from SubsidyLevelPo s where s.position = :position")
+    @Query("select s.subsidy from SubsidyLevel s where s.position = :position")
     double getSubsidy(@Param("position") Position position);
 
 
@@ -28,6 +28,6 @@ public interface SubsidyLevelRepository extends CustomizedRepository<SubsidyLeve
      * @param subsidy
      */
     @Modifying
-    @Query("update SubsidyLevelPo set subsidy = :subsidy where position = :position")
+    @Query("update SubsidyLevel set subsidy = :subsidy where position = :position")
     void updateSubsidy(@Param("position") Position position, @Param("subsidy") double subsidy);
 }

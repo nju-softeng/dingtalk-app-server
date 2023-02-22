@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.po.VMApplyPo;
+import com.softeng.dingtalk.po_entity.VMApply;
 import com.softeng.dingtalk.service.VMApplyService;
 import com.softeng.dingtalk.vo.VMApplyVO;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,7 @@ public class VMApplyController {
       * @return
      */
     @GetMapping("/vmApply/auditingList")
-    public List<VMApplyPo> getAuditingVMApplyList(){
+    public List<VMApply> getAuditingVMApplyList(){
         return vmApplyService.getAuditingVMApplyList();
     }
 
@@ -57,7 +57,7 @@ public class VMApplyController {
      * @return
      */
     @GetMapping("/vmApply/user/{uid}")
-    public List<VMApplyPo> getAuditingVMApplyList(@PathVariable int uid){
+    public List<VMApply> getAuditingVMApplyList(@PathVariable int uid){
         return vmApplyService.getUserVMApplyList(uid);
     }
 

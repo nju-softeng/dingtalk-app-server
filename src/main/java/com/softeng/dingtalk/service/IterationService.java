@@ -2,7 +2,7 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.DateUtils;
 import com.softeng.dingtalk.dao.repository.*;
-import com.softeng.dingtalk.po.*;
+import com.softeng.dingtalk.po_entity.*;
 import com.softeng.dingtalk.vo.IterateInfoVO;
 import com.softeng.dingtalk.vo.IterationVO;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +54,7 @@ public class IterationService {
      * @param id
      * @return
      */
-    public IterationPo getIterationById(int id) {
+    public Iteration getIterationById(int id) {
         return iterationRepository.getIterationById(id);
     }
 
@@ -63,7 +63,7 @@ public class IterationService {
      * 查询开发者参与的迭代
      * @return
      */
-    public List<IterationPo> listUserIteration(int uid) {
+    public List<Iteration> listUserIteration(int uid) {
          List<Integer> ids = iterationDetailRepository.listIterationIdByUid(uid);
          if (ids.size() != 0) {
              return iterationRepository.findAllById(ids);
@@ -79,27 +79,27 @@ public class IterationService {
      * @param vo
      */
     public void createIteration(int pid, IterationVO vo) {
-        ProjectPo p = projectRepository.findById(pid).get();
+        Project p = projectRepository.findById(pid).get();
         LocalDate[] dates = vo.getDates();
-        IterationPo iterationPo = new IterationPo(p.getCnt() + 1, p.getAuditor(), dates[0], dates[1]);
+        Iteration iteration = new Iteration(p.getCnt() + 1, p.getAuditor(), dates[0], dates[1]);
         int day = (int) dates[0].until(dates[1], ChronoUnit.DAYS) + 1;
-        iterationPo.setExpectedAC(day * vo.getDingIds().size() / 30.0);
-        iterationPo.setProject(p);
-        iterationPo.setPrevIteration(p.getCurIteration());
-        iterationRepository.save(iterationPo);
+        iteration.setExpectedAC(day * vo.getDingIds().size() / 30.0);
+        iteration.setProject(p);
+        iteration.setPrevIteration(p.getCurIteration());
+        iterationRepository.save(iteration);
         // 更新项目的迭代
-        p.setCurIteration(iterationPo.getId());
+        p.setCurIteration(iteration.getId());
         // 获取分配者的userid;
         p.setCnt(p.getCnt()+1);
         List<String> userids = vo.getDingIds();
-        List<IterationDetailPo> iterationDetailPos = new ArrayList<>();
+        List<IterationDetail> iterationDetails = new ArrayList<>();
         for (String u : userids) {
             // 根据userid 查询 uid
             int uid = systemService.getIdByUserid(u);
-            IterationDetailPo itd = new IterationDetailPo(iterationPo, new UserPo(uid));
-            iterationDetailPos.add(itd);
+            IterationDetail itd = new IterationDetail(iteration, new User(uid));
+            iterationDetails.add(itd);
         }
-        iterationDetailRepository.saveAll(iterationDetailPos);
+        iterationDetailRepository.saveAll(iterationDetails);
     }
 
 
@@ -108,7 +108,7 @@ public class IterationService {
      * @param vo 前端接收的数据
      **/
     public void updateIteration(IterationVO vo) {
-        IterationPo it = iterationRepository.findById(vo.getId()).get();
+        Iteration it = iterationRepository.findById(vo.getId()).get();
         LocalDate[] dates = vo.getDates();
         it.setBeginTime(vo.getDates()[0]);
         it.setEndTime(vo.getDates()[1]);
@@ -118,13 +118,13 @@ public class IterationService {
         if (vo.isUpdateDingIds()) {
             // 删除旧的 iterationDetail
             iterationDetailRepository.deleteByIterationId(vo.getId());
-            List<IterationDetailPo> iterationDetailPos = new ArrayList<>();
+            List<IterationDetail> iterationDetails = new ArrayList<>();
             for (String u : vo.getDingIds()) {
                 int uid = systemService.getIdByUserid(u);
-                IterationDetailPo itd = new IterationDetailPo(it, new UserPo(uid));
-                iterationDetailPos.add(itd);
+                IterationDetail itd = new IterationDetail(it, new User(uid));
+                iterationDetails.add(itd);
             }
-            iterationDetailRepository.saveAll(iterationDetailPos);
+            iterationDetailRepository.saveAll(iterationDetails);
         }
 
     }
@@ -136,9 +136,9 @@ public class IterationService {
      * @return
      */
     public Map listProjectDetail(int pid) {
-        List<IterationPo> iterationPos = iterationRepository.listIterationByPid(pid);
-        ProjectPo p = projectRepository.findById(pid).get();
-        return Map.of("iterations", iterationPos, "authorid", p.getAuditor().getId()  , "title", p.getTitle(),"icnt", p.getCnt(), "success", p.getSuccessCnt());
+        List<Iteration> iterations = iterationRepository.listIterationByPid(pid);
+        Project p = projectRepository.findById(pid).get();
+        return Map.of("iterations", iterations, "authorid", p.getAuditor().getId()  , "title", p.getTitle(),"icnt", p.getCnt(), "success", p.getSuccessCnt());
     }
 
 
@@ -147,7 +147,7 @@ public class IterationService {
      * @param pid
      * @return
      */
-    public List<IterationPo> listProjectIterations(int pid) {
+    public List<Iteration> listProjectIterations(int pid) {
         return iterationRepository.listIterationByPid(pid);
     }
 
@@ -157,8 +157,8 @@ public class IterationService {
      * @param itid
      */
     public void rmIteration(int itid) {
-        IterationPo it = iterationRepository.findById(itid).get();
-        ProjectPo p = it.getProject();
+        Iteration it = iterationRepository.findById(itid).get();
+        Project p = it.getProject();
         // 修改项目迭代次数
         p.setCnt(p.getCnt() - 1);
         // 修改项目当前迭代版本
@@ -207,24 +207,24 @@ public class IterationService {
      */
     public Map computeIterationAc(int itid, LocalDate finishdate) {
         // 当前迭代
-        IterationPo iterationPo = iterationRepository.findById(itid).get();
+        Iteration iteration = iterationRepository.findById(itid).get();
 
         // 预期时间
-        int predictDay = (int) iterationPo.getBeginTime().until(iterationPo.getEndTime(), ChronoUnit.DAYS) + 1;
+        int predictDay = (int) iteration.getBeginTime().until(iteration.getEndTime(), ChronoUnit.DAYS) + 1;
         // 实际时间
-        int actualDay = (int) iterationPo.getBeginTime().until(finishdate, ChronoUnit.DAYS) + 1;
+        int actualDay = (int) iteration.getBeginTime().until(finishdate, ChronoUnit.DAYS) + 1;
 
         //连续按时完成次数
         int successCnt = 0;
         //是否有前驱
-        if (iterationPo.getPrevIteration() != 0) {
+        if (iteration.getPrevIteration() != 0) {
             // 上一个迭代的连续按时发布数
-            successCnt = iterationRepository.getConSucessCntById(iterationPo.getPrevIteration());
+            successCnt = iterationRepository.getConSucessCntById(iteration.getPrevIteration());
         }
 
 
         //迭代人数
-        int num = iterationPo.getIterationDetailPos().size();
+        int num = iteration.getIterationDetails().size();
         // 预期AC
         double AcPredict = predictDay * num / 30.0;
         // 实际AC
@@ -235,7 +235,7 @@ public class IterationService {
         if (predictDay < actualDay)  {
             log.debug("延期交付");
             successCnt = 0;
-            int delay = (int) iterationPo.getEndTime().until(finishdate, ChronoUnit.DAYS);
+            int delay = (int) iteration.getEndTime().until(finishdate, ChronoUnit.DAYS);
             if (Math.ceil(delay / 7.0) <= 1.0) {
                 AcReduce = Math.ceil(delay / 7.0) * 0.15 * AcPredict;
             } else {
@@ -251,28 +251,28 @@ public class IterationService {
         double[] dclist = new double[num];
 
         //  开始年月周
-        int begin = dateUtils.getDateCode(iterationPo.getBeginTime());
+        int begin = dateUtils.getDateCode(iteration.getBeginTime());
         // 结束年月周
         int end = dateUtils.getDateCode(finishdate);
 
 
-        String period = dateUtils.getDateStr(iterationPo.getBeginTime()) + " ~ " + dateUtils.getDateStr(finishdate);
+        String period = dateUtils.getDateStr(iteration.getBeginTime()) + " ~ " + dateUtils.getDateStr(finishdate);
         String info;
         if (begin == end) {
             info = "迭代在一周之内,有效占比: " + actualDay + "/7 ";
         } else {
-            int beginWeek = iterationPo.getBeginTime().getDayOfWeek().getValue();
+            int beginWeek = iteration.getBeginTime().getDayOfWeek().getValue();
             int endWeek = finishdate.getDayOfWeek().getValue();
             info = "第1周有效占比: " + (7 - beginWeek + 1) + "/7   " + "   结束周有效占比: " + endWeek + "/7";
         }
 
         int index = 0;
         double dcSum = 0;
-        for (IterationDetailPo itd : iterationPo.getIterationDetailPos()) {
-            double dcAll = dcRecordRepository.getUserDcSumByDate(itd.getUser().getId(), iterationPo.getAuditor().getId(), begin, end);
-            double dcBeginWeek = dcRecordRepository.getUserDcByWeek(itd.getUser().getId(), iterationPo.getAuditor().getId(), begin);
-            double dcEndWeek = dcRecordRepository.getUserDcByWeek(itd.getUser().getId(), iterationPo.getAuditor().getId(), end);
-            double deduct = (dcBeginWeek * (iterationPo.getBeginTime().getDayOfWeek().getValue() - 1) + dcEndWeek * (7 - finishdate.getDayOfWeek().getValue())) / 7.0;
+        for (IterationDetail itd : iteration.getIterationDetails()) {
+            double dcAll = dcRecordRepository.getUserDcSumByDate(itd.getUser().getId(), iteration.getAuditor().getId(), begin, end);
+            double dcBeginWeek = dcRecordRepository.getUserDcByWeek(itd.getUser().getId(), iteration.getAuditor().getId(), begin);
+            double dcEndWeek = dcRecordRepository.getUserDcByWeek(itd.getUser().getId(), iteration.getAuditor().getId(), end);
+            double deduct = (dcBeginWeek * (iteration.getBeginTime().getDayOfWeek().getValue() - 1) + dcEndWeek * (7 - finishdate.getDayOfWeek().getValue())) / 7.0;
             // 开发期间周dc均值
             dclist[index] = (dcAll - deduct) * 7.0 / actualDay;
             dcSum += dclist[index];
@@ -288,7 +288,7 @@ public class IterationService {
 
         index = 0;
         List<IterateInfoVO> iterateInfoVOS = new ArrayList<>();
-        for (IterationDetailPo itd : iterationPo.getIterationDetailPos()) {
+        for (IterationDetail itd : iteration.getIterationDetails()) {
             // AC 计算公式
             double ac = (AcActual + AcAward - AcReduce) * dclist[index] / dcSum * dclist[index] * 2;
             IterateInfoVO infoVO = new IterateInfoVO(itd.getUser().getName(), dclist[index], ac);
@@ -307,24 +307,24 @@ public class IterationService {
      */
     public void setIterationAc(int itid, LocalDate finishdate) {
         // 当前迭代
-        IterationPo iterationPo = iterationRepository.findById(itid).get();
-        ProjectPo projectPo = iterationPo.getProject();
+        Iteration iteration = iterationRepository.findById(itid).get();
+        Project project = iteration.getProject();
 
         // 预期时间
-        int predictDay = (int) iterationPo.getBeginTime().until(iterationPo.getEndTime(), ChronoUnit.DAYS) + 1;
+        int predictDay = (int) iteration.getBeginTime().until(iteration.getEndTime(), ChronoUnit.DAYS) + 1;
         // 实际时间
-        int actualDay = (int) iterationPo.getBeginTime().until(finishdate, ChronoUnit.DAYS) + 1;
+        int actualDay = (int) iteration.getBeginTime().until(finishdate, ChronoUnit.DAYS) + 1;
 
         //连续按时完成次数
         int successCnt = 0;
         //是否有前驱
-        if (iterationPo.getPrevIteration() != 0) {
+        if (iteration.getPrevIteration() != 0) {
             // 上一个迭代的连续按时发布数
-            successCnt = iterationRepository.getConSucessCntById(iterationPo.getPrevIteration());
+            successCnt = iterationRepository.getConSucessCntById(iteration.getPrevIteration());
         }
 
         //迭代人数
-        int num = iterationPo.getIterationDetailPos().size();
+        int num = iteration.getIterationDetails().size();
         // 预期AC
         double AcPredict = predictDay * num / 30.0;
         // 实际AC
@@ -335,7 +335,7 @@ public class IterationService {
             log.debug("延期交付");
             // 连续奖励中断
             successCnt = 0;
-            int delay = (int) iterationPo.getEndTime().until(finishdate, ChronoUnit.DAYS);
+            int delay = (int) iteration.getEndTime().until(finishdate, ChronoUnit.DAYS);
             if (Math.ceil(delay / 7.0) <= 1.0) {
                 AcReduce = Math.ceil(delay / 7.0) * 0.15 * AcPredict;
             } else {
@@ -347,8 +347,8 @@ public class IterationService {
             // 连续按时交付次数加 1
             successCnt++;
         }
-        iterationPo.setConSuccess(successCnt);
-        projectPo.setSuccessCnt(successCnt);
+        iteration.setConSuccess(successCnt);
+        project.setSuccessCnt(successCnt);
 
         // AC奖励
         double AcAward = fib(successCnt);
@@ -356,15 +356,15 @@ public class IterationService {
 
         double[] dclist = new double[num];
 
-        int begin = dateUtils.getDateCode(iterationPo.getBeginTime());
+        int begin = dateUtils.getDateCode(iteration.getBeginTime());
         int end = dateUtils.getDateCode(finishdate);
         int index = 0;
         double dcSum = 0;
-        for (IterationDetailPo itd : iterationPo.getIterationDetailPos()) {
-            double dcAll = dcRecordRepository.getUserDcSumByDate(itd.getUser().getId(), iterationPo.getAuditor().getId(), begin, end);
-            double dcBeginWeek = dcRecordRepository.getUserDcByWeek(itd.getUser().getId(), iterationPo.getAuditor().getId(), begin);
-            double dcEndWeek = dcRecordRepository.getUserDcByWeek(itd.getUser().getId(), iterationPo.getAuditor().getId(), end);
-            double deduct = (dcBeginWeek * (iterationPo.getBeginTime().getDayOfWeek().getValue() - 1) + dcEndWeek * (7 - finishdate.getDayOfWeek().getValue())) / 7.0;
+        for (IterationDetail itd : iteration.getIterationDetails()) {
+            double dcAll = dcRecordRepository.getUserDcSumByDate(itd.getUser().getId(), iteration.getAuditor().getId(), begin, end);
+            double dcBeginWeek = dcRecordRepository.getUserDcByWeek(itd.getUser().getId(), iteration.getAuditor().getId(), begin);
+            double dcEndWeek = dcRecordRepository.getUserDcByWeek(itd.getUser().getId(), iteration.getAuditor().getId(), end);
+            double deduct = (dcBeginWeek * (iteration.getBeginTime().getDayOfWeek().getValue() - 1) + dcEndWeek * (7 - finishdate.getDayOfWeek().getValue())) / 7.0;
             // 开发期间周dc均值
             dclist[index] = (dcAll - deduct) * 7.0 / actualDay;
             dcSum += dclist[index];
@@ -376,31 +376,31 @@ public class IterationService {
         }
 
         index = 0;
-        List<AcRecordPo> acRecordPos = new ArrayList<>();
-        for (IterationDetailPo itd : iterationPo.getIterationDetailPos()) {
-            if (itd.getAcRecordPO() != null) {
-                acRecordRepository.delete(itd.getAcRecordPO());
+        List<AcRecord> acRecords = new ArrayList<>();
+        for (IterationDetail itd : iteration.getIterationDetails()) {
+            if (itd.getAcRecord() != null) {
+                acRecordRepository.delete(itd.getAcRecord());
             }
             // AC 计算公式
             double ac = (AcActual + AcAward - AcReduce) * dclist[index] /dcSum * dclist[index] * 2;
-            AcRecordPo acRecordPO = new AcRecordPo(itd.getUser(), projectPo.getAuditor(), ac, "完成开发任务: " + projectPo.getTitle() + " 第" + projectPo.getCnt() + "迭代" , AcRecordPo.PROJECT, iterationPo.getFinishTime().atTime(8,0));
+            AcRecord acRecord = new AcRecord(itd.getUser(), project.getAuditor(), ac, "完成开发任务: " + project.getTitle() + " 第" + project.getCnt() + "迭代" , AcRecord.PROJECT, iteration.getFinishTime().atTime(8,0));
             // 实例化ac记录
-            acRecordRepository.save(acRecordPO);
-            itd.setAcRecordPO(acRecordPO);
+            acRecordRepository.save(acRecord);
+            itd.setAcRecord(acRecord);
             itd.setAc(ac);
             iterationDetailRepository.save(itd);
-            acRecordPos.add(acRecordPO);
+            acRecords.add(acRecord);
             index ++;
         }
 
         //更新论文和迭代状态
-        iterationPo.setFinishTime(finishdate);
-        iterationPo.setStatus(true);
+        iteration.setFinishTime(finishdate);
+        iteration.setStatus(true);
 
         // 发送消息
-        notifyService.autoSetProjectAcMessage(acRecordPos);
+        notifyService.autoSetProjectAcMessage(acRecords);
         // 计算助研金
-        acRecordPos.forEach(ac -> performanceService.computeSalary(ac.getUser().getId(), LocalDate.now()));
+        acRecords.forEach(ac -> performanceService.computeSalary(ac.getUser().getId(), LocalDate.now()));
 
     }
 
@@ -408,54 +408,54 @@ public class IterationService {
     /**
      * 自定义项目的ac值
      * @param itid
-     * @param iterationDetailPos
+     * @param iterationDetails
      * @return
      */
-    public List<AcRecordPo> manualSetIterationAc(int itid, List<IterationDetailPo> iterationDetailPos, LocalDate finishdate) {
-        IterationPo iterationPo = iterationRepository.findById(itid).get();
+    public List<AcRecord> manualSetIterationAc(int itid, List<IterationDetail> iterationDetails, LocalDate finishdate) {
+        Iteration iteration = iterationRepository.findById(itid).get();
         //设置完成时间
-        iterationPo.setFinishTime(finishdate);
-        ProjectPo projectPo = iterationPo.getProject();
-        iterationPo.setStatus(true);
+        iteration.setFinishTime(finishdate);
+        Project project = iteration.getProject();
+        iteration.setStatus(true);
 
         //连续按时完成次数
         int successCnt = 0;
-        if (iterationPo.getPrevIteration() != 0) { //是否有前驱
+        if (iteration.getPrevIteration() != 0) { //是否有前驱
             // 上一个迭代的连续按时发布数
-            successCnt = iterationRepository.getConSucessCntById(iterationPo.getPrevIteration());
+            successCnt = iterationRepository.getConSucessCntById(iteration.getPrevIteration());
         }
-        if (iterationPo.getEndTime().isBefore(finishdate)) {
+        if (iteration.getEndTime().isBefore(finishdate)) {
             successCnt = 0;
         } else {
             successCnt++;
         }
 
-        iterationPo.setConSuccess(successCnt);
-        projectPo.setSuccessCnt(successCnt);
+        iteration.setConSuccess(successCnt);
+        project.setSuccessCnt(successCnt);
 
         // 用于发送消息，计算助研金
-        List<AcRecordPo> acRecordPos = new ArrayList<>();
-        for (IterationDetailPo td : iterationDetailPos) {
-            IterationDetailPo iterationDetailPo = iterationDetailRepository.findById(td.getId()).get();
+        List<AcRecord> acRecords = new ArrayList<>();
+        for (IterationDetail td : iterationDetails) {
+            IterationDetail iterationDetail = iterationDetailRepository.findById(td.getId()).get();
             // 删除之前的 acrecord
-            if (iterationDetailPo.getAcRecordPO() != null) {
-                acRecordRepository.delete(iterationDetailPo.getAcRecordPO());
+            if (iterationDetail.getAcRecord() != null) {
+                acRecordRepository.delete(iterationDetail.getAcRecord());
             }
             // 更新AC
-            iterationDetailPo.setAc(td.getAc());
-            AcRecordPo acRecordPO = new AcRecordPo(td.getUser(), iterationPo.getAuditor(), td.getAc(), "完成开发任务: " + projectPo.getTitle() + "第" + iterationPo.getCnt() + "次迭代", AcRecordPo.PROJECT, iterationPo.getFinishTime().atTime(8,0));
-            acRecordRepository.save(acRecordPO);
-            iterationDetailPo.setAcRecordPO(acRecordPO);
-            acRecordPos.add(acRecordPO);
+            iterationDetail.setAc(td.getAc());
+            AcRecord acRecord = new AcRecord(td.getUser(), iteration.getAuditor(), td.getAc(), "完成开发任务: " + project.getTitle() + "第" + iteration.getCnt() + "次迭代", AcRecord.PROJECT, iteration.getFinishTime().atTime(8,0));
+            acRecordRepository.save(acRecord);
+            iterationDetail.setAcRecord(acRecord);
+            acRecords.add(acRecord);
         }
 
 
         // 发送消息
-        notifyService.manualSetProjectAcMessage(acRecordPos);
+        notifyService.manualSetProjectAcMessage(acRecords);
         // 计算助研金
-        acRecordPos.forEach(ac -> performanceService.computeSalary(ac.getUser().getId(), LocalDate.now()));
+        acRecords.forEach(ac -> performanceService.computeSalary(ac.getUser().getId(), LocalDate.now()));
 
-        return acRecordPos;
+        return acRecords;
     }
 
 }

@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.po.PrizePo;
-import com.softeng.dingtalk.po.UserPo;
+import com.softeng.dingtalk.po_entity.Prize;
+import com.softeng.dingtalk.po_entity.User;
 import com.softeng.dingtalk.dao.repository.PrizeRepository;
 import com.softeng.dingtalk.vo.PrizeVO;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class PrizeService {
      * @param userId
      * @return
      */
-    public List<PrizePo> findByUser(int userId){
+    public List<Prize> findByUser(int userId){
         return prizeRepository.findByUserId(userId);
     }
 
@@ -39,9 +39,9 @@ public class PrizeService {
      * @param prizeVO
      * @return
      */
-    public PrizePo addNewPrize(int userId, PrizeVO prizeVO){
-        PrizePo prizePo =new PrizePo(new UserPo(userId),prizeVO.getPrizeTime(),prizeVO.getPrizeName(),prizeVO.getLevel(),prizeVO.getRemark());
-        return prizeRepository.save(prizePo);
+    public Prize addNewPrize(int userId, PrizeVO prizeVO){
+        Prize prize =new Prize(new User(userId),prizeVO.getPrizeTime(),prizeVO.getPrizeName(),prizeVO.getLevel(),prizeVO.getRemark());
+        return prizeRepository.save(prize);
     }
 
     /**
@@ -49,7 +49,7 @@ public class PrizeService {
      * @param prizeVO
      */
     public void updatePrize(PrizeVO prizeVO){
-        PrizePo p = prizeRepository.findById(prizeVO.getId()).get();
+        Prize p = prizeRepository.findById(prizeVO.getId()).get();
         p.setLevel(prizeVO.getLevel());
         p.setPrizeTime(prizeVO.getPrizeTime());
         p.setPrizeName(prizeVO.getPrizeName());
@@ -62,7 +62,7 @@ public class PrizeService {
      * @param prizeId
      */
     public void deletePrize(int prizeId){
-        PrizePo p = prizeRepository.findById(prizeId).get();
+        Prize p = prizeRepository.findById(prizeId).get();
         p.setDeleted(true);
         prizeRepository.save(p);
     }

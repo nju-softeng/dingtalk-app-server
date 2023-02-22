@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.UserPo;
-import com.softeng.dingtalk.po.VoteDetailPo;
+import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.po_entity.VoteDetail;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,14 +15,14 @@ import java.util.Set;
  * @date 2/5/2020
  */
 @Repository
-public interface VoteDetailRepository extends CustomizedRepository<VoteDetailPo, Integer> {
+public interface VoteDetailRepository extends CustomizedRepository<VoteDetail, Integer> {
 
     /**
      * 查询参与指定投票的用户id
      * @param vid 所指定的投票
      * @return
      */
-    @Query("select vd.user.id from VoteDetailPo vd where vd.vote.id = :vid")
+    @Query("select vd.user.id from VoteDetail vd where vd.vote.id = :vid")
     Set<Integer> findVoteUserid(int vid);
 
     /**
@@ -30,12 +30,12 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetailPo,
      * @param vid 所指定的投票
      * @return set
      */
-    @Query("select u.name from UserPo u " +
+    @Query("select u.name from User u " +
             "where u.deleted = false and u.position <> '待定' and " +
             "u.id not in " +
-            "(select vd.user.id from VoteDetailPo vd where vd.vote.id = :vid) and " +
+            "(select vd.user.id from VoteDetail vd where vd.vote.id = :vid) and " +
             "u.id not in " +
-            "(select pd.user.id from PaperDetailPo pd where pd.internalPaper.id in (select ip.id from InternalPaperPo ip where ip.vote.id = :vid))")
+            "(select pd.user.id from PaperDetail pd where pd.internalPaper.id in (select ip.id from InternalPaper ip where ip.vote.id = :vid))")
     List<String> findUnVoteUsername(int vid);
 
     /**
@@ -71,7 +71,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetailPo,
      * @param uid
      * @return
      */
-    @Query("select vd.result from VoteDetailPo vd where vd.vote.id = :vid and vd.user.id = :uid")
+    @Query("select vd.result from VoteDetail vd where vd.vote.id = :vid and vd.user.id = :uid")
     Boolean getVoteDetail(int vid, int uid);
 
 
@@ -81,8 +81,8 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetailPo,
      * @return
      */
     @EntityGraph(value="voteDetail.graph",type= EntityGraph.EntityGraphType.FETCH)
-    @Query("select vd from VoteDetailPo vd where vd.vote.id = :vid")
-    List<VoteDetailPo> listByVid(int vid);
+    @Query("select vd from VoteDetail vd where vd.vote.id = :vid")
+    List<VoteDetail> listByVid(int vid);
 
 
     /**
@@ -90,7 +90,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetailPo,
      * @param vid
      * @return
      */
-    @Query("select vd.user.name from VoteDetailPo vd where vd.vote.id = :vid and vd.result = 1")
+    @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = 1")
     List<String> listAcceptNamelist(int vid);
 
     /**
@@ -98,8 +98,8 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetailPo,
      * @param vid
      * @return
      */
-    @Query("select vd.user from VoteDetailPo vd where vd.vote.id = :vid and vd.result = 1")
-    List<UserPo> listAcceptUserlist(int vid);
+    @Query("select vd.user from VoteDetail vd where vd.vote.id = :vid and vd.result = 1")
+    List<User> listAcceptUserlist(int vid);
 
 
     /**
@@ -107,7 +107,7 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetailPo,
      * @param vid
      * @return
      */
-    @Query("select vd.user.name from VoteDetailPo vd where vd.vote.id = :vid and vd.result = 0")
+    @Query("select vd.user.name from VoteDetail vd where vd.vote.id = :vid and vd.result = 0")
     List<String> listRejectNamelist(int vid);
 
     /**
@@ -115,8 +115,8 @@ public interface VoteDetailRepository extends CustomizedRepository<VoteDetailPo,
      * @param vid
      * @return
      */
-    @Query("select vd.user from VoteDetailPo vd where vd.vote.id = :vid and vd.result = 0")
-    List<UserPo> listRejectUserlist(int vid);
+    @Query("select vd.user from VoteDetail vd where vd.vote.id = :vid and vd.result = 0")
+    List<User> listRejectUserlist(int vid);
 
 
 }

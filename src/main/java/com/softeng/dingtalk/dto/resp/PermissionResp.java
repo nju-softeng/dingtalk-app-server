@@ -18,7 +18,7 @@ import java.io.Serializable;
 @ApiModel(value="PermissionResp对象", description="权限响应对象")
 public class PermissionResp implements Serializable {
     @ApiModelProperty(value = "权限id")
-    private Integer id;
+    private int id;
 
     @ApiModelProperty(value = "权限名")
     private String name;

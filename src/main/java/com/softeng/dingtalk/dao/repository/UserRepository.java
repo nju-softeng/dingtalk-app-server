@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.UserPo;
+import com.softeng.dingtalk.po_entity.User;
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.vo.UserVO;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -20,15 +20,15 @@ import java.util.Set;
  * @date 12/7/2019
  */
 @Repository
-public interface UserRepository extends CustomizedRepository<UserPo, Integer>, JpaSpecificationExecutor<UserPo> {
+public interface UserRepository extends CustomizedRepository<User, Integer>, JpaSpecificationExecutor<User> {
 
-//    /**
-//     * 获取用户权限
-//     * @param uid 用户id
-//     * @return 用户权限
-//     */
-//    @Query("select u.authority from UserPo u where u.id = :uid")
-//    Integer getUserAuthority(int uid);
+    /**
+     * 获取用户权限
+     * @param uid 用户id
+     * @return 用户权限
+     */
+    @Query("select u.authority from User u where u.id = :uid")
+    Integer getUserAuthority(int uid);
 
     /**
      * 查询职位不是待定的所有用户id
@@ -43,7 +43,7 @@ public interface UserRepository extends CustomizedRepository<UserPo, Integer>, J
      * @param time
      * @return
      */
-    @Query(value = "select u.id from UserPo u where u.position <> '待定' and u.deleted = false and u.insertTime <= :time")
+    @Query(value = "select u.id from User u where u.position <> '待定' and u.deleted = false and u.insertTime <= :time")
     Set<Integer> listStudentIdBeforeVoteTime(LocalDateTime time);
 
     /**
@@ -52,8 +52,8 @@ public interface UserRepository extends CustomizedRepository<UserPo, Integer>, J
      * @param userid
      * @return
      */
-    @Query("select u from UserPo u where u.userid = :userid")
-    UserPo findByUserid(@Param("userid")String userid);
+    @Query("select u from User u where u.userid = :userid")
+    User findByUserid(@Param("userid")String userid);
 
 
     /**
@@ -61,7 +61,7 @@ public interface UserRepository extends CustomizedRepository<UserPo, Integer>, J
      * 供用户提交审核申请时选择
      * @return
      */
-    @Query(value = "select id, name from user where is_deleted = 0", nativeQuery = true)
+    @Query(value = "select id, name from user where authority = 1 and is_deleted = 0", nativeQuery = true)
     List<Map<String, Object>> listAuditor();
 
 
@@ -69,7 +69,7 @@ public interface UserRepository extends CustomizedRepository<UserPo, Integer>, J
      * 查询系统中所有可用用户
      * @return List<UserVo>
      */
-    @Query("select new com.softeng.dingtalk.vo.UserVO(u.id, u.name) from UserPo u where u.deleted = false")
+    @Query("select new com.softeng.dingtalk.vo.UserVO(u.id, u.name) from User u where u.deleted = false")
     List<UserVO> listUserVOS();
 
 
@@ -77,7 +77,7 @@ public interface UserRepository extends CustomizedRepository<UserPo, Integer>, J
      * 查询所有可用用户id
      * @return
      */
-    @Query("select u.id from UserPo u where u.deleted = false")
+    @Query("select u.id from User u where u.deleted = false")
     List<Integer> listUid();
 
 
@@ -85,13 +85,13 @@ public interface UserRepository extends CustomizedRepository<UserPo, Integer>, J
      * 查询系统中所用户的 userid
      * @return
      */
-    @Query("select u.userid from UserPo u")
+    @Query("select u.userid from User u")
     List<String> listAllUserid();
 
     /**
      * 查询所有在读的学生（博士、硕士）的userid（钉钉中的user的id）
      */
-    @Query("select u.userid from UserPo u where u.deleted = false" +
+    @Query("select u.userid from User u where u.deleted = false" +
             "and (u.position = '专硕' or u.position = '学硕' or u.position = '博士生')")
     List<String> listAllStudentUserId();
 
@@ -99,9 +99,9 @@ public interface UserRepository extends CustomizedRepository<UserPo, Integer>, J
      * 查询所有在读的学生（博士、硕士）
      * @return
      */
-    @Query("select  u from UserPo u where u.deleted = false " +
+    @Query("select  u from User u where u.deleted = false " +
             "and (u.position = '专硕' or u.position = '学硕' or u.position = '博士生')")
-    List<UserPo> listAllStudent();
+    List<User> listAllStudent();
 
 
     /**
@@ -109,7 +109,7 @@ public interface UserRepository extends CustomizedRepository<UserPo, Integer>, J
      * @param userid
      * @return
      */
-    @Query("select u.id from UserPo u where u.userid = :userid")
+    @Query("select u.id from User u where u.userid = :userid")
     Integer findIdByUserid(@Param("userid") String userid);
 
 
@@ -118,18 +118,18 @@ public interface UserRepository extends CustomizedRepository<UserPo, Integer>, J
      * @param uid
      * @return
      */
-    @Query("select u.position from UserPo u where u.id = :uid")
+    @Query("select u.position from User u where u.id = :uid")
     Position getUserPosition(@Param("uid") int uid);
 
 
-//    /**
-//     * 更新用户的审核权限
-//     * @param uid
-//     * @param authority
-//     */
-//    @Modifying
-//    @Query("update UserPo set authority = :authority where id = :uid")
-//    void updateUserRole(@Param("uid")int uid, @Param("authority") int authority);
+    /**
+     * 更新用户的审核权限
+     * @param uid
+     * @param authority
+     */
+    @Modifying
+    @Query("update User set authority = :authority where id = :uid")
+    void updateUserRole(@Param("uid")int uid, @Param("authority") int authority);
 
 
     /**
@@ -138,22 +138,22 @@ public interface UserRepository extends CustomizedRepository<UserPo, Integer>, J
      * @param stuName
      */
     @Modifying
-    @Query("update UserPo set stuNum = :stunum, position = :position where id = :uid")
-    void updateUserInfo(@Param("uid") int uid,@Param("stunum") String stuName, @Param("position") Position position);
+    @Query("update User set stuNum = :stunum, position = :position, authority = :authority where id = :uid")
+    void updateUserInfo(@Param("uid") int uid,@Param("stunum") String stuName, @Param("position") Position position , @Param("authority") int authority);
 
     /**
      * 通过id集合去查询用户名集合
      * @param ids
      * @return
      */
-    @Query("select u.name from UserPo u where u.id in :ids")
+    @Query("select u.name from User u where u.id in :ids")
     Set<String> listNameByids(Set<Integer> ids);
 
     /**
      * 查询出职位是待定以外的所有用户id
      * @return
      */
-    @Query("select u.id from UserPo u where u.position <> '待定'")
+    @Query("select u.id from User u where u.position <> '待定'")
     Set<Integer> listUserids();
 
     /**
@@ -161,21 +161,21 @@ public interface UserRepository extends CustomizedRepository<UserPo, Integer>, J
      * @param uid
      */
     @Modifying
-    @Query("update UserPo set deleted = false where id = :uid")
+    @Query("update User set deleted = false where id = :uid")
     void enableUser(int uid);
 
     /**
      * 查询所有被禁用的用户
      * @return
      */
-    @Query("select u from UserPo u where u.deleted = true ")
-    List<UserPo> listDisableUser();
+    @Query("select u from User u where u.deleted = true ")
+    List<User> listDisableUser();
 
     /**
      * 查询所有被禁用用户id
      * @return
      */
-    @Query("select u.id from UserPo u where u.deleted = true ")
+    @Query("select u.id from User u where u.deleted = true ")
     Set<Integer> listDisableUserid();
 
 }

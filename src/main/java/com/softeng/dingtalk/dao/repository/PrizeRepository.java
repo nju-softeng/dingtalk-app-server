@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.PrizePo;
+import com.softeng.dingtalk.po_entity.Prize;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  * @Data 01/25/2022
  */
 
-public interface PrizeRepository extends CustomizedRepository<PrizePo, Integer> {
+public interface PrizeRepository extends CustomizedRepository<Prize, Integer> {
 
     /**
      * 查询用户所有奖项
@@ -20,5 +20,5 @@ public interface PrizeRepository extends CustomizedRepository<PrizePo, Integer> 
      * @return
      */
     @Query(value = "select * from prize pr where user_id=:userId and deleted = false ", nativeQuery = true)
-    List<PrizePo> findByUserId(int userId);
+    List<Prize> findByUserId(int userId);
 }

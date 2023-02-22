@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.UserPermissionPo;
+import com.softeng.dingtalk.po_entity.UserPermission;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,12 +12,12 @@ import java.util.List;
  */
 
 @Repository
-public interface UserPermissionRepository extends CustomizedRepository<UserPermissionPo, UserPermissionRepository>{
+public interface UserPermissionRepository extends CustomizedRepository<UserPermission, UserPermissionRepository>{
 
     /**
      * 获取用户的所有权限
      * @param userId 用户id
      * @return 用户所有权限
      */
-    List<UserPermissionPo> findAllByUserId(int userId);
+    List<UserPermission> findAllByUserId(int userId);
 }

@@ -1,13 +1,13 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.DingTalkSchedulePo;
-import com.softeng.dingtalk.po.DingTalkScheduleDetailPo;
+import com.softeng.dingtalk.po_entity.DingTalkSchedule;
+import com.softeng.dingtalk.po_entity.DingTalkScheduleDetail;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface DingTalkScheduleRepository extends CustomizedRepository<DingTalkSchedulePo,Integer>{
-    List<DingTalkSchedulePo> getDingTalkSchedulesByAcCalculatedFalse();
-    List<DingTalkSchedulePo> getDingTalkSchedulesByDingTalkScheduleDetailListContains(DingTalkScheduleDetailPo dingTalkScheduleDetail);
+public interface DingTalkScheduleRepository extends CustomizedRepository<DingTalkSchedule,Integer>{
+    List<DingTalkSchedule> getDingTalkSchedulesByAcCalculatedFalse();
+    List<DingTalkSchedule> getDingTalkSchedulesByDingTalkScheduleDetailListContains(DingTalkScheduleDetail dingTalkScheduleDetail);
 }

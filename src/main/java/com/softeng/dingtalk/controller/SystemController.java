@@ -1,9 +1,9 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.po.PaperLevelPo;
-import com.softeng.dingtalk.po.PatentLevelPo;
-import com.softeng.dingtalk.po.SubsidyLevelPo;
-import com.softeng.dingtalk.po.UserPo;
+import com.softeng.dingtalk.po_entity.PaperLevel;
+import com.softeng.dingtalk.po_entity.PatentLevel;
+import com.softeng.dingtalk.po_entity.SubsidyLevel;
+import com.softeng.dingtalk.po_entity.User;
 import com.softeng.dingtalk.service.SystemService;
 import com.softeng.dingtalk.vo.QueryUserVO;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class SystemController {
      */
     @PostMapping("/system/user/{page}")
     public Map queryUser(@RequestBody QueryUserVO vo, @PathVariable int page) {
-        Page<UserPo> pages = systemService.multiQueryUser(page, 10, vo.getName(), vo.getPosition());
+        Page<User> pages = systemService.multiQueryUser(page, 10, vo.getName(), vo.getPosition());
         return Map.of("content", pages.getContent(), "total", pages.getTotalElements());
     }
 
@@ -56,18 +56,18 @@ public class SystemController {
      * @return List<SubsidyLevel>
      */
     @GetMapping("/system/subsidy")
-    public List<SubsidyLevelPo> listSubsidy() {
+    public List<SubsidyLevel> listSubsidy() {
         return systemService.listSubsidy();
     }
 
 
     /**
      * 更新绩效标准
-     * @param subsidyLevelPos
+     * @param subsidyLevels
      */
     @PostMapping("/system/subsidy")
-    public void updateSubsidy(@RequestBody List<SubsidyLevelPo> subsidyLevelPos) {
-        systemService.setSubsidy(subsidyLevelPos);
+    public void updateSubsidy(@RequestBody List<SubsidyLevel> subsidyLevels) {
+        systemService.setSubsidy(subsidyLevels);
     }
 
 
@@ -76,7 +76,7 @@ public class SystemController {
      * @return
      */
     @GetMapping("/system/paperlevel")
-    public List<PaperLevelPo> listPaperLevel() {
+    public List<PaperLevel> listPaperLevel() {
         return systemService.listPaperLevel();
     }
 
@@ -85,35 +85,35 @@ public class SystemController {
      * @return List<PatentLevel>
      */
     @GetMapping("/system/patentLevel")
-    public List<PatentLevelPo> listPatentLevel() {
+    public List<PatentLevel> listPatentLevel() {
         return systemService.listPatentLevel();
     }
 
     /**
      * 更新专利AC标准
-     * @param patentLevelPos
+     * @param patentLevels
      */
     @PostMapping("/system/patentLevel")
-    public void updatePatentLevel(@RequestBody List<PatentLevelPo> patentLevelPos) {
-        systemService.updatePatentLevel(patentLevelPos);
+    public void updatePatentLevel(@RequestBody List<PatentLevel> patentLevels) {
+        systemService.updatePatentLevel(patentLevels);
     }
     /**
      * 更新论文绩效标准
-     * @param paperLevelPos
+     * @param paperLevels
      */
     @PostMapping("/system/paperlevel")
-    public void updatePaperLevel(@RequestBody List<PaperLevelPo> paperLevelPos) {
-        systemService.updatePaperLevel(paperLevelPos);
+    public void updatePaperLevel(@RequestBody List<PaperLevel> paperLevels) {
+        systemService.updatePaperLevel(paperLevels);
     }
 
 
     /**
      * 更新用户信息
-     * @param userPo
+     * @param user
      */
     @PostMapping("/system/userinfo")
-    public void updateUserInfo(@RequestBody UserPo userPo) {
-        systemService.updateUserInfo(userPo);
+    public void updateUserInfo(@RequestBody User user) {
+        systemService.updateUserInfo(user);
     }
 
 
@@ -143,7 +143,7 @@ public class SystemController {
      * @return
      */
     @GetMapping("/system/query/disableuser")
-    public List<UserPo> queryDisableUser() {
+    public List<User> queryDisableUser() {
         return systemService.queryDisableUser();
     }
 

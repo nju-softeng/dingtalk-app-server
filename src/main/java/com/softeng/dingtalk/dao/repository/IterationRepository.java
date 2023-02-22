@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.IterationPo;
+import com.softeng.dingtalk.po_entity.Iteration;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +12,7 @@ import java.util.List;
  * @description
  * @date 3/14/2020
  */
-public interface IterationRepository extends CustomizedRepository<IterationPo, Integer> {
+public interface IterationRepository extends CustomizedRepository<Iteration, Integer> {
 
     /**
      * 查询项目的所有迭代
@@ -20,15 +20,15 @@ public interface IterationRepository extends CustomizedRepository<IterationPo, I
      * @return
      */
     @EntityGraph(value="iteration.graph",type= EntityGraph.EntityGraphType.FETCH)
-    @Query("select it from IterationPo it where it.project.id = :pid order by it.id desc")
-    List<IterationPo> listIterationByPid(@Param("pid") int pid);
+    @Query("select it from Iteration it where it.project.id = :pid order by it.id desc")
+    List<Iteration> listIterationByPid(@Param("pid") int pid);
 
     /**
      * 根据id查询当前迭代的连续交付次数
      * @param id
      * @return
      */
-    @Query("select i.conSuccess from IterationPo i where i.id = :id")
+    @Query("select i.conSuccess from Iteration i where i.id = :id")
     Integer getConSucessCntById(@Param("id") int id);
 
     /**
@@ -37,8 +37,8 @@ public interface IterationRepository extends CustomizedRepository<IterationPo, I
      * @return
      */
     @EntityGraph(value="iteration.graph",type= EntityGraph.EntityGraphType.FETCH)
-    @Query("select i from IterationPo i where i.id = :id")
-    IterationPo getIterationById(@Param("id") int id);
+    @Query("select i from Iteration i where i.id = :id")
+    Iteration getIterationById(@Param("id") int id);
 
 
     /**
@@ -46,8 +46,8 @@ public interface IterationRepository extends CustomizedRepository<IterationPo, I
      * @param uid
      * @return
      */
-    @Query("select p from IterationPo p left join IterationDetailPo pd on p.id = pd.iteration.id where pd.user.id = :uid")
-    List<IterationPo> listunfinishIteration(@Param("uid")int uid);
+    @Query("select p from Iteration p left join IterationDetail pd on p.id = pd.iteration.id where pd.user.id = :uid")
+    List<Iteration> listunfinishIteration(@Param("uid")int uid);
 
 
     /**
@@ -56,8 +56,8 @@ public interface IterationRepository extends CustomizedRepository<IterationPo, I
      * @return
      */
     @EntityGraph(value="iteration.graph",type= EntityGraph.EntityGraphType.FETCH)
-    @Query("select i from IterationPo i where i.id in :ids order by i.id desc")
-    List<IterationPo> findAllById(@Param("ids") List<Integer> ids);
+    @Query("select i from Iteration i where i.id in :ids order by i.id desc")
+    List<Iteration> findAllById(@Param("ids") List<Integer> ids);
 
 
 }

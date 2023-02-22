@@ -19,7 +19,7 @@
         <result column="auditor_name" property="auditorName"/>
         <result column="auditor_id" property="auditorid"/>
         <result column="status" property="status"/>
-        <collection property="acItemPos" ofType="com.softeng.dingtalk.vo.AcItemVO" javaType="java.util.List">
+        <collection property="acItems" ofType="com.softeng.dingtalk.vo.AcItemVO" javaType="java.util.List">
             <result column="apply_ac" property="ac"/>
             <result column="reason" property="reason"/>
         </collection>

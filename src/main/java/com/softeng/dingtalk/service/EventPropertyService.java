@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.service;
-import com.softeng.dingtalk.po.EventFilePo;
-import com.softeng.dingtalk.po.EventPropertyPo;
+import com.softeng.dingtalk.po_entity.EventFile;
+import com.softeng.dingtalk.po_entity.EventProperty;
 import com.softeng.dingtalk.dao.repository.EventPropertyRepository;
 import com.softeng.dingtalk.dao.repository.EventFileRepository;
 import com.softeng.dingtalk.vo.EventPropertyInfoVO;
@@ -43,14 +43,14 @@ public class EventPropertyService {
      */
     public Map<String, Object> getEventInfoList(int page, int size){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
-        Page<EventPropertyPo> eventProperties=eventPropertyRepository.findAll(pageable);
-        List<EventPropertyInfoVO> infoList=eventProperties.stream().map(eventPropertyPo -> new EventPropertyInfoVO(eventPropertyPo.getId(),
-                eventPropertyPo.getName(), eventPropertyPo.getYear(), eventPropertyPo.getType())).collect(Collectors.toList());
+        Page<EventProperty> eventProperties=eventPropertyRepository.findAll(pageable);
+        List<EventPropertyInfoVO> infoList=eventProperties.stream().map(eventProperty -> new EventPropertyInfoVO(eventProperty.getId(),
+                eventProperty.getName(), eventProperty.getYear(), eventProperty.getType())).collect(Collectors.toList());
         return Map.of("list",infoList,"total",eventProperties.getTotalElements());
     }
 
-    public EventPropertyPo getEventInfo(int eventId){
-        EventPropertyPo ep = eventPropertyRepository.findById(eventId).get();
+    public EventProperty getEventInfo(int eventId){
+        EventProperty ep = eventPropertyRepository.findById(eventId).get();
         //以下三行代码非常关键，不能删除
         log.info(String.valueOf(ep.getPictureFileList().size()));
         log.info(String.valueOf(ep.getVideoFileList().size()));
@@ -62,20 +62,20 @@ public class EventPropertyService {
 
     /**
      * 添加新的event资产
-     * @param eventPropertyPo
+     * @param eventProperty
      */
-    public void addEventProperty(EventPropertyPo eventPropertyPo){
-        eventPropertyRepository.save(eventPropertyPo);
+    public void addEventProperty(EventProperty eventProperty){
+        eventPropertyRepository.save(eventProperty);
     }
 
     /**
      * 更新event资产
-     * @param eventPropertyPo
+     * @param eventProperty
      */
-    public void updateEventProperty(EventPropertyPo eventPropertyPo){
-        EventPropertyPo eventPropertyPoRec =eventPropertyRepository.findById(eventPropertyPo.getId()).get();
-        eventPropertyPoRec.update(eventPropertyPo.getName(), eventPropertyPo.getYear(), eventPropertyPo.getType());
-        eventPropertyRepository.save(eventPropertyPoRec);
+    public void updateEventProperty(EventProperty eventProperty){
+        EventProperty eventPropertyRec =eventPropertyRepository.findById(eventProperty.getId()).get();
+        eventPropertyRec.update(eventProperty.getName(), eventProperty.getYear(), eventProperty.getType());
+        eventPropertyRepository.save(eventPropertyRec);
     }
 
 
@@ -86,26 +86,26 @@ public class EventPropertyService {
      * @param eventId
      */
     public void addEventPropertyFileList(List<MultipartFile> fileList, String type, int eventId){
-        EventPropertyPo eventPropertyPo =eventPropertyRepository.findById(eventId).get();
-        List<EventFilePo> eventFilePoList =saveFileList(fileList, eventPropertyPo, eventPropertyPo.getPath()+"/"+type,type);
+        EventProperty eventProperty =eventPropertyRepository.findById(eventId).get();
+        List<EventFile> eventFileList =saveFileList(fileList, eventProperty, eventProperty.getPath()+"/"+type,type);
         switch (type){
             case "Picture":
-                eventFilePoList =this.appendList(eventPropertyPo.getPictureFileList(), eventFilePoList);
-                eventPropertyPo.setPictureFileList(eventFilePoList);
+                eventFileList =this.appendList(eventProperty.getPictureFileList(), eventFileList);
+                eventProperty.setPictureFileList(eventFileList);
                 break;
             case "Video":
-                eventFilePoList =this.appendList(eventPropertyPo.getVideoFileList(), eventFilePoList);
-                eventPropertyPo.setVideoFileList(eventFilePoList);
+                eventFileList =this.appendList(eventProperty.getVideoFileList(), eventFileList);
+                eventProperty.setVideoFileList(eventFileList);
                 break;
             case "Doc":
-                eventFilePoList =this.appendList(eventPropertyPo.getDocFileList(), eventFilePoList);
-                eventPropertyPo.setDocFileList(eventFilePoList);
+                eventFileList =this.appendList(eventProperty.getDocFileList(), eventFileList);
+                eventProperty.setDocFileList(eventFileList);
                 break;
         }
-        eventPropertyRepository.save(eventPropertyPo);
+        eventPropertyRepository.save(eventProperty);
     }
 
-    private List<EventFilePo> appendList(List<EventFilePo> headList, List<EventFilePo> appendList){
+    private List<EventFile> appendList(List<EventFile> headList, List<EventFile> appendList){
         if(headList!=null){
             headList.addAll(appendList);
             return headList;
@@ -120,28 +120,28 @@ public class EventPropertyService {
      * @param type
      */
     public void deleteEventPropertyFile(int eventId, int eventFileId, String type){
-        EventPropertyPo eventPropertyPo =eventPropertyRepository.findById(eventId).get();
-        EventFilePo eventFilePo =eventFileRepository.findById(eventFileId).get();
-        fileService.deleteFileByPath(eventFilePo.getFileName(), eventFilePo.getFileId());
+        EventProperty eventProperty =eventPropertyRepository.findById(eventId).get();
+        EventFile eventFile =eventFileRepository.findById(eventFileId).get();
+        fileService.deleteFileByPath(eventFile.getFileName(), eventFile.getFileId());
         switch (type){
             case "Picture":
-                eventPropertyPo.getPictureFileList().remove(eventFilePo);
+                eventProperty.getPictureFileList().remove(eventFile);
                 break;
             case "Video":
-                eventPropertyPo.getVideoFileList().remove(eventFilePo);
+                eventProperty.getVideoFileList().remove(eventFile);
                 break;
             case "Doc":
-                eventPropertyPo.getDocFileList().remove(eventFilePo);
+                eventProperty.getDocFileList().remove(eventFile);
                 break;
         }
-        eventFileRepository.delete(eventFilePo);
+        eventFileRepository.delete(eventFile);
 //        eventPropertyRepository.save(eventProperty);
     }
 
     public void downloadEventFile(int eventFileId, HttpServletResponse response){
-        EventFilePo eventFilePo =eventFileRepository.findById(eventFileId).get();
+        EventFile eventFile =eventFileRepository.findById(eventFileId).get();
         try{
-            fileService.downloadFile(eventFilePo.getFileName(), eventFilePo.getFileId(),response);
+            fileService.downloadFile(eventFile.getFileName(), eventFile.getFileId(),response);
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -155,16 +155,16 @@ public class EventPropertyService {
      * @param type
      * @return
      */
-    private List<EventFilePo> saveFileList(List<MultipartFile> fileList, EventPropertyPo eventPropertyPo, String path, String type){
+    private List<EventFile> saveFileList(List<MultipartFile> fileList, EventProperty eventProperty, String path, String type){
         if(fileList!=null && fileList.size()!=0){
-            List<EventFilePo> eventFilePoList =new ArrayList<>();
+            List<EventFile> eventFileList =new ArrayList<>();
             for(MultipartFile file:fileList){
                 String fileId=fileService.addFileByPath(file,path);
-                EventFilePo eventFilePo =new EventFilePo(file.getOriginalFilename(),fileId,type, eventPropertyPo);
-                eventFilePoList.add(eventFilePo);
+                EventFile eventFile =new EventFile(file.getOriginalFilename(),fileId,type, eventProperty);
+                eventFileList.add(eventFile);
             }
-            eventFileRepository.saveBatch(eventFilePoList);
-            return eventFilePoList;
+            eventFileRepository.saveBatch(eventFileList);
+            return eventFileList;
         } else {
             log.info("寄");
           return null;
@@ -176,23 +176,23 @@ public class EventPropertyService {
      * @param id
      */
     public void deleteEventProperty(int id){
-        EventPropertyPo eventPropertyPo =eventPropertyRepository.findById(id).get();
-        List<EventFilePo> eventFilePoList = eventPropertyPo.getDocFileList();
-        if(eventFilePoList !=null)this.simpleDeleteFileList(eventFilePoList);
-        eventFilePoList = eventPropertyPo.getVideoFileList();
-        if(eventFilePoList !=null)this.simpleDeleteFileList(eventFilePoList);
-        eventFilePoList = eventPropertyPo.getPictureFileList();
-        if(eventFilePoList !=null)this.simpleDeleteFileList(eventFilePoList);
+        EventProperty eventProperty =eventPropertyRepository.findById(id).get();
+        List<EventFile> eventFileList = eventProperty.getDocFileList();
+        if(eventFileList !=null)this.simpleDeleteFileList(eventFileList);
+        eventFileList = eventProperty.getVideoFileList();
+        if(eventFileList !=null)this.simpleDeleteFileList(eventFileList);
+        eventFileList = eventProperty.getPictureFileList();
+        if(eventFileList !=null)this.simpleDeleteFileList(eventFileList);
         eventPropertyRepository.deleteById(id);
     }
 
     /**
      * 简单删除文件，不修改数据库
-     * @param eventFilePoList
+     * @param eventFileList
      */
-    private void simpleDeleteFileList(List<EventFilePo> eventFilePoList){
-        for(EventFilePo eventFilePo : eventFilePoList){
-            fileService.deleteFileByPath(eventFilePo.getFileName(), eventFilePo.getFileId());
+    private void simpleDeleteFileList(List<EventFile> eventFileList){
+        for(EventFile eventFile : eventFileList){
+            fileService.deleteFileByPath(eventFile.getFileName(), eventFile.getFileId());
         }
     }
 }

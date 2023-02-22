@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.component;
 
-import com.softeng.dingtalk.api.MessageApi;
-import com.softeng.dingtalk.po.*;
+import com.softeng.dingtalk.component.dingApi.MessageApi;
+import com.softeng.dingtalk.po_entity.*;
 import com.softeng.dingtalk.dao.repository.AcRecordRepository;
 import com.softeng.dingtalk.dao.repository.ExternalPaperRepository;
 import com.softeng.dingtalk.dao.repository.InternalPaperRepository;
@@ -84,17 +84,17 @@ public class Timer {
         LocalDateTime now = LocalDateTime.now();
 
         // (针对外部评审投票) 检查是否有投票需要开始
-        List<VotePo> upcomingVotePos = voteService.listUpcomingVote(now);
-        upcomingVotePos.forEach(v -> {
+        List<Vote> upcomingVotes = voteService.listUpcomingVote(now);
+        upcomingVotes.forEach(v -> {
             // 标注该投票已经开始
             v.setStarted(true);
             voteRepository.save(v);
 
-            ExternalPaperPo externalPaperPo = externalPaperRepository.findByVid(v.getId());
-            if (externalPaperPo != null) {
+            ExternalPaper externalPaper = externalPaperRepository.findByVid(v.getId());
+            if (externalPaper != null) {
                 // 发送投票开始的消息
-                String markdown = startVoteInfo(externalPaperPo.getTitle(), v.getEndTime());
-                String url = generateVoteDetailUrl(true, externalPaperPo.getId());
+                String markdown = startVoteInfo(externalPaper.getTitle(), v.getEndTime());
+                String url = generateVoteDetailUrl(true, externalPaper.getId());
                 messageApi.sendActionCard("外部评审投票", markdown, "前往投票", url);
             }
         });
@@ -108,11 +108,11 @@ public class Timer {
         // 检查是否有需要被结束的投票
         LocalDateTime now = LocalDateTime.now();
 
-        List<VotePo> votePos = voteService.listUnderwayVote(now);
-        votePos.forEach(v -> {
+        List<Vote> votes = voteService.listUnderwayVote(now);
+        votes.forEach(v -> {
             // 更新汇总投票结果
             v = voteService.updateVote(v);
-            PaperPo paper = v.isExternal() ?
+            Paper paper = v.isExternal() ?
                     externalPaperRepository.findByVid(v.getId()) :
                     internalPaperRepository.findByVid(v.getId());
             messageApi.sendActionCard(

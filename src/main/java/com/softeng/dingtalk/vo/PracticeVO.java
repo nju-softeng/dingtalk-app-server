@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.po.UserPo;
+import com.softeng.dingtalk.po_entity.User;
 import lombok.Data;
 import java.time.LocalDate;
 @Data
@@ -8,7 +8,7 @@ public class PracticeVO {
 
     private Integer id;
 
-    UserPo userPo;
+    User user;
     //实习单位
     String companyName;
     //实习部门

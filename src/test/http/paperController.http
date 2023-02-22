@@ -18,13 +18,13 @@ Content-Type: application/json
   "paperDetails": [
     {
       "num": 1,
-      "userPo": {
+      "user": {
         "id": 1
       }
     },
     {
       "num": 2,
-      "userPo": {
+      "user": {
         "id": 3
       }
     }
@@ -46,31 +46,31 @@ Content-Type: application/json
   "paperDetails": [
     {
       "num": 1,
-      "userPo": {
+      "user": {
         "id": 4
       }
     },
     {
       "num": 2,
-      "userPo": {
+      "user": {
         "id": 6
       }
     },
     {
       "num": 3,
-      "userPo": {
+      "user": {
         "id": 5
       }
     },
     {
       "num": 4,
-      "userPo": {
+      "user": {
         "id": 7
       }
     },
     {
       "num": 5,
-      "userPo": {
+      "user": {
         "id": 8
       }
     }

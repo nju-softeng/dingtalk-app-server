@@ -2,10 +2,10 @@ package com.softeng.dingtalk.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.softeng.dingtalk.po.ExternalPaperPo;
-import com.softeng.dingtalk.po.InternalPaperPo;
-import com.softeng.dingtalk.po.ReviewPo;
-import com.softeng.dingtalk.po.VotePo;
+import com.softeng.dingtalk.po_entity.ExternalPaper;
+import com.softeng.dingtalk.po_entity.InternalPaper;
+import com.softeng.dingtalk.po_entity.Review;
+import com.softeng.dingtalk.po_entity.Vote;
 import com.softeng.dingtalk.dao.repository.ExternalPaperRepository;
 import com.softeng.dingtalk.dao.repository.InternalPaperRepository;
 import com.softeng.dingtalk.dao.repository.VoteRepository;
@@ -115,9 +115,9 @@ public class PaperController {
     @PostMapping("/paper_result/{pid}")
     public void updateResult(@PathVariable int pid, @RequestBody PaperResultVO vo) {
         paperService.updateInternalPaperResult(pid, vo.getResult(), vo.getUpdateDate());
-        VotePo votePo = internalPaperRepository.findVoteById(pid);
-        if(votePo != null) {
-            voteService.computeVoteAc(votePo, vo.getResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8, 0)));
+        Vote vote = internalPaperRepository.findVoteById(pid);
+        if(vote != null) {
+            voteService.computeVoteAc(vote, vo.getResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8, 0)));
         }
     }
 
@@ -131,9 +131,9 @@ public class PaperController {
     public void updateExPaperResult(@PathVariable int pid, @RequestBody PaperResultVO vo) {
         // 更新论文记录
         paperService.updateExPaperResult(pid, vo.getResult(), vo.getUpdateDate());
-        VotePo votePo = externalPaperRepository.findVoteById(pid);
+        Vote vote = externalPaperRepository.findVoteById(pid);
         // 更具投票结果计算，投票人的ac值
-        voteService.computeVoteAc(votePo, vo.getResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8,0)));
+        voteService.computeVoteAc(vote, vo.getResult(), LocalDateTime.of(vo.getUpdateDate(), LocalTime.of(8,0)));
     }
 
 
@@ -153,7 +153,7 @@ public class PaperController {
      */
     @GetMapping("/ex-paper/page/{page}/size/{size}")
     public Map listExternalPaper(@PathVariable int page, @PathVariable int size) {
-        Page<ExternalPaperPo> pages = paperService.listExternalPaper(page, size);
+        Page<ExternalPaper> pages = paperService.listExternalPaper(page, size);
         return Map.of("list", pages.getContent(), "total", pages.getTotalElements());
     }
 
@@ -164,7 +164,7 @@ public class PaperController {
      * @return
      */
     @GetMapping("/paper/{id}")
-    public InternalPaperPo getPaper(@PathVariable int id) {
+    public InternalPaper getPaper(@PathVariable int id) {
         return paperService.getInternalPaper(id);
     }
 
@@ -175,7 +175,7 @@ public class PaperController {
      * @return
      */
     @GetMapping("/ex-papper/{id}")
-    public ExternalPaperPo getExPaper(@PathVariable int id) {
+    public ExternalPaper getExPaper(@PathVariable int id) {
         return paperService.getExInternalPaper(id);
     }
 
@@ -185,8 +185,8 @@ public class PaperController {
      * @return
      */
     @PostMapping("/paper/review")
-    public void submitReview(@RequestBody ReviewPo reviewPo, @RequestAttribute int uid) {
-        paperService.submitReview(reviewPo, uid);
+    public void submitReview(@RequestBody Review review, @RequestAttribute int uid) {
+        paperService.submitReview(review, uid);
     }
 
 
@@ -196,7 +196,7 @@ public class PaperController {
      * @return
      */
     @GetMapping("/paper/{id}/review")
-    public List<ReviewPo> listReview(@PathVariable int id) {
+    public List<Review> listReview(@PathVariable int id) {
         return paperService.listReview(id, false);
     }
 
@@ -207,22 +207,22 @@ public class PaperController {
      * @return
      */
     @GetMapping("/ex-paper/{id}/review")
-    public List<ReviewPo> listExReview(@PathVariable int id) {
+    public List<Review> listExReview(@PathVariable int id) {
         return paperService.listReview(id, true);
     }
 
 
     /**
      * 更新评审建议
-     * @param reviewPo
+     * @param review
      * @param uid
      */
     @PostMapping("/paper/{id}/review/update")
-    public void updateReview(@RequestBody ReviewPo reviewPo, @RequestAttribute int uid) {
-        if (uid != reviewPo.getUser().getId()) {
+    public void updateReview(@RequestBody Review review, @RequestAttribute int uid) {
+        if (uid != review.getUser().getId()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "无修改权限");
         }
-        paperService.updateReview(reviewPo);
+        paperService.updateReview(review);
     }
 
 
@@ -243,7 +243,7 @@ public class PaperController {
      * @return
      */
     @GetMapping("/paper/{id}/vote")
-    public VotePo getPaperVote(@PathVariable int id) {
+    public Vote getPaperVote(@PathVariable int id) {
         return paperService.getVoteByPid(id);
     }
 
@@ -257,7 +257,7 @@ public class PaperController {
      * @return
      */
     @GetMapping("/ex-paper/{pid}/vote")
-    public VotePo getExPaperVote(@PathVariable int pid) {
+    public Vote getExPaperVote(@PathVariable int pid) {
         return paperService.getExPaperVote(pid);
     }
 

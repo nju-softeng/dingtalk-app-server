@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.component;
 
+import com.softeng.dingtalk.component.encryptor.EncryptorComponent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

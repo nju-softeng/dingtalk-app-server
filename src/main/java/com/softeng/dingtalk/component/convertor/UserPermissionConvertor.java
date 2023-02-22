@@ -1,12 +1,10 @@
 package com.softeng.dingtalk.component.convertor;
 
-import com.softeng.dingtalk.convertor.AbstractConvertorTemplate;
 import com.softeng.dingtalk.dto.resp.UserPermissionResp;
-import com.softeng.dingtalk.entity.UserPermission;
-import com.softeng.dingtalk.po.UserPermissionPo;
+import com.softeng.dingtalk.po_entity.UserPermission;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserPermissionConvertor extends AbstractConvertorTemplate<UserPermissionResp, UserPermissionResp, UserPermission, UserPermissionPo> {
+public class UserPermissionConvertor extends AbstractConvertorTemplate<UserPermissionResp, UserPermissionResp, UserPermission> {
 }
 

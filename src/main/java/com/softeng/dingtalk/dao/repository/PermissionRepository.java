@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.PermissionPo;
+import com.softeng.dingtalk.po_entity.Permission;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface PermissionRepository extends CustomizedRepository<PermissionPo, Integer>{
+public interface PermissionRepository extends CustomizedRepository<Permission, Integer>{
 
-    PermissionPo findById(int id);
+    Permission findById(int id);
 }

@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.po.AbsentOAPo;
+import com.softeng.dingtalk.po_entity.AbsentOA;
 import com.softeng.dingtalk.service.DingTalkScheduleService;
 import com.softeng.dingtalk.vo.AbsentOAVO;
 import com.softeng.dingtalk.vo.DingTalkScheduleVO;
@@ -41,7 +41,7 @@ public class DingTalkScheduleController {
     }
 
     @GetMapping("/schedule/{id}/absentOA")
-    public AbsentOAPo getAbsentOADetail(@PathVariable int id, @RequestAttribute int uid){
+    public AbsentOA getAbsentOADetail(@PathVariable int id, @RequestAttribute int uid){
         return dingTalkScheduleService.getAbsentOADetail(id,uid);
     }
 

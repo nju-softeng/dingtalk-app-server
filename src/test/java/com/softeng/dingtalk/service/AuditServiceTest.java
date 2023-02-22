@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.service;
 
 
-import com.softeng.dingtalk.po.AcItemPo;
+import com.softeng.dingtalk.po_entity.AcItem;
 import com.softeng.dingtalk.vo.CheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -27,10 +27,10 @@ public class AuditServiceTest {
 
     @Test
     public void testUpdateAuditResult() {
-        List<AcItemPo> acItemPos = new ArrayList<>();
-        acItemPos.add(new AcItemPo("申请ac1", 1));
-        acItemPos.add(new AcItemPo("申请ac2", 1));
-        CheckVO vo = new CheckVO(1329, 0.5, 0.777, 2, acItemPos);
+        List<AcItem> acItems = new ArrayList<>();
+        acItems.add(new AcItem("申请ac1", 1));
+        acItems.add(new AcItem("申请ac2", 1));
+        CheckVO vo = new CheckVO(1329, 0.5, 0.777, 2, acItems);
         auditService.updateAuditResult(vo);
     }
 

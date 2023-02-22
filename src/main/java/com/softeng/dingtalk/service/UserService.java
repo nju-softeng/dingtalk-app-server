@@ -1,13 +1,11 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.api.BaseApi;
+import com.softeng.dingtalk.component.dingApi.BaseApi;
 import com.softeng.dingtalk.component.convertor.PermissionConvertor;
 import com.softeng.dingtalk.component.convertor.TeamConvertor;
 import com.softeng.dingtalk.dao.repository.*;
-import com.softeng.dingtalk.encryption.Encryption;
-import com.softeng.dingtalk.entity.Permission;
-import com.softeng.dingtalk.entity.Team;
-import com.softeng.dingtalk.po.*;
+import com.softeng.dingtalk.component.encryptor.Encryption;
+import com.softeng.dingtalk.po_entity.*;
 import com.softeng.dingtalk.utils.StreamUtils;
 import com.softeng.dingtalk.vo.UserInfoVO;
 import com.softeng.dingtalk.vo.UserVO;
@@ -64,14 +62,14 @@ public class UserService {
     @Value("${file.userLeaseContractFilePath}")
     private String userLeaseContractFilePath;
 
-//    /**
-//     * 判断用户权限是否为审核人
-//     * @param uid 用户id
-//     * @return
-//     */
-//    public boolean isAuditor(int uid) {
-//        return userRepository.getUserAuthority(uid) == UserPo.AUDITOR_AUTHORITY;
-//    }
+    /**
+     * 判断用户权限是否为审核人
+     * @param uid 用户id
+     * @return
+     */
+    public boolean isAuditor(int uid) {
+        return userRepository.getUserAuthority(uid) == User.AUDITOR_AUTHORITY;
+    }
 
 
     /**
@@ -98,7 +96,7 @@ public class UserService {
      * @param userid
      * @return
      */
-    public UserPo getUser(String userid) {
+    public User getUser(String userid) {
         return userRepository.findByUserid(userid);
     }
 
@@ -118,7 +116,7 @@ public class UserService {
      * @return
      */
     public Map getUserInfo(int uid) {
-        UserPo u = userRepository.findById(uid).get();
+        User u = userRepository.findById(uid).get();
         double ac = acRecordRepository.getUserAcSum(uid);
         baseApi.getJsapiTicket(); // 提前拿到jsapi ticket，避免需要时再去那减少时延
         if (u.getAvatar() != null) {
@@ -129,14 +127,14 @@ public class UserService {
     }
 
 
-//    /**
-//     * 更新用户权限
-//     * @param uid
-//     * @param authority
-//     */
-//    public void updateRole(int uid, int authority) {
-//        userRepository.updateUserRole(uid, authority);
-//    }
+    /**
+     * 更新用户权限
+     * @param uid
+     * @param authority
+     */
+    public void updateRole(int uid, int authority) {
+        userRepository.updateUserRole(uid, authority);
+    }
 
 
     /**
@@ -145,13 +143,13 @@ public class UserService {
      * @return
      */
     public UserInfoVO getUserDetail(int uid) {
-        UserPo u = userRepository.findById(uid).get();
+        User u = userRepository.findById(uid).get();
         return new UserInfoVO(u.getName(), u.getAvatar(), u.getPosition(), u.getStuNum(), u.getUndergraduateCollege(), u.getMasterCollege(), encryption.doDecrypt(u.getIdCardNo()), encryption.doDecrypt(u.getCreditCard()), u.getBankName(),u.getRentingStart(), u.getRentingEnd(), u.getAddress(), u.getWorkState(), u.getRemark(),u.getLeaseContractFileName(),u.getLeaseContractFilePath());
     }
 
 
     public void updateUserInfo(UserInfoVO userInfoVO, int uid) {
-        UserPo u = userRepository.findById(uid).get();
+        User u = userRepository.findById(uid).get();
         u.setStuNum(userInfoVO.getStuNum());
         u.setName(userInfoVO.getName());
         u.setCreditCard(encryption.doEncrypt(userInfoVO.getCreditCard()));
@@ -168,16 +166,16 @@ public class UserService {
     }
 
     public void saveLeaseContractFile(MultipartFile file, int uid){
-       UserPo userPo =userRepository.findById(uid).get();
-       userPo.setLeaseContractFileName(file.getOriginalFilename());
-       userPo.setLeaseContractFilePath(fileService.addFileByPath(file,userLeaseContractFilePath+ userPo.getStuNum()));
-       userRepository.save(userPo);
+       User user =userRepository.findById(uid).get();
+       user.setLeaseContractFileName(file.getOriginalFilename());
+       user.setLeaseContractFilePath(fileService.addFileByPath(file,userLeaseContractFilePath+ user.getStuNum()));
+       userRepository.save(user);
     }
 
     public void downloadContractFile(int uid, HttpServletResponse httpServletResponse) throws IOException {
-        UserPo userPo =userRepository.findById(uid).get();
-        String fileName= userPo.getLeaseContractFileName();
-        String filePath= userPo.getLeaseContractFilePath();
+        User user =userRepository.findById(uid).get();
+        String fileName= user.getLeaseContractFileName();
+        String filePath= user.getLeaseContractFilePath();
         fileService.downloadFile(fileName,filePath,httpServletResponse);
     }
 
@@ -193,10 +191,10 @@ public class UserService {
      * @return 所有权限名
      */
     public List<Permission> getPermissions(int userId){
-        List<UserPermissionPo> userPermissionPoList = userPermissionRepository.findAllByUserId(userId);
+        List<UserPermission> userPermissionList = userPermissionRepository.findAllByUserId(userId);
         return StreamUtils.map(
-                userPermissionPoList,
-                userPermissionPo -> permissionConvertor.po2Entity(permissionRepository.findById(userPermissionPo.getPermissionId()))
+                userPermissionList,
+                userPermission -> permissionRepository.findById(userPermission.getPermissionId())
         );
     }
 
@@ -206,10 +204,10 @@ public class UserService {
      * @return
      */
     public List<Team> getTeams(int userId){
-        List<UserTeamPo> userTeamPoList = userTeamRepository.findAllByUserId(userId);
+        List<UserTeam> userTeamList = userTeamRepository.findAllByUserId(userId);
         return StreamUtils.map(
-                userTeamPoList,
-                userTeamPo -> teamConvertor.po2Entity(teamRepository.findById(userTeamPo.getTeamId()))
+                userTeamList,
+                userTeam -> teamRepository.findById(userTeam.getTeamId())
         );
     }
 }

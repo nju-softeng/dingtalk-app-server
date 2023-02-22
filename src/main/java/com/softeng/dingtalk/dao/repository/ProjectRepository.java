@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.ProjectPo;
+import com.softeng.dingtalk.po_entity.Project;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,7 +15,7 @@ import java.util.Map;
  * @date 2/25/2020
  */
 @Repository
-public interface ProjectRepository  extends CustomizedRepository<ProjectPo, Integer> {
+public interface ProjectRepository  extends CustomizedRepository<Project, Integer> {
 
     /**
      * 修改项目标题
@@ -23,7 +23,7 @@ public interface ProjectRepository  extends CustomizedRepository<ProjectPo, Inte
      * @param title
      */
     @Modifying
-    @Query("update ProjectPo set title = :title where id = :id")
+    @Query("update Project set title = :title where id = :id")
     void updateTitle(@Param("id") int id, @Param("title") String title);
 
 

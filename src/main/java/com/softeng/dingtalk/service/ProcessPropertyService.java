@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.service;
-import com.softeng.dingtalk.po.ProcessFilePo;
-import com.softeng.dingtalk.po.ProcessPropertyPo;
+import com.softeng.dingtalk.po_entity.ProcessFile;
+import com.softeng.dingtalk.po_entity.ProcessProperty;
 import com.softeng.dingtalk.dao.repository.ProcessFileRepository;
 import com.softeng.dingtalk.dao.repository.ProcessPropertyRepository;
 import com.softeng.dingtalk.dao.repository.UserRepository;
@@ -37,31 +37,31 @@ public class ProcessPropertyService {
     public void addProcessProperty(MultipartFile file, ProcessPropertyVO processPropertyVO,int uid){
         //1.保存文件
         String fileId;
-        ProcessFilePo processFilePo =null;
+        ProcessFile processFile =null;
         if(file!=null){
             fileId=fileService.addFileByPath(file,processPropertyVO.getFilePath()+"/PPT");
-            processFilePo =new ProcessFilePo(file.getOriginalFilename(),"PPT",fileId);
+            processFile =new ProcessFile(file.getOriginalFilename(),"PPT",fileId);
         }
         //2.保存记录信息
-        ProcessPropertyPo processPropertyPo =new ProcessPropertyPo(processPropertyVO.getConferenceName(),processPropertyVO.getYear(),
+        ProcessProperty processProperty =new ProcessProperty(processPropertyVO.getConferenceName(),processPropertyVO.getYear(),
                 processPropertyVO.getFilePath(),userRepository.findById(uid).get());
-        processPropertyPo.setPPTFile(processFilePo);
-        processPropertyRepository.save(processPropertyPo);
+        processProperty.setPPTFile(processFile);
+        processPropertyRepository.save(processProperty);
     }
     public Map<String, Object> getProcessProperty(int page, int size){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
-        Page<ProcessPropertyPo> processProperties=processPropertyRepository.findAll(pageable);
-        List<ProcessPropertyPo> infoList=processProperties.toList();
+        Page<ProcessProperty> processProperties=processPropertyRepository.findAll(pageable);
+        List<ProcessProperty> infoList=processProperties.toList();
         return Map.of("list",infoList,"total",processProperties.getTotalElements());
     }
     public void updateProcessProperty(ProcessPropertyVO processPropertyVO){
-        ProcessPropertyPo processPropertyPo =processPropertyRepository.findById(processPropertyVO.getId()).get();
-        processPropertyPo.update(processPropertyVO.getConferenceName(),processPropertyVO.getYear());
-        processPropertyRepository.save(processPropertyPo);
+        ProcessProperty processProperty =processPropertyRepository.findById(processPropertyVO.getId()).get();
+        processProperty.update(processPropertyVO.getConferenceName(),processPropertyVO.getYear());
+        processPropertyRepository.save(processProperty);
     }
 
     public ProcessPropertyDetailVO getProcessPropertyDetail(int id){
-        ProcessPropertyPo pp=processPropertyRepository.findById(id).get();
+        ProcessProperty pp=processPropertyRepository.findById(id).get();
         log.info(String.valueOf(pp.getConferencePhotoFileList().size()));
         log.info(String.valueOf(pp.getPersonalPhotoFileList()));
         return new ProcessPropertyDetailVO(pp.getId(),pp.getConferenceName(),pp.getYear(),pp.getFilePath(),pp.getUser(),
@@ -69,7 +69,7 @@ public class ProcessPropertyService {
     }
 
     public void deleteProcessProperty(int id){
-        ProcessPropertyPo pp=processPropertyRepository.findById(id).get();
+        ProcessProperty pp=processPropertyRepository.findById(id).get();
         if(pp.getInvitationFile()!=null)fileService.deleteFileByPath(pp.getInvitationFile().getFileName(),pp.getInvitationFile().getFileId());
         if(pp.getPPTFile()!=null)fileService.deleteFileByPath(pp.getPPTFile().getFileName(),pp.getPPTFile().getFileId());
         if(pp.getPersonalPhotoFileList()!=null)this.simpleDeleteFileList(pp.getPersonalPhotoFileList());
@@ -78,44 +78,44 @@ public class ProcessPropertyService {
     }
 
     public void addProcessFile(MultipartFile file,String fileType,int id){
-        ProcessPropertyPo pp=processPropertyRepository.findById(id).get();
+        ProcessProperty pp=processPropertyRepository.findById(id).get();
         String fileName=file.getOriginalFilename();
         String fileId=fileService.addFileByPath(file,pp.getFilePath()+"/"+getFileTypeFolderName(fileType));
-        ProcessFilePo processFilePo =new ProcessFilePo(fileName,fileType,fileId);
-        processFilePo.setProcessProperty(pp);
-        List<ProcessFilePo> processFilePoList =null;
+        ProcessFile processFile =new ProcessFile(fileName,fileType,fileId);
+        processFile.setProcessProperty(pp);
+        List<ProcessFile> processFileList =null;
         switch (fileType){
             case"invitationFile":
-                pp.setInvitationFile(processFilePo);
+                pp.setInvitationFile(processFile);
                 break;
             case"PPTFile":
-                pp.setPPTFile(processFilePo);
+                pp.setPPTFile(processFile);
                 break;
             case "personalPhotoFile":
-                processFilePoList =pp.getPersonalPhotoFileList();
+                processFileList =pp.getPersonalPhotoFileList();
                 if(pp.getPersonalPhotoFileList()==null){
-                    processFilePoList =new LinkedList<ProcessFilePo>();
+                    processFileList =new LinkedList<ProcessFile>();
                 }
-                processFilePoList.add(processFilePo);
-                processFileRepository.save(processFilePo);
-                pp.setPersonalPhotoFileList(processFilePoList);
+                processFileList.add(processFile);
+                processFileRepository.save(processFile);
+                pp.setPersonalPhotoFileList(processFileList);
                 break;
             case "conferencePhotoFile":
-                processFilePoList =pp.getConferencePhotoFileList();
+                processFileList =pp.getConferencePhotoFileList();
                 if(pp.getConferencePhotoFileList()==null){
-                    processFilePoList =new LinkedList<ProcessFilePo>();
+                    processFileList =new LinkedList<ProcessFile>();
                 }
-                processFilePoList.add(processFilePo);
-                processFileRepository.save(processFilePo);
-                pp.setConferencePhotoFileList(processFilePoList);
+                processFileList.add(processFile);
+                processFileRepository.save(processFile);
+                pp.setConferencePhotoFileList(processFileList);
                 break;
         }
         processPropertyRepository.save(pp);
     }
 
     public void deleteProcessFile(int processId, int fileId, String type){
-        ProcessPropertyPo pp=processPropertyRepository.findById(processId).get();
-        ProcessFilePo pf=processFileRepository.findById(fileId).get();
+        ProcessProperty pp=processPropertyRepository.findById(processId).get();
+        ProcessFile pf=processFileRepository.findById(fileId).get();
         fileService.deleteFileByPath(pf.getFileName(),pf.getFileId());
         switch (type){
             case"invitationFile":
@@ -137,18 +137,18 @@ public class ProcessPropertyService {
 
     /**
      * 简单删除文件，不修改数据库
-     * @param processFilePoList
+     * @param processFileList
      */
-    private void simpleDeleteFileList(List<ProcessFilePo> processFilePoList){
-        for(ProcessFilePo processFilePo : processFilePoList){
-            fileService.deleteFileByPath(processFilePo.getFileName(), processFilePo.getFileId());
+    private void simpleDeleteFileList(List<ProcessFile> processFileList){
+        for(ProcessFile processFile : processFileList){
+            fileService.deleteFileByPath(processFile.getFileName(), processFile.getFileId());
         }
     }
 
     public void downloadProcessFile(int id, HttpServletResponse response)  {
-        ProcessFilePo processFilePo =processFileRepository.findById(id).get();
+        ProcessFile processFile =processFileRepository.findById(id).get();
         try{
-            fileService.downloadFile(processFilePo.getFileName(), processFilePo.getFileId(),response);
+            fileService.downloadFile(processFile.getFileName(), processFile.getFileId(),response);
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

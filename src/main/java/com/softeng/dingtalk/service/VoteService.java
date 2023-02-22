@@ -2,9 +2,9 @@ package com.softeng.dingtalk.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softeng.dingtalk.controller.WebSocketController;
-import com.softeng.dingtalk.api.MessageApi;
+import com.softeng.dingtalk.component.dingApi.MessageApi;
 import com.softeng.dingtalk.dao.repository.*;
-import com.softeng.dingtalk.po.*;
+import com.softeng.dingtalk.po_entity.*;
 
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.vo.VoteVO;
@@ -78,17 +78,17 @@ public class VoteService {
      * @return
      */
     @CacheEvict(value = "voting", allEntries = true)
-    public VotePo createVote(VoteVO vo) {
+    public Vote createVote(VoteVO vo) {
         lock.lock();
         try {
             // 确保线程安全问题
             if (voteRepository.isExisted(vo.getPaperid(), false) == 0) {
                 // 如果投票还没有被创建
-                VotePo votePo = new VotePo(LocalDateTime.now(), vo.getEndTime(), vo.getPaperid());
-                voteRepository.save(votePo);
-                internalPaperRepository.updatePaperVote(vo.getPaperid(), votePo.getId());
+                Vote vote = new Vote(LocalDateTime.now(), vo.getEndTime(), vo.getPaperid());
+                voteRepository.save(vote);
+                internalPaperRepository.updatePaperVote(vo.getPaperid(), vote.getId());
                 sendVoteInfoCardToDingtalk(vo.getPaperid(), vo.getEndTime().toLocalTime());
-                return voteRepository.refresh(votePo);
+                return voteRepository.refresh(vote);
             } else {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "慢了一步，投票已经被别人发起了");
             }
@@ -121,7 +121,7 @@ public class VoteService {
      * @param now
      * @return
      */
-    public List<VotePo> listUpcomingVote(LocalDateTime now) {
+    public List<Vote> listUpcomingVote(LocalDateTime now) {
         return voteRepository.listUpcomingVote(now);
     }
 
@@ -134,7 +134,7 @@ public class VoteService {
      * @return
      */
     @Cacheable(value = "voting")
-    public List<VotePo> listUnderwayVote(LocalDateTime now) {
+    public List<Vote> listUnderwayVote(LocalDateTime now) {
         return voteRepository.listClosingVote(now);
     }
 
@@ -142,36 +142,36 @@ public class VoteService {
     /**
      * 更新投票的最终结果，投票截止后调用, 被定时器调用
      *
-     * @param votePo
+     * @param vote
      * @return
      */
     @CacheEvict(value = "voting", allEntries = true)
-    public VotePo updateVote(VotePo votePo) {
+    public Vote updateVote(Vote vote) {
         log.debug("投票结果更新，清空缓存");
-        votePo.setStatus(true);
-        votePo.setAccept(voteDetailRepository.getAcceptCnt(votePo.getId()));
-        votePo.setTotal(voteDetailRepository.getCnt(votePo.getId()));
-        votePo.setResult(getVotingResult(votePo));
-        voteRepository.save(votePo);
+        vote.setStatus(true);
+        vote.setAccept(voteDetailRepository.getAcceptCnt(vote.getId()));
+        vote.setTotal(voteDetailRepository.getCnt(vote.getId()));
+        vote.setResult(getVotingResult(vote));
+        voteRepository.save(vote);
 
         // 如果是内部评审投票
-        if (!votePo.isExternal()) {
+        if (!vote.isExternal()) {
             internalPaperRepository.updatePaperResult(
-                    votePo.getPid(),
-                    votePo.getResult() == 1 ? InternalPaperPo.REVIEWING : (votePo.getResult() == 2 ? InternalPaperPo.FLAT : InternalPaperPo.NOTPASS)
+                    vote.getPid(),
+                    vote.getResult() == 1 ? InternalPaper.REVIEWING : (vote.getResult() == 2 ? InternalPaper.FLAT : InternalPaper.NOTPASS)
                     );
         }
 
         try {
             WebSocketController.sendInfo(objectMapper.writeValueAsString(Map.of(
-                    "vid", votePo.getId(),
+                    "vid", vote.getId(),
                     "isEnd", true
             )));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return votePo;
+        return vote;
     }
 
 
@@ -180,36 +180,36 @@ public class VoteService {
      *
      * @param vid
      * @param uid
-     * @param voteDetailPo
+     * @param voteDetail
      * @return
      */
-    public Map poll(int vid, int uid, VoteDetailPo voteDetailPo) {
+    public Map poll(int vid, int uid, VoteDetail voteDetail) {
         // 收到投票的时间
         LocalDateTime now = LocalDateTime.now();
-        VotePo votePo = voteRepository.findById(vid).get();
+        Vote vote = voteRepository.findById(vid).get();
 
         // 如果是内部评审论文，判断投票人是否为论文作者
-        if (paperService.listAuthorId(votePo.getPid()).contains(uid)) {
+        if (paperService.listAuthorId(vote.getPid()).contains(uid)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "论文作者不能参与投票！");
         }
 
         // 投票已经截止
-        if (now.isAfter(votePo.getEndTime())) {
+        if (now.isAfter(vote.getEndTime())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "投票已经截止！");
         }
 
-        voteDetailRepository.save(voteDetailPo);
+        voteDetailRepository.save(voteDetail);
         return getVotingDetails(vid, uid);
     }
 
     /**
      * 不同的职位对应不同的票权
      *
-     * @param userPo 用户
+     * @param user 用户
      * @return 票权值
      */
-    public static double getWeight(UserPo userPo) {
-        switch (userPo.getPosition()) {
+    public static double getWeight(User user) {
+        switch (user.getPosition()) {
             case DOCTOR:
                 return 2.0;
             case ACADEMIC:
@@ -227,7 +227,7 @@ public class VoteService {
      * @param rejectUserListPo 投拒绝的人的列表
      * @return [0, 1)
      */
-    public double calculatePercentageOfVotesAccepted(List<UserPo> acceptUserListPo, List<UserPo> rejectUserListPo) {
+    public double calculatePercentageOfVotesAccepted(List<User> acceptUserListPo, List<User> rejectUserListPo) {
         double acceptWeights = acceptUserListPo.stream().mapToDouble(VoteService::getWeight).sum();
         double rejectWeights = rejectUserListPo.stream().mapToDouble(VoteService::getWeight).sum();
         double totleWeights = acceptWeights + rejectWeights;
@@ -237,24 +237,24 @@ public class VoteService {
     /**
      * 算出某次投票的接受的加权百分比
      *
-     * @param votePo
+     * @param vote
      * @return [0, 1)
      */
-    public double calculatePercentageOfVotesAccepted(VotePo votePo) {
+    public double calculatePercentageOfVotesAccepted(Vote vote) {
         return calculatePercentageOfVotesAccepted(
-                voteDetailRepository.listAcceptUserlist(votePo.getId()),
-                voteDetailRepository.listRejectUserlist(votePo.getId())
+                voteDetailRepository.listAcceptUserlist(vote.getId()),
+                voteDetailRepository.listRejectUserlist(vote.getId())
         );
     }
 
     /**
      * 判断某次投票是否通过
      *
-     * @param votePo
+     * @param vote
      * @return
      */
-    public int getVotingResult(VotePo votePo) {
-        double result = calculatePercentageOfVotesAccepted(votePo);
+    public int getVotingResult(Vote vote) {
+        double result = calculatePercentageOfVotesAccepted(vote);
         if (result > flatRateNumerator/flatRateDenominator) {
             return 1;
         } else if (result == flatRateNumerator/flatRateDenominator) {
@@ -273,14 +273,14 @@ public class VoteService {
      * @return map 待重构为具体对象
      */
     public Map getVotingDetails(int vid, int uid) {
-        VotePo votePo = voteRepository.findById(vid).get();
+        Vote vote = voteRepository.findById(vid).get();
         // myVote 我的投票，in (accept, reject, unvote)
         Boolean myVote = voteDetailRepository.getVoteDetail(vid, uid);
         // isOver 投票是否结束
-        Boolean isOver = votePo.getEndTime().isBefore(LocalDateTime.now());
+        Boolean isOver = vote.getEndTime().isBefore(LocalDateTime.now());
 
-        List<UserPo> acceptUserListPo = new ArrayList<>();
-        List<UserPo> rejectUserListPo = new ArrayList<>();
+        List<User> acceptUserListPo = new ArrayList<>();
+        List<User> rejectUserListPo = new ArrayList<>();
         List<String> unVoteNames = new ArrayList<>();
 
         double acceptedPercentage = 0.0;
@@ -299,8 +299,8 @@ public class VoteService {
                 "reject", rejectUserListPo.size(),
                 "total", acceptUserListPo.size() + rejectUserListPo.size(),
                 "myvote", myVote == null ? "unvote" : (myVote ? "accept" : "reject"),
-                "acceptnames", acceptUserListPo.stream().map(UserPo::getName).collect(Collectors.toList()),
-                "rejectnames", rejectUserListPo.stream().map(UserPo::getName).collect(Collectors.toList()),
+                "acceptnames", acceptUserListPo.stream().map(User::getName).collect(Collectors.toList()),
+                "rejectnames", rejectUserListPo.stream().map(User::getName).collect(Collectors.toList()),
                 "unvotenames", unVoteNames,
                 "acceptedPercentage", acceptedPercentage
         );
@@ -310,15 +310,15 @@ public class VoteService {
      * 生成投票的ac记录
      *
      * @param title
-     * @param userPo
+     * @param user
      * @param voteDetail
      * @param finalResult
      * @param dateTime
      * @return
      */
-    private AcRecordPo generateAcRecord(String title, UserPo userPo, boolean voteDetail, int finalResult, LocalDateTime dateTime) {
+    private AcRecord generateAcRecord(String title, User user, boolean voteDetail, int finalResult, LocalDateTime dateTime) {
         int coefficient = 0;
-        if (finalResult == InternalPaperPo.SUSPEND) {
+        if (finalResult == InternalPaper.SUSPEND) {
             // 中止外投不扣分
             coefficient = 0;
         } else if (finalResult != 2) {
@@ -328,11 +328,11 @@ public class VoteService {
                 coefficient = -1;
             }
         }
-        return AcRecordPo.builder()
-                .user(userPo)
+        return AcRecord.builder()
+                .user(user)
                 // 论文投票AC变化，对于硕士生是1分，对于博士生是2分
-                .ac(coefficient * (userPo.getPosition() == Position.DOCTOR ? 2 : 1))
-                .classify(AcRecordPo.VOTE)
+                .ac(coefficient * (user.getPosition() == Position.DOCTOR ? 2 : 1))
+                .classify(AcRecord.VOTE)
                 .reason((coefficient == 0 ? "投稿中止：" : (coefficient == 1 ? "投票预测正确：" : "投票预测错误：") + title))
                 .createTime(dateTime)
                 .build();
@@ -341,52 +341,52 @@ public class VoteService {
     /**
      * 根据论文最终结果计算投票者的ac
      *
-     * @param votePo
+     * @param vote
      * @param result
      */
-    public void computeVoteAc(VotePo votePo, int result, LocalDateTime dateTime) {
+    public void computeVoteAc(Vote vote, int result, LocalDateTime dateTime) {
         // 1. 校验数据
-        if (votePo == null) {
+        if (vote == null) {
             throw new RuntimeException("未发起投票");
         }
 
-        PaperPo paper = votePo.isExternal() ?
-                externalPaperRepository.findByVid(votePo.getId()) :
-                internalPaperRepository.findByVid(votePo.getId());
+        Paper paper = vote.isExternal() ?
+                externalPaperRepository.findByVid(vote.getId()) :
+                internalPaperRepository.findByVid(vote.getId());
         if (paper == null) {
             throw new RuntimeException("投票对应的论文不存在，请联系开发者");
         }
 
         // 2. 获取 voteDetails
-        List<VoteDetailPo> voteDetailPos = Optional.ofNullable(voteDetailRepository.listByVid(votePo.getId()))
+        List<VoteDetail> voteDetails = Optional.ofNullable(voteDetailRepository.listByVid(vote.getId()))
                 .orElse(new ArrayList<>());
 
         // 3. 删除旧的 acRecord
-        acRecordRepository.deleteAll(voteDetailPos.stream()
-                .map(VoteDetailPo::getAcRecordPO)
+        acRecordRepository.deleteAll(voteDetails.stream()
+                .map(VoteDetail::getAcRecord)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList())
         );
 
         // 4. 生成新的 acRecord 更新 voteDetail
-        voteDetailPos.forEach(voteDetailPo -> {
-            voteDetailPo.setAcRecordPO(generateAcRecord(
+        voteDetails.forEach(voteDetail -> {
+            voteDetail.setAcRecord(generateAcRecord(
                     paper.getTitle(),
-                    voteDetailPo.getUser(),
-                    voteDetailPo.isResult(),
+                    voteDetail.getUser(),
+                    voteDetail.isResult(),
                     result,
                     dateTime));
         });
-        voteDetailRepository.saveAll(voteDetailPos);
+        voteDetailRepository.saveAll(voteDetails);
 
         // 5. 保存新的 acRecord
-        acRecordRepository.saveAll(voteDetailPos.stream()
-                .map(VoteDetailPo::getAcRecordPO)
+        acRecordRepository.saveAll(voteDetails.stream()
+                .map(VoteDetail::getAcRecord)
                 .collect(Collectors.toList())
         );
 
         // 6. 生成消息数据
-        notifyService.voteAcMessage(votePo.getId(), result);
+        notifyService.voteAcMessage(vote.getId(), result);
     }
 
 }

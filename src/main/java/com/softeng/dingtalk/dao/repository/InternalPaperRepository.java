@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.InternalPaperPo;
-import com.softeng.dingtalk.po.VotePo;
+import com.softeng.dingtalk.po_entity.InternalPaper;
+import com.softeng.dingtalk.po_entity.Vote;
 import com.softeng.dingtalk.vo.PaperFileInfoVO;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +16,7 @@ import java.util.Map;
  * @date 2/5/2020
  */
 @Repository
-public interface InternalPaperRepository extends CustomizedRepository<InternalPaperPo, Integer> {
+public interface InternalPaperRepository extends CustomizedRepository<InternalPaper, Integer> {
 
     /**
      * 根据id 获取论文title
@@ -24,7 +24,7 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
      * @param id
      * @return
      */
-    @Query("select p.title from InternalPaperPo p where p.id = :id")
+    @Query("select p.title from InternalPaper p where p.id = :id")
     String getPaperTitleById(@Param("id") int id);
 
     /**
@@ -42,8 +42,8 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
      * @param vid
      * @return
      */
-    @Query("select p from InternalPaperPo p where p.vote.id = :vid")
-    InternalPaperPo findByVid(int vid);
+    @Query("select p from InternalPaper p where p.vote.id = :vid")
+    InternalPaper findByVid(int vid);
 
     /**
      * 发起论文投票时，更新论文记录
@@ -61,7 +61,7 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
      * @param id
      * @return
      */
-    @Query("select p.vote.id from InternalPaperPo p where p.id = :id")
+    @Query("select p.vote.id from InternalPaper p where p.id = :id")
     Integer findVidById(@Param("id") int id);
 
     /**
@@ -70,8 +70,8 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
      * @param id
      * @return
      */
-    @Query("select p.vote from InternalPaperPo p where p.id = :id")
-    VotePo findVoteById(@Param("id") int id);
+    @Query("select p.vote from InternalPaper p where p.id = :id")
+    Vote findVoteById(@Param("id") int id);
 
 
     /**
@@ -81,13 +81,13 @@ public interface InternalPaperRepository extends CustomizedRepository<InternalPa
      * @param result
      */
     @Modifying
-    @Query("update InternalPaperPo set result = :result where id = :id")
+    @Query("update InternalPaper set result = :result where id = :id")
     void updatePaperResult(int id, int result);
 
     @Query("select new com.softeng.dingtalk.vo.PaperFileInfoVO(p.id, p.reviewFileName, p.reviewFileId,p.submissionFileName," +
             "p.submissionFileId,p.publishedFileName,p.publishedFileId,p.publishedLatexFileName,p.publishedLatexFileId," +
             "p.publicFileName,p.publicFileId,p.sourceFileName,p.sourceFileId,p.commentFileName,p.commentFileId) " +
-            "from InternalPaperPo  p where p.id= :id")
+            "from InternalPaper  p where p.id= :id")
     PaperFileInfoVO getPaperFileInfo(@Param("id") int id);
 
 }

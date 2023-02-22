@@ -1,8 +1,8 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.DateUtils;
-import com.softeng.dingtalk.po.AcItemPo;
-import com.softeng.dingtalk.po.DcRecordPo;
+import com.softeng.dingtalk.po_entity.AcItem;
+import com.softeng.dingtalk.po_entity.DcRecord;
 import com.softeng.dingtalk.vo.ApplyVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -35,10 +35,10 @@ public class ApplicationServiceTests {
         vo.setAuditorid(4);
         vo.setDate(LocalDate.now());
         vo.setDvalue(0.5);
-        List<AcItemPo> acItemPos = new ArrayList<>();
-        acItemPos.add(new AcItemPo("申请ac1", 1));
-        acItemPos.add(new AcItemPo("申请ac2", 1));
-        vo.setAcItemPos(acItemPos);
+        List<AcItem> acItems = new ArrayList<>();
+        acItems.add(new AcItem("申请ac1", 1));
+        acItems.add(new AcItem("申请ac2", 1));
+        vo.setAcItems(acItems);
         applicationService.addApplication(vo, 1);
     }
 
@@ -51,7 +51,7 @@ public class ApplicationServiceTests {
         vo.setDate(LocalDate.now());
         vo.setDvalue(0.1);
         // 如果不 new 一个数组会出现空指针异常
-        vo.setAcItemPos(new ArrayList<>());
+        vo.setAcItems(new ArrayList<>());
         applicationService.updateApplication(vo, 1);
     }
 
@@ -63,10 +63,10 @@ public class ApplicationServiceTests {
         vo.setDate(LocalDate.now());
         vo.setDvalue(0.5);
         vo.setCvalue(0.8);
-        List<AcItemPo> acItemPos = new ArrayList<>();
-        acItemPos.add(new AcItemPo("申请ac1", 1));
-        acItemPos.add(new AcItemPo("申请ac2", 2));
-        vo.setAcItemPos(acItemPos);
+        List<AcItem> acItems = new ArrayList<>();
+        acItems.add(new AcItem("申请ac1", 1));
+        acItems.add(new AcItem("申请ac2", 2));
+        vo.setAcItems(acItems);
         applicationService.addApplicationByAuditor(vo, 3);
     }
 
@@ -79,10 +79,10 @@ public class ApplicationServiceTests {
         vo.setDate(LocalDate.now());
         vo.setDvalue(0.5);
         vo.setCvalue(0.8);
-        List<AcItemPo> acItemPos = new ArrayList<>();
-        acItemPos.add(new AcItemPo("申请ac1", 1));
-        acItemPos.add(new AcItemPo("申请ac2", 2));
-        vo.setAcItemPos(acItemPos);
+        List<AcItem> acItems = new ArrayList<>();
+        acItems.add(new AcItem("申请ac1", 1));
+        acItems.add(new AcItem("申请ac2", 2));
+        vo.setAcItems(acItems);
         applicationService.updateApplication(vo, 4);
     }
 
@@ -94,12 +94,12 @@ public class ApplicationServiceTests {
         vo.setDate(LocalDate.now());
         vo.setDvalue(0.5);
         vo.setCvalue(0.8);
-        List<AcItemPo> acItemPos = new ArrayList<>();
-        acItemPos.add(new AcItemPo("申请ac1", 1));
-        acItemPos.add(new AcItemPo("申请ac2", 2));
-        vo.setAcItemPos(acItemPos);
-        DcRecordPo dcRecordPO = new DcRecordPo().setByAuditor(5, vo, dateUtils.getDateCode(vo.getDate()));
-        log.info(dcRecordPO.toString());
+        List<AcItem> acItems = new ArrayList<>();
+        acItems.add(new AcItem("申请ac1", 1));
+        acItems.add(new AcItem("申请ac2", 2));
+        vo.setAcItems(acItems);
+        DcRecord dcRecord = new DcRecord().setByAuditor(5, vo, dateUtils.getDateCode(vo.getDate()));
+        log.info(dcRecord.toString());
     }
 
     @Test

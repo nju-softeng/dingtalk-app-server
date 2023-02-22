@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.VotePo;
+import com.softeng.dingtalk.po_entity.Vote;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -14,15 +14,15 @@ import java.util.List;
  * @date 2/5/2020
  */
 @Repository
-public interface VoteRepository extends CustomizedRepository<VotePo, Integer> {
+public interface VoteRepository extends CustomizedRepository<Vote, Integer> {
 
     /**
      * 查询还没有开始的外部评审投票中已到达开始时间的投票
      * @param nowtime
      * @return
      */
-    @Query("select v from VotePo v where v.external = true and v.started = false and v.startTime <= :nowtime")
-    List<VotePo> listUpcomingVote(LocalDateTime nowtime);
+    @Query("select v from Vote v where v.external = true and v.started = false and v.startTime <= :nowtime")
+    List<Vote> listUpcomingVote(LocalDateTime nowtime);
 
 
     /**
@@ -30,8 +30,8 @@ public interface VoteRepository extends CustomizedRepository<VotePo, Integer> {
      * @param nowtime
      * @return
      */
-    @Query("select v from VotePo v where v.status = false and v.endTime <= :nowtime")
-    List<VotePo> listClosingVote(LocalDateTime nowtime);
+    @Query("select v from Vote v where v.status = false and v.endTime <= :nowtime")
+    List<Vote> listClosingVote(LocalDateTime nowtime);
 
 
     /**
@@ -42,7 +42,7 @@ public interface VoteRepository extends CustomizedRepository<VotePo, Integer> {
      * @param result 最终结果
      */
     @Modifying
-    @Query("update VotePo v set v.status = true, v.accept = :accept, v.total = :total, v.result = :result where v.id = :id")
+    @Query("update Vote v set v.status = true, v.accept = :accept, v.total = :total, v.result = :result where v.id = :id")
     void updateStatus(int id, int accept, int total, boolean result);
 
 
@@ -61,7 +61,7 @@ public interface VoteRepository extends CustomizedRepository<VotePo, Integer> {
      * @param vid
      * @return
      */
-    @Query("select v.endTime from VotePo v where v.id = :vid")
+    @Query("select v.endTime from Vote v where v.id = :vid")
     LocalDateTime getEndTimeByVid(int vid);
 
 

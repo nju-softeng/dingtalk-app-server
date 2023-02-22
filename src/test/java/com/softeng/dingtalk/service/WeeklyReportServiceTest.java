@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.api.ReportApi;
+import com.softeng.dingtalk.component.dingApi.ReportApi;
 import com.softeng.dingtalk.dao.repository.AcRecordRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;

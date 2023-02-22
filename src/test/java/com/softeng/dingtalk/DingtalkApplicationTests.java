@@ -1,8 +1,8 @@
 package com.softeng.dingtalk;
 
-import com.softeng.dingtalk.component.EncryptorComponent;
-import com.softeng.dingtalk.po.InternalPaperPo;
-import com.softeng.dingtalk.po.PaperPo;
+import com.softeng.dingtalk.component.encryptor.EncryptorComponent;
+import com.softeng.dingtalk.po_entity.InternalPaper;
+import com.softeng.dingtalk.po_entity.Paper;
 import com.softeng.dingtalk.enums.PaperType;
 import com.softeng.dingtalk.dao.repository.InternalPaperRepository;
 import com.softeng.dingtalk.service.VoteService;
@@ -35,7 +35,7 @@ public class DingtalkApplicationTests {
 
     @Test
     public void test2() {
-        PaperPo paper = new InternalPaperPo("标题11111", "journal", PaperType.JOURNAL_A, LocalDate.now(), true, null,null,null,null);
+        Paper paper = new InternalPaper("标题11111", "journal", PaperType.JOURNAL_A, LocalDate.now(), true, null,null,null,null);
         log.debug(paper.getTitle());
     }
 }

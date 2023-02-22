@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.po.ProcessFilePo;
-import com.softeng.dingtalk.po.UserPo;
+import com.softeng.dingtalk.po_entity.ProcessFile;
+import com.softeng.dingtalk.po_entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,9 +14,9 @@ public class ProcessPropertyDetailVO {
     String conferenceName;
     String year;
     String filePath;
-    UserPo userPo;
-    ProcessFilePo invitationFile;
-    ProcessFilePo PPTFile;
-    List<ProcessFilePo> personalPhotoFileList;
-    List<ProcessFilePo> conferencePhotoFileList;
+    User user;
+    ProcessFile invitationFile;
+    ProcessFile PPTFile;
+    List<ProcessFile> personalPhotoFileList;
+    List<ProcessFile> conferencePhotoFileList;
 }

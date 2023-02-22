@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.DcRecordPo;
+import com.softeng.dingtalk.po_entity.DcRecord;
 
 import com.softeng.dingtalk.vo.AppliedVO;
 import com.softeng.dingtalk.vo.CheckedVO;
@@ -21,7 +21,7 @@ import java.util.List;
  * @date 12/12/2019
  */
 @Repository
-public interface DcRecordRepository extends CustomizedRepository<DcRecordPo, Integer> {
+public interface DcRecordRepository extends CustomizedRepository<DcRecord, Integer> {
 
 
     /**
@@ -31,7 +31,7 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecordPo, Int
      * @Date 7:49 PM 1/28/2020
      **/
     @Query("select new com.softeng.dingtalk.vo.CheckedVO(d.id, d.applicant.name, d.applicant.id, d.dvalue, d.cvalue, d.dc, d.ac, d.yearmonth, d.week, d.insertTime, d.weekdate) " +
-            "from DcRecordPo d where d.auditor.id = :uid and d.status = true order by d.id desc")
+            "from DcRecord d where d.auditor.id = :uid and d.status = true order by d.id desc")
     Page<CheckedVO> listChecked(@Param("uid")int uid, Pageable pageable);
 
     /**
@@ -42,7 +42,7 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecordPo, Int
      * @return
      */
     @Query("select new com.softeng.dingtalk.vo.CheckedVO(d.id, d.applicant.name, d.applicant.id, d.dvalue, d.cvalue, d.dc, d.ac, d.yearmonth, d.week, d.insertTime, d.weekdate) " +
-            "from DcRecordPo d where d.auditor.id = :uid and d.yearmonth = :yearmonth and d.week = :week and d.status = true order by d.id desc")
+            "from DcRecord d where d.auditor.id = :uid and d.yearmonth = :yearmonth and d.week = :week and d.status = true order by d.id desc")
     List<CheckedVO> listCheckedByDate(@Param("uid")int uid, @Param("yearmonth") int yearmonth, @Param("week") int week);
 
 
@@ -52,7 +52,7 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecordPo, Int
      * @return java.util.List<com.softeng.dingtalk.vo.ApplicationVO>
      * @Date 8:18 PM 1/19/2020
      **/
-    @Query("select new com.softeng.dingtalk.vo.ToCheckVO(d.id, d.applicant.id, d.applicant.name, d.dvalue, d.yearmonth, d.week, d.insertTime, d.weekdate) from DcRecordPo d where d.auditor.id = :uid and d.status = false order by d.id desc")
+    @Query("select new com.softeng.dingtalk.vo.ToCheckVO(d.id, d.applicant.id, d.applicant.name, d.dvalue, d.yearmonth, d.week, d.insertTime, d.weekdate) from DcRecord d where d.auditor.id = :uid and d.status = false order by d.id desc")
     List<ToCheckVO> listToCheckVO(@Param("uid") int uid);
 
 
@@ -63,7 +63,7 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecordPo, Int
      * @param end   结束年月周
      * @return
      */
-    @Query("select new com.softeng.dingtalk.vo.DcVO(d.dateCode, d.dc) from DcRecordPo d where d.applicant.id = :uid and d.auditor.id = :aid and d.dateCode >= :begin and d.dateCode <= :end")
+    @Query("select new com.softeng.dingtalk.vo.DcVO(d.dateCode, d.dc) from DcRecord d where d.applicant.id = :uid and d.auditor.id = :aid and d.dateCode >= :begin and d.dateCode <= :end")
     List<DcVO> listUserDcByDate(@Param("uid") int uid, @Param("aid") int aid, @Param("begin") int begin, @Param("end") int end);
 
     /**
@@ -74,7 +74,7 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecordPo, Int
      * @param end
      * @return
      */
-    @Query("select coalesce(sum(d.dc), 0)  from DcRecordPo d where d.applicant.id = :uid and d.auditor.id = :aid and d.dateCode >= :begin and d.dateCode <= :end")
+    @Query("select coalesce(sum(d.dc), 0)  from DcRecord d where d.applicant.id = :uid and d.auditor.id = :aid and d.dateCode >= :begin and d.dateCode <= :end")
     double getUserDcSumByDate(@Param("uid") int uid, @Param("aid") int aid, @Param("begin") int begin, @Param("end") int end);
 
 
@@ -110,7 +110,7 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecordPo, Int
      *
      **/
     @Query("select new com.softeng.dingtalk.vo.AppliedVO(d.id, d.auditor.id, d.auditor.name, d.status, d.dvalue, d.dc, d.ac, d.yearmonth, d.week, d.weekdate, d.insertTime) " +
-            "from DcRecordPo d where d.applicant.id = :uid")
+            "from DcRecord d where d.applicant.id = :uid")
     List<AppliedVO> listByUid(@Param("uid") int uid, Pageable pageable);
 
 
@@ -120,7 +120,7 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecordPo, Int
      * @return java.lang.Integer
      * @Date 2:19 PM 1/28/2020
      **/
-    @Query("select count (d) from DcRecordPo d where d.applicant.id = :uid")
+    @Query("select count (d) from DcRecord d where d.applicant.id = :uid")
     Integer getCountByUid(@Param("uid") int uid);
 
 
@@ -130,7 +130,7 @@ public interface DcRecordRepository extends CustomizedRepository<DcRecordPo, Int
      * @return java.lang.Integer
      * @Date 10:20 PM 3/12/2020
      **/
-    @Query("select count (d) from DcRecordPo d where d.auditor.id = :aid and d.status = false ")
+    @Query("select count (d) from DcRecord d where d.auditor.id = :aid and d.status = false ")
     Integer getUnCheckCntByAid(@Param("aid") int aid);
 
 

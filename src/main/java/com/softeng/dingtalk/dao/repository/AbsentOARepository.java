@@ -1,11 +1,11 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po.AbsentOAPo;
-import com.softeng.dingtalk.po.DingTalkSchedulePo;
-import com.softeng.dingtalk.po.UserPo;
+import com.softeng.dingtalk.po_entity.AbsentOA;
+import com.softeng.dingtalk.po_entity.DingTalkSchedule;
+import com.softeng.dingtalk.po_entity.User;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AbsentOARepository extends CustomizedRepository<AbsentOAPo,Integer>{
-    AbsentOAPo getAbsentOAByUserAndDingTalkSchedule(UserPo userPo, DingTalkSchedulePo dingTalkSchedulePo);
+public interface AbsentOARepository extends CustomizedRepository<AbsentOA,Integer>{
+    AbsentOA getAbsentOAByUserAndDingTalkSchedule(User user, DingTalkSchedule dingTalkSchedule);
 }
