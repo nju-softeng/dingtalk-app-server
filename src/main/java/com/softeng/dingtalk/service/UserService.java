@@ -5,6 +5,8 @@ import com.softeng.dingtalk.component.convertor.PermissionConvertor;
 import com.softeng.dingtalk.component.convertor.TeamConvertor;
 import com.softeng.dingtalk.dao.repository.*;
 import com.softeng.dingtalk.component.encryptor.Encryption;
+import com.softeng.dingtalk.dto.resp.PermissionResp;
+import com.softeng.dingtalk.dto.resp.TeamResp;
 import com.softeng.dingtalk.po_entity.*;
 import com.softeng.dingtalk.utils.StreamUtils;
 import com.softeng.dingtalk.vo.UserInfoVO;
@@ -40,24 +42,7 @@ public class UserService {
     BaseApi baseApi;
     @Autowired
     Encryption encryption;
-    @Resource
-    TeamConvertor teamConvertor;
-    @Resource
-    PermissionConvertor permissionConvertor;
 
-    /**
-     * @author LiXiaoKang
-     * @description 新增用用户权限、用户组相关注入
-     * @date 2/5/2023
-     */
-    @Autowired
-    private PermissionRepository permissionRepository;
-    @Autowired
-    private TeamRepository teamRepository;
-    @Autowired
-    private UserPermissionRepository userPermissionRepository;
-    @Autowired
-    private UserTeamRepository userTeamRepository;
 
     @Value("${file.userLeaseContractFilePath}")
     private String userLeaseContractFilePath;
@@ -179,35 +164,4 @@ public class UserService {
         fileService.downloadFile(fileName,filePath,httpServletResponse);
     }
 
-    /**
-     * @author LiXiaoKang
-     * @description 新增用用户权限、用户组相关service层方法
-     * @date 2/5/2023
-     */
-
-    /**
-     * 获得该用户的所有权限名
-     * @param userId
-     * @return 所有权限名
-     */
-    public List<Permission> getPermissions(int userId){
-        List<UserPermission> userPermissionList = userPermissionRepository.findAllByUserId(userId);
-        return StreamUtils.map(
-                userPermissionList,
-                userPermission -> permissionRepository.findById(userPermission.getPermissionId())
-        );
-    }
-
-    /**
-     * 获得该用户所在的所有用户组名
-     * @param userId
-     * @return
-     */
-    public List<Team> getTeams(int userId){
-        List<UserTeam> userTeamList = userTeamRepository.findAllByUserId(userId);
-        return StreamUtils.map(
-                userTeamList,
-                userTeam -> teamRepository.findById(userTeam.getTeamId())
-        );
-    }
 }

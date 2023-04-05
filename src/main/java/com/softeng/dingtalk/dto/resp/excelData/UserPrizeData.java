@@ -1,12 +1,14 @@
-package com.softeng.dingtalk.excel;
+package com.softeng.dingtalk.dto.resp.excelData;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.excel.annotation.write.style.*;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
+import com.alibaba.excel.annotation.write.style.ContentStyle;
+import com.alibaba.excel.annotation.write.style.HeadFontStyle;
+import com.alibaba.excel.annotation.write.style.HeadStyle;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 
 @Data
@@ -16,19 +18,18 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 @HeadStyle(verticalAlignment = VerticalAlignment.CENTER, horizontalAlignment = HorizontalAlignment.CENTER,
         fillForegroundColor = 42, bottomBorderColor = 42, leftBorderColor = 42, rightBorderColor = 42)
 @HeadFontStyle(fontHeightInPoints = 11)
-public class AcData {
+public class UserPrizeData {
     @ColumnWidth(15)
     @ExcelProperty("学号")
-    private String num;
+    private String stuNum;
     @ExcelProperty("姓名")
-    private String name;
-    @ColumnWidth(5)
-    @ExcelProperty("AC 变化")
-    private Double ac;
-    @ColumnWidth(150)
-    @ExcelProperty("AC 变化原因")
-    @ContentStyle(horizontalAlignment = HorizontalAlignment.LEFT)
-    @HeadStyle(horizontalAlignment = HorizontalAlignment.LEFT,
-            fillForegroundColor = 42, bottomBorderColor = 42, leftBorderColor = 42, rightBorderColor = 42)
-    private String reason;
+    private String stuName;
+    @ExcelProperty("获将时间")
+    private String prizeTime;
+    @ExcelProperty("奖项名称")
+    private String prizeName;
+    @ExcelProperty("奖项级别")
+    private String level;
+    @ExcelProperty("备注")
+    private String remark;
 }

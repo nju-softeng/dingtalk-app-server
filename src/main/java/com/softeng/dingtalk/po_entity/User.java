@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @ToString
+@Accessors(chain = true)
 @Table(name = "user")
 @SQLDelete(sql = "update `user` set is_deleted = 1 where id = ?")
 public class User {

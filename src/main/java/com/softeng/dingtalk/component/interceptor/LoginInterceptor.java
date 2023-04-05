@@ -20,13 +20,13 @@ import java.util.Optional;
  */
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
-    @Autowired
-    private EncryptorComponent encryptorComponent;
+//    @Autowired
+//    private EncryptorComponent encryptorComponent;
     @Resource
     private UserContextHolder userContextHolder;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String tmp = request.getHeader("token");
+//        String tmp = request.getHeader("token");
         Optional.ofNullable(request.getHeader("token"))
                 .ifPresentOrElse(token -> {
                     // 如果token存在，则将token 解密后 里面的 uid 和 aid 塞入，request 请求中

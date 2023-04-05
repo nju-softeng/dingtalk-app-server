@@ -43,12 +43,7 @@ public class UserController {
     NotifyService notifyService;
     @Autowired
     BaseApi baseApi;
-    @Resource
-    UserContextHolder userContextHolder;
-    @Resource
-    TeamConvertor teamConvertor;
-    @Resource
-    PermissionConvertor permissionConvertor;
+
 
 
     /**
@@ -143,32 +138,5 @@ public class UserController {
     @GetMapping("/user/leaseContract")
     public void downloadLeaseContract(@RequestAttribute int uid, HttpServletResponse response) throws IOException {
         userService.downloadContractFile(uid,response);
-    }
-
-    /**
-     * @author LiXiaoKang
-     * @description 新增获取用户权限与所属组信息
-     * @create 1/10/2023 8:38 PM
-     */
-
-    /**
-     * 获取用户权限信息
-     * @param uid
-     * @return
-     */
-    @GetMapping("/v2/user/permission")
-    public CommonResult<List<PermissionResp>> getPermissions(@RequestAttribute int uid){
-        return CommonResult.success(StreamUtils.map(
-                userService.getPermissions(userContextHolder.getUserContext().getUid()),
-                permission -> permissionConvertor.entity_PO2Resp(permission)
-        ));
-    }
-
-    @GetMapping("/v2/user/team")
-    public CommonResult<List<TeamResp>> getTeams(@RequestAttribute int uid){
-        return CommonResult.success(StreamUtils.map(
-                userService.getTeams(userContextHolder.getUserContext().getUid()),
-                team -> teamConvertor.entity_PO2Resp(team)
-        ));
     }
 }

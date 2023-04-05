@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.mapper;
 
-import com.softeng.dingtalk.excel.DcSummaryData;
+import com.softeng.dingtalk.dto.resp.excelData.DcSummaryData;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

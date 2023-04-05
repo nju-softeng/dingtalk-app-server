@@ -1,4 +1,4 @@
-package com.softeng.dingtalk.dto.resp;
+package com.softeng.dingtalk.dto.req;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
@@ -10,8 +10,8 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="UserPermissionResp对象", description="用户-权限响应对象")
-public class UserPermissionResp implements Serializable {
+@ApiModel(value="UserTeamReq对象", description="用户-研究组请求对象")
+public class UserPermissionReq implements Serializable {
     private int userId;
 
     private int permissionId;

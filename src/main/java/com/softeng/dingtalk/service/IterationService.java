@@ -131,6 +131,7 @@ public class IterationService {
 
 
     /**
+     * todo-有bug
      * 查询项目详细信息
      * @param pid
      * @return

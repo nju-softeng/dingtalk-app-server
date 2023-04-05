@@ -1,12 +1,11 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.component.convertor.UserConvertor;
 import com.softeng.dingtalk.component.encryptor.EncryptorComponent;
 import com.softeng.dingtalk.component.dingApi.ContactsApi;
 import com.softeng.dingtalk.component.UserContextHolder;
 import com.softeng.dingtalk.dto.CommonResult;
-import com.softeng.dingtalk.dto.resp.UserResp;
 import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.service.PermissionService;
 import com.softeng.dingtalk.service.SystemService;
 import com.softeng.dingtalk.service.UserService;
 import com.softeng.dingtalk.utils.StreamUtils;
@@ -43,6 +42,8 @@ public class LoginController {
     EncryptorComponent encryptorComponent;
     @Resource
     UserContextHolder userContextHolder;
+    @Resource
+    PermissionService permissionService;
 
 
     /**
@@ -112,7 +113,7 @@ public class LoginController {
         UserContextHolder.UserContext userContext = new UserContextHolder.UserContext()
                 .setUid(uid)
                 .setPermissionIds(StreamUtils.map(
-                        userService.getPermissions(uid),
+                        permissionService.getPermissions(uid),
                         permission -> permission.getId()
                 ));
         // 生成加密token
@@ -147,7 +148,7 @@ public class LoginController {
         UserContextHolder.UserContext userContext = new UserContextHolder.UserContext()
                 .setUid(uid)
                 .setPermissionIds(StreamUtils.map(
-                        userService.getPermissions(uid),
+                        permissionService.getPermissions(uid),
                         permission -> permission.getId()
                 ));
         // 生成加密token

@@ -2,10 +2,14 @@ package com.softeng.dingtalk.aspect;
 
 import com.softeng.dingtalk.component.UserContextHolder;
 import com.softeng.dingtalk.exception.CustomExceptionEnum;
+import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+@Aspect
+@Component
 public class AuthAspect {
 
     @Resource

@@ -1,11 +1,9 @@
 package com.softeng.dingtalk.dao.mapper;
 
-import com.softeng.dingtalk.excel.AcData;
-import org.apache.ibatis.annotations.Mapper;
+import com.softeng.dingtalk.dto.resp.excelData.AcData;
 import org.springframework.stereotype.Repository;
 
 import java.time.Month;
-import java.time.Year;
 import java.util.List;
 
 @Repository

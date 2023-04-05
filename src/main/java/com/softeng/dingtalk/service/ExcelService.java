@@ -2,10 +2,10 @@ package com.softeng.dingtalk.service;
 
 import com.alibaba.excel.EasyExcel;
 import com.softeng.dingtalk.po_entity.Prize;
-import com.softeng.dingtalk.excel.AcData;
-import com.softeng.dingtalk.excel.DcSummaryData;
-import com.softeng.dingtalk.excel.UserPrizeData;
-import com.softeng.dingtalk.excel.UserPropertyData;
+import com.softeng.dingtalk.dto.resp.excelData.AcData;
+import com.softeng.dingtalk.dto.resp.excelData.DcSummaryData;
+import com.softeng.dingtalk.dto.resp.excelData.UserPrizeData;
+import com.softeng.dingtalk.dto.resp.excelData.UserPropertyData;
 import com.softeng.dingtalk.dao.mapper.AcRecordMapper;
 import com.softeng.dingtalk.dao.mapper.DcSummaryMapper;
 import com.softeng.dingtalk.dao.repository.PrizeRepository;
