@@ -1,9 +1,9 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.entity.Practice;
-import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.repository.PracticeRepository;
-import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.po_entity.Practice;
+import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.dao.repository.PracticeRepository;
+import com.softeng.dingtalk.dao.repository.UserRepository;
 import com.softeng.dingtalk.vo.PracticeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +24,15 @@ public class PracticeService {
     @Autowired
     UserRepository userRepository;
     public void addPractice(PracticeVO practiceVO,int uid){
-        Practice practice=new Practice(userRepository.findById(uid).get(),practiceVO.getCompanyName(),practiceVO.getDepartment(),practiceVO.getStart(),practiceVO.getEnd(),practiceVO.getState());
+        Practice practice =new Practice(userRepository.findById(uid).get(),practiceVO.getCompanyName(),practiceVO.getDepartment(),practiceVO.getStart(),practiceVO.getEnd(),practiceVO.getState());
         practiceRepository.save(practice);
     }
 
+    // todo-权限相关（替换原本的authority）
     public void deletePractice(int id,int uid){
-        Practice practice=practiceRepository.findById(id).get();
-        User user=userRepository.findById(uid).get();
-        if(practice.getUser().getId()!=uid && user.getAuthority()!=2){
+        Practice practice =practiceRepository.findById(id).get();
+        User user =userRepository.findById(uid).get();
+        if(practice.getUser().getId()!=uid){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"无删除权限！");
         }
         practiceRepository.delete(practice);
@@ -41,7 +42,7 @@ public class PracticeService {
         if(practiceRepository.findById(practiceVO.getId()).get().getState()==1){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"审核已通过，无需修改！");
         }
-        Practice practice=practiceRepository.findById(practiceVO.getId()).get();
+        Practice practice =practiceRepository.findById(practiceVO.getId()).get();
         practice.update(practiceVO.getCompanyName(),practiceVO.getDepartment(),practiceVO.getStart(),practiceVO.getEnd(),practiceVO.getState());
         practiceRepository.save(practice);
     }
@@ -57,7 +58,7 @@ public class PracticeService {
 //    }
 
     public List<Practice> getPracticeList(int uid){
-        User user=userRepository.findById(uid).get();
+        User user =userRepository.findById(uid).get();
         if(user.getName().equals(adminUserName)){
             return practiceRepository.findAllByStateEquals(0);
         } else {

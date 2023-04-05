@@ -1,10 +1,14 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.api.BaseApi;
-import com.softeng.dingtalk.encryption.Encryption;
-import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.repository.AcRecordRepository;
-import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.component.dingApi.BaseApi;
+import com.softeng.dingtalk.component.convertor.PermissionConvertor;
+import com.softeng.dingtalk.component.convertor.TeamConvertor;
+import com.softeng.dingtalk.dao.repository.*;
+import com.softeng.dingtalk.component.encryptor.Encryption;
+import com.softeng.dingtalk.dto.resp.PermissionResp;
+import com.softeng.dingtalk.dto.resp.TeamResp;
+import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.utils.StreamUtils;
 import com.softeng.dingtalk.vo.UserInfoVO;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
@@ -38,8 +43,10 @@ public class UserService {
     @Autowired
     Encryption encryption;
 
+
     @Value("${file.userLeaseContractFilePath}")
     private String userLeaseContractFilePath;
+
     /**
      * 判断用户权限是否为审核人
      * @param uid 用户id
@@ -144,16 +151,16 @@ public class UserService {
     }
 
     public void saveLeaseContractFile(MultipartFile file, int uid){
-       User user=userRepository.findById(uid).get();
+       User user =userRepository.findById(uid).get();
        user.setLeaseContractFileName(file.getOriginalFilename());
-       user.setLeaseContractFilePath(fileService.addFileByPath(file,userLeaseContractFilePath+user.getStuNum()));
+       user.setLeaseContractFilePath(fileService.addFileByPath(file,userLeaseContractFilePath+ user.getStuNum()));
        userRepository.save(user);
     }
 
     public void downloadContractFile(int uid, HttpServletResponse httpServletResponse) throws IOException {
-        User user=userRepository.findById(uid).get();
-        String fileName=user.getLeaseContractFileName();
-        String filePath=user.getLeaseContractFilePath();
+        User user =userRepository.findById(uid).get();
+        String fileName= user.getLeaseContractFileName();
+        String filePath= user.getLeaseContractFilePath();
         fileService.downloadFile(fileName,filePath,httpServletResponse);
     }
 

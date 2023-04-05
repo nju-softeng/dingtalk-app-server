@@ -1,8 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DateUtils;
-import com.softeng.dingtalk.api.ReportApi;
-import com.softeng.dingtalk.entity.DcRecord;
+import com.softeng.dingtalk.component.dingApi.ReportApi;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.NotifyService;
 import com.softeng.dingtalk.service.UserService;
@@ -11,13 +10,11 @@ import com.softeng.dingtalk.vo.CheckVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 

@@ -1,23 +1,16 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.api.ReportApi;
+import com.softeng.dingtalk.component.dingApi.ReportApi;
 import com.softeng.dingtalk.component.DateUtils;
-import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.repository.UserRepository;
-import com.softeng.dingtalk.vo.UserVO;
+import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.dao.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Year;
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**

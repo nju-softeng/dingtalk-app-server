@@ -1,13 +1,11 @@
 package com.softeng.dingtalk.component;
 
-import com.softeng.dingtalk.api.MessageApi;
-import com.softeng.dingtalk.constant.LocalUrlConstant;
-import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.AcRecordRepository;
-import com.softeng.dingtalk.repository.ExternalPaperRepository;
-import com.softeng.dingtalk.repository.InternalPaperRepository;
-import com.softeng.dingtalk.repository.VoteRepository;
+import com.softeng.dingtalk.component.dingApi.MessageApi;
+import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.dao.repository.AcRecordRepository;
+import com.softeng.dingtalk.dao.repository.ExternalPaperRepository;
+import com.softeng.dingtalk.dao.repository.InternalPaperRepository;
+import com.softeng.dingtalk.dao.repository.VoteRepository;
 import com.softeng.dingtalk.service.InitService;
 import com.softeng.dingtalk.service.SystemService;
 import com.softeng.dingtalk.service.VoteService;
@@ -21,7 +19,6 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author zhanyeye

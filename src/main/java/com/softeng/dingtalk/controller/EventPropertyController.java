@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 import com.alibaba.fastjson.JSONObject;
-import com.softeng.dingtalk.entity.EventProperty;
+import com.softeng.dingtalk.po_entity.EventProperty;
 import com.softeng.dingtalk.service.EventPropertyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class EventPropertyController {
 
     @PostMapping("/event")
     public void addEventProperty(@RequestParam String eventPropertyJsonStr){
-        EventProperty eventProperty= JSONObject.parseObject(eventPropertyJsonStr,EventProperty.class);
+        EventProperty eventProperty = JSONObject.parseObject(eventPropertyJsonStr, EventProperty.class);
         if(eventProperty.getId()==null){
             eventPropertyService.addEventProperty(eventProperty);
         }else{

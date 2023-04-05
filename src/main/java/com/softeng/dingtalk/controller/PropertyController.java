@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.entity.Property;
+import com.softeng.dingtalk.po_entity.Property;
 import com.softeng.dingtalk.service.PropertyService;
 import com.softeng.dingtalk.vo.PropertyVO;
 import lombok.extern.slf4j.Slf4j;

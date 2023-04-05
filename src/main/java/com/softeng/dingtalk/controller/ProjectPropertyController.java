@@ -1,5 +1,5 @@
 package com.softeng.dingtalk.controller;
-import com.softeng.dingtalk.entity.ProjectProperty;
+import com.softeng.dingtalk.po_entity.ProjectProperty;
 import com.softeng.dingtalk.service.ProjectPropertyService;
 import com.softeng.dingtalk.vo.ProjectPropertyFileVO;
 import com.softeng.dingtalk.vo.ProjectPropertyVO;

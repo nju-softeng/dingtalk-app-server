@@ -1,8 +1,8 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.DateUtils;
-import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.repository.*;
+import com.softeng.dingtalk.dao.repository.*;
+import com.softeng.dingtalk.po_entity.*;
 import com.softeng.dingtalk.vo.ProjectVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

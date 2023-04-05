@@ -2,11 +2,11 @@ package com.softeng.dingtalk.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softeng.dingtalk.controller.WebSocketController;
-import com.softeng.dingtalk.api.MessageApi;
-import com.softeng.dingtalk.entity.*;
+import com.softeng.dingtalk.component.dingApi.MessageApi;
+import com.softeng.dingtalk.dao.repository.*;
+import com.softeng.dingtalk.po_entity.*;
 
 import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.VoteVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +19,12 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author zhanyeye
@@ -225,13 +223,13 @@ public class VoteService {
     /**
      * 根据投接受票的投拒绝票的人加权后算出接受的百分比值
      *
-     * @param acceptUserList 投接受的人的列表
-     * @param rejectUserList 投拒绝的人的列表
+     * @param acceptUserListPo 投接受的人的列表
+     * @param rejectUserListPo 投拒绝的人的列表
      * @return [0, 1)
      */
-    public double calculatePercentageOfVotesAccepted(List<User> acceptUserList, List<User> rejectUserList) {
-        double acceptWeights = acceptUserList.stream().mapToDouble(VoteService::getWeight).sum();
-        double rejectWeights = rejectUserList.stream().mapToDouble(VoteService::getWeight).sum();
+    public double calculatePercentageOfVotesAccepted(List<User> acceptUserListPo, List<User> rejectUserListPo) {
+        double acceptWeights = acceptUserListPo.stream().mapToDouble(VoteService::getWeight).sum();
+        double rejectWeights = rejectUserListPo.stream().mapToDouble(VoteService::getWeight).sum();
         double totleWeights = acceptWeights + rejectWeights;
         return totleWeights == 0.0 ? 0.0 : acceptWeights / totleWeights;
     }
@@ -281,28 +279,28 @@ public class VoteService {
         // isOver 投票是否结束
         Boolean isOver = vote.getEndTime().isBefore(LocalDateTime.now());
 
-        List<User> acceptUserList = new ArrayList<>();
-        List<User> rejectUserList = new ArrayList<>();
+        List<User> acceptUserListPo = new ArrayList<>();
+        List<User> rejectUserListPo = new ArrayList<>();
         List<String> unVoteNames = new ArrayList<>();
 
         double acceptedPercentage = 0.0;
 
         if (isOver) {
             // 投票已结束
-            acceptUserList = voteDetailRepository.listAcceptUserlist(vid);
-            rejectUserList = voteDetailRepository.listRejectUserlist(vid);
+            acceptUserListPo = voteDetailRepository.listAcceptUserlist(vid);
+            rejectUserListPo = voteDetailRepository.listRejectUserlist(vid);
             unVoteNames = voteDetailRepository.findUnVoteUsername(vid);
-            acceptedPercentage = calculatePercentageOfVotesAccepted(acceptUserList, rejectUserList);
+            acceptedPercentage = calculatePercentageOfVotesAccepted(acceptUserListPo, rejectUserListPo);
         }
         return Map.of(
                 "vid", vid,
                 "status", isOver,
-                "accept", acceptUserList.size(),
-                "reject", rejectUserList.size(),
-                "total", acceptUserList.size() + rejectUserList.size(),
+                "accept", acceptUserListPo.size(),
+                "reject", rejectUserListPo.size(),
+                "total", acceptUserListPo.size() + rejectUserListPo.size(),
                 "myvote", myVote == null ? "unvote" : (myVote ? "accept" : "reject"),
-                "acceptnames", acceptUserList.stream().map(User::getName).collect(Collectors.toList()),
-                "rejectnames", rejectUserList.stream().map(User::getName).collect(Collectors.toList()),
+                "acceptnames", acceptUserListPo.stream().map(User::getName).collect(Collectors.toList()),
+                "rejectnames", rejectUserListPo.stream().map(User::getName).collect(Collectors.toList()),
                 "unvotenames", unVoteNames,
                 "acceptedPercentage", acceptedPercentage
         );

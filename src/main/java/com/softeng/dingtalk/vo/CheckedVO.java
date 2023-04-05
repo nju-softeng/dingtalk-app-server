@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.entity.AcItem;
+import com.softeng.dingtalk.po_entity.AcItem;
 import lombok.*;
 
 import java.time.LocalDate;

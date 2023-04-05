@@ -1,12 +1,12 @@
 package com.softeng.dingtalk.service;
 
 import com.dingtalk.api.response.OapiUserGetResponse;
-import com.softeng.dingtalk.api.*;
+import com.softeng.dingtalk.component.dingApi.*;
 import com.softeng.dingtalk.component.AcAlgorithm;
 import com.softeng.dingtalk.constant.LocalUrlConstant;
-import com.softeng.dingtalk.entity.*;
+import com.softeng.dingtalk.dao.repository.*;
+import com.softeng.dingtalk.po_entity.*;
 import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -365,8 +365,8 @@ public class SystemService {
     }
 
     public void calculateScheduleAC() {
-        List<DingTalkSchedule> dingTalkScheduleList=dingTalkScheduleRepository.getDingTalkSchedulesByAcCalculatedFalse();
-        for(DingTalkSchedule dingTalkSchedule:dingTalkScheduleList){
+        List<DingTalkSchedule> dingTalkScheduleList =dingTalkScheduleRepository.getDingTalkSchedulesByAcCalculatedFalse();
+        for(DingTalkSchedule dingTalkSchedule : dingTalkScheduleList){
             LocalDateTime now=LocalDateTime.now();
             if(now.compareTo(dingTalkSchedule.getEnd())>=0){
                 //获取改日程请假列表，并获取oa通过的同学的列表
@@ -380,11 +380,11 @@ public class SystemService {
                 absentUserIdList.removeAll(osNotPassUserIdList);
                 //进行扣分
                 if(absentUserIdList.size()!=0){
-                    List<DingTalkScheduleDetail> detailList=dingTalkSchedule.getDingTalkScheduleDetailList();
+                    List<DingTalkScheduleDetail> detailList= dingTalkSchedule.getDingTalkScheduleDetailList();
                     detailList.forEach(detail -> {
                         boolean isContain = absentUserIdList .stream().anyMatch(x-> x.equals(detail.getUser().getUnionid()));
                         if(isContain) {
-                            AcRecord acRecord=new AcRecord(detail.getUser(),
+                            AcRecord acRecord =new AcRecord(detail.getUser(),
                                     null,
                                     -1*absentACPunishment,
                                     detail.getDingTalkSchedule().getStart().toString()+"会议缺席",

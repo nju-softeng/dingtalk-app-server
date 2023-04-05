@@ -88,7 +88,7 @@
   </tbody>
 </table>
 
-+ 钉钉SDK的封装 👉 ：[com.softeng.dingtalk.api](https://github.com/nju-softeng/dingtalk-app-server/tree/main/src/main/java/com/softeng/dingtalk/api)
++ 钉钉SDK的封装 👉 ：[com.softeng.dingtalk.dingApi](https://github.com/nju-softeng/dingtalk-app-server/tree/main/src/main/java/com/softeng/dingtalk/api)
 + 项目前端代码  👉 ：[dingtalk-app-web](https://github.com/nju-softeng/dingtalk-app-web)
 
 ### 注意事项  

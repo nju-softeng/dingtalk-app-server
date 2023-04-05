@@ -1,12 +1,10 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.DateUtils;
-import com.softeng.dingtalk.entity.AcItem;
-import com.softeng.dingtalk.entity.DcRecord;
-import com.softeng.dingtalk.repository.DcRecordRepository;
+import com.softeng.dingtalk.po_entity.AcItem;
+import com.softeng.dingtalk.po_entity.DcRecord;
 import com.softeng.dingtalk.vo.ApplyVO;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

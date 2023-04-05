@@ -2,20 +2,19 @@ package com.softeng.dingtalk.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.softeng.dingtalk.entity.ExternalPaper;
-import com.softeng.dingtalk.entity.InternalPaper;
-import com.softeng.dingtalk.entity.Review;
-import com.softeng.dingtalk.entity.Vote;
-import com.softeng.dingtalk.repository.ExternalPaperRepository;
-import com.softeng.dingtalk.repository.InternalPaperRepository;
-import com.softeng.dingtalk.repository.VoteRepository;
+import com.softeng.dingtalk.po_entity.ExternalPaper;
+import com.softeng.dingtalk.po_entity.InternalPaper;
+import com.softeng.dingtalk.po_entity.Review;
+import com.softeng.dingtalk.po_entity.Vote;
+import com.softeng.dingtalk.dao.repository.ExternalPaperRepository;
+import com.softeng.dingtalk.dao.repository.InternalPaperRepository;
+import com.softeng.dingtalk.dao.repository.VoteRepository;
 import com.softeng.dingtalk.service.FileService;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

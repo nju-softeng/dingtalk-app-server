@@ -1,10 +1,10 @@
 package com.softeng.dingtalk.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.entity.Vote;
-import com.softeng.dingtalk.entity.VoteDetail;
-import com.softeng.dingtalk.repository.VoteRepository;
+import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.po_entity.Vote;
+import com.softeng.dingtalk.po_entity.VoteDetail;
+import com.softeng.dingtalk.dao.repository.VoteRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;
 import com.softeng.dingtalk.vo.PollVO;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 /**

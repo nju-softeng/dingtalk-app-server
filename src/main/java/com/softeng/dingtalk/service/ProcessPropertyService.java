@@ -1,12 +1,9 @@
 package com.softeng.dingtalk.service;
-import com.softeng.dingtalk.entity.EventFile;
-import com.softeng.dingtalk.entity.EventProperty;
-import com.softeng.dingtalk.entity.ProcessFile;
-import com.softeng.dingtalk.entity.ProcessProperty;
-import com.softeng.dingtalk.repository.ProcessFileRepository;
-import com.softeng.dingtalk.repository.ProcessPropertyRepository;
-import com.softeng.dingtalk.repository.UserRepository;
-import com.softeng.dingtalk.vo.EventPropertyInfoVO;
+import com.softeng.dingtalk.po_entity.ProcessFile;
+import com.softeng.dingtalk.po_entity.ProcessProperty;
+import com.softeng.dingtalk.dao.repository.ProcessFileRepository;
+import com.softeng.dingtalk.dao.repository.ProcessPropertyRepository;
+import com.softeng.dingtalk.dao.repository.UserRepository;
 import com.softeng.dingtalk.vo.ProcessPropertyDetailVO;
 import com.softeng.dingtalk.vo.ProcessPropertyVO;
 import lombok.extern.slf4j.Slf4j;
@@ -18,15 +15,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -43,13 +37,13 @@ public class ProcessPropertyService {
     public void addProcessProperty(MultipartFile file, ProcessPropertyVO processPropertyVO,int uid){
         //1.保存文件
         String fileId;
-        ProcessFile processFile=null;
+        ProcessFile processFile =null;
         if(file!=null){
             fileId=fileService.addFileByPath(file,processPropertyVO.getFilePath()+"/PPT");
-            processFile=new ProcessFile(file.getOriginalFilename(),"PPT",fileId);
+            processFile =new ProcessFile(file.getOriginalFilename(),"PPT",fileId);
         }
         //2.保存记录信息
-        ProcessProperty processProperty=new ProcessProperty(processPropertyVO.getConferenceName(),processPropertyVO.getYear(),
+        ProcessProperty processProperty =new ProcessProperty(processPropertyVO.getConferenceName(),processPropertyVO.getYear(),
                 processPropertyVO.getFilePath(),userRepository.findById(uid).get());
         processProperty.setPPTFile(processFile);
         processPropertyRepository.save(processProperty);
@@ -61,7 +55,7 @@ public class ProcessPropertyService {
         return Map.of("list",infoList,"total",processProperties.getTotalElements());
     }
     public void updateProcessProperty(ProcessPropertyVO processPropertyVO){
-        ProcessProperty processProperty=processPropertyRepository.findById(processPropertyVO.getId()).get();
+        ProcessProperty processProperty =processPropertyRepository.findById(processPropertyVO.getId()).get();
         processProperty.update(processPropertyVO.getConferenceName(),processPropertyVO.getYear());
         processPropertyRepository.save(processProperty);
     }
@@ -87,9 +81,9 @@ public class ProcessPropertyService {
         ProcessProperty pp=processPropertyRepository.findById(id).get();
         String fileName=file.getOriginalFilename();
         String fileId=fileService.addFileByPath(file,pp.getFilePath()+"/"+getFileTypeFolderName(fileType));
-        ProcessFile processFile=new ProcessFile(fileName,fileType,fileId);
+        ProcessFile processFile =new ProcessFile(fileName,fileType,fileId);
         processFile.setProcessProperty(pp);
-        List<ProcessFile> processFileList=null;
+        List<ProcessFile> processFileList =null;
         switch (fileType){
             case"invitationFile":
                 pp.setInvitationFile(processFile);
@@ -98,18 +92,18 @@ public class ProcessPropertyService {
                 pp.setPPTFile(processFile);
                 break;
             case "personalPhotoFile":
-                processFileList=pp.getPersonalPhotoFileList();
+                processFileList =pp.getPersonalPhotoFileList();
                 if(pp.getPersonalPhotoFileList()==null){
-                    processFileList=new LinkedList<ProcessFile>();
+                    processFileList =new LinkedList<ProcessFile>();
                 }
                 processFileList.add(processFile);
                 processFileRepository.save(processFile);
                 pp.setPersonalPhotoFileList(processFileList);
                 break;
             case "conferencePhotoFile":
-                processFileList=pp.getConferencePhotoFileList();
+                processFileList =pp.getConferencePhotoFileList();
                 if(pp.getConferencePhotoFileList()==null){
-                    processFileList=new LinkedList<ProcessFile>();
+                    processFileList =new LinkedList<ProcessFile>();
                 }
                 processFileList.add(processFile);
                 processFileRepository.save(processFile);
@@ -146,15 +140,15 @@ public class ProcessPropertyService {
      * @param processFileList
      */
     private void simpleDeleteFileList(List<ProcessFile> processFileList){
-        for(ProcessFile processFile: processFileList){
-            fileService.deleteFileByPath(processFile.getFileName(),processFile.getFileId());
+        for(ProcessFile processFile : processFileList){
+            fileService.deleteFileByPath(processFile.getFileName(), processFile.getFileId());
         }
     }
 
     public void downloadProcessFile(int id, HttpServletResponse response)  {
-        ProcessFile processFile=processFileRepository.findById(id).get();
+        ProcessFile processFile =processFileRepository.findById(id).get();
         try{
-            fileService.downloadFile(processFile.getFileName(),processFile.getFileId(),response);
+            fileService.downloadFile(processFile.getFileName(), processFile.getFileId(),response);
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

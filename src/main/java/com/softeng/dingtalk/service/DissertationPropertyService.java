@@ -1,8 +1,8 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.entity.Dissertation;
-import com.softeng.dingtalk.repository.DissertationPropertyRepository;
-import com.softeng.dingtalk.repository.UserRepository;
+import com.softeng.dingtalk.po_entity.Dissertation;
+import com.softeng.dingtalk.dao.repository.DissertationPropertyRepository;
+import com.softeng.dingtalk.dao.repository.UserRepository;
 import com.softeng.dingtalk.vo.DissertationVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,7 +35,7 @@ public class DissertationPropertyService {
 
     public void addDissertation(MultipartFile file, DissertationVO dissertationVO){
         String fileId=fileService.addFileByPath(file,dissertationVO.getFilePath()+"/PreRejoin");
-        Dissertation dissertation=new Dissertation(dissertationVO.getState(),dissertationVO.getGraduateYear(),dissertationVO.getFilePath());
+        Dissertation dissertation =new Dissertation(dissertationVO.getState(),dissertationVO.getGraduateYear(),dissertationVO.getFilePath());
         dissertation.setUser(userRepository.findById(dissertationVO.getUserId()).get());
         dissertation.setPreRejoinFileName(file.getOriginalFilename());
         dissertation.setPreRejoinFileId(fileId);
@@ -45,7 +43,7 @@ public class DissertationPropertyService {
     }
 
     public void updateDissertation(DissertationVO dissertationVO){
-        Dissertation dissertationRec=dissertationPropertyRepository.findById(dissertationVO.getId()).get();
+        Dissertation dissertationRec =dissertationPropertyRepository.findById(dissertationVO.getId()).get();
         dissertationRec.update(dissertationVO.getState(),dissertationVO.getGraduateYear());
         dissertationPropertyRepository.save(dissertationRec);
     }
@@ -53,27 +51,27 @@ public class DissertationPropertyService {
     public Map<String, Object> getDissertation(int page, int size){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
         Page<Dissertation> dissertations=dissertationPropertyRepository.findAll(pageable);
-        List<Dissertation> dissertationList=dissertations.stream().collect(Collectors.toList());
-        return Map.of("list",dissertationList,"total",dissertations.getTotalElements());
+        List<Dissertation> dissertationList =dissertations.stream().collect(Collectors.toList());
+        return Map.of("list", dissertationList,"total",dissertations.getTotalElements());
     }
 
     public Dissertation getDissertationDetail(@PathVariable int uid){
-        Dissertation dissertationRec=dissertationPropertyRepository.findByUserId(uid);
+        Dissertation dissertationRec =dissertationPropertyRepository.findByUserId(uid);
         return dissertationRec;
     }
 
     public void deleteDissertation(int id){
-        Dissertation dissertation=dissertationPropertyRepository.findById(id).get();
-        if(dissertation.getPreRejoinFileId()!=null)fileService.deleteFileByPath(dissertation.getPreRejoinFileName(),dissertation.getPreRejoinFileId());
-        if(dissertation.getReviewFileId()!=null)fileService.deleteFileByPath(dissertation.getReviewFileName(),dissertation.getReviewFileId());
-        if(dissertation.getRejoinFileId()!=null)fileService.deleteFileByPath(dissertation.getRejoinFileName(),dissertation.getRejoinFileId());
-        if(dissertation.getFinalFileId()!=null)fileService.deleteFileByPath(dissertation.getFinalFileName(),dissertation.getFinalFileId());
+        Dissertation dissertation =dissertationPropertyRepository.findById(id).get();
+        if(dissertation.getPreRejoinFileId()!=null)fileService.deleteFileByPath(dissertation.getPreRejoinFileName(), dissertation.getPreRejoinFileId());
+        if(dissertation.getReviewFileId()!=null)fileService.deleteFileByPath(dissertation.getReviewFileName(), dissertation.getReviewFileId());
+        if(dissertation.getRejoinFileId()!=null)fileService.deleteFileByPath(dissertation.getRejoinFileName(), dissertation.getRejoinFileId());
+        if(dissertation.getFinalFileId()!=null)fileService.deleteFileByPath(dissertation.getFinalFileName(), dissertation.getFinalFileId());
         dissertationPropertyRepository.deleteById(id);
     }
 
     public void addDissertationFile(MultipartFile file, String type, int id){
-        Dissertation dissertation=dissertationPropertyRepository.findById(id).get();
-        String fileId=this.fileService.addFileByPath(file,dissertation.getFilePath()+"/"+getFileTypeFolderName(type));
+        Dissertation dissertation =dissertationPropertyRepository.findById(id).get();
+        String fileId=this.fileService.addFileByPath(file, dissertation.getFilePath()+"/"+getFileTypeFolderName(type));
         String fileName=file.getOriginalFilename();
         switch (type){
             case "preRejoinFile":
@@ -107,34 +105,34 @@ public class DissertationPropertyService {
         return 0;
     }
     public void deleteDissertationFile(int id,String type){
-        Dissertation dissertation=dissertationPropertyRepository.findById(id).get();
+        Dissertation dissertation =dissertationPropertyRepository.findById(id).get();
         String fileId=null;
         String fileName=null;
         switch (type){
             case "preRejoinFile":
-                fileId=dissertation.getPreRejoinFileId();
-                fileName=dissertation.getPreRejoinFileName();
+                fileId= dissertation.getPreRejoinFileId();
+                fileName= dissertation.getPreRejoinFileName();
                 dissertation.setPreRejoinFileName(null);
                 dissertation.setPreRejoinFileId(null);
                 dissertation.setState(0);
                 break;
             case "reviewFile":
-                fileId=dissertation.getReviewFileId();
-                fileName=dissertation.getReviewFileName();
+                fileId= dissertation.getReviewFileId();
+                fileName= dissertation.getReviewFileName();
                 dissertation.setReviewFileName(null);
                 dissertation.setReviewFileId(null);
                 dissertation.setState(0);
                 break;
             case "rejoinFile":
-                fileId=dissertation.getRejoinFileId();
-                fileName=dissertation.getRejoinFileName();
+                fileId= dissertation.getRejoinFileId();
+                fileName= dissertation.getRejoinFileName();
                 dissertation.setRejoinFileName(null);
                 dissertation.setRejoinFileId(null);
                 dissertation.setState(1);
                 break;
             case "finalFile":
-                fileId=dissertation.getFinalFileId();
-                fileName=dissertation.getFinalFileName();
+                fileId= dissertation.getFinalFileId();
+                fileName= dissertation.getFinalFileName();
                 dissertation.setFinalFileName(null);
                 dissertation.setFinalFileId(null);
                 dissertation.setState(2);
@@ -157,25 +155,25 @@ public class DissertationPropertyService {
     }
 
     private DissertationFileInfo getDissertationFileInfo(int id,String type){
-        Dissertation dissertation=dissertationPropertyRepository.findById(id).get();
+        Dissertation dissertation =dissertationPropertyRepository.findById(id).get();
         String fileName=null;
         String fileId=null;
         switch (type){
             case "preRejoinFile":
-                fileId=dissertation.getPreRejoinFileId();
-                fileName=dissertation.getPreRejoinFileName();
+                fileId= dissertation.getPreRejoinFileId();
+                fileName= dissertation.getPreRejoinFileName();
                 break;
             case "reviewFile":
-                fileId=dissertation.getReviewFileId();
-                fileName=dissertation.getReviewFileName();
+                fileId= dissertation.getReviewFileId();
+                fileName= dissertation.getReviewFileName();
                 break;
             case "rejoinFile":
-                fileId=dissertation.getRejoinFileId();
-                fileName=dissertation.getRejoinFileName();
+                fileId= dissertation.getRejoinFileId();
+                fileName= dissertation.getRejoinFileName();
                 break;
             case "finalFile":
-                fileId=dissertation.getFinalFileId();
-                fileName=dissertation.getFinalFileName();
+                fileId= dissertation.getFinalFileId();
+                fileName= dissertation.getFinalFileName();
                 break;
         }
         return new DissertationFileInfo(fileName, fileId);

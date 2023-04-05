@@ -1,10 +1,10 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.repository.AcRecordRepository;
-import com.softeng.dingtalk.repository.BugDetailRepository;
-import com.softeng.dingtalk.repository.BugRepository;
-import com.softeng.dingtalk.repository.IterationDetailRepository;
+import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.dao.repository.AcRecordRepository;
+import com.softeng.dingtalk.dao.repository.BugDetailRepository;
+import com.softeng.dingtalk.dao.repository.BugRepository;
+import com.softeng.dingtalk.dao.repository.IterationDetailRepository;
 import com.softeng.dingtalk.vo.BugCheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

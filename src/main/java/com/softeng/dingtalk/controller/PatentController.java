@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.softeng.dingtalk.entity.Patent;
+import com.softeng.dingtalk.po_entity.Patent;
 import com.softeng.dingtalk.service.FileService;
 import com.softeng.dingtalk.service.PatentService;
 import com.softeng.dingtalk.vo.PatentVO;

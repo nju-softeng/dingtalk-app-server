@@ -1,10 +1,7 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.api.ReportApi;
-import com.softeng.dingtalk.component.AcAlgorithm;
-import com.softeng.dingtalk.component.Timer;
-import com.softeng.dingtalk.entity.AcRecord;
-import com.softeng.dingtalk.repository.AcRecordRepository;
+import com.softeng.dingtalk.component.dingApi.ReportApi;
+import com.softeng.dingtalk.dao.repository.AcRecordRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,9 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * @Author zhanyeye

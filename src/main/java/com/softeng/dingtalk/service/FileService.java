@@ -2,12 +2,11 @@ package com.softeng.dingtalk.service;
 
 import com.aliyun.dingtalkdrive_1_0.models.AddFileResponseBody;
 import com.aliyun.dingtalkdrive_1_0.models.GetDownloadInfoResponseBody;
-import com.softeng.dingtalk.api.BaseApi;
+import com.softeng.dingtalk.component.dingApi.BaseApi;
 import com.softeng.dingtalk.vo.PaperFileDownloadInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 /**
  * @author RickyWu
