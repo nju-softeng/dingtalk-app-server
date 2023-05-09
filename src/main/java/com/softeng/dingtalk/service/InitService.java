@@ -76,6 +76,7 @@ public class InitService {
             subsidyLevels.add(new SubsidyLevel(Position.PROFESSIONAL, 200));
             subsidyLevels.add(new SubsidyLevel(Position.UNDERGRADUATE, 0));
             subsidyLevels.add(new SubsidyLevel(Position.OTHER, 0));
+            subsidyLevels.add(new SubsidyLevel(Position.TEACHER, 0));
             subsidyLevelRepository.saveBatch(subsidyLevels);
         }
     }

@@ -123,6 +123,9 @@ public class PaperService {
         Vote vote = new Vote(vo.getStartTime(), vo.getEndTime(), true, externalPaper.getId());
         externalPaper.setVote(vote);
 
+        vote.setTotal(0);
+        vote.setAccept(0);
+
         voteRepository.save(vote);
     }
 

@@ -17,7 +17,7 @@ public class NewsConvertor extends AbstractConvertorTemplate<NewsReq, NewsResp, 
         res.setAuthor(new User().setId(newsReq.getAuthorId()));
         res.setIsDeleted(0);
         res.setIsShown(1);
-//        这里加上时间，因为News有release_time字段，且未null，
+//        这里加上时间，因为News有release_time字段，且为null，
 //        会让数据库表的default CURRENT_TIMESTAMP失效
         res.setReleaseTime(LocalDateTime.now());
         return res;

@@ -17,9 +17,12 @@ public class NewsReq implements Serializable {
     @ApiModelProperty(value = "公告标题")
     private String title;
 
-    @ApiModelProperty(value = "公告链接")
-    private String link;
+//    @ApiModelProperty(value = "公告链接")
+//    private String link;
 
     @ApiModelProperty(value = "公告发布者id")
     private int authorId;
+
+    @ApiModelProperty(value = "公告详情内容")
+    private String content;
 }

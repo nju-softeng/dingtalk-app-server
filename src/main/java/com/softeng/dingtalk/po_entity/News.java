@@ -27,10 +27,10 @@ public class News {
      */
     private String title;
 
-    /**
-     * 公告跳转链接
-     */
-    private String link;
+//    /**
+//     * 公告跳转链接
+//     */
+//    private String link;
 
     /**
      * 公告发布作者
@@ -54,6 +54,11 @@ public class News {
      * 公告发布时间
      */
     private LocalDateTime releaseTime;
+
+    /**
+     * 公告详情内容
+     */
+    private String content;
 
     @Override
     public boolean equals(Object o) {

@@ -71,6 +71,43 @@ public class VoteService {
     @Value("${paper.flatRateDenominator}")
     private double flatRateDenominator;
 
+
+    private static double doctorWeightForVote;
+
+    private static double academicWeightForVote;
+
+    private static double professionalWeightForVote;
+
+    private static double teacherWeightForVote;
+
+    private static double defaultWeightForVote;
+
+    @Value("${paper.doctorWeight}")
+    public void setDoctorWeightForVote(double value) {
+        VoteService.doctorWeightForVote = value;
+    }
+
+    @Value("${paper.academicWeight}")
+    public void setAcademicWeightForVote(double value) {
+        VoteService.academicWeightForVote = value;
+    }
+
+    @Value("${paper.doctorWeight}")
+    public void setProfessionalWeightForVote(double value) {
+        VoteService.professionalWeightForVote = value;
+    }
+
+    @Value("${paper.teacherWeight}")
+    public void setTeacherWeightForVote(double value) {
+        VoteService.teacherWeightForVote = value;
+    }
+
+    @Value("${paper.defaultWeight}")
+    public void setDefaultWeightForVote(double value) {
+        VoteService.defaultWeightForVote = value;
+    }
+
+
     /**
      * 创建论文评审投票
      *
@@ -85,6 +122,10 @@ public class VoteService {
             if (voteRepository.isExisted(vo.getPaperid(), false) == 0) {
                 // 如果投票还没有被创建
                 Vote vote = new Vote(LocalDateTime.now(), vo.getEndTime(), vo.getPaperid());
+
+                vote.setAccept(0);
+                vote.setTotal(0);
+
                 voteRepository.save(vote);
                 internalPaperRepository.updatePaperVote(vo.getPaperid(), vote.getId());
                 sendVoteInfoCardToDingtalk(vo.getPaperid(), vo.getEndTime().toLocalTime());
@@ -211,12 +252,15 @@ public class VoteService {
     public static double getWeight(User user) {
         switch (user.getPosition()) {
             case DOCTOR:
-                return 2.0;
+                return doctorWeightForVote;
             case ACADEMIC:
+                return academicWeightForVote;
             case PROFESSIONAL:
-                return 1.0;
+                return professionalWeightForVote;
+            case TEACHER:
+                return teacherWeightForVote;
             default:
-                return 0.0;
+                return defaultWeightForVote;
         }
     }
 
@@ -299,8 +343,10 @@ public class VoteService {
                 "reject", rejectUserListPo.size(),
                 "total", acceptUserListPo.size() + rejectUserListPo.size(),
                 "myvote", myVote == null ? "unvote" : (myVote ? "accept" : "reject"),
-                "acceptnames", acceptUserListPo.stream().map(User::getName).collect(Collectors.toList()),
-                "rejectnames", rejectUserListPo.stream().map(User::getName).collect(Collectors.toList()),
+//                "acceptnames", acceptUserListPo.stream().map(User::getName).collect(Collectors.toList()),
+//                "rejectnames", rejectUserListPo.stream().map(User::getName).collect(Collectors.toList()),
+                "acceptUsers", acceptUserListPo,
+                "rejectUsers", rejectUserListPo,
                 "unvotenames", unVoteNames,
                 "acceptedPercentage", acceptedPercentage
         );
@@ -330,7 +376,7 @@ public class VoteService {
         }
         return AcRecord.builder()
                 .user(user)
-                // 论文投票AC变化，对于硕士生是1分，对于博士生是2分
+                // todo- 论文投票AC变化，对于硕士生是1分，对于博士生是2分
                 .ac(coefficient * (user.getPosition() == Position.DOCTOR ? 2 : 1))
                 .classify(AcRecord.VOTE)
                 .reason((coefficient == 0 ? "投稿中止：" : (coefficient == 1 ? "投票预测正确：" : "投票预测错误：") + title))

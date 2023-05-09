@@ -1,5 +1,7 @@
 package com.softeng.dingtalk.controller;
 
+import com.softeng.dingtalk.dto.CommonResult;
+import com.softeng.dingtalk.dto.req.VMApplyReq;
 import com.softeng.dingtalk.po_entity.VMApply;
 import com.softeng.dingtalk.service.VMApplyService;
 import com.softeng.dingtalk.vo.VMApplyVO;
@@ -80,5 +82,10 @@ public class VMApplyController {
     @DeleteMapping("/vmApply/{id}")
     public void deleteVMApply(@PathVariable int id,@RequestAttribute int uid){
         vmApplyService.deleteVMApply(id,uid);
+    }
+
+    @PostMapping("/v2/vmApply/page/{page}/{size}")
+    public CommonResult<Map<String, Object>> queryVMApplyList(@PathVariable int page, @PathVariable int size, @RequestBody VMApplyReq vmApplyReq) {
+        return CommonResult.success(vmApplyService.queryVMApplyList(page, size, vmApplyReq));
     }
 }

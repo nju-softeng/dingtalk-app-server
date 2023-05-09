@@ -4,6 +4,7 @@ import com.softeng.dingtalk.component.encryptor.EncryptorComponent;
 import com.softeng.dingtalk.component.dingApi.ContactsApi;
 import com.softeng.dingtalk.component.UserContextHolder;
 import com.softeng.dingtalk.dto.CommonResult;
+import com.softeng.dingtalk.dto.resp.PermissionResp;
 import com.softeng.dingtalk.po_entity.User;
 import com.softeng.dingtalk.service.PermissionService;
 import com.softeng.dingtalk.service.SystemService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -108,7 +110,7 @@ public class LoginController {
      * @param response
      */
     @GetMapping("/v2/login_test/{uid}")
-    public CommonResult<Map> testlogin2(@PathVariable int uid, HttpServletResponse response) {
+    public CommonResult<Map<String, Object>> testlogin2(@PathVariable int uid, HttpServletResponse response) {
         log.debug("测试登陆" + uid);
         UserContextHolder.UserContext userContext = new UserContextHolder.UserContext()
                 .setUid(uid)
@@ -118,10 +120,11 @@ public class LoginController {
                 ));
         // 生成加密token
         String token = userContextHolder.encrypt(userContext);
+        List<PermissionResp> permissionList = permissionService.getPermissions(uid);
         // 在header创建自定义的权限
         response.setHeader("token",token);
         response.setHeader("uid", uid + "");
-        return CommonResult.success(Map.of("token",token, "uid", uid + ""));
+        return CommonResult.success(Map.of("token",token, "uid", uid, "permissionList", permissionList));
     }
 
 
@@ -132,7 +135,7 @@ public class LoginController {
      * @date 9:17 AM 12/11/2019
      **/
     @PostMapping("/v2/login")
-    public Map login2(@RequestBody Map authcode, HttpServletResponse response) {
+    public CommonResult<Map<String, Object>> login2(@RequestBody Map authcode, HttpServletResponse response) {
         //根据免登授权码获取userid
         log.debug(authcode.toString());
         String userid = contactsApi.getUserId((String) authcode.get("authCode"));
@@ -153,9 +156,10 @@ public class LoginController {
                 ));
         // 生成加密token
         String token = userContextHolder.encrypt(userContext);
+        List<PermissionResp> permissionList = permissionService.getPermissions(uid);
         // 在header创建自定义的权限
         response.setHeader("token",token);
         response.setHeader("uid", uid + "");
-        return Map.of( "uid", uid, "token", token);
+        return CommonResult.success(Map.of( "uid", uid, "token", token, "permissionList", permissionList));
     }
 }

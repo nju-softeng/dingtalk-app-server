@@ -20,4 +20,7 @@ public interface UserPermissionRepository extends CustomizedRepository<UserPermi
      * @return 用户所有权限
      */
     List<UserPermission> findAllByUserId(int userId);
+
+
+    void deleteAllByUserId(int userId);
 }

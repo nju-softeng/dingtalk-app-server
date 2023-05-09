@@ -178,4 +178,7 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
     @Query("select u.id from User u where u.deleted = true ")
     Set<Integer> listDisableUserid();
 
+    @Query(value = "select * from user u where u.is_deleted = false ", nativeQuery = true)
+    List<User> findAllValidUser();
+
 }

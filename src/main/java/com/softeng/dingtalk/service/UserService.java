@@ -1,5 +1,6 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.component.convertor.UserConvertor;
 import com.softeng.dingtalk.component.dingApi.BaseApi;
 import com.softeng.dingtalk.component.convertor.PermissionConvertor;
 import com.softeng.dingtalk.component.convertor.TeamConvertor;
@@ -7,6 +8,7 @@ import com.softeng.dingtalk.dao.repository.*;
 import com.softeng.dingtalk.component.encryptor.Encryption;
 import com.softeng.dingtalk.dto.resp.PermissionResp;
 import com.softeng.dingtalk.dto.resp.TeamResp;
+import com.softeng.dingtalk.dto.resp.UserResp;
 import com.softeng.dingtalk.po_entity.*;
 import com.softeng.dingtalk.utils.StreamUtils;
 import com.softeng.dingtalk.vo.UserInfoVO;
@@ -39,9 +41,15 @@ public class UserService {
     @Autowired
     private FileService fileService;
     @Autowired
-    BaseApi baseApi;
+    private BaseApi baseApi;
     @Autowired
-    Encryption encryption;
+    private Encryption encryption;
+    @Resource
+    private PermissionRepository permissionRepository;
+    @Resource
+    private UserPermissionRepository userPermissionRepository;
+    @Resource
+    private PermissionConvertor permissionConvertor;
 
 
     @Value("${file.userLeaseContractFilePath}")
@@ -102,12 +110,17 @@ public class UserService {
      */
     public Map getUserInfo(int uid) {
         User u = userRepository.findById(uid).get();
+        List<UserPermission> userPermissionList = userPermissionRepository.findAllByUserId(uid);
+        List<PermissionResp> permissionRespList = StreamUtils.map(
+                userPermissionList,
+                userPermission -> permissionConvertor.entity_PO2Resp(permissionRepository.findById(userPermission.getPermissionId()))
+        );
         double ac = acRecordRepository.getUserAcSum(uid);
         baseApi.getJsapiTicket(); // 提前拿到jsapi ticket，避免需要时再去那减少时延
         if (u.getAvatar() != null) {
-            return Map.of("name", u.getName(), "avatar", u.getAvatar(), "ac", ac, "userid", u.getUserid());
+            return Map.of("name", u.getName(), "avatar", u.getAvatar(), "ac", ac, "userid", u.getUserid(), "permissionList", permissionRespList);
         } else {
-            return Map.of("name", u.getName(), "ac", ac, "userid", u.getUserid());
+            return Map.of("name", u.getName(), "ac", ac, "userid", u.getUserid(), "permissionList", permissionRespList);
         }
     }
 

@@ -24,8 +24,8 @@ public class NewsResp implements Serializable {
     @ApiModelProperty(value = "公告标题")
     private String title;
 
-    @ApiModelProperty(value = "公告链接")
-    private String link;
+//    @ApiModelProperty(value = "公告链接")
+//    private String link;
 
     @ApiModelProperty(value = "公告发布者id")
     private int authorId;
@@ -38,4 +38,7 @@ public class NewsResp implements Serializable {
 
     @ApiModelProperty(value = "公告发布时间")
     private LocalDateTime releaseTime;
+
+    @ApiModelProperty(value = "公告详情内容")
+    private String content;
 }

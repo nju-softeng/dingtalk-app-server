@@ -1,6 +1,8 @@
 package com.softeng.dingtalk.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.softeng.dingtalk.dto.CommonResult;
+import com.softeng.dingtalk.dto.req.PatentReq;
 import com.softeng.dingtalk.po_entity.Patent;
 import com.softeng.dingtalk.service.FileService;
 import com.softeng.dingtalk.service.PatentService;
@@ -70,4 +72,8 @@ public class PatentController {
     }
 
 
+    @PostMapping("/v2/patent/{page}/{size}")
+    public CommonResult<Map<String, Object>> queryPatentList(@PathVariable int page, @PathVariable int size, @RequestBody PatentReq patentReq) {
+        return CommonResult.success(patentService.queryPatentList(page, size, patentReq));
+    }
 }

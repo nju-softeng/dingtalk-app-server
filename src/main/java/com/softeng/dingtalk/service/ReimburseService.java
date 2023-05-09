@@ -1,10 +1,14 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.component.convertor.ReimbursementConvertor;
+import com.softeng.dingtalk.dto.req.ReimbursementReq;
+import com.softeng.dingtalk.dto.resp.ReimbursementResp;
 import com.softeng.dingtalk.po_entity.Reimbursement;
 import com.softeng.dingtalk.po_entity.ReimbursementFile;
 import com.softeng.dingtalk.dao.repository.ReimbursementFileRepository;
 import com.softeng.dingtalk.dao.repository.ReimbursementRepository;
 import com.softeng.dingtalk.dao.repository.UserRepository;
+import com.softeng.dingtalk.utils.StreamUtils;
 import com.softeng.dingtalk.vo.ReimbursementVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +16,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.annotation.Resource;
+import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +43,8 @@ public class ReimburseService {
     UserRepository userRepository;
     @Autowired
     FileService fileService;
+    @Resource
+    ReimbursementConvertor reimbursementConvertor;
     public void addReimbursement(ReimbursementVO reimbursementVO,int id){
         Reimbursement reimbursement =new Reimbursement(reimbursementVO.getName(),reimbursementVO.getType(),reimbursementVO.getPath());
         reimbursement.setUser(userRepository.findById(id).get());
@@ -93,6 +104,24 @@ public class ReimburseService {
         } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
         }
+    }
 
+    public Map<String, Object> queryReimbursementList(int page, int size, ReimbursementReq reimbursementReq) {
+        Pageable pageable = PageRequest.of(page - 1,size, Sort.by("id").descending());
+        Specification<Reimbursement> reimbursementSpecification = ((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if(reimbursementReq.getState() != -2)
+                predicates.add(criteriaBuilder.equal(root.get("state"), reimbursementReq.getState()));
+            if(!"".equals(reimbursementReq.getType()))
+                predicates.add(criteriaBuilder.equal(root.get("type"), reimbursementReq.getType()));
+            if(reimbursementReq.getUserId() != 0)
+                predicates.add(criteriaBuilder.equal(root.get("user").get("id"), reimbursementReq.getUserId()));
+            Predicate[] arr = new Predicate[predicates.size()];
+            return criteriaBuilder.and(predicates.toArray(arr));
+        });
+        Page<Reimbursement> reimbursementPage = reimbursementRepository.findAll(reimbursementSpecification, pageable);
+        List<ReimbursementResp> reimbursementRespList = StreamUtils.map(reimbursementPage.toList(),
+                reimbursement -> reimbursementConvertor.entity_PO2Resp(reimbursement));
+        return Map.of("list", reimbursementRespList, "total", reimbursementPage.getTotalElements());
     }
 }

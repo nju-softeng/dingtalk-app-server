@@ -1,7 +1,11 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.component.convertor.PatentConvertor;
 import com.softeng.dingtalk.dao.repository.*;
+import com.softeng.dingtalk.dto.req.PatentReq;
+import com.softeng.dingtalk.dto.resp.PatentResp;
 import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.utils.StreamUtils;
 import com.softeng.dingtalk.vo.PatentVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +14,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +49,8 @@ public class PatentService {
     FileService fileService;
     @Autowired
     UserRepository userRepository;
+    @Resource
+    PatentConvertor patentConvertor;
 
     @Value("${patent.rank1Rate}")
     private double rank1Rate;
@@ -118,7 +131,7 @@ public class PatentService {
                 if(ac!=0){
                     AcRecord acRecord =new AcRecord(patentDetail.getUser(),userRepository.findById(uid).get(),ac,"专利内审通过", AcRecord.Patent, LocalDateTime.now());
                     acRecordRepository.save(acRecord);
-                    patentDetail.getAcRecordList().add(acRecord);
+//                    patentDetail.getAcRecordList().add(acRecord);
                 }
 
             });
@@ -149,7 +162,7 @@ public class PatentService {
             if(ac!=0){
                 AcRecord acRecord =new AcRecord(patentDetail.getUser(),userRepository.findById(uid).get(),ac,reason, AcRecord.Patent, LocalDateTime.now());
                 acRecordRepository.save(acRecord);
-                patentDetail.getAcRecordList().add(acRecord);
+//                patentDetail.getAcRecordList().add(acRecord);
             }
 
         });
@@ -254,5 +267,45 @@ public class PatentService {
             this.id=id;
         }
         PatentFileInfo(){}
+    }
+
+    public Map<String, Object> queryPatentList(int page, int size, PatentReq patentReq) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
+        Specification<Patent> patentSpecification = ((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if(patentReq.getInventorsIdList().size() == 1) {
+//                查询特定发明人的专利
+                int userId = patentReq.getInventorsIdList().get(0);
+
+                Subquery<PatentDetail> subQuery = criteriaQuery.subquery(PatentDetail.class);
+                Root<PatentDetail> subRoot = subQuery.from(PatentDetail.class);
+//                subQuery.where(criteriaBuilder.equal(subRoot.get("user").get("id"), userId));
+//                subQuery.select(subRoot.get("id"));
+//
+//                predicates.add(criteriaBuilder.exists(subQuery));
+
+                subQuery.select(subRoot.get("patent").get("id"));
+                subQuery.where(criteriaBuilder.equal(subRoot.get("user").get("id"), userId));
+
+                predicates.add(root.get("id").in(subQuery));
+            }
+            if(!"".equals(patentReq.getYear())) {
+                predicates.add(criteriaBuilder.equal(root.get("year"), patentReq.getYear()));
+            }
+            if(patentReq.getState() != -2) {
+                predicates.add(criteriaBuilder.equal(root.get("state"), patentReq.getState()));
+            }
+            if(patentReq.getApplicantId() != 0) {
+                predicates.add(criteriaBuilder.equal(root.get("applicant").get("id"), patentReq.getApplicantId()));
+            }
+            Predicate[] arr = new Predicate[predicates.size()];
+            return criteriaBuilder.and(predicates.toArray(arr));
+        });
+
+        Page<Patent> patentPage = patentRepository.findAll(patentSpecification, pageable);
+        List<PatentResp> patentRespList = StreamUtils.map(patentPage.toList(), patent ->
+            patentConvertor.entity_PO2Resp(patent)
+        );
+        return Map.of("list", patentRespList, "total", patentPage.getTotalElements());
     }
 }

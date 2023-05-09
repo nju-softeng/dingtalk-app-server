@@ -1,12 +1,15 @@
 package com.softeng.dingtalk.service;
 
 import com.dingtalk.api.response.OapiUserGetResponse;
+import com.softeng.dingtalk.component.convertor.UserConvertor;
 import com.softeng.dingtalk.component.dingApi.*;
 import com.softeng.dingtalk.component.AcAlgorithm;
 import com.softeng.dingtalk.constant.LocalUrlConstant;
 import com.softeng.dingtalk.dao.repository.*;
+import com.softeng.dingtalk.dto.resp.UserResp;
 import com.softeng.dingtalk.po_entity.*;
 import com.softeng.dingtalk.enums.Position;
+import com.softeng.dingtalk.utils.StreamUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -69,6 +73,9 @@ public class SystemService {
     AcRecordRepository acRecordRepository;
     @Autowired
     PatentLevelRepository patentLevelRepository;
+
+    @Resource
+    UserConvertor userConvertor;
 
     @Value("${DingTalkSchedule.absentACPunishment}")
     double absentACPunishment;
@@ -121,6 +128,7 @@ public class SystemService {
             case "学硕": position = Position.ACADEMIC;  break;
             case "专硕": position = Position.PROFESSIONAL;  break;
             case "博": position = Position.DOCTOR;  break;
+//            todo-
             default:   position = Position.OTHER;  break;
         }
 
@@ -169,11 +177,13 @@ public class SystemService {
      * @param position
      * @return
      */
-    public Page<User> multiQueryUser(int page, int size, String name, String position) {
+    public Map<String, Object> multiQueryUser(int page, int size, String name, String position) {
         Specification<User> spec = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(criteriaBuilder.equal(root.get("deleted"), false));
-            predicates.add(criteriaBuilder.notEqual(root.get("authority"), User.ADMIN_AUTHORITY));
+//          todo-修改
+
+//            predicates.add(criteriaBuilder.notEqual(root.get("authority"), User.ADMIN_AUTHORITY));
             if (!"".equals(name)) {
                 // 根据姓名模糊查询
                 predicates.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
@@ -191,7 +201,10 @@ public class SystemService {
         };
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        return userRepository.findAll(spec, pageable);
+//        return userRepository.findAll(spec, pageable);
+        Page<User> userPage = userRepository.findAll(spec, pageable);
+        List<UserResp> userRespList = StreamUtils.map( userPage.toList(), user -> userConvertor.entity_PO2Resp(user));
+        return Map.of("content", userRespList, "total", userPage.getTotalElements());
     }
 
 
@@ -306,7 +319,7 @@ public class SystemService {
      * 当从数据库录入dc数据时，并不会触发更新 dcsummary
      * 所以需要调用该函数刷新 dcsummary
      */
-    public void manulUpdatePerformance(int yearmonth) {
+    public void manualUpdatePerformance(int yearmonth) {
         // todo 拿到所有用户可用 uid
         List<Integer> uidlist = userRepository.listUid();
         // todo 根据用户id,和指定年月更新dcsummary
@@ -322,7 +335,7 @@ public class SystemService {
     /**
      * 手动指定某天，当天未交周报的硕士博士扣除相应的分数
      */
-    public void manulDeductedPointsUnsubmittedWeeklyReport(LocalDate localDate) {
+    public void manualDeductedPointsUnSubmittedWeeklyReport(LocalDate localDate) {
         var start = localDate.atTime(0, 0, 0);
         var end = start.plusDays(1);
         var poorGuys = weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end);
@@ -333,6 +346,8 @@ public class SystemService {
         log.info(start.toString() + "未提交周报扣分" + Arrays.toString(poorGuys.stream().map(User::getName).toArray()));
         acRecordRepository.saveAll(
                 poorGuys.stream()
+                        // 筛选出在校的用户(或者未设置工作状态的用户)
+                        .filter(user -> user.getWorkState() == null || !user.getWorkState())
                         .map(user -> AcRecord.builder()
                                 .user(user)
                                 .ac(AcAlgorithm.getPointOfUnsubmittedWeekReport(user))
@@ -342,7 +357,8 @@ public class SystemService {
                                         start.toLocalDate().toString()
                                 ))
                                 .createTime(end)
-                                .build())
+                                .build()
+                        )
                         .collect(Collectors.toList())
         );
     }
@@ -359,6 +375,8 @@ public class SystemService {
                 LocalUrlConstant.FRONTEND_PERFORMANCE_URL,
                 "您还未提交本周周报，请在周日24点前提交周报并随后申请绩效",
                 weeklyReportService.queryUnSubmittedWeeklyReportUser(start, end).stream()
+                        // 筛选出在校的用户(或者未设置工作状态的用户)
+                        .filter(user -> user.getWorkState() == null || !user.getWorkState())
                         .map(User::getUserid)
                         .collect(Collectors.toList())
         );

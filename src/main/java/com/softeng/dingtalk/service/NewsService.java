@@ -29,7 +29,7 @@ public class NewsService {
     private NewsConvertor newsConvertor;
 
     public Map<String, Object> getShownNews(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("release_time"));
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("release_time").descending());
         Page<News> newsPage = newsRepository.findAllByIsShownAndIsDeleted(
                 NewsState.IS_SHOWN.getValue(),
                 NewsState.IS_NOT_DELETED.getValue(),
@@ -39,7 +39,7 @@ public class NewsService {
     }
 
     public Map<String, Object> getNotShownNews(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("release_time"));
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("release_time").descending());
         Page<News> newsPage = newsRepository.findAllByIsShownAndIsDeleted(
                 NewsState.IS_NOT_SHOWN.getValue(),
                 NewsState.IS_NOT_DELETED.getValue(),
@@ -55,7 +55,7 @@ public class NewsService {
     }
 
     public Map<String, Object> getAllNews(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("release_time"));
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("release_time").descending());
         Page<News> newsPage = newsRepository.findAllByIsDeleted(NewsState.IS_NOT_DELETED.getValue(), pageable);
         List<NewsResp> newsList = StreamUtils.map(newsPage.toList(), news -> newsConvertor.entity_PO2Resp(news));
         return Map.of("newsList", newsList, "total", newsPage.getTotalElements());

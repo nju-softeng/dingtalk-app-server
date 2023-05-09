@@ -21,4 +21,6 @@ public interface UserTeamRepository extends CustomizedRepository<UserTeam, UserT
      * @return 用户所在的所有用户组
      */
     List<UserTeam> findAllByUserId(int userId);
+
+    void deleteAllByUserId(int userId);
 }

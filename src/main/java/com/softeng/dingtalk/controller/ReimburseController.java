@@ -1,5 +1,7 @@
 package com.softeng.dingtalk.controller;
 
+import com.softeng.dingtalk.dto.CommonResult;
+import com.softeng.dingtalk.dto.req.ReimbursementReq;
 import com.softeng.dingtalk.po_entity.Reimbursement;
 import com.softeng.dingtalk.service.ReimburseService;
 import com.softeng.dingtalk.vo.ReimbursementVO;
@@ -64,4 +66,8 @@ public class ReimburseController {
         reimburseService.downloadReimbursementFile(id,response);
     }
 
+    @PostMapping("/v2/reimbursement/{page}/{size}")
+    public CommonResult<Map<String, Object>>  queryReimbursementList(@PathVariable int page, @PathVariable int size, @RequestBody ReimbursementReq reimbursementReq) {
+        return CommonResult.success(reimburseService.queryReimbursementList(page, size, reimbursementReq));
+    }
 }

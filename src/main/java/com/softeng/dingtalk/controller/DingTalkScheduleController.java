@@ -18,6 +18,7 @@ public class DingTalkScheduleController {
     DingTalkScheduleService dingTalkScheduleService;
     @PostMapping("/schedule")
     public void addSchedule(@RequestBody DingTalkScheduleVO dingTalkScheduleVO,@RequestAttribute int uid){
+//        todo-有bug
         if(dingTalkScheduleVO.getId()==null) {
             dingTalkScheduleService.addSchedule(dingTalkScheduleVO,uid);
         } else {

@@ -22,7 +22,7 @@ public interface NewsRepository extends CustomizedRepository<News, Integer>{
     Page<News> findAllByIsShownAndIsDeleted(@Param("isShown") int isShown, @Param("isDeleted") int isDeleted, Pageable pageable);
 
 //    @Query("select n from News n where n.isDeleted = :isDeleted and n.isShown = :isShown")
-    @Query(value = "select * from news n where n.is_deleted = :isDeleted and n.is_shown = :isShown", nativeQuery = true)
+    @Query(value = "select * from news n where n.is_deleted = :isDeleted and n.is_shown = :isShown order by release_time desc ", nativeQuery = true)
     List<News> findAllByIsShownAndIsDeleted(@Param("isShown") int isShown, @Param("isDeleted") int isDeleted);
 
     @Modifying

@@ -25,8 +25,8 @@ public class PatentDetail {
     private Patent patent;
     @ManyToOne
     private User user;
-    @OneToMany(cascade = CascadeType.REMOVE)
-    private List<AcRecord> acRecordList;
+//    @OneToMany(cascade = CascadeType.REMOVE)
+//    private List<AcRecord> acRecordList;
 
     public PatentDetail(int num, Patent patent, User user) {
         this.num = num;

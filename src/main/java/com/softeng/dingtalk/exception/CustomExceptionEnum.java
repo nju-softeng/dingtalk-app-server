@@ -8,6 +8,16 @@ public enum CustomExceptionEnum {
     LOGIN_PLEASE(100004, "未登录"),
 //    PASSWORD_ERROR(100005, "密码错误"),
     ACCESS_DENIED(100006, "权限不足，拒绝访问"),
+
+    INTERNSHIP_APPLICATION_CONFLICT(100007, "与已有的实习申请中的时间段冲突"),
+    INTERNSHIP_APPLICATION_AUDITED_ALREADY(100008, "该实习申请已经审核，无需修改"),
+    INTERNSHIP_APPLICATION_DELETION_DENIED(100009, "无删除权限"),
+
+    INTERNSHIP_PERIOD_UNSET(100010, "管理员未设置推荐实习时间段"),
+
+    START_DATE_IS_AFTER_END_DATE(100011, "起始日期晚于截止日期"),
+
+    WRONG_FORMAT_OF_STUDENT_NUMBER(100012, "错误的学号格式")
     ;
 
     private static final int COMMON_EXCEPTION_CODE_BASE = 100000;

@@ -78,10 +78,12 @@ public class DingTalkScheduleService {
 
     public Map<String,Object> getScheduleList(int page, int size, int uid){
         Pageable pageable = PageRequest.of(page-1,size, Sort.by("id").descending());
-        User user =userRepository.findById(uid).get();
-        Page<DingTalkScheduleDetail> dingTalkScheduleDetails=dingTalkScheduleDetailRepository.getDingTalkScheduleDetailsByUserEquals(user,pageable);
-        List<DingTalkSchedule> dingTalkScheduleList =dingTalkScheduleDetails.toList().stream().map(DingTalkScheduleDetail::getDingTalkSchedule).collect(Collectors.toList());
-        return Map.of("list", dingTalkScheduleList,"total",dingTalkScheduleDetails.getTotalElements());
+//        User user =userRepository.findById(uid).get();
+//        Page<DingTalkScheduleDetail> dingTalkScheduleDetails=dingTalkScheduleDetailRepository.getDingTalkScheduleDetailsByUserEquals(user,pageable);
+//        List<DingTalkSchedule> dingTalkScheduleList =dingTalkScheduleDetails.toList().stream().map(DingTalkScheduleDetail::getDingTalkSchedule).collect(Collectors.toList());
+//        return Map.of("list", dingTalkScheduleList,"total",dingTalkScheduleDetails.getTotalElements());
+        Page<DingTalkSchedule> dingTalkSchedulePage = dingTalkScheduleRepository.findAll(pageable);
+        return Map.of("list", dingTalkSchedulePage.toList(), "total", dingTalkSchedulePage.getTotalElements());
     }
 
     public void deleteSchedule(int id, int uid){
