@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.vo.UserVO;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

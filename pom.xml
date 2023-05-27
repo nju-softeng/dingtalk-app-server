@@ -16,6 +16,7 @@
 
     <properties>
         <java.version>11</java.version>
+        <fabric-gateway-java.version>2.2.3</fabric-gateway-java.version>
     </properties>
 
     <distributionManagement>
@@ -169,7 +170,7 @@
       <dependency>
           <groupId>org.hyperledger.fabric-sdk-java</groupId>
           <artifactId>fabric-sdk-java</artifactId>
-          <version>1.4.7</version>
+          <version>${fabric-gateway-java.version}</version>
       </dependency>
 
 
@@ -200,6 +201,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
             <version>2.2.6.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hyperledger.fabric</groupId>
+            <artifactId>fabric-gateway-java</artifactId>
+            <version>2.2.3</version>
         </dependency>
 
     </dependencies>

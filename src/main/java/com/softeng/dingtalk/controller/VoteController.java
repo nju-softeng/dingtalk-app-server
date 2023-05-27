@@ -1,9 +1,9 @@
 package com.softeng.dingtalk.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.softeng.dingtalk.po_entity.User;
-import com.softeng.dingtalk.po_entity.Vote;
-import com.softeng.dingtalk.po_entity.VoteDetail;
+import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.entity.Vote;
+import com.softeng.dingtalk.entity.VoteDetail;
 import com.softeng.dingtalk.dao.repository.VoteRepository;
 import com.softeng.dingtalk.service.PaperService;
 import com.softeng.dingtalk.service.VoteService;

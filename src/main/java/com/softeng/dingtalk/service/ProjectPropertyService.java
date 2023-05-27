@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.service;
-import com.softeng.dingtalk.po_entity.ProjectProperty;
-import com.softeng.dingtalk.po_entity.ProjectPropertyFile;
+import com.softeng.dingtalk.entity.ProjectProperty;
+import com.softeng.dingtalk.entity.ProjectPropertyFile;
 import com.softeng.dingtalk.dao.repository.ProjectPropertyFileRepository;
 import com.softeng.dingtalk.dao.repository.ProjectPropertyRepository;
 import com.softeng.dingtalk.vo.ProjectPropertyFileVO;

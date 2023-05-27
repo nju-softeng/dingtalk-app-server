@@ -2,8 +2,8 @@ package com.softeng.dingtalk.service;
 
 import com.aliyun.dingtalkdrive_1_0.models.GetDownloadInfoResponseBody;
 import com.softeng.dingtalk.component.dingApi.BaseApi;
-import com.softeng.dingtalk.po_entity.ExternalPaper;
-import com.softeng.dingtalk.po_entity.InternalPaper;
+import com.softeng.dingtalk.entity.ExternalPaper;
+import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.dao.repository.ExternalPaperRepository;
 import com.softeng.dingtalk.dao.repository.InternalPaperRepository;
 import com.softeng.dingtalk.vo.PaperFileDownloadInfoVO;

@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.EventProperty;
+import com.softeng.dingtalk.entity.EventProperty;
 import org.springframework.stereotype.Repository;
 
 @Repository

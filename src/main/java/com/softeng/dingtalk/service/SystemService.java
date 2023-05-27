@@ -7,7 +7,7 @@ import com.softeng.dingtalk.component.AcAlgorithm;
 import com.softeng.dingtalk.constant.LocalUrlConstant;
 import com.softeng.dingtalk.dao.repository.*;
 import com.softeng.dingtalk.dto.resp.UserResp;
-import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.utils.StreamUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -203,7 +203,7 @@ public class SystemService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 //        return userRepository.findAll(spec, pageable);
         Page<User> userPage = userRepository.findAll(spec, pageable);
-        List<UserResp> userRespList = StreamUtils.map( userPage.toList(), user -> userConvertor.entity_PO2Resp(user));
+        List<UserResp> userRespList = StreamUtils.map( userPage.toList(), user -> userConvertor.entity2Resp(user));
         return Map.of("content", userRespList, "total", userPage.getTotalElements());
     }
 

@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.ExternalPaper;
-import com.softeng.dingtalk.po_entity.Vote;
+import com.softeng.dingtalk.entity.ExternalPaper;
+import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.vo.PaperFileInfoVO;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

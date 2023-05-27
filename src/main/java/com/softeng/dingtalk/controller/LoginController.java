@@ -5,7 +5,7 @@ import com.softeng.dingtalk.component.dingApi.ContactsApi;
 import com.softeng.dingtalk.component.UserContextHolder;
 import com.softeng.dingtalk.dto.CommonResult;
 import com.softeng.dingtalk.dto.resp.PermissionResp;
-import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.service.PermissionService;
 import com.softeng.dingtalk.service.SystemService;
 import com.softeng.dingtalk.service.UserService;

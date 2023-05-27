@@ -3,7 +3,7 @@ package com.softeng.dingtalk.config;
 import com.softeng.dingtalk.bean.Chaincode;
 import com.softeng.dingtalk.bean.Orderers;
 import com.softeng.dingtalk.bean.Peers;
-import com.softeng.dingtalk.fabric.ChaincodeManager;
+//import com.softeng.dingtalk.fabric.ChaincodeManager;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -14,6 +14,7 @@ import java.util.Objects;
  * @Author Jerrian Zhao
  * @Data 03/06/2022
  */
+@Deprecated
 public class FabricConfig {
     private static final Logger logger = Logger.getLogger(FabricConfig.class);
 
@@ -24,19 +25,19 @@ public class FabricConfig {
     private String cryptoConfigPath;
     private boolean registerEvent = false;
 
-    private String getChannelPath() {
-        String directorys = Objects.requireNonNull(ChaincodeManager.class.getClassLoader().getResource("fabric")).getFile();
-        logger.debug("directorys = " + directorys);
-        File directory = new File(directorys);
-        logger.debug("directory = " + directory.getPath());
+//    private String getChannelPath() {
+//        String directorys = Objects.requireNonNull(ChaincodeManager.class.getClassLoader().getResource("fabric")).getFile();
+//        logger.debug("directorys = " + directorys);
+//        File directory = new File(directorys);
+//        logger.debug("directory = " + directory.getPath());
+//
+//        return directory.getPath();
+//    }
 
-        return directory.getPath();
-    }
-
-    public FabricConfig() {
-        channelArtifactsPath = getChannelPath() + "/channel-artifacts/";
-        cryptoConfigPath = getChannelPath() + "/crypto-config/";
-    }
+//    public FabricConfig() {
+//        channelArtifactsPath = getChannelPath() + "/channel-artifacts/";
+//        cryptoConfigPath = getChannelPath() + "/crypto-config/";
+//    }
 
     public Peers getPeers() {
         return peers;

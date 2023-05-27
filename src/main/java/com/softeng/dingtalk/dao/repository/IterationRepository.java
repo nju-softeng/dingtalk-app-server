@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.Iteration;
+import com.softeng.dingtalk.entity.Iteration;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

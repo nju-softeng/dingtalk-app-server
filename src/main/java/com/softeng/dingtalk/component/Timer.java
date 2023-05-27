@@ -4,7 +4,7 @@ import com.softeng.dingtalk.component.dingApi.MessageApi;
 import com.softeng.dingtalk.dao.repository.*;
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.enums.PracticeStateEnum;
-import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.service.*;
 import com.softeng.dingtalk.utils.stuNumUtils.StuNumParser;
 import com.softeng.dingtalk.utils.stuNumUtils.StuNumParserFactory;

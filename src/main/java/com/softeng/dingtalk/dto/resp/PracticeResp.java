@@ -1,13 +1,10 @@
 package com.softeng.dingtalk.dto.resp;
 
-import com.softeng.dingtalk.po_entity.User;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.time.LocalDate;
 

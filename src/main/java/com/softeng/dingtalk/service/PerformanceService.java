@@ -4,7 +4,7 @@ import com.softeng.dingtalk.dao.repository.AcRecordRepository;
 import com.softeng.dingtalk.dao.repository.BugRepository;
 import com.softeng.dingtalk.dao.repository.DcSummaryRepository;
 import com.softeng.dingtalk.dao.repository.UserRepository;
-import com.softeng.dingtalk.po_entity.DcSummary;
+import com.softeng.dingtalk.entity.DcSummary;
 import com.softeng.dingtalk.enums.Position;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

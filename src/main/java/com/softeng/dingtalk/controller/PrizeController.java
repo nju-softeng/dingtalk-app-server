@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.po_entity.Prize;
+import com.softeng.dingtalk.entity.Prize;
 import com.softeng.dingtalk.service.PrizeService;
 import com.softeng.dingtalk.vo.PrizeVO;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.Project;
+import com.softeng.dingtalk.entity.Project;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

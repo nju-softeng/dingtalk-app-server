@@ -1,7 +1,5 @@
 package com.softeng.dingtalk.dto.resp;
 
-import com.softeng.dingtalk.po_entity.PatentDetail;
-import com.softeng.dingtalk.po_entity.User;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

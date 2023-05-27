@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.UserPermission;
+import com.softeng.dingtalk.entity.UserPermission;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

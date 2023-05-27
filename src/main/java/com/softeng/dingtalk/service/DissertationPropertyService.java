@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.po_entity.Dissertation;
+import com.softeng.dingtalk.entity.Dissertation;
 import com.softeng.dingtalk.dao.repository.DissertationPropertyRepository;
 import com.softeng.dingtalk.dao.repository.UserRepository;
 import com.softeng.dingtalk.vo.DissertationVO;

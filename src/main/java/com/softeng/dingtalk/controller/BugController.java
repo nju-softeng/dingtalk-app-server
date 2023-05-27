@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.po_entity.Bug;
+import com.softeng.dingtalk.entity.Bug;
 import com.softeng.dingtalk.dao.repository.BugRepository;
 import com.softeng.dingtalk.service.BugService;
 import com.softeng.dingtalk.vo.BugCheckVO;

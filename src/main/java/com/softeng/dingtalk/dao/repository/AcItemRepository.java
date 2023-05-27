@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.AcItem;
-import com.softeng.dingtalk.po_entity.DcRecord;
+import com.softeng.dingtalk.entity.AcItem;
+import com.softeng.dingtalk.entity.DcRecord;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;

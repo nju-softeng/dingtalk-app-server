@@ -2,7 +2,7 @@ package com.softeng.dingtalk.component.convertor;
 
 import com.softeng.dingtalk.dto.req.UserTeamReq;
 import com.softeng.dingtalk.dto.resp.UserTeamResp;
-import com.softeng.dingtalk.po_entity.UserTeam;
+import com.softeng.dingtalk.entity.UserTeam;
 import org.springframework.stereotype.Component;
 
 @Component

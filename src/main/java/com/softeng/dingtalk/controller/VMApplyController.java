@@ -2,7 +2,7 @@ package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.dto.CommonResult;
 import com.softeng.dingtalk.dto.req.VMApplyReq;
-import com.softeng.dingtalk.po_entity.VMApply;
+import com.softeng.dingtalk.entity.VMApply;
 import com.softeng.dingtalk.service.VMApplyService;
 import com.softeng.dingtalk.vo.VMApplyVO;
 import lombok.extern.slf4j.Slf4j;

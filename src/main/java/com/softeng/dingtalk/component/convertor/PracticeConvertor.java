@@ -3,9 +3,7 @@ package com.softeng.dingtalk.component.convertor;
 import com.softeng.dingtalk.dao.repository.UserRepository;
 import com.softeng.dingtalk.dto.req.PracticeReq;
 import com.softeng.dingtalk.dto.resp.PracticeResp;
-import com.softeng.dingtalk.dto.resp.VMApplyResp;
-import com.softeng.dingtalk.po_entity.Practice;
-import com.softeng.dingtalk.po_entity.VMApply;
+import com.softeng.dingtalk.entity.Practice;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -18,12 +16,12 @@ public class PracticeConvertor extends AbstractConvertorTemplate<PracticeReq, Pr
     private UserRepository userRepository;
 
     @Override
-    public PracticeResp entity_PO2Resp(Practice practice) {
-        return super.entity_PO2Resp(practice).setUser(userConvertor.entity_PO2Resp(practice.getUser()));
+    public PracticeResp entity2Resp(Practice practice) {
+        return super.entity2Resp(practice).setUser(userConvertor.entity2Resp(practice.getUser()));
     }
 
     @Override
-    public Practice req2Entity_PO(PracticeReq practiceReq) {
-        return super.req2Entity_PO(practiceReq).setUser(userRepository.findById(practiceReq.getUserId()).get());
+    public Practice req2Entity(PracticeReq practiceReq) {
+        return super.req2Entity(practiceReq).setUser(userRepository.findById(practiceReq.getUserId()).get());
     }
 }

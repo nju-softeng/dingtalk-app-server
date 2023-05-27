@@ -5,7 +5,7 @@ import com.aliyun.tea.TeaConverter;
 import com.aliyun.tea.TeaPair;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyun.teautil.models.RuntimeOptions;
-import com.softeng.dingtalk.po_entity.DingTalkSchedule;
+import com.softeng.dingtalk.entity.DingTalkSchedule;
 import com.softeng.dingtalk.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateFormatUtils;

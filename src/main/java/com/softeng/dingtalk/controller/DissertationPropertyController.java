@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.softeng.dingtalk.po_entity.Dissertation;
+import com.softeng.dingtalk.entity.Dissertation;
 import com.softeng.dingtalk.service.DissertationPropertyService;
 import com.softeng.dingtalk.vo.DissertationVO;
 import lombok.extern.slf4j.Slf4j;

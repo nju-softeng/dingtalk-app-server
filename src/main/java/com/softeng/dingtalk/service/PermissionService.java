@@ -4,10 +4,9 @@ import com.softeng.dingtalk.component.convertor.PermissionConvertor;
 import com.softeng.dingtalk.dao.repository.PermissionRepository;
 import com.softeng.dingtalk.dao.repository.UserPermissionRepository;
 import com.softeng.dingtalk.dto.resp.PermissionResp;
-import com.softeng.dingtalk.po_entity.UserPermission;
+import com.softeng.dingtalk.entity.UserPermission;
 import com.softeng.dingtalk.utils.StreamUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +32,7 @@ public class PermissionService {
         List<UserPermission> userPermissionList = userPermissionRepository.findAllByUserId(userId);
         return StreamUtils.map(
                 userPermissionList,
-                userPermission -> permissionConvertor.entity_PO2Resp(permissionRepository.findById(userPermission.getPermissionId()))
+                userPermission -> permissionConvertor.entity2Resp(permissionRepository.findById(userPermission.getPermissionId()))
         );
     }
 }

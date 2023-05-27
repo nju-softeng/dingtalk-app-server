@@ -1,15 +1,11 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.component.convertor.UserConvertor;
 import com.softeng.dingtalk.component.dingApi.BaseApi;
 import com.softeng.dingtalk.component.convertor.PermissionConvertor;
-import com.softeng.dingtalk.component.convertor.TeamConvertor;
 import com.softeng.dingtalk.dao.repository.*;
 import com.softeng.dingtalk.component.encryptor.Encryption;
 import com.softeng.dingtalk.dto.resp.PermissionResp;
-import com.softeng.dingtalk.dto.resp.TeamResp;
-import com.softeng.dingtalk.dto.resp.UserResp;
-import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.utils.StreamUtils;
 import com.softeng.dingtalk.vo.UserInfoVO;
 import com.softeng.dingtalk.vo.UserVO;
@@ -113,7 +109,7 @@ public class UserService {
         List<UserPermission> userPermissionList = userPermissionRepository.findAllByUserId(uid);
         List<PermissionResp> permissionRespList = StreamUtils.map(
                 userPermissionList,
-                userPermission -> permissionConvertor.entity_PO2Resp(permissionRepository.findById(userPermission.getPermissionId()))
+                userPermission -> permissionConvertor.entity2Resp(permissionRepository.findById(userPermission.getPermissionId()))
         );
         double ac = acRecordRepository.getUserAcSum(uid);
         baseApi.getJsapiTicket(); // 提前拿到jsapi ticket，避免需要时再去那减少时延

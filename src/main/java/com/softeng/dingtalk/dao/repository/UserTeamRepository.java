@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.UserTeam;
-import com.softeng.dingtalk.po_entity.cpk.UserTeamCPK;
+import com.softeng.dingtalk.entity.UserTeam;
+import com.softeng.dingtalk.entity.cpk.UserTeamCPK;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

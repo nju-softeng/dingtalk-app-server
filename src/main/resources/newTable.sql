@@ -73,3 +73,14 @@ create table if not exists  `internship_period_recommended`
     author_id       int not null comment '发布者id',
     foreign key (author_id) references user (id)
 ) comment '推荐实习周期表';
+
+create table if not exists `patent_ac_record`
+(
+    id                  int primary key AUTO_INCREMENT comment '公告id',
+    patent_id           int not null ,
+    ac_record_id        int not null ,
+#     内审通过为1，授权通过为2
+    type                int not null,
+    foreign key (patent_id) references patent (id),
+    foreign key (ac_record_id) references ac_record (id)
+);

@@ -4,7 +4,7 @@ import com.softeng.dingtalk.dao.repository.AcItemRepository;
 import com.softeng.dingtalk.dao.repository.AcRecordRepository;
 import com.softeng.dingtalk.dao.repository.DcRecordRepository;
 import com.softeng.dingtalk.dao.repository.DcSummaryRepository;
-import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.vo.CheckedVO;
 import com.softeng.dingtalk.vo.ToCheckVO;
 import com.softeng.dingtalk.vo.CheckVO;

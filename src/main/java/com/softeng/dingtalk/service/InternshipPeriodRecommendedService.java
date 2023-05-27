@@ -5,7 +5,7 @@ import com.softeng.dingtalk.dao.repository.InternshipPeriodRecommendedRepository
 import com.softeng.dingtalk.dto.req.InternshipPeriodRecommendedReq;
 import com.softeng.dingtalk.dto.resp.InternshipPeriodRecommendedResp;
 import com.softeng.dingtalk.exception.CustomExceptionEnum;
-import com.softeng.dingtalk.po_entity.InternshipPeriodRecommended;
+import com.softeng.dingtalk.entity.InternshipPeriodRecommended;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +25,11 @@ public class InternshipPeriodRecommendedService {
     public InternshipPeriodRecommendedResp getNewestPeriod() {
         InternshipPeriodRecommended res = internshipPeriodRecommendedRepository.findTop();
         CustomExceptionEnum.INTERNSHIP_PERIOD_UNSET.throwIf(res == null);
-        return internshipPeriodRecommendedConvertor.entity_PO2Resp(res);
+        return internshipPeriodRecommendedConvertor.entity2Resp(res);
     }
 
     public void addPeriod(InternshipPeriodRecommendedReq internshipPeriodRecommendedReq) {
-        internshipPeriodRecommendedRepository.save(internshipPeriodRecommendedConvertor.req2Entity_PO(internshipPeriodRecommendedReq));
+        internshipPeriodRecommendedRepository.save(internshipPeriodRecommendedConvertor.req2Entity(internshipPeriodRecommendedReq));
     }
 
 }

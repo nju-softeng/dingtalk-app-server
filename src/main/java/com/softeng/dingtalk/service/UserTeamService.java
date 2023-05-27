@@ -21,13 +21,13 @@ public class UserTeamService {
     private UserTeamConvertor userTeamConvertor;
 
     public void addUserTeam(UserTeamReq userTeamReq) {
-        userTeamRepository.save(userTeamConvertor.req2Entity_PO(userTeamReq));
+        userTeamRepository.save(userTeamConvertor.req2Entity(userTeamReq));
     }
 
     public void updateUserPermissionList(List<UserTeamReq> userTeamReqList) {
         int userId = userTeamReqList.get(0).getUserId();
         userTeamRepository.deleteAllByUserId(userId);
         userTeamRepository.saveBatch(StreamUtils.map(userTeamReqList,
-                (userTeamReq -> userTeamConvertor.req2Entity_PO(userTeamReq))));
+                (userTeamReq -> userTeamConvertor.req2Entity(userTeamReq))));
     }
 }

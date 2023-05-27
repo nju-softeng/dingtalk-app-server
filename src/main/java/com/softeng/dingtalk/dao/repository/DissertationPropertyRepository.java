@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.Dissertation;
+import com.softeng.dingtalk.entity.Dissertation;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.DingTalkSchedule;
-import com.softeng.dingtalk.po_entity.DingTalkScheduleDetail;
+import com.softeng.dingtalk.entity.DingTalkSchedule;
+import com.softeng.dingtalk.entity.DingTalkScheduleDetail;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

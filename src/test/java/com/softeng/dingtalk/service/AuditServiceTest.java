@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.service;
 
 
-import com.softeng.dingtalk.po_entity.AcItem;
+import com.softeng.dingtalk.entity.AcItem;
 import com.softeng.dingtalk.vo.CheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

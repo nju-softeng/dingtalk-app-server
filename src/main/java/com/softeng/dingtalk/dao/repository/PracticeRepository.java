@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.Practice;
-import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.entity.Practice;
+import com.softeng.dingtalk.entity.User;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 

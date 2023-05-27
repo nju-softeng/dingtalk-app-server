@@ -17,7 +17,14 @@ public enum CustomExceptionEnum {
 
     START_DATE_IS_AFTER_END_DATE(100011, "起始日期晚于截止日期"),
 
-    WRONG_FORMAT_OF_STUDENT_NUMBER(100012, "错误的学号格式")
+    WRONG_FORMAT_OF_STUDENT_NUMBER(100012, "错误的学号格式"),
+
+
+    FABRIC_CONTRACT_EXCEPTION(100020, "智能合约故障"),
+    FABRIC_INTERRUPT_EXCEPTION(100020, "区块链网路中断"),
+    FABRIC_TIMEOUT_EXCEPTION(100020, "区块链网路连接超时"),
+
+    DEFAULT_EXCEPTION(111111, "出错了，联系管理员")
     ;
 
     private static final int COMMON_EXCEPTION_CODE_BASE = 100000;

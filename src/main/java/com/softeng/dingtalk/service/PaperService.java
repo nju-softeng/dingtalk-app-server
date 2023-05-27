@@ -3,7 +3,7 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.dingApi.BaseApi;
 import com.softeng.dingtalk.dao.repository.*;
-import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.dao.mapper.InternalPaperMapper;
 
 import com.softeng.dingtalk.vo.*;
@@ -175,7 +175,7 @@ public class PaperService {
 
     /**
      * 删除实验室内部论文记录
-     *
+     * todo
      * @param id
      */
     public void deleteInternalPaper(int id) {
@@ -187,7 +187,7 @@ public class PaperService {
 
     /**
      * 删除实验室外部论文记录
-     *
+     * todo
      * @param id
      */
     public void deleteExternalPaper(int id) {

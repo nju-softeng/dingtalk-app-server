@@ -4,7 +4,7 @@ import com.softeng.dingtalk.component.convertor.PatentConvertor;
 import com.softeng.dingtalk.dao.repository.*;
 import com.softeng.dingtalk.dto.req.PatentReq;
 import com.softeng.dingtalk.dto.resp.PatentResp;
-import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.utils.StreamUtils;
 import com.softeng.dingtalk.vo.PatentVO;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -51,6 +50,8 @@ public class PatentService {
     UserRepository userRepository;
     @Resource
     PatentConvertor patentConvertor;
+    @Resource
+    private PatentAcRecordRepository patentAcRecordRepository;
 
     @Value("${patent.rank1Rate}")
     private double rank1Rate;
@@ -93,7 +94,14 @@ public class PatentService {
         }
     }
 
+//    todo-add logic
     public void deletePatent(int id){
+        List<PatentAcRecord> patentAcRecordList = patentAcRecordRepository.findAllByPatentId(id);
+        for(PatentAcRecord patentAcRecord : patentAcRecordList) {
+            acRecordRepository.delete(acRecordRepository.findById(patentAcRecord.getAcRecordId()).get());
+            patentAcRecordRepository.delete(patentAcRecord);
+        }
+
         patentRepository.deleteById(id);
     }
 
@@ -132,6 +140,13 @@ public class PatentService {
                     AcRecord acRecord =new AcRecord(patentDetail.getUser(),userRepository.findById(uid).get(),ac,"专利内审通过", AcRecord.Patent, LocalDateTime.now());
                     acRecordRepository.save(acRecord);
 //                    patentDetail.getAcRecordList().add(acRecord);
+
+//                    关联patent与acRecord
+                    PatentAcRecord patentAcRecord = new PatentAcRecord();
+                    patentAcRecord.setPatentId(id);
+                    patentAcRecord.setAcRecordId(acRecord.getId());
+                    patentAcRecord.setType(PatentAcRecord.AuditorType);
+                    patentAcRecordRepository.save(patentAcRecord);
                 }
 
             });
@@ -163,6 +178,13 @@ public class PatentService {
                 AcRecord acRecord =new AcRecord(patentDetail.getUser(),userRepository.findById(uid).get(),ac,reason, AcRecord.Patent, LocalDateTime.now());
                 acRecordRepository.save(acRecord);
 //                patentDetail.getAcRecordList().add(acRecord);
+
+//                    关联patent与acRecord
+                PatentAcRecord patentAcRecord = new PatentAcRecord();
+                patentAcRecord.setPatentId(id);
+                patentAcRecord.setAcRecordId(acRecord.getId());
+                patentAcRecord.setType(PatentAcRecord.AuthorizationType);
+                patentAcRecordRepository.save(patentAcRecord);
             }
 
         });
@@ -304,7 +326,7 @@ public class PatentService {
 
         Page<Patent> patentPage = patentRepository.findAll(patentSpecification, pageable);
         List<PatentResp> patentRespList = StreamUtils.map(patentPage.toList(), patent ->
-            patentConvertor.entity_PO2Resp(patent)
+            patentConvertor.entity2Resp(patent)
         );
         return Map.of("list", patentRespList, "total", patentPage.getTotalElements());
     }

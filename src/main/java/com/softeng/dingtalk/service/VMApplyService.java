@@ -5,8 +5,8 @@ import com.softeng.dingtalk.component.convertor.VMApplyConvertor;
 import com.softeng.dingtalk.dto.req.VMApplyReq;
 import com.softeng.dingtalk.dto.resp.VMApplyResp;
 import com.softeng.dingtalk.enums.PermissionEnum;
-import com.softeng.dingtalk.po_entity.User;
-import com.softeng.dingtalk.po_entity.VMApply;
+import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.entity.VMApply;
 import com.softeng.dingtalk.dao.repository.UserRepository;
 import com.softeng.dingtalk.dao.repository.VMApplyRepository;
 import com.softeng.dingtalk.utils.StreamUtils;
@@ -108,7 +108,7 @@ public class VMApplyService {
             return criteriaBuilder.and(predicates.toArray(arr));
         });
         Page<VMApply> vmApplyPage = vmApplyRepository.findAll(vmApplySpecification, pageable);
-        List<VMApplyResp> vmApplyReqList = StreamUtils.map(vmApplyPage.toList(), vmApply -> vmApplyConvertor.entity_PO2Resp(vmApply));
+        List<VMApplyResp> vmApplyReqList = StreamUtils.map(vmApplyPage.toList(), vmApply -> vmApplyConvertor.entity2Resp(vmApply));
         return Map.of("list", vmApplyReqList, "total", vmApplyPage.getTotalElements());
     }
 

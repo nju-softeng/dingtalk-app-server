@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.PaperLevel;
+import com.softeng.dingtalk.entity.PaperLevel;
 import com.softeng.dingtalk.enums.PaperType;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

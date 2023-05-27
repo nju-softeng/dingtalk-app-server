@@ -2,8 +2,6 @@ package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.dto.CommonResult;
 import com.softeng.dingtalk.dto.req.UserPermissionReq;
-import com.softeng.dingtalk.dto.req.UserTeamReq;
-import com.softeng.dingtalk.po_entity.UserPermission;
 import com.softeng.dingtalk.service.UserPermissionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

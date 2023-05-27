@@ -2,7 +2,7 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.dingApi.OAApi;
 import com.softeng.dingtalk.component.dingApi.ScheduleApi;
-import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.dao.repository.AbsentOARepository;
 import com.softeng.dingtalk.dao.repository.DingTalkScheduleDetailRepository;
 import com.softeng.dingtalk.dao.repository.DingTalkScheduleRepository;
@@ -21,9 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
