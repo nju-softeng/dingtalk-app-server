@@ -152,8 +152,16 @@ public class PracticeService {
         InternshipPeriodRecommended periodRecommended = internshipPeriodRecommendedRepository.findTop();
         LocalDate startRecommended = periodRecommended.getStart();
         LocalDate endRecommended = periodRecommended.getEnd();
-        if((startRecommended.isBefore(start) || startRecommended.isEqual(start)) && (endRecommended.isAfter(end)) || endRecommended.isEqual(end))
+        if((startRecommended.isBefore(start) || startRecommended.isEqual(start)) && (endRecommended.isAfter(end)) || endRecommended.isEqual(end)){
             practiceReq.setState(PracticeStateEnum.ACCEPTED.getValue());
+            LocalDate cur = LocalDate.now();
+            User applicant = userRepository.findById(practiceReq.getUserId()).get();
+            if((cur.isAfter(start) || cur.isEqual(start)) && (cur.isBefore(end) || cur.isEqual(end))) {
+                applicant.setWorkState(false);
+                userRepository.save(applicant);
+            }
+        }
+
 
 
         Practice practice = practiceConvertor.req2Entity_PO(practiceReq);
