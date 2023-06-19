@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.Team;
+import com.softeng.dingtalk.entity.Team;
 import org.springframework.stereotype.Repository;
 
 /**

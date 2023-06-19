@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
  * @Description: 微服务里四层对象转换器的接口
  * @Version: 1.0
  */
-public interface CommonConvertorInterface<REQ, RESP, ENTITY_PO> {
+public interface CommonConvertorInterface<REQ, RESP, ENTITY> {
 
-    ENTITY_PO req2Entity_PO(REQ req);
-    RESP entity_PO2Resp(ENTITY_PO entity);
+    ENTITY req2Entity(REQ req);
+    RESP entity2Resp(ENTITY entity);
 
     default <FROM, TO> List<TO> _batchTransfer(List<FROM> froms, Function<FROM, TO> transferLogic) {
         return CollectionUtils.isEmpty(froms)
@@ -24,12 +24,12 @@ public interface CommonConvertorInterface<REQ, RESP, ENTITY_PO> {
                 : froms.stream().map(transferLogic).collect(Collectors.toList());
     }
 
-    default List<ENTITY_PO> batchReq2Entity_PO(List<REQ> reqList) {
-        return _batchTransfer(reqList, this::req2Entity_PO);
+    default List<ENTITY> batchReq2Entity(List<REQ> reqList) {
+        return _batchTransfer(reqList, this::req2Entity);
     }
 
-    default List<RESP> batchEntity_PO2Resp(List<ENTITY_PO> entities) {
-        return _batchTransfer(entities, this::entity_PO2Resp);
+    default List<RESP> batchEntity2Resp(List<ENTITY> entities) {
+        return _batchTransfer(entities, this::entity2Resp);
     }
 
 }

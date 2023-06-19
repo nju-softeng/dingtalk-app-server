@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.po_entity.AbsentOA;
+import com.softeng.dingtalk.entity.AbsentOA;
 import com.softeng.dingtalk.service.DingTalkScheduleService;
 import com.softeng.dingtalk.vo.AbsentOAVO;
 import com.softeng.dingtalk.vo.DingTalkScheduleVO;

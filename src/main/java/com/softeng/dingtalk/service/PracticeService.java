@@ -6,9 +6,9 @@ import com.softeng.dingtalk.dto.req.PracticeReq;
 import com.softeng.dingtalk.dto.resp.PracticeResp;
 import com.softeng.dingtalk.enums.PracticeStateEnum;
 import com.softeng.dingtalk.exception.CustomExceptionEnum;
-import com.softeng.dingtalk.po_entity.InternshipPeriodRecommended;
-import com.softeng.dingtalk.po_entity.Practice;
-import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.entity.InternshipPeriodRecommended;
+import com.softeng.dingtalk.entity.Practice;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.dao.repository.PracticeRepository;
 import com.softeng.dingtalk.dao.repository.UserRepository;
 import com.softeng.dingtalk.utils.StreamUtils;
@@ -28,7 +28,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +116,7 @@ public class PracticeService {
             return criteriaBuilder.and(predicates.toArray(arr));
         });
         Page<Practice> practicePage = practiceRepository.findAll(practiceSpecification, pageable);
-        List<PracticeResp> practiceRespList = StreamUtils.map(practicePage.toList(), (practice -> practiceConvertor.entity_PO2Resp(practice)));
+        List<PracticeResp> practiceRespList = StreamUtils.map(practicePage.toList(), (practice -> practiceConvertor.entity2Resp(practice)));
         return Map.of("list", practiceRespList, "total", practicePage.getTotalElements());
     }
 
@@ -164,7 +163,7 @@ public class PracticeService {
 
 
 
-        Practice practice = practiceConvertor.req2Entity_PO(practiceReq);
+        Practice practice = practiceConvertor.req2Entity(practiceReq);
         practiceRepository.save(practice);
     }
 
@@ -183,7 +182,7 @@ public class PracticeService {
             }
         }
 
-        Practice practice = practiceConvertor.req2Entity_PO(practiceReq);
+        Practice practice = practiceConvertor.req2Entity(practiceReq);
         practiceRepository.save(practice);
     }
 }

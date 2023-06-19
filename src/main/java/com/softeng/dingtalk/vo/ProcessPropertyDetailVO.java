@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.po_entity.ProcessFile;
-import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.entity.ProcessFile;
+import com.softeng.dingtalk.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

@@ -1,10 +1,10 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.dao.repository.*;
-import com.softeng.dingtalk.po_entity.DcSummary;
-import com.softeng.dingtalk.po_entity.PaperLevel;
-import com.softeng.dingtalk.po_entity.PatentLevel;
-import com.softeng.dingtalk.po_entity.SubsidyLevel;
+import com.softeng.dingtalk.entity.DcSummary;
+import com.softeng.dingtalk.entity.PaperLevel;
+import com.softeng.dingtalk.entity.PatentLevel;
+import com.softeng.dingtalk.entity.SubsidyLevel;
 import com.softeng.dingtalk.enums.PaperType;
 import com.softeng.dingtalk.enums.Position;
 import lombok.extern.slf4j.Slf4j;

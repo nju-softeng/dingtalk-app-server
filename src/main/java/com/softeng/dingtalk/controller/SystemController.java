@@ -1,9 +1,9 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.po_entity.PaperLevel;
-import com.softeng.dingtalk.po_entity.PatentLevel;
-import com.softeng.dingtalk.po_entity.SubsidyLevel;
-import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.entity.PaperLevel;
+import com.softeng.dingtalk.entity.PatentLevel;
+import com.softeng.dingtalk.entity.SubsidyLevel;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.service.SystemService;
 import com.softeng.dingtalk.vo.QueryUserVO;
 import lombok.extern.slf4j.Slf4j;

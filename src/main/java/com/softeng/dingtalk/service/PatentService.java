@@ -4,7 +4,7 @@ import com.softeng.dingtalk.component.convertor.PatentConvertor;
 import com.softeng.dingtalk.dao.repository.*;
 import com.softeng.dingtalk.dto.req.PatentReq;
 import com.softeng.dingtalk.dto.resp.PatentResp;
-import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.utils.StreamUtils;
 import com.softeng.dingtalk.vo.PatentVO;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -304,7 +303,7 @@ public class PatentService {
 
         Page<Patent> patentPage = patentRepository.findAll(patentSpecification, pageable);
         List<PatentResp> patentRespList = StreamUtils.map(patentPage.toList(), patent ->
-            patentConvertor.entity_PO2Resp(patent)
+            patentConvertor.entity2Resp(patent)
         );
         return Map.of("list", patentRespList, "total", patentPage.getTotalElements());
     }

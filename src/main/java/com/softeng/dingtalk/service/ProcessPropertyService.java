@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.service;
-import com.softeng.dingtalk.po_entity.ProcessFile;
-import com.softeng.dingtalk.po_entity.ProcessProperty;
+import com.softeng.dingtalk.entity.ProcessFile;
+import com.softeng.dingtalk.entity.ProcessProperty;
 import com.softeng.dingtalk.dao.repository.ProcessFileRepository;
 import com.softeng.dingtalk.dao.repository.ProcessPropertyRepository;
 import com.softeng.dingtalk.dao.repository.UserRepository;

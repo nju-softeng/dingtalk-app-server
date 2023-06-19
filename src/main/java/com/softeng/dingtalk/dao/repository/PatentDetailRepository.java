@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.PatentDetail;
+import com.softeng.dingtalk.entity.PatentDetail;
 import org.springframework.stereotype.Repository;
 
 @Repository

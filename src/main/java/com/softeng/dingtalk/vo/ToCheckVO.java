@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.vo;
 
-import com.softeng.dingtalk.po_entity.AcItem;
+import com.softeng.dingtalk.entity.AcItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

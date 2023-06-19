@@ -35,6 +35,8 @@
                 t1.week3,
                 t1.week4,
                 t1.week5,
+                t1.hasLease,
+                t1.position,
                 t1.total,
                 t1.ac,
                 t2.ac as acChanges,
@@ -50,6 +52,8 @@
                         d.week3,
                         d.week4,
                         d.week5,
+                        u.position,
+                        (case ifnull(u.lease_contract_file_name, 0) when 0 then '否' else '是' end ) as hasLease,
                         d.total,
                         d.ac,
                         d.topup   as topUp

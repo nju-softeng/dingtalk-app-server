@@ -21,14 +21,14 @@ public class UserPermissionService {
     private UserPermissionConvertor userPermissionConvertor;
 
     public void addUserPermission(UserPermissionReq userPermissionReq) {
-        userPermissionRepository.save(userPermissionConvertor.req2Entity_PO(userPermissionReq));
+        userPermissionRepository.save(userPermissionConvertor.req2Entity(userPermissionReq));
     }
 
     public void updateUserPermissionList(List<UserPermissionReq> userPermissionReqList) {
         int userId = userPermissionReqList.get(0).getUserId();
         userPermissionRepository.deleteAllByUserId(userId);
         userPermissionRepository.saveBatch(StreamUtils.map(userPermissionReqList,
-                (userPermissionReq -> userPermissionConvertor.req2Entity_PO(userPermissionReq))));
+                (userPermissionReq -> userPermissionConvertor.req2Entity(userPermissionReq))));
     }
 
 }

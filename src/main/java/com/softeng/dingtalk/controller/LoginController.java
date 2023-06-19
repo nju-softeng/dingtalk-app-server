@@ -5,7 +5,7 @@ import com.softeng.dingtalk.component.dingApi.ContactsApi;
 import com.softeng.dingtalk.component.UserContextHolder;
 import com.softeng.dingtalk.dto.CommonResult;
 import com.softeng.dingtalk.dto.resp.PermissionResp;
-import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.service.PermissionService;
 import com.softeng.dingtalk.service.SystemService;
 import com.softeng.dingtalk.service.UserService;
@@ -91,6 +91,13 @@ public class LoginController {
         String token = encryptorComponent.encrypt(map);
         // 在header创建自定义的权限
         response.setHeader("token",token);
+        String role = getRole(user);
+        response.setHeader("role", role);
+        response.setHeader("uid", user.getId() + "");
+        return Map.of("role", role, "uid", user.getId(), "token", token);
+    }
+
+    private String getRole(User user) {
         String role = null;
         if (user.getAuthority() == User.NORMAL_AUTHORITY) {
             role = USER_ROLE;
@@ -99,9 +106,7 @@ public class LoginController {
         } else {
             role = ADMIN_ROLE;
         }
-        response.setHeader("role", role);
-        response.setHeader("uid", user.getId() + "");
-        return Map.of("role", role, "uid", user.getId(), "token", token);
+        return role;
     }
 
     /**
@@ -112,19 +117,21 @@ public class LoginController {
     @GetMapping("/v2/login_test/{uid}")
     public CommonResult<Map<String, Object>> testlogin2(@PathVariable int uid, HttpServletResponse response) {
         log.debug("测试登陆" + uid);
+        String role = userService.isAuditor(uid) ? AUDITOR_ROLE: USER_ROLE;
         UserContextHolder.UserContext userContext = new UserContextHolder.UserContext()
                 .setUid(uid)
                 .setPermissionIds(StreamUtils.map(
                         permissionService.getPermissions(uid),
                         permission -> permission.getId()
-                ));
+                )).setRole(role);
         // 生成加密token
         String token = userContextHolder.encrypt(userContext);
         List<PermissionResp> permissionList = permissionService.getPermissions(uid);
         // 在header创建自定义的权限
         response.setHeader("token",token);
         response.setHeader("uid", uid + "");
-        return CommonResult.success(Map.of("token",token, "uid", uid, "permissionList", permissionList));
+        response.setHeader("role", role);
+        return CommonResult.success(Map.of("token",token, "uid", uid, "permissionList", permissionList, "role", role));
     }
 
 
@@ -148,18 +155,20 @@ public class LoginController {
             user = systemService.addNewUser(userid);
         }
         int uid = user.getId();
+        String role = getRole(user);
         UserContextHolder.UserContext userContext = new UserContextHolder.UserContext()
                 .setUid(uid)
                 .setPermissionIds(StreamUtils.map(
                         permissionService.getPermissions(uid),
                         permission -> permission.getId()
-                ));
+                )).setRole(role);
         // 生成加密token
         String token = userContextHolder.encrypt(userContext);
         List<PermissionResp> permissionList = permissionService.getPermissions(uid);
         // 在header创建自定义的权限
         response.setHeader("token",token);
         response.setHeader("uid", uid + "");
-        return CommonResult.success(Map.of( "uid", uid, "token", token, "permissionList", permissionList));
+        response.setHeader("role", role);
+        return CommonResult.success(Map.of( "uid", uid, "token", token, "permissionList", permissionList, "role", role));
     }
 }

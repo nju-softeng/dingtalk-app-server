@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.Property;
+import com.softeng.dingtalk.entity.Property;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.service;
 
 import com.alibaba.excel.EasyExcel;
-import com.softeng.dingtalk.po_entity.Prize;
+import com.softeng.dingtalk.entity.Prize;
 import com.softeng.dingtalk.dto.resp.excelData.AcData;
 import com.softeng.dingtalk.dto.resp.excelData.DcSummaryData;
 import com.softeng.dingtalk.dto.resp.excelData.UserPrizeData;

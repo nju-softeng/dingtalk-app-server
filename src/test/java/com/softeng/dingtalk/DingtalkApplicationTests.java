@@ -1,8 +1,8 @@
 package com.softeng.dingtalk;
 
 import com.softeng.dingtalk.component.encryptor.EncryptorComponent;
-import com.softeng.dingtalk.po_entity.InternalPaper;
-import com.softeng.dingtalk.po_entity.Paper;
+import com.softeng.dingtalk.entity.InternalPaper;
+import com.softeng.dingtalk.entity.Paper;
 import com.softeng.dingtalk.enums.PaperType;
 import com.softeng.dingtalk.dao.repository.InternalPaperRepository;
 import com.softeng.dingtalk.service.VoteService;

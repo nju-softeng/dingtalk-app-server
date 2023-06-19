@@ -2,8 +2,8 @@ package com.softeng.dingtalk.component.convertor;
 
 import com.softeng.dingtalk.dto.req.NewsReq;
 import com.softeng.dingtalk.dto.resp.NewsResp;
-import com.softeng.dingtalk.po_entity.News;
-import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.entity.News;
+import com.softeng.dingtalk.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 public class NewsConvertor extends AbstractConvertorTemplate<NewsReq, NewsResp, News>{
 
     @Override
-    public News req2Entity_PO(NewsReq newsReq) {
-        News res = super.req2Entity_PO(newsReq);
+    public News req2Entity(NewsReq newsReq) {
+        News res = super.req2Entity(newsReq);
         res.setAuthor(new User().setId(newsReq.getAuthorId()));
         res.setIsDeleted(0);
         res.setIsShown(1);
@@ -24,8 +24,8 @@ public class NewsConvertor extends AbstractConvertorTemplate<NewsReq, NewsResp, 
     }
 
     @Override
-    public NewsResp entity_PO2Resp(News news) {
-        return super.entity_PO2Resp(news)
+    public NewsResp entity2Resp(News news) {
+        return super.entity2Resp(news)
                 .setAuthorName(news.getAuthor().getName())
                 .setAuthorId(news.getAuthor().getId());
     }

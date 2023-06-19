@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.component;
 
-import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

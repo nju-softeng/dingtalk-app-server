@@ -3,8 +3,8 @@ package com.softeng.dingtalk.service;
 import com.softeng.dingtalk.component.convertor.ReimbursementConvertor;
 import com.softeng.dingtalk.dto.req.ReimbursementReq;
 import com.softeng.dingtalk.dto.resp.ReimbursementResp;
-import com.softeng.dingtalk.po_entity.Reimbursement;
-import com.softeng.dingtalk.po_entity.ReimbursementFile;
+import com.softeng.dingtalk.entity.Reimbursement;
+import com.softeng.dingtalk.entity.ReimbursementFile;
 import com.softeng.dingtalk.dao.repository.ReimbursementFileRepository;
 import com.softeng.dingtalk.dao.repository.ReimbursementRepository;
 import com.softeng.dingtalk.dao.repository.UserRepository;
@@ -121,7 +121,7 @@ public class ReimburseService {
         });
         Page<Reimbursement> reimbursementPage = reimbursementRepository.findAll(reimbursementSpecification, pageable);
         List<ReimbursementResp> reimbursementRespList = StreamUtils.map(reimbursementPage.toList(),
-                reimbursement -> reimbursementConvertor.entity_PO2Resp(reimbursement));
+                reimbursement -> reimbursementConvertor.entity2Resp(reimbursement));
         return Map.of("list", reimbursementRespList, "total", reimbursementPage.getTotalElements());
     }
 }

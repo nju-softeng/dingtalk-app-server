@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.InternalPaper;
-import com.softeng.dingtalk.po_entity.PaperDetail;
+import com.softeng.dingtalk.entity.InternalPaper;
+import com.softeng.dingtalk.entity.PaperDetail;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

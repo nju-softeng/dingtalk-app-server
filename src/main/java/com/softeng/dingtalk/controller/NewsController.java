@@ -1,16 +1,12 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.aspect.AccessPermission;
-import com.softeng.dingtalk.component.convertor.NewsConvertor;
 import com.softeng.dingtalk.dto.CommonResult;
 import com.softeng.dingtalk.dto.req.NewsReq;
 import com.softeng.dingtalk.dto.resp.NewsResp;
 import com.softeng.dingtalk.enums.PermissionEnum;
-import com.softeng.dingtalk.po_entity.News;
 import com.softeng.dingtalk.service.NewsService;
-import com.softeng.dingtalk.utils.StreamUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

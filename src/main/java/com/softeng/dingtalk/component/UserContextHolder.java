@@ -40,6 +40,13 @@ public class UserContextHolder {
          * 这里的权限不仅包括permission表中的权限，还包括其他业务权限（例如评审，是否是是该组成员等）
          */
         private List<Integer> permissionIds;
+
+        /**
+         *
+         * 用户角色，v2已弃用，设置主要是为了兼容v1
+         */
+        @Deprecated
+        private String role;
     }
     private final ThreadLocal<UserContext> userContext = new ThreadLocal<>();
 

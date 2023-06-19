@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.service;
 
-import com.softeng.dingtalk.po_entity.Property;
-import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.entity.Property;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.dao.repository.PropertyRepository;
 import com.softeng.dingtalk.vo.PropertyVO;
 import lombok.extern.slf4j.Slf4j;

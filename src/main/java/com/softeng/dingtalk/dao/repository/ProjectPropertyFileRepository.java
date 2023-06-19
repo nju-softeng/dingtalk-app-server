@@ -1,5 +1,5 @@
 package com.softeng.dingtalk.dao.repository;
-import com.softeng.dingtalk.po_entity.ProjectPropertyFile;
+import com.softeng.dingtalk.entity.ProjectPropertyFile;
 import org.springframework.stereotype.Repository;
 
 @Repository

@@ -3,7 +3,7 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.dingApi.BaseApi;
 import com.softeng.dingtalk.dao.repository.*;
-import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.entity.*;
 import com.softeng.dingtalk.dao.mapper.InternalPaperMapper;
 
 import com.softeng.dingtalk.vo.*;

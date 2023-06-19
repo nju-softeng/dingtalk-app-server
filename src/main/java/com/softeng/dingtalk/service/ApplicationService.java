@@ -1,9 +1,9 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.DateUtils;
-import com.softeng.dingtalk.po_entity.AcItem;
-import com.softeng.dingtalk.po_entity.AcRecord;
-import com.softeng.dingtalk.po_entity.DcRecord;
+import com.softeng.dingtalk.entity.AcItem;
+import com.softeng.dingtalk.entity.AcRecord;
+import com.softeng.dingtalk.entity.DcRecord;
 import com.softeng.dingtalk.dao.mapper.DcRecordMapper;
 import com.softeng.dingtalk.dao.repository.AcItemRepository;
 import com.softeng.dingtalk.dao.repository.AcRecordRepository;

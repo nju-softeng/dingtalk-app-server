@@ -2,7 +2,7 @@ package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.dto.CommonResult;
 import com.softeng.dingtalk.dto.req.ReimbursementReq;
-import com.softeng.dingtalk.po_entity.Reimbursement;
+import com.softeng.dingtalk.entity.Reimbursement;
 import com.softeng.dingtalk.service.ReimburseService;
 import com.softeng.dingtalk.vo.ReimbursementVO;
 import lombok.extern.slf4j.Slf4j;

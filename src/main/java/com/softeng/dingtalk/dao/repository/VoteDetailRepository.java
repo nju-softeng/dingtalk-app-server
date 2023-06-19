@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dao.repository;
 
-import com.softeng.dingtalk.po_entity.User;
-import com.softeng.dingtalk.po_entity.VoteDetail;
+import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.entity.VoteDetail;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -5,7 +5,7 @@ import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.alibaba.excel.annotation.write.style.ContentStyle;
 import com.alibaba.excel.annotation.write.style.HeadFontStyle;
 import com.alibaba.excel.annotation.write.style.HeadStyle;
-import com.softeng.dingtalk.po_entity.DcSummary;
+import com.softeng.dingtalk.entity.DcSummary;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,6 +37,10 @@ public class DcSummaryData {
     private double week4;
     @ExcelProperty("第五周DC")
     private double week5;
+    @ExcelProperty("学位")
+    private String position;
+    @ExcelProperty("是否上传租房合同")
+    private String hasLease;
     @ExcelProperty("总DC")
     private double total;
     @ExcelProperty("当前AC")
@@ -45,6 +49,7 @@ public class DcSummaryData {
     private double topUp;
     @ExcelProperty("本月AC相比上月变化")
     private double acChanges;
+
     @ExcelProperty("AC 变化原因")
     @ContentStyle(horizontalAlignment = HorizontalAlignment.LEFT)
     @HeadStyle(horizontalAlignment = HorizontalAlignment.LEFT,

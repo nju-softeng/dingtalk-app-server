@@ -2,7 +2,7 @@ package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.dto.CommonResult;
 import com.softeng.dingtalk.dto.req.PracticeReq;
-import com.softeng.dingtalk.po_entity.Practice;
+import com.softeng.dingtalk.entity.Practice;
 import com.softeng.dingtalk.service.PracticeService;
 import com.softeng.dingtalk.vo.PracticeVO;
 import lombok.extern.slf4j.Slf4j;

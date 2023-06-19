@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.dao.repository;
 
 
-import com.softeng.dingtalk.po_entity.SubsidyLevel;
+import com.softeng.dingtalk.entity.SubsidyLevel;
 import com.softeng.dingtalk.enums.Position;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

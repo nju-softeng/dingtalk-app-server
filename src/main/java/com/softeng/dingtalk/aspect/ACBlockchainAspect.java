@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.aspect;
 
 
-import com.softeng.dingtalk.po_entity.AcRecord;
+import com.softeng.dingtalk.entity.AcRecord;
 import com.softeng.dingtalk.dao.repository.AcRecordRepository;
 import com.softeng.dingtalk.service.SystemService;
 import lombok.extern.slf4j.Slf4j;

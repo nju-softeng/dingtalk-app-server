@@ -5,7 +5,7 @@ import com.softeng.dingtalk.dao.repository.NewsRepository;
 import com.softeng.dingtalk.dto.req.NewsReq;
 import com.softeng.dingtalk.dto.resp.NewsResp;
 import com.softeng.dingtalk.enums.NewsState;
-import com.softeng.dingtalk.po_entity.News;
+import com.softeng.dingtalk.entity.News;
 import com.softeng.dingtalk.utils.StreamUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,7 +34,7 @@ public class NewsService {
                 NewsState.IS_SHOWN.getValue(),
                 NewsState.IS_NOT_DELETED.getValue(),
                 pageable);
-        List<NewsResp> newsList = StreamUtils.map(newsPage.toList(), news -> newsConvertor.entity_PO2Resp(news));
+        List<NewsResp> newsList = StreamUtils.map(newsPage.toList(), news -> newsConvertor.entity2Resp(news));
         return Map.of("newsList", newsList, "total", newsPage.getTotalElements());
     }
 
@@ -44,25 +44,25 @@ public class NewsService {
                 NewsState.IS_NOT_SHOWN.getValue(),
                 NewsState.IS_NOT_DELETED.getValue(),
                 pageable);
-        List<NewsResp> newsList = StreamUtils.map(newsPage.toList(), news -> newsConvertor.entity_PO2Resp(news));
+        List<NewsResp> newsList = StreamUtils.map(newsPage.toList(), news -> newsConvertor.entity2Resp(news));
         return Map.of("newsList", newsList, "total", newsPage.getTotalElements());
     }
 
     public List<NewsResp> getShownNews() {
         return StreamUtils.map(newsRepository.findAllByIsShownAndIsDeleted(
                 NewsState.IS_SHOWN.getValue(),
-                NewsState.IS_NOT_DELETED.getValue()), news -> newsConvertor.entity_PO2Resp(news));
+                NewsState.IS_NOT_DELETED.getValue()), news -> newsConvertor.entity2Resp(news));
     }
 
     public Map<String, Object> getAllNews(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("release_time").descending());
         Page<News> newsPage = newsRepository.findAllByIsDeleted(NewsState.IS_NOT_DELETED.getValue(), pageable);
-        List<NewsResp> newsList = StreamUtils.map(newsPage.toList(), news -> newsConvertor.entity_PO2Resp(news));
+        List<NewsResp> newsList = StreamUtils.map(newsPage.toList(), news -> newsConvertor.entity2Resp(news));
         return Map.of("newsList", newsList, "total", newsPage.getTotalElements());
     }
 
     public void addNews(NewsReq newsReq) {
-        newsRepository.save(newsConvertor.req2Entity_PO(newsReq));
+        newsRepository.save(newsConvertor.req2Entity(newsReq));
     }
 
     public void hideNews(int newsId) {

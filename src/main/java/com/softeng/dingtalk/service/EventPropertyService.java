@@ -1,6 +1,6 @@
 package com.softeng.dingtalk.service;
-import com.softeng.dingtalk.po_entity.EventFile;
-import com.softeng.dingtalk.po_entity.EventProperty;
+import com.softeng.dingtalk.entity.EventFile;
+import com.softeng.dingtalk.entity.EventProperty;
 import com.softeng.dingtalk.dao.repository.EventPropertyRepository;
 import com.softeng.dingtalk.dao.repository.EventFileRepository;
 import com.softeng.dingtalk.vo.EventPropertyInfoVO;

@@ -2,7 +2,7 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.dingApi.ReportApi;
 import com.softeng.dingtalk.component.DateUtils;
-import com.softeng.dingtalk.po_entity.User;
+import com.softeng.dingtalk.entity.User;
 import com.softeng.dingtalk.dao.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

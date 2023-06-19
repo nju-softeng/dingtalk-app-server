@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softeng.dingtalk.controller.WebSocketController;
 import com.softeng.dingtalk.component.dingApi.MessageApi;
 import com.softeng.dingtalk.dao.repository.*;
-import com.softeng.dingtalk.po_entity.*;
+import com.softeng.dingtalk.entity.*;
 
 import com.softeng.dingtalk.enums.Position;
 import com.softeng.dingtalk.vo.VoteVO;
