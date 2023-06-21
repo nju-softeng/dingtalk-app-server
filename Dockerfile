@@ -8,7 +8,7 @@
 #ENTRYPOINT ["sh", "-c", "java -jar dingtalk-0.0.1-SNAPSHOT.jar --spring.profiles.active=$PROFILES"]
 
 # First stage: complete build environment
-FROM maven:3.8.6-jdk-11-slim AS builder
+FROM maven:3.6.3-jdk-11-slim AS builder
 WORKDIR /code
 COPY . /code
 # add pom.xml and source code
