@@ -21,6 +21,8 @@ public interface UserPermissionRepository extends CustomizedRepository<UserPermi
      */
     List<UserPermission> findAllByUserId(int userId);
 
+    List<UserPermission> findAllByPermissionId(int permissionId);
+
 
     void deleteAllByUserId(int userId);
 }

@@ -61,6 +61,7 @@ public interface UserRepository extends CustomizedRepository<User, Integer>, Jpa
      * 供用户提交审核申请时选择
      * @return
      */
+    @Deprecated
     @Query(value = "select id, name from user where authority = 1 and is_deleted = 0", nativeQuery = true)
     List<Map<String, Object>> listAuditor();
 

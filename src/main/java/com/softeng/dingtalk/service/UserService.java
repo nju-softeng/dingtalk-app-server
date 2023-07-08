@@ -6,6 +6,7 @@ import com.softeng.dingtalk.dao.repository.*;
 import com.softeng.dingtalk.component.encryptor.Encryption;
 import com.softeng.dingtalk.dto.resp.PermissionResp;
 import com.softeng.dingtalk.entity.*;
+import com.softeng.dingtalk.enums.PermissionEnum;
 import com.softeng.dingtalk.utils.StreamUtils;
 import com.softeng.dingtalk.vo.UserInfoVO;
 import com.softeng.dingtalk.vo.UserVO;
@@ -95,7 +96,11 @@ public class UserService {
      * @return
      */
     public Map getAuditorUser() {
-        return Map.of("auditorlist", userRepository.listAuditor());
+        List<UserPermission> userPermissionList = userPermissionRepository.findAllByPermissionId(PermissionEnum.REVIEW_PERFORMANCE_APPLICATION.getCode());
+        List<User> auditorList = StreamUtils.map(userPermissionList, userPermission ->
+            userRepository.findById(userPermission.getUserId()).get()
+        );
+        return Map.of("auditorlist", auditorList);
     }
 
 
