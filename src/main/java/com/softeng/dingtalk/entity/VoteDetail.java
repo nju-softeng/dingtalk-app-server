@@ -17,17 +17,20 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @NamedEntityGraph(name="voteDetail.graph",attributeNodes={@NamedAttributeNode("acRecord")})
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"vote_id", "user_id"})})
+//@Table(name = "vote_detail")
+@Table(name = "vote_detail",uniqueConstraints = {@UniqueConstraint(columnNames={"vote_id", "user_id"})})
 public class VoteDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private boolean result;
 
     @JsonIgnoreProperties("voteDetails")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vote_id")
     private Vote vote;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     /**

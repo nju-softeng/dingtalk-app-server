@@ -2,7 +2,7 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.Property;
 import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.repository.PropertyRepository;
+import com.softeng.dingtalk.dao.repository.PropertyRepository;
 import com.softeng.dingtalk.vo.PropertyVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class PropertyService {
      * @return
      */
     public Property addNewProperty(int userId, PropertyVO propertyVO){
-        Property property=new Property(new User(userId),propertyVO.getName(),propertyVO.getType(),propertyVO.getPreserver(),propertyVO.getRemark(),propertyVO.getStartTime());
+        Property property =new Property(new User(userId),propertyVO.getName(),propertyVO.getType(),propertyVO.getPreserver(),propertyVO.getRemark(),propertyVO.getStartTime());
         return propertyRepository.save(property);
     }
 

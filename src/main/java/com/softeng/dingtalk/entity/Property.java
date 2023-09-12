@@ -18,6 +18,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "property")
 public class Property {
 
     @Id
@@ -60,7 +61,7 @@ public class Property {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    public Property(User user, String name, String type, String preserver, String remark,LocalDate startTime) {
+    public Property(User user, String name, String type, String preserver, String remark, LocalDate startTime) {
         this.user = user;
         this.name = name;
         this.type = type;

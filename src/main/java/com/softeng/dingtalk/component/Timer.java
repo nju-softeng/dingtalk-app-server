@@ -1,27 +1,23 @@
 package com.softeng.dingtalk.component;
 
-import com.softeng.dingtalk.api.MessageApi;
-import com.softeng.dingtalk.constant.LocalUrlConstant;
-import com.softeng.dingtalk.entity.*;
+import com.softeng.dingtalk.component.dingApi.MessageApi;
+import com.softeng.dingtalk.dao.repository.*;
 import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.AcRecordRepository;
-import com.softeng.dingtalk.repository.ExternalPaperRepository;
-import com.softeng.dingtalk.repository.InternalPaperRepository;
-import com.softeng.dingtalk.repository.VoteRepository;
-import com.softeng.dingtalk.service.InitService;
-import com.softeng.dingtalk.service.SystemService;
-import com.softeng.dingtalk.service.VoteService;
-import com.softeng.dingtalk.service.WeeklyReportService;
+import com.softeng.dingtalk.enums.PracticeStateEnum;
+import com.softeng.dingtalk.entity.*;
+import com.softeng.dingtalk.service.*;
+import com.softeng.dingtalk.utils.stuNumUtils.StuNumParser;
+import com.softeng.dingtalk.utils.stuNumUtils.StuNumParserFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author zhanyeye
@@ -54,6 +50,11 @@ public class Timer {
     @Autowired
     SystemService systemService;
 
+    @Resource
+    private PracticeRepository practiceRepository;
+    @Resource
+    private UserRepository userRepository;
+
     /**
      * 每周周日23点扫描一次，给当天还未提交周报的博士、硕士发送提醒消息
      */
@@ -67,9 +68,9 @@ public class Timer {
      * 每周一凌晨2点扫描一次，查询周日一整天没有提交周报的博士、硕士，每人扣 1 ac
      */
     @Scheduled(cron = "0 0 2 ? * MON")
-    public void deductedPointsUnsubmittedWeeklyReport() {
+    public void deductedPointsUnSubmittedWeeklyReport() {
         log.info(LocalDate.now() + " 定时扫描扣分");
-        systemService.manulDeductedPointsUnsubmittedWeeklyReport(LocalDate.now().minusDays(1));
+        systemService.manualDeductedPointsUnSubmittedWeeklyReport(LocalDate.now().minusDays(1));
     }
 
     //每天凌晨扫描一次,会议的AC结算
@@ -172,6 +173,49 @@ public class Timer {
      */
     private String startVoteInfo(String title, LocalDateTime dateTime) {
         return " #### 投票 \n ##### 论文： " + title + " \n 截止时间: " + dateTime.toLocalTime().toString();
+    }
+
+
+//    @Scheduled(cron = "0/20 * * * * ?")
+//    public void test() {
+//        log.info(LocalDate.now() + "test");
+//    }
+
+    /**
+     * 每天凌晨一点根据审核通过的实习申请修改对应用户的工作状态
+     */
+    @Scheduled(cron = "0 0 1 * * ?")
+    public void editWorkState() {
+        log.info("每天凌晨一点根据审核通过的实习申请修改对应用户的工作状态");
+        List<Practice> practiceList = practiceRepository.findAllByStateEquals(PracticeStateEnum.ACCEPTED.getValue());
+        LocalDate cur = LocalDate.now();
+        practiceList.forEach(practice -> {
+            LocalDate start = practice.getStart();
+            LocalDate end = practice.getEnd();
+            User user = practice.getUser();
+            user.setWorkState((cur.isAfter(start) || cur.isEqual(start)) && (cur.isBefore(end) || cur.isEqual(end)));
+            userRepository.save(user);
+        });
+    }
+
+    /**
+     * 每年8月1日凌晨两点进行用户职位的变更
+     */
+    @Scheduled(cron = "0 0 2 1 8 ?")
+    public void updateUserPosition() {
+        log.info("每年8月1日进行用户职位的变更");
+        userRepository.findAllValidUser()
+                .stream()
+//                筛选出设置了学号的用户
+                .filter((user -> user.getStuNum() != null))
+                .forEach((user -> {
+                    //                排除教师用户
+                    if(user.getPosition() == Position.TEACHER) return;
+                    StuNumParser parser= StuNumParserFactory.generateParser(user.getStuNum().length());
+                    assert parser != null;
+                    user.setPosition(parser.parse(user.getStuNum()));
+                    userRepository.save(user);
+                }));
     }
 
 }

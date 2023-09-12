@@ -18,7 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"user_id", "yearmonth"})})
+@Table(name = "dc_summary",uniqueConstraints = {@UniqueConstraint(columnNames={"user_id", "yearmonth"})})
 public class DcSummary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,6 +47,7 @@ public class DcSummary {
     private double salary;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
 

@@ -1,12 +1,12 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.dao.repository.*;
 import com.softeng.dingtalk.entity.DcSummary;
 import com.softeng.dingtalk.entity.PaperLevel;
 import com.softeng.dingtalk.entity.PatentLevel;
 import com.softeng.dingtalk.entity.SubsidyLevel;
 import com.softeng.dingtalk.enums.PaperType;
 import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,6 +76,7 @@ public class InitService {
             subsidyLevels.add(new SubsidyLevel(Position.PROFESSIONAL, 200));
             subsidyLevels.add(new SubsidyLevel(Position.UNDERGRADUATE, 0));
             subsidyLevels.add(new SubsidyLevel(Position.OTHER, 0));
+            subsidyLevels.add(new SubsidyLevel(Position.TEACHER, 0));
             subsidyLevelRepository.saveBatch(subsidyLevels);
         }
     }
@@ -98,7 +99,7 @@ public class InitService {
 
     public void initPatentLevel(){
         if(patentLevelRepository.count()==0){
-            PatentLevel patentLevel=new PatentLevel();
+            PatentLevel patentLevel =new PatentLevel();
             patentLevel.setTitle("patent");
             patentLevel.setTotal(40);
             patentLevelRepository.save(patentLevel);

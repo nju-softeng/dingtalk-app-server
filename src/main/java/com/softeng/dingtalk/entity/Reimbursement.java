@@ -11,6 +11,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "reimbursement")
 public class Reimbursement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +32,7 @@ public class Reimbursement {
     @OneToMany(mappedBy = "reimbursement",cascade = {CascadeType.REMOVE},fetch = FetchType.EAGER)
     List<ReimbursementFile> reimbursementFileList;
 
-    public Reimbursement(String name,String type, String path) {
+    public Reimbursement(String name, String type, String path) {
         this.name=name;
         this.type = type;
         this.path = path;

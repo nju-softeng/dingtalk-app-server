@@ -13,6 +13,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "project_property_file")
 public class ProjectPropertyFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

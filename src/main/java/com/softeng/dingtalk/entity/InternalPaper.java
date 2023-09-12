@@ -2,14 +2,11 @@ package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.softeng.dingtalk.enums.PaperType;
-import com.sun.istack.Nullable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
-import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +21,7 @@ import java.util.Map;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "internal_paper")
 public class InternalPaper implements Paper {
     /**
      * 论文的投稿结果
@@ -54,7 +52,7 @@ public class InternalPaper implements Paper {
     private PaperType paperType;
 
     /**
-     * 投稿结果
+     * 投稿结
      */
     private int result;
 
@@ -185,7 +183,7 @@ public class InternalPaper implements Paper {
     }
 
     public InternalPaper(String title, String journal, PaperType paperType, LocalDate updateDate,
-                         Boolean isStudentFirstAuthor,  String firstAuthor,String path,String theme,String year) {
+                         Boolean isStudentFirstAuthor, String firstAuthor, String path, String theme, String year) {
         this.title = title;
         this.journal = journal;
         this.paperType = paperType;

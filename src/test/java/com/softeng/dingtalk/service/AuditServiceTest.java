@@ -2,8 +2,6 @@ package com.softeng.dingtalk.service;
 
 
 import com.softeng.dingtalk.entity.AcItem;
-import com.softeng.dingtalk.repository.AcItemRepository;
-import com.softeng.dingtalk.repository.DcRecordRepository;
 import com.softeng.dingtalk.vo.CheckVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -12,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 

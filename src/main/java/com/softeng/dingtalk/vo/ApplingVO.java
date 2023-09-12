@@ -27,5 +27,5 @@ public class ApplingVO {
     /**
      * ac值申请列表
      */
-    private List<AcItem> acItems;    
+    private List<AcItem> acItems;
 }

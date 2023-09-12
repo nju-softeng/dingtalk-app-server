@@ -17,6 +17,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "paper_level")
 public class PaperLevel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

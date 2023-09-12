@@ -2,11 +2,11 @@ package com.softeng.dingtalk.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softeng.dingtalk.controller.WebSocketController;
-import com.softeng.dingtalk.api.MessageApi;
+import com.softeng.dingtalk.component.dingApi.MessageApi;
+import com.softeng.dingtalk.dao.repository.*;
 import com.softeng.dingtalk.entity.*;
 
 import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.VoteVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +19,12 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author zhanyeye
@@ -73,6 +71,43 @@ public class VoteService {
     @Value("${paper.flatRateDenominator}")
     private double flatRateDenominator;
 
+
+    private static double doctorWeightForVote;
+
+    private static double academicWeightForVote;
+
+    private static double professionalWeightForVote;
+
+    private static double teacherWeightForVote;
+
+    private static double defaultWeightForVote;
+
+    @Value("${paper.doctorWeight}")
+    public void setDoctorWeightForVote(double value) {
+        VoteService.doctorWeightForVote = value;
+    }
+
+    @Value("${paper.academicWeight}")
+    public void setAcademicWeightForVote(double value) {
+        VoteService.academicWeightForVote = value;
+    }
+
+    @Value("${paper.doctorWeight}")
+    public void setProfessionalWeightForVote(double value) {
+        VoteService.professionalWeightForVote = value;
+    }
+
+    @Value("${paper.teacherWeight}")
+    public void setTeacherWeightForVote(double value) {
+        VoteService.teacherWeightForVote = value;
+    }
+
+    @Value("${paper.defaultWeight}")
+    public void setDefaultWeightForVote(double value) {
+        VoteService.defaultWeightForVote = value;
+    }
+
+
     /**
      * 创建论文评审投票
      *
@@ -87,6 +122,10 @@ public class VoteService {
             if (voteRepository.isExisted(vo.getPaperid(), false) == 0) {
                 // 如果投票还没有被创建
                 Vote vote = new Vote(LocalDateTime.now(), vo.getEndTime(), vo.getPaperid());
+
+                vote.setAccept(0);
+                vote.setTotal(0);
+
                 voteRepository.save(vote);
                 internalPaperRepository.updatePaperVote(vo.getPaperid(), vote.getId());
                 sendVoteInfoCardToDingtalk(vo.getPaperid(), vo.getEndTime().toLocalTime());
@@ -213,25 +252,28 @@ public class VoteService {
     public static double getWeight(User user) {
         switch (user.getPosition()) {
             case DOCTOR:
-                return 2.0;
+                return doctorWeightForVote;
             case ACADEMIC:
+                return academicWeightForVote;
             case PROFESSIONAL:
-                return 1.0;
+                return professionalWeightForVote;
+            case TEACHER:
+                return teacherWeightForVote;
             default:
-                return 0.0;
+                return defaultWeightForVote;
         }
     }
 
     /**
      * 根据投接受票的投拒绝票的人加权后算出接受的百分比值
      *
-     * @param acceptUserList 投接受的人的列表
-     * @param rejectUserList 投拒绝的人的列表
+     * @param acceptUserListPo 投接受的人的列表
+     * @param rejectUserListPo 投拒绝的人的列表
      * @return [0, 1)
      */
-    public double calculatePercentageOfVotesAccepted(List<User> acceptUserList, List<User> rejectUserList) {
-        double acceptWeights = acceptUserList.stream().mapToDouble(VoteService::getWeight).sum();
-        double rejectWeights = rejectUserList.stream().mapToDouble(VoteService::getWeight).sum();
+    public double calculatePercentageOfVotesAccepted(List<User> acceptUserListPo, List<User> rejectUserListPo) {
+        double acceptWeights = acceptUserListPo.stream().mapToDouble(VoteService::getWeight).sum();
+        double rejectWeights = rejectUserListPo.stream().mapToDouble(VoteService::getWeight).sum();
         double totleWeights = acceptWeights + rejectWeights;
         return totleWeights == 0.0 ? 0.0 : acceptWeights / totleWeights;
     }
@@ -281,28 +323,30 @@ public class VoteService {
         // isOver 投票是否结束
         Boolean isOver = vote.getEndTime().isBefore(LocalDateTime.now());
 
-        List<User> acceptUserList = new ArrayList<>();
-        List<User> rejectUserList = new ArrayList<>();
+        List<User> acceptUserListPo = new ArrayList<>();
+        List<User> rejectUserListPo = new ArrayList<>();
         List<String> unVoteNames = new ArrayList<>();
 
         double acceptedPercentage = 0.0;
 
         if (isOver) {
             // 投票已结束
-            acceptUserList = voteDetailRepository.listAcceptUserlist(vid);
-            rejectUserList = voteDetailRepository.listRejectUserlist(vid);
+            acceptUserListPo = voteDetailRepository.listAcceptUserlist(vid);
+            rejectUserListPo = voteDetailRepository.listRejectUserlist(vid);
             unVoteNames = voteDetailRepository.findUnVoteUsername(vid);
-            acceptedPercentage = calculatePercentageOfVotesAccepted(acceptUserList, rejectUserList);
+            acceptedPercentage = calculatePercentageOfVotesAccepted(acceptUserListPo, rejectUserListPo);
         }
         return Map.of(
                 "vid", vid,
                 "status", isOver,
-                "accept", acceptUserList.size(),
-                "reject", rejectUserList.size(),
-                "total", acceptUserList.size() + rejectUserList.size(),
+                "accept", acceptUserListPo.size(),
+                "reject", rejectUserListPo.size(),
+                "total", acceptUserListPo.size() + rejectUserListPo.size(),
                 "myvote", myVote == null ? "unvote" : (myVote ? "accept" : "reject"),
-                "acceptnames", acceptUserList.stream().map(User::getName).collect(Collectors.toList()),
-                "rejectnames", rejectUserList.stream().map(User::getName).collect(Collectors.toList()),
+//                "acceptnames", acceptUserListPo.stream().map(User::getName).collect(Collectors.toList()),
+//                "rejectnames", rejectUserListPo.stream().map(User::getName).collect(Collectors.toList()),
+                "acceptUsers", acceptUserListPo,
+                "rejectUsers", rejectUserListPo,
                 "unvotenames", unVoteNames,
                 "acceptedPercentage", acceptedPercentage
         );
@@ -332,7 +376,7 @@ public class VoteService {
         }
         return AcRecord.builder()
                 .user(user)
-                // 论文投票AC变化，对于硕士生是1分，对于博士生是2分
+                // todo- 论文投票AC变化，对于硕士生是1分，对于博士生是2分
                 .ac(coefficient * (user.getPosition() == Position.DOCTOR ? 2 : 1))
                 .classify(AcRecord.VOTE)
                 .reason((coefficient == 0 ? "投稿中止：" : (coefficient == 1 ? "投票预测正确：" : "投票预测错误：") + title))

@@ -20,6 +20,8 @@ public class ExcelController {
 
     @PostMapping("/excel/ac_data")
     public void downloadAcData(@RequestBody LocalDate date, HttpServletResponse response) throws IOException {
+//        response.setContentType("application/vnd.ms-excel;chartset=utf-8"); //文件扩展名为excel格式
+//        response.setHeader("Content-Disposition", "attachment;filename=" + "fileName.xlsx");
         excelService.writeAcDataByDate(date, response.getOutputStream());
     }
 

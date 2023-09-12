@@ -16,6 +16,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "subsidy_level")
 public class SubsidyLevel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

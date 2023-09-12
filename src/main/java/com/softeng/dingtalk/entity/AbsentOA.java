@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "absentoa")
 public class AbsentOA {
 
     @Id

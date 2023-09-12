@@ -1,8 +1,8 @@
 package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.component.DateUtils;
+import com.softeng.dingtalk.dao.repository.*;
 import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.repository.*;
 import com.softeng.dingtalk.vo.IterateInfoVO;
 import com.softeng.dingtalk.vo.IterationVO;
 import lombok.extern.slf4j.Slf4j;
@@ -131,6 +131,7 @@ public class IterationService {
 
 
     /**
+     * todo-有bug
      * 查询项目详细信息
      * @param pid
      * @return

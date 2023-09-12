@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "ding_talk_schedule_detail")
 public class DingTalkScheduleDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

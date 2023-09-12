@@ -18,6 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "bug")
 @NamedEntityGraph(name="bug.graph",attributeNodes={@NamedAttributeNode("bugDetails")})
 public class Bug {
     @Id

@@ -29,7 +29,7 @@ public class EventPropertyController {
 
     @PostMapping("/event")
     public void addEventProperty(@RequestParam String eventPropertyJsonStr){
-        EventProperty eventProperty= JSONObject.parseObject(eventPropertyJsonStr,EventProperty.class);
+        EventProperty eventProperty = JSONObject.parseObject(eventPropertyJsonStr, EventProperty.class);
         if(eventProperty.getId()==null){
             eventPropertyService.addEventProperty(eventProperty);
         }else{

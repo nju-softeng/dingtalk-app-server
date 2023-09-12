@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "ding_talk_schedule")
 public class DingTalkSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +35,7 @@ public class DingTalkSchedule {
     String location;
     String scheduleId;
 
-    @Column(name = "acCalculated")
+    @Column(name = "ac_calculated")
     boolean acCalculated =false;
 
     public DingTalkSchedule(String summary, LocalDateTime start, LocalDateTime end, boolean online, String location) {

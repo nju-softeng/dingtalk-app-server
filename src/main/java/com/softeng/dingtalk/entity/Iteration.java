@@ -18,6 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "iteration")
 @NamedEntityGraph(name="iteration.graph",attributeNodes={@NamedAttributeNode("iterationDetails")})
 public class Iteration {
     @Id

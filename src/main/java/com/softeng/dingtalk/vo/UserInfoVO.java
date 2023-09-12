@@ -32,4 +32,5 @@ public class UserInfoVO {
     private String remark;
     private String leaseContractFileName;
     private String leaseContractFilePath;
+    private String tel;
 }

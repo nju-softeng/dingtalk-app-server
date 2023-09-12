@@ -1,9 +1,7 @@
 package com.softeng.dingtalk.entity;
 
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -18,6 +16,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Deprecated
+@Table(name = "external_paper")
 public class ExternalPaper implements Paper {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

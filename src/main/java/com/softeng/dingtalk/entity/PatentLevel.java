@@ -1,6 +1,5 @@
 package com.softeng.dingtalk.entity;
 
-import com.softeng.dingtalk.enums.PaperType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +10,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "patent_level")
 public class PatentLevel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class PatentLevel {
     @Column(columnDefinition="DECIMAL(10,3)")
     private double total;
 
-    public PatentLevel(String title,  double total) {
+    public PatentLevel(String title, double total) {
         this.title = title;
         this.total = total;
     }

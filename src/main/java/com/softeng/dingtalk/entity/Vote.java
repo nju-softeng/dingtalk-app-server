@@ -19,6 +19,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "vote")
 public class Vote {
 
     @Id
@@ -28,7 +29,7 @@ public class Vote {
     /**
      * 投票最终结果, -1为未结束, 0为拒绝, 1为接受, 2为平票
      */
-    int result = -1;
+    Integer result = -1;
 
     /**
      * 平票后作者是否选择外投
@@ -38,12 +39,12 @@ public class Vote {
     /**
      * 支持人数
      */
-    int accept;
+    Integer accept;
 
     /**
      * 总投票人数
      */
-    int total;
+    Integer total;
 
     /**
      * 投票是否截止
@@ -80,7 +81,7 @@ public class Vote {
     private List<VoteDetail> voteDetails;
 
 
-    public Vote(LocalDateTime startTime ,LocalDateTime endTime, int pid) {
+    public Vote(LocalDateTime startTime , LocalDateTime endTime, int pid) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.pid = pid;

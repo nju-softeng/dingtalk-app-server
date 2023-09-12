@@ -1,15 +1,17 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.dao.repository.AcRecordRepository;
+import com.softeng.dingtalk.dao.repository.BugRepository;
+import com.softeng.dingtalk.dao.repository.DcSummaryRepository;
+import com.softeng.dingtalk.dao.repository.UserRepository;
 import com.softeng.dingtalk.entity.DcSummary;
 import com.softeng.dingtalk.enums.Position;
-import com.softeng.dingtalk.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -93,7 +95,7 @@ public class PerformanceService {
      */
     public List<Map<String, Object>> listDcSummaryVO(LocalDate date, boolean isDesc) {
         int yearmonth = date.getYear() * 100 + date.getMonthValue();
-        systemService.manulUpdatePerformance(yearmonth);
+        systemService.manualUpdatePerformance(yearmonth);
         return isDesc ?
                 dcSummaryRepository.listDcSummaryDesc(yearmonth) :
                 dcSummaryRepository.listDcSummaryAsc(yearmonth);

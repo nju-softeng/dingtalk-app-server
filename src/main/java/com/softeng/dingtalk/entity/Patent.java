@@ -13,6 +13,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Proxy(lazy = false)
+@Table(name = "patent")
 public class Patent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,7 +81,7 @@ public class Patent {
     int state=0;
 
 
-    public Patent(String name, String year,String type,String version, String obligee, String filePath) {
+    public Patent(String name, String year, String type, String version, String obligee, String filePath) {
         this.year=year;
         this.type=type;
         this.name = name;

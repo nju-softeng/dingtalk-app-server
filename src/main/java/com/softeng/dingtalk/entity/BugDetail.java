@@ -16,6 +16,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "bug_detail")
 public class BugDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

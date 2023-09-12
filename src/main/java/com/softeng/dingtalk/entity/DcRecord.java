@@ -24,6 +24,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
+@Table(name = "dc_record")
 @NamedEntityGraph(name="dcRecord.graph",attributeNodes={@NamedAttributeNode("acItems"), @NamedAttributeNode("auditor")})
 public class DcRecord {
     @Id

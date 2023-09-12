@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.softeng.dingtalk.mapper.DcSummaryMapper">
+<mapper namespace="com.softeng.dingtalk.dao.mapper.DcSummaryMapper">
 
-    <select id="listDcSummaryDataByYearMonth" resultType="com.softeng.dingtalk.excel.DcSummaryData">
+    <select id="listDcSummaryDataByYearMonthDiscarded" resultType="com.softeng.dingtalk.dto.resp.excelData.DcSummaryData">
         SELECT
             u.stu_num as stuNum,
             u.name,
@@ -23,6 +23,58 @@
                 AND u.is_deleted = 0
         ORDER BY
             d.salary DESC
+    </select>
+
+    <select id="listDcSummaryDataByYearMonth" resultType="com.softeng.dingtalk.dto.resp.excelData.DcSummaryData">
+        SELECT  t1.stuNum,
+                t1.name,
+                t1.id,
+                t1.salary,
+                t1.week1,
+                t1.week2,
+                t1.week3,
+                t1.week4,
+                t1.week5,
+                t1.hasLease,
+                t1.position,
+                t1.total,
+                t1.ac,
+                t2.ac as acChanges,
+                t2.reason as acReasons,
+                t1.topup as topUp
+        FROM (
+                 SELECT u.stu_num as stuNum,
+                        u.name,
+                        u.id,
+                        d.salary,
+                        d.week1,
+                        d.week2,
+                        d.week3,
+                        d.week4,
+                        d.week5,
+                        u.position,
+                        (case ifnull(u.lease_contract_file_name, 0) when 0 then '否' else '是' end ) as hasLease,
+                        d.total,
+                        d.ac,
+                        d.topup   as topUp
+                 FROM `user` u
+                          INNER JOIN (SELECT * FROM dc_summary WHERE yearmonth = #{yearmonth}) d ON d.user_id = u.id
+                     AND u.is_deleted = 0
+                 ORDER BY d.salary DESC
+             ) t1 LEFT OUTER JOIN (
+            SELECT
+                u.stu_num as num,
+                u.NAME as name,
+                u.id,
+                sum( a.ac ) as ac,
+                GROUP_CONCAT( CONCAT( a.reason, ' :  ', a.ac ) SEPARATOR '\n' ) as reason
+            FROM
+                `user` u
+                    INNER JOIN ( SELECT * FROM ac_record WHERE YEAR ( create_time ) = LEFT(#{yearmonth}, 4) AND MONTH ( create_time ) = RIGHT(#{yearmonth}, 2) ) a ON a.user_id = u.id
+                    AND u.is_deleted = 0
+            GROUP BY
+                u.id
+        ) t2 ON t1.id = t2.id
     </select>
 
 </mapper>

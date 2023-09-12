@@ -1,16 +1,13 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.entity.User;
+import com.softeng.dingtalk.dto.CommonResult;
+import com.softeng.dingtalk.dto.req.VMApplyReq;
 import com.softeng.dingtalk.entity.VMApply;
-import com.softeng.dingtalk.repository.UserRepository;
-import com.softeng.dingtalk.repository.VMApplyRepository;
 import com.softeng.dingtalk.service.VMApplyService;
 import com.softeng.dingtalk.vo.VMApplyVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -85,5 +82,10 @@ public class VMApplyController {
     @DeleteMapping("/vmApply/{id}")
     public void deleteVMApply(@PathVariable int id,@RequestAttribute int uid){
         vmApplyService.deleteVMApply(id,uid);
+    }
+
+    @PostMapping("/v2/vmApply/page/{page}/{size}")
+    public CommonResult<Map<String, Object>> queryVMApplyList(@PathVariable int page, @PathVariable int size, @RequestBody VMApplyReq vmApplyReq) {
+        return CommonResult.success(vmApplyService.queryVMApplyList(page, size, vmApplyReq));
     }
 }

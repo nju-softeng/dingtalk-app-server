@@ -1,7 +1,5 @@
 package com.softeng.dingtalk.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.models.auth.In;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +10,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "dissertation")
 public class Dissertation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +42,7 @@ public class Dissertation {
         this.graduateYear=graduateYear;
     }
 
-    public Dissertation(int state,String graduateYear,String filePath){
+    public Dissertation(int state, String graduateYear, String filePath){
         this.state=state;
         this.graduateYear=graduateYear;
         this.filePath=filePath;

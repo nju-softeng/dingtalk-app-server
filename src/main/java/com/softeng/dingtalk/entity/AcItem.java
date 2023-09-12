@@ -8,7 +8,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 /**
  * @author zhanyeye
@@ -21,6 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @Deprecated
+@Table(name = "ac_item")
 public class AcItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

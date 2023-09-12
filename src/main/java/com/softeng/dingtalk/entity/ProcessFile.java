@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "process_file")
 public class ProcessFile {
 
     @Id

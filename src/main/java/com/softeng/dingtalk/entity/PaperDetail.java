@@ -1,6 +1,5 @@
 package com.softeng.dingtalk.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +18,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @ToString
+@Table(name = "paper_detail")
 public class PaperDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

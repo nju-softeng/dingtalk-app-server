@@ -11,6 +11,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "project_property")
 public class ProjectProperty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +24,7 @@ public class ProjectProperty {
     @OneToMany(mappedBy = "projectProperty", fetch = FetchType.EAGER)
     List<ProjectPropertyFile> projectPropertyFileList;
 
-    public ProjectProperty(String name,String path){
+    public ProjectProperty(String name, String path){
         this.name=name;
         this.path=path;
     }

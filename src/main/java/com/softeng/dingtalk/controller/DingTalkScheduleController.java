@@ -1,7 +1,6 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.entity.AbsentOA;
-import com.softeng.dingtalk.entity.DingTalkSchedule;
 import com.softeng.dingtalk.service.DingTalkScheduleService;
 import com.softeng.dingtalk.vo.AbsentOAVO;
 import com.softeng.dingtalk.vo.DingTalkScheduleVO;
@@ -9,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -20,6 +18,7 @@ public class DingTalkScheduleController {
     DingTalkScheduleService dingTalkScheduleService;
     @PostMapping("/schedule")
     public void addSchedule(@RequestBody DingTalkScheduleVO dingTalkScheduleVO,@RequestAttribute int uid){
+//        todo-有bug
         if(dingTalkScheduleVO.getId()==null) {
             dingTalkScheduleService.addSchedule(dingTalkScheduleVO,uid);
         } else {

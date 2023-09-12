@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "reimbursement_file")
 public class ReimbursementFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,7 +1,7 @@
 package com.softeng.dingtalk.controller;
 
 import com.softeng.dingtalk.component.DateUtils;
-import com.softeng.dingtalk.repository.DcSummaryRepository;
+import com.softeng.dingtalk.dao.repository.DcSummaryRepository;
 import com.softeng.dingtalk.service.ApplicationService;
 import com.softeng.dingtalk.service.AuditService;
 import com.softeng.dingtalk.service.UserService;
@@ -55,7 +55,7 @@ public class ApplicationController {
      */
     @PostMapping("/application")
     public void addApplication(@RequestAttribute int uid, @Valid @RequestBody ApplyVO vo) {
-        if (userService.isAuditor(uid) && uid == vo.getAuditorid()) {
+        if (uid == vo.getAuditorid()) {
             applicationService.addApplicationByAuditor(vo, uid);
         } else {
             applicationService.addApplication(vo, uid);
@@ -69,7 +69,7 @@ public class ApplicationController {
      */
     @PutMapping("/application/{id}")
     public void updateApplication(@RequestAttribute int uid, @Valid @RequestBody ApplyVO vo) {
-        if (userService.isAuditor(uid) && uid == vo.getAuditorid()) {
+        if (uid == vo.getAuditorid()) {
             applicationService.updateApplicationByAuditor(vo, uid);
         } else {
             applicationService.updateApplication(vo, uid);

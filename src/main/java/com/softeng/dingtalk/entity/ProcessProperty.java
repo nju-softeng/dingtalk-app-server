@@ -3,9 +3,6 @@ package com.softeng.dingtalk.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "process_property")
 public class ProcessProperty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,11 +47,11 @@ public class ProcessProperty {
     @JoinColumn(name = "conference_photo_id")
     List<ProcessFile> conferencePhotoFileList;
 
-    public ProcessProperty(String conferenceName,String year,String filePath,User user){
+    public ProcessProperty(String conferenceName, String year, String filePath, User user){
         this.conferenceName=conferenceName;
         this.year=year;
         this.filePath=filePath;
-        this.user=user;
+        this.user = user;
     }
 
     public void update(String conferenceName,String year){

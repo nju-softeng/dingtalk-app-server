@@ -16,6 +16,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "iteration_detail")
 public class IterationDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

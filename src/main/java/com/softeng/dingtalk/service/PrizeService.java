@@ -2,7 +2,7 @@ package com.softeng.dingtalk.service;
 
 import com.softeng.dingtalk.entity.Prize;
 import com.softeng.dingtalk.entity.User;
-import com.softeng.dingtalk.repository.PrizeRepository;
+import com.softeng.dingtalk.dao.repository.PrizeRepository;
 import com.softeng.dingtalk.vo.PrizeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +39,8 @@ public class PrizeService {
      * @param prizeVO
      * @return
      */
-    public Prize addNewPrize(int userId,PrizeVO prizeVO){
-        Prize prize=new Prize(new User(userId),prizeVO.getPrizeTime(),prizeVO.getPrizeName(),prizeVO.getLevel(),prizeVO.getRemark());
+    public Prize addNewPrize(int userId, PrizeVO prizeVO){
+        Prize prize =new Prize(new User(userId),prizeVO.getPrizeTime(),prizeVO.getPrizeName(),prizeVO.getLevel(),prizeVO.getRemark());
         return prizeRepository.save(prize);
     }
 

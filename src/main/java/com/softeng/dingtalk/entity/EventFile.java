@@ -1,7 +1,6 @@
 package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +11,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "event_file")
 public class EventFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class EventFile {
         this.fileName=fileName;
         this.fileId=fileId;
         this.fileType=fileType;
-        this.eventProperty=eventProperty;
+        this.eventProperty = eventProperty;
     }
 
 }

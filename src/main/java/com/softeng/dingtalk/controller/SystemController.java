@@ -8,13 +8,10 @@ import com.softeng.dingtalk.service.SystemService;
 import com.softeng.dingtalk.vo.QueryUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -38,9 +35,10 @@ public class SystemController {
      * @return
      */
     @PostMapping("/system/user/{page}")
-    public Map queryUser(@RequestBody QueryUserVO vo, @PathVariable int page) {
-        Page<User> pages = systemService.multiQueryUser(page, 10, vo.getName(), vo.getPosition());
-        return Map.of("content", pages.getContent(), "total", pages.getTotalElements());
+    public Map<String, Object> queryUser(@RequestBody QueryUserVO vo, @PathVariable int page) {
+//        Page<User> pages = systemService.multiQueryUser(page, 10, vo.getName(), vo.getPosition());
+//        return Map.of("content", pages.getContent(), "total", pages.getTotalElements());
+        return systemService.multiQueryUser(page, 10, vo.getName(), vo.getPosition());
     }
 
 
@@ -155,7 +153,7 @@ public class SystemController {
      */
     @GetMapping("/system/updateperf/{yearmonth}")
     public void manulUpdatePerformance(@PathVariable int yearmonth) {
-        systemService.manulUpdatePerformance(yearmonth);
+        systemService.manualUpdatePerformance(yearmonth);
     }
 
     /**
@@ -164,7 +162,7 @@ public class SystemController {
     @PostMapping("/system/weekreport/acrecord")
     public void manulDeductedPointsUnsubmittedWeeklyReport(
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startTime) {
-        systemService.manulDeductedPointsUnsubmittedWeeklyReport(startTime);
+        systemService.manualDeductedPointsUnSubmittedWeeklyReport(startTime);
     }
 
     /**

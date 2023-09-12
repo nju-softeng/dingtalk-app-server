@@ -3,14 +3,17 @@ package com.softeng.dingtalk.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
+@Accessors(chain = true)
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "practice")
 public class Practice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

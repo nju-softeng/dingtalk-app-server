@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "vmapply")
 public class VMApply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +20,7 @@ public class VMApply {
     @JoinColumn(name = "user_id")
     User user;
     //状态 -1审核不通过，0审核中，1审核通过
-    int state;
+    Integer state;
     //项目组
     String projectTeam;
     //课题
@@ -33,11 +34,11 @@ public class VMApply {
     //申请用途
     String purpose;
     //CPU核心数
-    int coreNum;
+    Integer coreNum;
     //内存大小 GB为单位
-    int memory;
+    Integer memory;
     //硬盘容量 GB为单位
-    int capacity;
+    Integer capacity;
     //操作系统
     String operationSystem;
     //申请日期

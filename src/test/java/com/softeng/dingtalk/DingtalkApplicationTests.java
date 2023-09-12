@@ -1,11 +1,10 @@
 package com.softeng.dingtalk;
 
-import com.softeng.dingtalk.component.EncryptorComponent;
+import com.softeng.dingtalk.component.encryptor.EncryptorComponent;
 import com.softeng.dingtalk.entity.InternalPaper;
 import com.softeng.dingtalk.entity.Paper;
-import com.softeng.dingtalk.entity.Vote;
 import com.softeng.dingtalk.enums.PaperType;
-import com.softeng.dingtalk.repository.InternalPaperRepository;
+import com.softeng.dingtalk.dao.repository.InternalPaperRepository;
 import com.softeng.dingtalk.service.VoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -15,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @RunWith(SpringRunner.class)

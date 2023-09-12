@@ -1,6 +1,8 @@
 package com.softeng.dingtalk.controller;
 
-import com.softeng.dingtalk.api.BaseApi;
+import com.softeng.dingtalk.component.dingApi.BaseApi;
+import com.softeng.dingtalk.aspect.AccessPermission;
+import com.softeng.dingtalk.enums.PermissionEnum;
 import com.softeng.dingtalk.entity.Message;
 import com.softeng.dingtalk.service.NotifyService;
 import com.softeng.dingtalk.service.UserService;
@@ -8,9 +10,7 @@ import com.softeng.dingtalk.vo.UserInfoVO;
 import com.softeng.dingtalk.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,9 +33,9 @@ public class UserController {
     UserService userService;
     @Autowired
     NotifyService notifyService;
-
     @Autowired
     BaseApi baseApi;
+
 
 
     /**
@@ -99,6 +99,7 @@ public class UserController {
      * 更新用户权限
      * @param map
      */
+    @AccessPermission(PermissionEnum.EDIT_ANY_USER_INFO)
     @PostMapping("/updaterole")
     public void updateUserRole(@RequestBody Map<String, Object> map) {
         userService.updateRole((int) map.get("uid"), (int) map.get("authority"));
@@ -130,6 +131,4 @@ public class UserController {
     public void downloadLeaseContract(@RequestAttribute int uid, HttpServletResponse response) throws IOException {
         userService.downloadContractFile(uid,response);
     }
-
-
 }

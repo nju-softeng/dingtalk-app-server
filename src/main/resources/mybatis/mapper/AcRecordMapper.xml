@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.softeng.dingtalk.mapper.AcRecordMapper">
+<mapper namespace="com.softeng.dingtalk.dao.mapper.AcRecordMapper">
 
-    <select id="listAcDataByYearMonth" resultType="com.softeng.dingtalk.excel.AcData">
+    <select id="listAcDataByYearMonth" resultType="com.softeng.dingtalk.dto.resp.excelData.AcData">
         SELECT
             u.stu_num as num,
             u.NAME as name,

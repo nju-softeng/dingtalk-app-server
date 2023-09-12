@@ -1,7 +1,11 @@
 package com.softeng.dingtalk.service;
 
+import com.softeng.dingtalk.component.convertor.PatentConvertor;
+import com.softeng.dingtalk.dao.repository.*;
+import com.softeng.dingtalk.dto.req.PatentReq;
+import com.softeng.dingtalk.dto.resp.PatentResp;
 import com.softeng.dingtalk.entity.*;
-import com.softeng.dingtalk.repository.*;
+import com.softeng.dingtalk.utils.StreamUtils;
 import com.softeng.dingtalk.vo.PatentVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,17 +14,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.Resource;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +48,8 @@ public class PatentService {
     FileService fileService;
     @Autowired
     UserRepository userRepository;
+    @Resource
+    PatentConvertor patentConvertor;
 
     @Value("${patent.rank1Rate}")
     private double rank1Rate;
@@ -50,21 +59,21 @@ public class PatentService {
 
     //将增加专利和修改合并
     public void addPatent(MultipartFile file, PatentVO patentVO){
-        Patent patent=null;
+        Patent patent =null;
         if(patentVO.getId()==null){
-            patent=new Patent(patentVO.getName(),patentVO.getYear(),patentVO.getType(),
+            patent =new Patent(patentVO.getName(),patentVO.getYear(),patentVO.getType(),
                     patentVO.getVersion(),patentVO.getObligee(),patentVO.getFilePath());
         }else{
-            patent=patentRepository.findById(patentVO.getId()).get();
+            patent =patentRepository.findById(patentVO.getId()).get();
             patent.update(patentVO.getName(),patentVO.getYear(),patentVO.getType(),
                     patentVO.getVersion(),patentVO.getObligee(),patentVO.getFilePath());
         }
         patent.setApplicant(userRepository.findById(patentVO.getApplicantId()).get());
         if(file!=null){
             if(patent.getReviewFileId()!=null){
-                fileService.deleteFileByPath(patent.getReviewFileName(),patent.getReviewFileId());
+                fileService.deleteFileByPath(patent.getReviewFileName(), patent.getReviewFileId());
             }
-            String fileId=fileService.addFileByPath(file,patent.getFilePath()+"/Review");
+            String fileId=fileService.addFileByPath(file, patent.getFilePath()+"/Review");
             patent.setReviewFileName(file.getOriginalFilename());
             patent.setReviewFileId(fileId);
         }
@@ -72,10 +81,10 @@ public class PatentService {
         //经过内审状态后，不可以再修改发明者名单
         if(patent.getState()!=0)return;
         if(patentVO.getInventorsIdList()!=null){
-            List<PatentDetail> patentDetailList=new LinkedList<>();
+            List<PatentDetail> patentDetailList =new LinkedList<>();
             int num=1;
             for(Integer id:patentVO.getInventorsIdList()){
-                PatentDetail patentDetail=new PatentDetail(num,patent,userRepository.findById(id).get());
+                PatentDetail patentDetail =new PatentDetail(num, patent,userRepository.findById(id).get());
                 patentDetailList.add(patentDetail);
                 num++;
             }
@@ -113,15 +122,15 @@ public class PatentService {
 
     //内审决定
     public void decideAudit(int id,boolean isPass,int uid){
-        Patent patent=patentRepository.findById(id).get();
+        Patent patent =patentRepository.findById(id).get();
         if(isPass){
             double sum=patentLevelRepository.getValue("patent");
             patent.getPatentDetailList().forEach(patentDetail -> {
-                double ac=calculateAC(1,patentDetail.getNum(),sum);
+                double ac=calculateAC(1, patentDetail.getNum(),sum);
                 if(ac!=0){
-                    AcRecord acRecord=new AcRecord(patentDetail.getUser(),userRepository.findById(uid).get(),ac,"专利内审通过", AcRecord.Patent, LocalDateTime.now());
+                    AcRecord acRecord =new AcRecord(patentDetail.getUser(),userRepository.findById(uid).get(),ac,"专利内审通过", AcRecord.Patent, LocalDateTime.now());
                     acRecordRepository.save(acRecord);
-                    patentDetail.getAcRecordList().add(acRecord);
+//                    patentDetail.getAcRecordList().add(acRecord);
                 }
 
             });
@@ -134,7 +143,7 @@ public class PatentService {
     }
     //授权决定
     public void decideAuthorization(int id,boolean isPass,int uid){
-        Patent patent=patentRepository.findById(id).get();
+        Patent patent =patentRepository.findById(id).get();
         int signal;
         String reason;
         if(isPass){
@@ -148,11 +157,11 @@ public class PatentService {
         }
         double sum=patentLevelRepository.getValue("patent");
         patent.getPatentDetailList().forEach(patentDetail -> {
-            double ac=calculateAC(signal,patentDetail.getNum(),sum);
+            double ac=calculateAC(signal, patentDetail.getNum(),sum);
             if(ac!=0){
-                AcRecord acRecord=new AcRecord(patentDetail.getUser(),userRepository.findById(uid).get(),ac,reason, AcRecord.Patent, LocalDateTime.now());
+                AcRecord acRecord =new AcRecord(patentDetail.getUser(),userRepository.findById(uid).get(),ac,reason, AcRecord.Patent, LocalDateTime.now());
                 acRecordRepository.save(acRecord);
-                patentDetail.getAcRecordList().add(acRecord);
+//                patentDetail.getAcRecordList().add(acRecord);
             }
 
         });
@@ -161,25 +170,25 @@ public class PatentService {
     }
 
     public void addPatentFile(MultipartFile file, int id, String type){
-        Patent patent=patentRepository.findById(id).get();
+        Patent patent =patentRepository.findById(id).get();
         PatentFileInfo patentFileInfo=getPatentFileInfo(patent,type);
         if(patentFileInfo.name!=null){
             fileService.deleteFileByPath(patentFileInfo.name,patentFileInfo.id);
         }
-        String fileId=fileService.addFileByPath(file,patent.getFilePath()+"/"+getFileTypeFolderName(type));
+        String fileId=fileService.addFileByPath(file, patent.getFilePath()+"/"+getFileTypeFolderName(type));
         setPatentFileAttribute(patent,type,file.getOriginalFilename(),fileId);
         patentRepository.save(patent);
     }
 
     public void deletePatentFile(int id, String type){
-        Patent patent=patentRepository.findById(id).get();
+        Patent patent =patentRepository.findById(id).get();
         PatentFileInfo patentFileInfo=getPatentFileInfo(patent,type);
         fileService.deleteFileByPath(patentFileInfo.name,patentFileInfo.id);
         setPatentFileAttribute(patent,type,null,null);
     }
 
     public void downloadPatentFile(int id, String type, HttpServletResponse response){
-        Patent patent=patentRepository.findById(id).get();
+        Patent patent =patentRepository.findById(id).get();
         PatentFileInfo patentFileInfo=getPatentFileInfo(patent,type);
         try{
             fileService.downloadFile(patentFileInfo.name,patentFileInfo.id,response);
@@ -188,7 +197,7 @@ public class PatentService {
         }
     }
 
-    private void setPatentFileAttribute(Patent patent,String type,String fileName,String fileId){
+    private void setPatentFileAttribute(Patent patent, String type, String fileName, String fileId){
         switch(type){
             case "reviewFile":
                 patent.setReviewFileName(fileName);
@@ -215,28 +224,28 @@ public class PatentService {
         }
     }
 
-    private PatentFileInfo getPatentFileInfo(Patent patent,String type){
+    private PatentFileInfo getPatentFileInfo(Patent patent, String type){
         PatentFileInfo patentFileInfo=new PatentFileInfo();
         switch(type){
             case "reviewFile":
-                patentFileInfo.name=patent.getReviewFileName();
-                patentFileInfo.id=patent.getReviewFileId();
+                patentFileInfo.name= patent.getReviewFileName();
+                patentFileInfo.id= patent.getReviewFileId();
                 break;
             case "submissionFile":
-                patentFileInfo.name=patent.getSubmissionFileName();
-                patentFileInfo.id=patent.getSubmissionFileId();
+                patentFileInfo.name= patent.getSubmissionFileName();
+                patentFileInfo.id= patent.getSubmissionFileId();
                 break;
             case "commentFile":
-                patentFileInfo.name=patent.getCommentFileName();
-                patentFileInfo.id=patent.getCommentFileId();
+                patentFileInfo.name= patent.getCommentFileName();
+                patentFileInfo.id= patent.getCommentFileId();
                 break;
             case "handlingFile":
-                patentFileInfo.name=patent.getHandlingFileName();
-                patentFileInfo.id=patent.getHandlingFileId();
+                patentFileInfo.name= patent.getHandlingFileName();
+                patentFileInfo.id= patent.getHandlingFileId();
                 break;
             case"authorizationFile":
-                patentFileInfo.name=patent.getAuthorizationFileName();
-                patentFileInfo.id=patent.getAuthorizationFileId();
+                patentFileInfo.name= patent.getAuthorizationFileName();
+                patentFileInfo.id= patent.getAuthorizationFileId();
                 break;
             default:
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "未找到对应文件类型！");
@@ -257,5 +266,45 @@ public class PatentService {
             this.id=id;
         }
         PatentFileInfo(){}
+    }
+
+    public Map<String, Object> queryPatentList(int page, int size, PatentReq patentReq) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
+        Specification<Patent> patentSpecification = ((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if(patentReq.getInventorsIdList().size() == 1) {
+//                查询特定发明人的专利
+                int userId = patentReq.getInventorsIdList().get(0);
+
+                Subquery<PatentDetail> subQuery = criteriaQuery.subquery(PatentDetail.class);
+                Root<PatentDetail> subRoot = subQuery.from(PatentDetail.class);
+//                subQuery.where(criteriaBuilder.equal(subRoot.get("user").get("id"), userId));
+//                subQuery.select(subRoot.get("id"));
+//
+//                predicates.add(criteriaBuilder.exists(subQuery));
+
+                subQuery.select(subRoot.get("patent").get("id"));
+                subQuery.where(criteriaBuilder.equal(subRoot.get("user").get("id"), userId));
+
+                predicates.add(root.get("id").in(subQuery));
+            }
+            if(!"".equals(patentReq.getYear())) {
+                predicates.add(criteriaBuilder.equal(root.get("year"), patentReq.getYear()));
+            }
+            if(patentReq.getState() != -2) {
+                predicates.add(criteriaBuilder.equal(root.get("state"), patentReq.getState()));
+            }
+            if(patentReq.getApplicantId() != 0) {
+                predicates.add(criteriaBuilder.equal(root.get("applicant").get("id"), patentReq.getApplicantId()));
+            }
+            Predicate[] arr = new Predicate[predicates.size()];
+            return criteriaBuilder.and(predicates.toArray(arr));
+        });
+
+        Page<Patent> patentPage = patentRepository.findAll(patentSpecification, pageable);
+        List<PatentResp> patentRespList = StreamUtils.map(patentPage.toList(), patent ->
+            patentConvertor.entity2Resp(patent)
+        );
+        return Map.of("list", patentRespList, "total", patentPage.getTotalElements());
     }
 }

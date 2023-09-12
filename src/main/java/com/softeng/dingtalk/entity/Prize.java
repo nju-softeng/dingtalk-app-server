@@ -18,6 +18,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "prize")
 public class Prize {
     /**
      * 表示奖项级别的静态常量

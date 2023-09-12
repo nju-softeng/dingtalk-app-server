@@ -1,20 +1,19 @@
 package com.softeng.dingtalk.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
 @ToString
+@Table(name = "patent_detail")
 public class PatentDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +24,8 @@ public class PatentDetail {
     private Patent patent;
     @ManyToOne
     private User user;
-    @OneToMany(cascade = CascadeType.REMOVE)
-    private List<AcRecord> acRecordList;
+//    @OneToMany(cascade = CascadeType.REMOVE)
+//    private List<AcRecord> acRecordList;
 
     public PatentDetail(int num, Patent patent, User user) {
         this.num = num;
