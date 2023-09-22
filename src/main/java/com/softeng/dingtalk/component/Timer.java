@@ -201,7 +201,7 @@ public class Timer {
     /**
      * 每月22日14点30分进行用户职位的变更
      */
-    @Scheduled(cron = "0 30 14 22 * ?")
+    @Scheduled(cron = "0 49 14 22 * ?")
     public void updateUserPosition() {
         log.info("每月22日14点30分进行用户职位的变更");
         userRepository.findAllValidUser()
@@ -211,7 +211,7 @@ public class Timer {
                 .forEach((user -> {
                     //                排除教师用户
                     if(user.getPosition() == Position.TEACHER) return;
-                    StuNumParser parser= StuNumParserFactory.generateParser(user.getStuNum().length());
+                    StuNumParser parser= StuNumParserFactory.generateParser(user.getStuNum().trim().length());
                     assert parser != null;
                     user.setPosition(parser.parse(user.getStuNum()));
                     userRepository.save(user);
