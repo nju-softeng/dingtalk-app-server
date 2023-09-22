@@ -201,7 +201,7 @@ public class Timer {
     /**
      * 每月22日13点40分进行用户职位的变更
      */
-    @Scheduled(cron = "0 40 13 22 * ?")
+    @Scheduled(cron = "0 10 14 22 * ?")
     public void updateUserPosition() {
         log.info("每年8月1日进行用户职位的变更");
         userRepository.findAllValidUser()
