@@ -199,7 +199,7 @@ public class Timer {
     }
 
     /**
-     * 每月22日13点进行用户职位的变更
+     * 每月22日13点40分进行用户职位的变更
      */
     @Scheduled(cron = "0 40 13 22 * ?")
     public void updateUserPosition() {
