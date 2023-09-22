@@ -199,11 +199,11 @@ public class Timer {
     }
 
     /**
-     * 每月22日14点30分进行用户职位的变更
+     * 每月22日15点10分进行用户职位的变更
      */
-    @Scheduled(cron = "0 49 14 22 * ?")
+    @Scheduled(cron = "0 10 15 22 * ?")
     public void updateUserPosition() {
-        log.info("每月22日14点30分进行用户职位的变更");
+        log.info("每月22日15点10分进行用户职位的变更");
         userRepository.findAllValidUser()
                 .stream()
 //                筛选出设置了学号的用户
