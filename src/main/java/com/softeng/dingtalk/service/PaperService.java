@@ -287,7 +287,7 @@ public class PaperService {
                     calculateAc(internalPaper, sum, paperDetail.getNum()),
                     internalPaper.getReason(),
                     AcRecord.PAPER,
-                    internalPaper.getUpdateDate().atTime(8, 0)
+                    LocalDate.now().atTime(8, 0)
             ));
         });
 
